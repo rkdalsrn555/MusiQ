@@ -107,3 +107,213 @@
 ![Untitled](./img/Untitled%201.png)
 
 ![Untitled](./img/Untitled%202.png)
+
+## 10/16
+
+### Pose Detection
+
+### 정리 링크
+
+[[파이썬] MediaPipe 포즈 감지(Pose)](https://puleugo.tistory.com/17)
+
+### 전체 코드
+
+```python
+import cv2
+import mediapipe as mp
+
+# MediaPipe Pose 모델 초기화
+mp_pose = mp.solutions.pose
+mp_drawing = mp.solutions.drawing_utils
+
+# 카메라 캡처 초기화
+cap = cv2.VideoCapture(0)
+frame_rate = 33
+
+# Pose 모델 생성
+pose = mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
+
+# 확대 처리를 위한 boolean
+zoomed_in = False
+
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret:
+        continue
+
+    # 이미지를 RGB 포맷으로 변환
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    # 포즈 랜드마크 감지
+    results = pose.process(frame_rgb)
+
+    if results.pose_landmarks:
+        landmarks = results.pose_landmarks.landmark
+
+        h, w, _ = frame.shape
+        if landmarks[11].y > landmarks[18].y and not zoomed_in:
+            x1 = int(w / 4)
+            y1 = int(h / 4)
+            x2 = int(3 * w / 4)
+            y2 = int(3 * h / 4)
+            frame = frame[y1:y2, x1:x2]
+            zoomed_in = True
+        elif (landmarks[11].y < landmarks[18].y and zoomed_in):
+            frame = cv2.resize(frame, (w, h))
+            zoomed_in = False
+
+
+    if results.pose_landmarks:
+        # 포즈 랜드마크 그리기
+        mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+
+    # 화면에 영상 표시
+    cv2.imshow('Pose Detection', frame)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+# 종료 시 리소스 해제
+cap.release()
+cv2.destroyAllWindows()
+```
+
+### 코드 설명
+
+### Solution 불러오기
+
+```python
+# MediaPipe Pose 모델 초기화
+mp_pose = mp.solutions.pose
+mp_drawing = mp.solutions.drawing_utils
+```
+
+- MediaPipe에서 제공하는 솔루션을 가져오는 코드
+- mp.solution..pose → pose detection 모델을 생성할 수 있음
+- mp.solution.drawing → pose detection의 결과인 pose landmarks를 frame에 그릴 수 있도록 도와줌
+
+### 캠 사용
+
+```python
+# 카메라 캡처 초기화
+cap = cv2.VideoCapture(0)
+frame_rate = 33
+```
+
+캠을 사용하기 위한 코드
+
+- openCV 사용
+- VideoCapture의 파라미터로 URL이나 영상의 경로를 입력하면 해당 영상을 실행하고, 0을 입력하면 컴퓨터의 캠을 사용함
+
+### 모델 생성
+
+```python
+# Pose 모델 생성
+pose = mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
+```
+
+- 모델 생성하는 코드
+- 파라미터
+  - **[3.1. STATIC*IMAGE_MODE (정적*이미지\_모드)](<https://puleugo.tistory.com/17#article-3-1--static_image_mode-(%EC%A0%95%EC%A0%81_%EC%9D%B4%EB%AF%B8%EC%A7%80_%EB%AA%A8%EB%93%9C)>)**
+  - **[3.2. MODEL*COMPLEXITY (모델*복잡성)](<https://puleugo.tistory.com/17#article-3-2--model_complexity-(%EB%AA%A8%EB%8D%B8_%EB%B3%B5%EC%9E%A1%EC%84%B1)>)**
+  - **[3.3. SMOOTH*LANDMARKS (부드러운*랜드마크)](<https://puleugo.tistory.com/17#article-3-3--smooth_landmarks-(%EB%B6%80%EB%93%9C%EB%9F%AC%EC%9A%B4_%EB%9E%9C%EB%93%9C%EB%A7%88%ED%81%AC)>)**
+  - **[3.4. ENABLE*SEGMENTATION (분할*허용)](<https://puleugo.tistory.com/17#article-3-4--enable_segmentation-(%EB%B6%84%ED%95%A0_%ED%97%88%EC%9A%A9)>)**
+  - **[3.5. SMOOTH*SEGMENTATION (부드러운*분할)](<https://puleugo.tistory.com/17#article-3-5--smooth_segmentation-(%EB%B6%80%EB%93%9C%EB%9F%AC%EC%9A%B4_%EB%B6%84%ED%95%A0)>)**
+  - **[3.6. MIN*DETECTION_CONFIDENCE (최소*탐지\_신뢰값)](<https://puleugo.tistory.com/17#article-3-6--min_detection_confidence-(%EC%B5%9C%EC%86%8C_%ED%83%90%EC%A7%80_%EC%8B%A0%EB%A2%B0%EA%B0%92)>)**
+  - **[3.7. MIN*TRACKING_CONFIDENCE (최소*추적\_신뢰값)](<https://puleugo.tistory.com/17#article-3-7--min_tracking_confidence-(%EC%B5%9C%EC%86%8C_%EC%B6%94%EC%A0%81_%EC%8B%A0%EB%A2%B0%EA%B0%92)>)**
+  ```python
+  각 파라미터의 내용은 아직 이해가 필요함
+  ```
+
+### Detection 부분 코드
+
+```python
+while cap.isOpened():
+    ret, frame = cap.read()
+    if not ret:
+        continue
+
+    # 이미지를 RGB 포맷으로 변환
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+    # 포즈 랜드마크 감지
+    results = pose.process(frame_rgb)
+
+    if results.pose_landmarks:
+        landmarks = results.pose_landmarks.landmark
+
+        h, w, _ = frame.shape
+        if landmarks[11].y > landmarks[18].y and not zoomed_in:
+            x1 = int(w / 4)
+            y1 = int(h / 4)
+            x2 = int(3 * w / 4)
+            y2 = int(3 * h / 4)
+            frame = frame[y1:y2, x1:x2]
+            zoomed_in = True
+        elif (landmarks[11].y < landmarks[18].y and zoomed_in):
+            frame = cv2.resize(frame, (w, h))
+            zoomed_in = False
+
+
+    if results.pose_landmarks:
+        # 포즈 랜드마크 그리기
+        mp_drawing.draw_landmarks(frame, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
+
+    # 화면에 영상 표시
+    cv2.imshow('Pose Detection', frame)
+
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+```
+
+- pose.process 함수를 통해 detection
+- 우리가 필요한 정보는 landmarks
+  - 각 포인트의 좌표와 가시성? 값을 담고 있음
+  - 프레임마다 33개의 landmark를 가지고 있음
+  ```python
+  0: 오른쪽 골반 (Right Hip)
+  1: 왼쪽 골반 (Left Hip)
+  2: 오른쪽 아래 다리 (Right Knee)
+  3: 왼쪽 아래 다리 (Left Knee)
+  4: 오른쪽 발목 (Right Ankle)
+  5: 왼쪽 발목 (Left Ankle)
+  6: 오른쪽 어깨 (Right Shoulder)
+  7: 왼쪽 어깨 (Left Shoulder)
+  8: 오른쪽 팔꿈치 (Right Elbow)
+  9: 왼쪽 팔꿈치 (Left Elbow)
+  10: 오른쪽 손목 (Right Wrist)
+  11: 왼쪽 손목 (Left Wrist)
+  12: 머리 (Head)
+  13: 오른쪽 눈 (Right Eye)
+  14: 왼쪽 눈 (Left Eye)
+  15: 오른쪽 귀 (Right Ear)
+  16: 왼쪽 귀 (Left Ear)
+  17: 가운데 골반 (Hip)
+  18: 목 (Neck)
+  19: 배 (Abdomen)
+  20: 배꼽 (Navel)
+  21: 가슴 (Chest)
+  22: 오른쪽 발 뒤쪽 (Right Heel)
+  23: 왼쪽 발 뒤쪽 (Left Heel)
+  24: 오른쪽 바깥 발 (Right Out of Foot)
+  25: 왼쪽 바깥 발 (Left Out of Foot)
+  26: 오른쪽 손가락 끝 (Right Pinky)
+  27: 왼쪽 손가락 끝 (Left Pinky)
+  28: 오른쪽 엄지손가락 끝 (Right Thumb)
+  29: 왼쪽 엄지손가락 끝 (Left Thumb)
+  30: 오른쪽 손목 뒤쪽 (Right Wrist Back)
+  31: 왼쪽 손목 뒤쪽 (Left Wrist Back)
+  32: 가슴 윗 부분 (Upper Chest)
+  ```
+- 손 들기 감지
+  ```python
+  if landmarks[11].y > landmarks[18].y and not zoomed_in:
+  ```
+  - 이 코드를 통해 손 들기 처리를 함
+  - 왼쪽 손목으로 했는데 실행하면 오른쪽 손목만 감지함
+  - 일단 11번 (왼쪽 손목) 랜드마크의 y좌표가 18번 (목) 랜드마크의 y좌표보다 크면 들었다고 판단하도록 함
+
+## 챌린지
+
+1. 여러명을 감지할 수 있도록 보완
+2. 현재는 확대 관련 코드를 넣었지만 실패, 손 들면 얼굴을 확대하도록 보완
