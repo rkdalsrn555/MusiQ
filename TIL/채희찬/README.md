@@ -84,3 +84,99 @@ https://tvshowgame.pages.dev/
 [https://tipjem.com/스타크래프트-노래-맞추기-모음-카페-바로가기/](https://tipjem.com/%EC%8A%A4%ED%83%80%ED%81%AC%EB%9E%98%ED%94%84%ED%8A%B8-%EB%85%B8%EB%9E%98-%EB%A7%9E%EC%B6%94%EA%B8%B0-%EB%AA%A8%EC%9D%8C-%EC%B9%B4%ED%8E%98-%EB%B0%94%EB%A1%9C%EA%B0%80%EA%B8%B0/)
 
 # 가사 맞추기
+
+### 2023.10.16
+
+# JPA에서 Dto 조회
+
+---
+
+**Entity로 조회시 발생한는 문제**
+
+- Hibernate 캐시
+- 불필요한 컬럼 조회
+- OneToOne N+1 쿼리
+
+→ 단순 조회 기능에서 성능 이슈 多
+
+**Entity 조회**
+
+- 실시간으로 Entity 변경이 필요한 경우
+
+**Dto 조회**
+
+- 고강도 성능 개성 or 대량의 데이터 조회가 필요한 경우
+
+## 조회 컬럼 최소화 하기
+
+```java
+public List<BookPageDto> getBookPage (int bookNo, int pageNo) {
+    return queryFactory
+            .select(Projections.fields(BookPageDto.class,
+                    book.name,
+                    **Expressions.constantAs(bookNo, book.bookNo)**
+                )
+            )
+            .from(book)
+            .where(book.bookNo.eq(bookNo))
+            .offset(pageNo)
+            .limit(10)
+            .fetch();
+}
+```
+
+이미 알고있는 값에 대해서는 as 표현식을 사용하면 컬럼 조회를 줄일 수 있다.
+
+## SELECT 컬럼에 Entity 자제
+
+```java
+@Transactional(readOnly = true)
+public List<AdBond> createAdBond(LocalDate startDate, LocalDate endDate, List<String> orderTypes) {
+    return queryFactory
+            .select(Projections.fields(AdBond.class,
+                    adItem.amount.sum().as("amount"),
+                    adItem.txDate,
+                    adItem.orderType,
+                    **adItem.customer) // 불필요한 컬럼 조회 or N+1 발생**
+            )
+            .from(adItem)
+            .where(adItem.orderType.in(orderTypes)
+                    .and(adItem.txDate.between(startDate, endDate)))
+            .groupBy(adItem.orderType, adItem.txDate, adItem.customer)
+            .fetch();
+}
+```
+
+Customer의 ID만 필요한 경우에도 customer의 모든 컬럼을 가져와야 하는 상황이 생긴다.
+→ 일반적인 경우 N+1, Lazy Loading의 경우 쓰지 않는 컬럼 조회
+
+### 한번 더 N+1
+Cutomer와 @OneToOne 관계인 Shop이 매 건마다 함께 조회된다.
+
+@OneToOne 관계에서는 Lazy Loading이 불가능 하기 때문에 **N+1이 무조건 발생**
+
++Shop에도 @OneToOne 관계가 있다면 N+1이 계속 발생한다.
+
+## 해결 방안
+
+연관된 Entity의 save를 위해서는 반대편 Entity의 Id만 있으면 되기 때문에
+
+```java
+@Transactional(readOnly = true)
+public List<AdBond> createAdBond(LocalDate startDate, LocalDate endDate, List<String> orderTypes) {
+    return queryFactory
+            .select(Projections.fields(AdBond.class,
+                    adItem.amount.sum().as("amount"),
+                    adItem.txDate,
+                    adItem.orderType,
+                    **adItem.customer.id as("customerId")) // id만 직접 조회**
+            )
+            .from(adItem)
+            .where(adItem.orderType.in(orderTypes)
+                    .and(adItem.txDate.between(startDate, endDate)))
+            .groupBy(adItem.orderType, adItem.txDate, adItem.customer)
+            .fetch();
+}
+```
+
+AdBond 생성시에는 new Customer(customerId)로 해결 가능
