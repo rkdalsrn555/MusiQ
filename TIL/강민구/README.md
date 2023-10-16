@@ -1,9 +1,68 @@
-10.12 TIL
+# 10.16 TIL
+
+## Spring 비동기 처리
+
+### @EnableAsync
+
+`@Async` 어노테이션이 있는 메서드를 실행할때 해당 메서드가 비동기적으로 실행된다.
+
+→ 보통 멀티스레드 풀인 `ThreadPoolTaskExecutor`를 설정하기 위해 작성한다.
+
+> 
+> 
+> 1. **Core Pool Size**: **`setCorePoolSize(int corePoolSize)`** 메서드를 사용하여 스레드 풀의 핵심 스레드 수를 설정할 수 있습니다. 핵심 스레드는 작업을 처리하기 위해 항상 활성화되어 있는 스레드의 수를 나타냅니다.
+> 2. **Max Pool Size**: **`setMaxPoolSize(int maxPoolSize)`** 메서드를 사용하여 스레드 풀의 최대 스레드 수를 설정할 수 있습니다. 최대 스레드 수는 스레드 풀이 생성할 수 있는 최대 스레드의 수를 나타냅니다.
+> 3. **Queue Capacity**: **`setQueueCapacity(int queueCapacity)`** 메서드를 사용하여 대기 중인 작업을 보유할 수 있는 큐의 용량을 설정할 수 있습니다. 작업이 스레드 풀의 핵심 스레드 수를 초과할 경우 대기열에 작업이 대기하게 됩니다.
+> 4. **Thread Name Prefix**: **`setThreadNamePrefix(String threadNamePrefix)`** 메서드를 사용하여 생성된 스레드의 이름 접두사를 설정할 수 있습니다. 이를 통해 스레드 이름을 구분할 수 있습니다.
+> 5. **Daemon Threads**: **`setDaemon(boolean daemon)`** 메서드를 사용하여 생성된 스레드를 **백그라운드 데몬 스레드**로 설정할 수 있습니다.
+> 
+
+### @Async
+
+`@Async(”[ThreadName]”)` : 해당 메서드는 비동기로 실행되며, [ThreadName] 스레드풀에서 관리함.
+
+- `@Async` 어노테이션 내부에서 실행되는 메서드도 비동기로 처리된다.
+
+### DeferredResult
+
+비동기 처리를 수행한 후의 결과를 처리할 때 사용한다.
+
+→ 작업을 서버 백그라운드에서 처리한다.
+
+1. 요청을 받는 Controller에서 `DeferredResult` 객체를 생성한다
+2. Service에서 비동기 작업을 수행하고 `DeferredResult` 객체에 결과를 저장한다
+3. deferredResult.set(~) 에서 클라이언트에게 response를 전달해 줄 수 있다.
+    - 또는 WebSocket이나 SSE(Server-Sent-Events)를 사용해 응답 가능 (결과 푸쉬)
+    
+
+DeferredResult<ResponseDto> result = list.remove(1);
+
+
+게임과 같이 동시 사용자 그룹을 많이 처리하는 경우 비동기 방식으로 여러 요청을 동시에 처리하여 관리하여야 한다(서버 성능).
+
+실시간 채팅, 게임 서버 또는 웹 소켓과 같은 실시간 통신 애플리케이션에서 서버에서 비동기 처리는 클라이언트와 실시간으로 상호작용하기 위해 중요함.
+
+이외에 멀티 스레드 중 여러개의 스레드가 동시에 같은 자원에 접근 할 수 있고(동시성 이슈) 락킹기법이나 메세징 큐를 사용해 해결해야 한다.
+
+→ 데이터 일관성 보장
+
+특화 → 재접근 락으로 특정 스레드가 자원에 접근하는 동안 다른 스레드가 동시에 접근하지 못하게 처리
+
+**비동기 처리 중 이벤트 처리**
+
+https://jongmin92.github.io/2019/03/31/Java/java-async-1/
+
+---
+---
+---
+# 10.12 TIL
 
 [CI/CD, Jenkins] -> [Notion](https://enchanted-seeder-44e.notion.site/CI-CD-c4f4244c95d040479b85d6171f5d95f7?pvs=4)
 
 ---
-10.13 TIL
+---
+---
+# 10.13 TIL
 
 ## 기획 : 노래 1초 듣고 맞추기 1대1(단체 가능)
 
