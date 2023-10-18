@@ -248,3 +248,7 @@ AdBond 생성시에는 new Customer(customerId)로 해결 가능
 - 레벨업
     - 경험치 : 20
 - 한 판 끝나면 다시 방으로
+
+### 2023.10.18
+
+![Alt text](image.png)
