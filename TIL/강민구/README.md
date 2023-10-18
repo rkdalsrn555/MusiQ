@@ -1,5 +1,5 @@
 # 10.18 TIL
-![10-18TIL.PNG](./resource/10-18TIL.PNG)
+![10-18TIL.PNG](./resources/10-18TIL.PNG)
 
 ---
 ---
