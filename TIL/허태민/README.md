@@ -406,3 +406,14 @@ while cap.isOpened():
 ![Untitled6](./img/Untitled%206.png)
 
 ![Untitled7](./img/Untitled%207.png)
+
+## 10/13
+
+- 기획 회의 마무리
+- 기능 명세 작성
+  - 회원 관리
+  - 싱글 모드
+  - 멀티 모드
+  - MZ(명절) 모드
+
+![기능명세](./img/10_18_TIL_img.png)
