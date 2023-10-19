@@ -417,3 +417,9 @@ while cap.isOpened():
   - MZ(명절) 모드
 
 ![기능명세](./img/10_18_TIL_img.png)
+
+## 10/19
+
+- 기능 명세서 마무리
+- 발표 자료 제작  
+  [피피티링크](https://www.canva.com/design/DAFxrE6_PDk/uBcR-wEKRZSr4TErd3pdtA/edit?utm_content=DAFxrE6_PDk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
