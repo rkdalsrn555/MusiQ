@@ -251,4 +251,11 @@ AdBond 생성시에는 new Customer(customerId)로 해결 가능
 
 ### 2023.10.18
 
-![Alt text](image.png)
+![image.png](./resource/image.png)
+
+### 2023.10.19
+
+![figma.png](./resource/figma.png)
+
+![canva.png](./resource/canva.png)
+
