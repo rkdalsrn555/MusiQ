@@ -423,3 +423,12 @@ while cap.isOpened():
 - 기능 명세서 마무리
 - 발표 자료 제작  
   [피피티링크](https://www.canva.com/design/DAFxrE6_PDk/uBcR-wEKRZSr4TErd3pdtA/edit?utm_content=DAFxrE6_PDk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
+## 10/20
+
+- 발표 자료 준비
+  - Figma 및 PowerPoint 제작
+- 발표 진행
+  - 발표 중 생각보다 주변을 둘러 볼 여유가 없어서 아쉬웠음
+  - 좀 더 여유 있게 발표를 하려면 더 많은 연습이 필요할 것 같음
+- 회고록 작성
