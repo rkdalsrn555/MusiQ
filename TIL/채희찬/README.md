@@ -259,3 +259,7 @@ AdBond 생성시에는 new Customer(customerId)로 해결 가능
 
 ![canva.png](./resource/canva.png)
 
+### 2023.10.20
+
+![musiq.png](musiq.png)
+
