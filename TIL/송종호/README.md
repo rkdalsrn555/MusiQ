@@ -227,8 +227,10 @@ https://tvshowgame.pages.dev/
 
 ### 2023-10-20
 발표 진행
-회고 진행
+회고 진행 br
 
+[발표 자료 링크 ](https://www.canva.com/design/DAFxrE6_PDk/uBcR-wEKRZSr4TErd3pdtA/edit?utm_content=DAFxrE6_PDk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+)
 
 
 
