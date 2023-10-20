@@ -1,5 +1,6 @@
 # 10.20 TIL
 - 발표
+- [발표자료](https://www.canva.com/design/DAFxrE6_PDk/uBcR-wEKRZSr4TErd3pdtA/edit?utm_content=DAFxrE6_PDk&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 - 2주차 회고 진행
 
 ---
