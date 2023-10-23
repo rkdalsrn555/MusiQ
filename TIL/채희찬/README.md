@@ -263,3 +263,6 @@ AdBond 생성시에는 new Customer(customerId)로 해결 가능
 
 ![musiq.png](musiq.png)
 
+### 2023.10.23
+
+![erd_first](./resource/erd_first.JPG)
