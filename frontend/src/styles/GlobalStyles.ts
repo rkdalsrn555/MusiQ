@@ -34,6 +34,7 @@ const GlobalStyles = createGlobalStyle`
         border: 0;
         background: transparent;
         cursor: pointer;
+        font-family: "Galmuri14", sans-serif;
     }
 `;
 
