@@ -1,5 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 import reset from 'styled-reset';
+import cursorIcon from '../assets/img/cursor.png';
 
 const GlobalStyles = createGlobalStyle`
     :root {
@@ -10,9 +11,15 @@ const GlobalStyles = createGlobalStyle`
     a{
         text-decoration: none;
         color: inherit;
+        font-family: "Galmuri14", sans-serif;
     }
     *{
         box-sizing: border-box;
+        font-family: "Galmuri14", sans-serif;
+        cursor: url(${cursorIcon}) 2 2, auto;
+    }
+    *:hover{
+    cursor: url(${cursorIcon}) 2 2, auto;
     }
     html, body, div, span, h1, h2, h3, h4, h5, h6, p, 
     a, dl, dt, dd, ol, ul, li, form, label, table{
@@ -21,11 +28,13 @@ const GlobalStyles = createGlobalStyle`
         border: 0;
         font-size: 14px;
         vertical-align: baseline;
+        font-family: "Galmuri14", sans-serif;
     }
     body{
+        width: 100vw;
+        height: 100vh;
         line-height: 1;
-        font-family: "Galmuri14", sans-serif;
-        background-color: #F6F9F0;
+        overflow: hidden;
     }
     ol, ul{
         list-style: none;
@@ -34,7 +43,6 @@ const GlobalStyles = createGlobalStyle`
         border: 0;
         background: transparent;
         cursor: pointer;
-        font-family: "Galmuri14", sans-serif;
     }
 `;
 
