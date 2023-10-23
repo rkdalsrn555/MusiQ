@@ -1,11 +1,10 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RecoilRoot } from 'recoil';
-import { ThemeProvider } from 'styled-components';
 import { BrowserRouter } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
+import Router from './Router';
 import GlobalStyles from './styles/GlobalStyles';
 import theme from './styles/theme';
-import { Landing } from './pages';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -15,7 +14,7 @@ root.render(
     <BrowserRouter>
       <ThemeProvider theme={theme}>
         <GlobalStyles />
-        <Landing />
+        <Router />
       </ThemeProvider>
     </BrowserRouter>
   </RecoilRoot>
