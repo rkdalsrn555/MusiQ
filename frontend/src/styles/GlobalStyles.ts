@@ -2,6 +2,9 @@ import { createGlobalStyle } from 'styled-components';
 import reset from 'styled-reset';
 
 const GlobalStyles = createGlobalStyle`
+    :root {
+        /* --font-color-yellow: #AAAAAA; */
+    }
     ${reset}
     // 적용시킬 css 입력
     a{
@@ -16,12 +19,12 @@ const GlobalStyles = createGlobalStyle`
         margin: 0;
         padding: 0;
         border: 0;
-        font-size: 10px;
+        font-size: 14px;
         vertical-align: baseline;
     }
     body{
         line-height: 1;
-        font-family: "Galmuri11", sans-serif;
+        font-family: "Galmuri14", sans-serif;
         background-color: #F6F9F0;
     }
     ol, ul{
