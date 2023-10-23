@@ -5,7 +5,7 @@ import { ThemeProvider } from 'styled-components';
 import { BrowserRouter } from 'react-router-dom';
 import GlobalStyles from './styles/GlobalStyles';
 import theme from './styles/theme';
-import { Main } from './pages/Main/Main';
+import { Landing } from './pages';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -15,7 +15,7 @@ root.render(
     <BrowserRouter>
       <ThemeProvider theme={theme}>
         <GlobalStyles />
-        <Main />
+        <Landing />
       </ThemeProvider>
     </BrowserRouter>
   </RecoilRoot>
