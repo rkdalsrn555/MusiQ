@@ -1,5 +1,5 @@
 /* eslint-disable react/require-default-props */
-import React, { ReactNode, useEffect } from 'react';
+import React from 'react';
 import { AnimatePresence } from 'framer-motion';
 import * as S from './Modal.styled';
 
