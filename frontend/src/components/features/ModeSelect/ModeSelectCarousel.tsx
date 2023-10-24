@@ -2,7 +2,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FC, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Wrapper,
   Box,
   ButtonContainer,
   RotatedImage,
@@ -19,7 +18,7 @@ export const ModeSelectCarousel: React.FC = () => {
   const [visible, setVisible] = useState<number>(0);
   const [back, setBack] = useState<boolean>(false);
   const navigate = useNavigate();
-  const [lastInputTime, setLastInputTime] = useState<number>(0);
+  const [lastInputTime, setLastInputTime] = useState<number>(0); // 키보드, 마우스 연타 방지용으로 시간 측정
   const INPUT_INTERVAL = 350; // ms
 
   const contents = [
@@ -54,7 +53,7 @@ export const ModeSelectCarousel: React.FC = () => {
 
   const handleButtonClick = (action: () => void) => {
     const now = Date.now();
-    if (now - lastInputTime < INPUT_INTERVAL) return;
+    if (now - lastInputTime < INPUT_INTERVAL) return; // 마우스 연타 막기
     setLastInputTime(now);
     action();
   };
@@ -63,7 +62,7 @@ export const ModeSelectCarousel: React.FC = () => {
     // 키보드로 조작할 수 있도록 로직 추가
     const handleKeyDown = (event: KeyboardEvent) => {
       const now = Date.now();
-      if (now - lastInputTime < INPUT_INTERVAL) return;
+      if (now - lastInputTime < INPUT_INTERVAL) return; // 키보드 연타 막기
 
       setLastInputTime(now);
 
@@ -106,7 +105,7 @@ export const ModeSelectCarousel: React.FC = () => {
   };
 
   return (
-    <Wrapper>
+    <>
       <AnimatePresence custom={back}>
         <Box
           custom={back}
@@ -152,6 +151,6 @@ export const ModeSelectCarousel: React.FC = () => {
           <img src={nextButton} alt="nexButton" />
         </button>
       </ButtonContainer>
-    </Wrapper>
+    </>
   );
 };
