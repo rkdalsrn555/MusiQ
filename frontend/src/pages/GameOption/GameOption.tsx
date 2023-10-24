@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { SelectLevelBtn, SelectYearBtn } from '../../components/features';
 import { ReactComponent as StartIcon } from '../../assets/svgs/startBtn.svg';
-import { Logo } from '../../components/utils';
+import { Logo, BackBtn } from '../../components/utils';
 import * as S from './GameOption.styled';
 
 export const GameOption = () => {
@@ -9,6 +9,7 @@ export const GameOption = () => {
 
   return (
     <S.Wrapper>
+      <BackBtn url="/select-mode" />
       <S.Container>
         <Logo size="sm" />
         <S.OptionContainer>
