@@ -1,2 +1,2 @@
 export * from './Landing';
-export * from './ModeSelectPage';
+export * from './ModeSelectPage/ModeSelectPage';
