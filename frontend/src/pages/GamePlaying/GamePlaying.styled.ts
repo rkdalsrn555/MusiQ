@@ -19,3 +19,15 @@ export const AnswerInputPosition = styled.div`
   left: 50%;
   transform: translate(-50%, -50%);
 `;
+
+export const HeartGaugePosition = styled.div`
+  position: absolute;
+  top: 25%;
+  right: 5%;
+`;
+
+export const ChanceGaugePosition = styled.div`
+  position: absolute;
+  bottom: 25%;
+  right: 5%;
+`;
