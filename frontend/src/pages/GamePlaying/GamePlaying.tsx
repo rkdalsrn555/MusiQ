@@ -5,6 +5,7 @@ import {
   AnswerInput,
   HeartGauge,
   ChanceGauge,
+  PlayBtn,
 } from '../../components/features';
 import { BackBtn } from '../../components/utils';
 import * as S from './GamePlaying.styled';
@@ -29,6 +30,26 @@ export const GamePlaying = () => {
       <S.ChanceGaugePosition>
         <ChanceGauge chanceCnt={chanceCnt} />
       </S.ChanceGaugePosition>
+      <S.PlayingBtnBoxPosition>
+        <PlayBtn
+          btnName="처음"
+          onClickHandler={() => {
+            console.log('처음 클릭했다');
+          }}
+        />
+        <PlayBtn
+          btnName="중간"
+          onClickHandler={() => {
+            console.log('중간 클릭했다');
+          }}
+        />
+        <PlayBtn
+          btnName="끝"
+          onClickHandler={() => {
+            console.log('끝 클릭했다');
+          }}
+        />
+      </S.PlayingBtnBoxPosition>
     </S.Container>
   );
 };

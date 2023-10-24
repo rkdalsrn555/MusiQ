@@ -31,3 +31,17 @@ export const ChanceGaugePosition = styled.div`
   bottom: 25%;
   right: 5%;
 `;
+
+export const PlayingBtnBoxPosition = styled.div`
+  position: absolute;
+  bottom: 6%;
+  right: 5%;
+  width: 30rem;
+  height: 12rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  border-radius: 0.5rem;
+  background-color: rgba(255, 255, 255, 0.7);
+`;
