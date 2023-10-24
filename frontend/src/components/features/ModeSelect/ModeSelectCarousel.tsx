@@ -19,6 +19,8 @@ export const ModeSelectCarousel: React.FC = () => {
   const [visible, setVisible] = useState<number>(0);
   const [back, setBack] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [lastInputTime, setLastInputTime] = useState<number>(0);
+  const INPUT_INTERVAL = 350; // ms
 
   const contents = [
     // 박스 안에 넣을 텍스트, 이미지, 그리고 엔터 누르면 라우팅 될 링크를 설정!
@@ -50,9 +52,21 @@ export const ModeSelectCarousel: React.FC = () => {
     }
   };
 
+  const handleButtonClick = (action: () => void) => {
+    const now = Date.now();
+    if (now - lastInputTime < INPUT_INTERVAL) return;
+    setLastInputTime(now);
+    action();
+  };
+
   useEffect(() => {
     // 키보드로 조작할 수 있도록 로직 추가
     const handleKeyDown = (event: KeyboardEvent) => {
+      const now = Date.now();
+      if (now - lastInputTime < INPUT_INTERVAL) return;
+
+      setLastInputTime(now);
+
       switch (event.code) {
         case 'ArrowLeft':
           prevPlease();
@@ -112,28 +126,28 @@ export const ModeSelectCarousel: React.FC = () => {
       <ButtonContainer>
         <button
           type="button"
-          onClick={prevPlease}
+          onClick={() => handleButtonClick(prevPlease)}
           style={{
             fontSize: '30px',
-            visibility: visible > 0 ? 'visible' : 'hidden',
-          }} // 버튼을 숨기지 않고 공간을 유지합니다.
+            visibility: visible > 0 ? 'visible' : 'hidden', // 이전 컨텐츠가 없다면 버튼 숨겨서 오류 발생 막자
+          }}
         >
           <RotatedImage src={nextButton} alt="prevButton" />
         </button>
         <button
           type="button"
-          onClick={navigateToLink}
-          style={{ fontSize: '30px'}}
+          onClick={() => handleButtonClick(navigateToLink)}
+          style={{ fontSize: '30px' }}
         >
           <img src={EnterButton} alt="enterButton" />
         </button>
         <button
           type="button"
-          onClick={nextPlease}
+          onClick={() => handleButtonClick(nextPlease)}
           style={{
             fontSize: '30px',
-            visibility: visible < contents.length - 1 ? 'visible' : 'hidden',
-          }} // 버튼을 숨기지 않고 공간을 유지합니다.
+            visibility: visible < contents.length - 1 ? 'visible' : 'hidden', // 다음 컨텐츠가 없다면 버튼 숨겨서 오류 막자
+          }}
         >
           <img src={nextButton} alt="nexButton" />
         </button>
