@@ -1,3 +1,9 @@
+# 10.24 TIL
+![apidocs.PNG](./resources/apidocs.PNG)
+- ERD 완성
+---
+---
+---
 # 10.23 TIL
 ![erd_first.JPG](./resources/erd_first.JPG)
 
