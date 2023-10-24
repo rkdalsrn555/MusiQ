@@ -236,6 +236,9 @@ https://tvshowgame.pages.dev/
 # erd 설계
 ![erd_first](./resource/erd_first.JPG)
  
+ ### 2023-10-24
+ # api 명세
+ ![api](./resource/api.png)
 
 
 
