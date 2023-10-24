@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import * as S from './Landing.styled';
@@ -19,6 +19,19 @@ export const Landing = () => {
 
     setXY({ x: mouseX, y: mouseY });
   };
+
+  useEffect(() => {
+    const handleKeyUp = (e: any) => {
+      if (e.key === 'Enter') {
+        navigate('/guest/game-option');
+      }
+    };
+
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
 
   return (
     <S.LandingPageContainer onMouseMove={xyHandler}>
@@ -41,7 +54,7 @@ export const Landing = () => {
           <button
             type="button"
             onClick={() => {
-              navigate('/select-mode');
+              navigate('/guest/game-option');
             }}
           >
             Game start

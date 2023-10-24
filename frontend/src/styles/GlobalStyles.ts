@@ -1,6 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 import reset from 'styled-reset';
 import cursorIcon from '../assets/img/cursor.png';
+import backgroundGif1 from '../assets/img/background/backgroundGif1.gif';
 
 const GlobalStyles = createGlobalStyle`
     :root {
@@ -35,6 +36,10 @@ const GlobalStyles = createGlobalStyle`
         height: 100vh;
         line-height: 1;
         overflow: hidden;
+        background-image: url(${backgroundGif1});
+        background-size: cover;
+        object-fit: cover;
+        object-position: 50% 50%;
     }
     ol, ul{
         list-style: none;
