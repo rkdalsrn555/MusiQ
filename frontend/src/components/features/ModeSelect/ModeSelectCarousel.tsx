@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Wrapper,
@@ -14,12 +14,13 @@ export const ModeSelectCarousel: React.FC = () => {
   const [visible, setVisible] = useState<number>(0);
   const [back, setBack] = useState<boolean>(false);
   const navigate = useNavigate(); // useNavigate 훅을 사용
+  
 
   const contents = [
-    { text: 'Text 1', image: 'path_to_image1', link: '/single-mode' },
-    { text: 'Text 2', image: 'path_to_image2', link: '/link2' },
-    { text: 'Text 3', image: 'path_to_image2', link: '/link2' },
-    { text: 'Text 4', image: 'path_to_image2', link: '/link2' },
+    { text: 'Single Mode', image: 'path_to_image1', link: '/single-mode' },
+    { text: 'Text 2', image: 'path_to_image2', link: '/guest-mode' },
+    { text: 'Text 3', image: 'path_to_image2', link: '/multi-mode' },
+    { text: 'Text 4', image: 'path_to_image2', link: '/mz-mode' },
     // 여기에 추가 컨텐츠 객체를 넣을 수 있습니다.
   ];
 
@@ -40,6 +41,30 @@ export const ModeSelectCarousel: React.FC = () => {
       setVisible((prev) => prev - 1);
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      switch (event.code) {
+        case 'ArrowLeft':
+          prevPlease();
+          break;
+        case 'Enter':
+          navigateToLink();
+          break;
+        case 'ArrowRight':
+          nextPlease();
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [visible]);
 
   const boxVariants = {
     entry: (isBack: boolean) => ({
