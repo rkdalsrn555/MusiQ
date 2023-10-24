@@ -20,7 +20,7 @@ export const SelectLevelBtn = () => {
   }>({ title: 'easy', select: false, time: EASYTIME });
 
   const handleClickRadioButton = (e: any) => {
-    let tempTime = 0;
+    let tempTime;
     if (e.target.value === 'easy') {
       tempTime = EASYTIME;
     } else if (e.target.value === 'normal') {
@@ -33,7 +33,6 @@ export const SelectLevelBtn = () => {
 
   return (
     <S.Container>
-      <h2>난이도</h2>
       <ul>
         {levelLists.map((item) => (
           <li key={item.title}>
