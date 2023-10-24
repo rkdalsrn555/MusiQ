@@ -28,7 +28,7 @@ export const GameOption = () => {
         <StartIcon
           width={200}
           onClick={() => {
-            navigate('/');
+            navigate('/guest/game-play');
           }}
         />
       </S.Container>
