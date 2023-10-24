@@ -1,1 +1,1 @@
-export const SingleModePage = () => <div>hi</div>;
+export const SingleModePage = () => <div>single mode</div>;
