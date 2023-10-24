@@ -12,8 +12,8 @@ export const Wrapper = styled(motion.div)`
 `;
 
 export const Box = styled(motion.div)`
-  width: 40rem;
-  height: 27rem;
+  width: 54rem;
+  height: 30rem;
   background-color: rgba(255, 255, 255, 1);
   border-radius: 2.5rem;
   position: absolute;
@@ -31,11 +31,27 @@ export const ButtonContainer = styled.div`
   display: flex;
   bottom: 4rem;
   position: absolute;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   width: 100%;
-  max-width: 20rem; // 버튼 간격을 조절
+  max-width: 20rem;
+
+  button:nth-child(1) {
+    position: absolute;
+    left: -5rem; 
+  }
+
+  button:nth-child(3) {
+    position: absolute;
+    right: -5rem; 
+  }
 `;
 
 export const RotatedImage = styled.img`
   transform: rotate(180deg);
+`;
+
+export const StyledImage = styled.img`
+  width: 54rem;
+  height: 30rem;
 `;
