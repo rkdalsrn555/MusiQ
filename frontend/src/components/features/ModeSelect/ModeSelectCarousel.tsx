@@ -6,24 +6,32 @@ import {
   Box,
   ButtonContainer,
   RotatedImage,
+  StyledImage,
 } from './ModeSelect.styled';
 import nextButton from '../../../assets/svgs/buttonSvgs/nextButton.svg';
 import EnterButton from '../../../assets/svgs/buttonSvgs/Enter.svg';
+import singleModeChar from '../../../assets/img/modeSelect/singleMode.png';
+import multiModeChar from '../../../assets/img/modeSelect/multiMode.png';
+import guestModeChar from '../../../assets/img/modeSelect/guestMode.png';
+import mzModeChar from '../../../assets/img/modeSelect/mzMode.png';
 
 export const ModeSelectCarousel: React.FC = () => {
   const [visible, setVisible] = useState<number>(0);
   const [back, setBack] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [lastInputTime, setLastInputTime] = useState<number>(0);
+  const INPUT_INTERVAL = 350; // ms
 
   const contents = [
+    // 박스 안에 넣을 텍스트, 이미지, 그리고 엔터 누르면 라우팅 될 링크를 설정!
     {
-      text: 'Single Mode',
-      image: 'path_to_image1',
+      text: '',
+      image: singleModeChar,
       link: '/single/game-option',
-    }, // 넣을 텍스트, 이미지, 라우팅 될 링크를 설정해주자
-    { text: 'Text 2', image: 'path_to_image2', link: '/guest/game-option' },
-    { text: 'Text 3', image: 'path_to_image2', link: '/multi-mode' },
-    { text: 'Text 4', image: 'path_to_image2', link: '/mz-mode' },
+    },
+    { text: '', image: guestModeChar, link: '/guest/game-option' },
+    { text: '', image: multiModeChar, link: '/multi-mode' },
+    { text: '', image: mzModeChar, link: '/mz-mode' },
   ];
 
   const navigateToLink = () => {
@@ -44,9 +52,21 @@ export const ModeSelectCarousel: React.FC = () => {
     }
   };
 
+  const handleButtonClick = (action: () => void) => {
+    const now = Date.now();
+    if (now - lastInputTime < INPUT_INTERVAL) return;
+    setLastInputTime(now);
+    action();
+  };
+
   useEffect(() => {
     // 키보드로 조작할 수 있도록 로직 추가
     const handleKeyDown = (event: KeyboardEvent) => {
+      const now = Date.now();
+      if (now - lastInputTime < INPUT_INTERVAL) return;
+
+      setLastInputTime(now);
+
       switch (event.code) {
         case 'ArrowLeft':
           prevPlease();
@@ -70,6 +90,7 @@ export const ModeSelectCarousel: React.FC = () => {
   }, [visible]);
 
   const boxVariants = {
+    // 박스 애니메이션
     entry: (isBack: boolean) => ({
       opacity: 0,
       scale: 0,
@@ -95,36 +116,41 @@ export const ModeSelectCarousel: React.FC = () => {
           animate="visible"
           exit="exit"
         >
-          <img src={contents[visible].image} alt={contents[visible].text} />
+          <StyledImage
+            src={contents[visible].image}
+            alt={contents[visible].text}
+          />
           <p>{contents[visible].text}</p>
         </Box>
       </AnimatePresence>
       <ButtonContainer>
-        {visible > 0 && (
-          <button
-            type="button"
-            onClick={prevPlease}
-            style={{ fontSize: '30px' }}
-          >
-            <RotatedImage src={nextButton} alt="prevButton" />
-          </button>
-        )}
         <button
           type="button"
-          onClick={navigateToLink}
-          style={{ fontSize: '30px', alignSelf: 'center' }}
+          onClick={() => handleButtonClick(prevPlease)}
+          style={{
+            fontSize: '30px',
+            visibility: visible > 0 ? 'visible' : 'hidden', // 이전 컨텐츠가 없다면 버튼 숨겨서 오류 발생 막자
+          }}
+        >
+          <RotatedImage src={nextButton} alt="prevButton" />
+        </button>
+        <button
+          type="button"
+          onClick={() => handleButtonClick(navigateToLink)}
+          style={{ fontSize: '30px' }}
         >
           <img src={EnterButton} alt="enterButton" />
         </button>
-        {visible < contents.length - 1 && (
-          <button
-            type="button"
-            onClick={nextPlease}
-            style={{ fontSize: '30px' }}
-          >
-            <img src={nextButton} alt="nexButton" />
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={() => handleButtonClick(nextPlease)}
+          style={{
+            fontSize: '30px',
+            visibility: visible < contents.length - 1 ? 'visible' : 'hidden', // 다음 컨텐츠가 없다면 버튼 숨겨서 오류 막자
+          }}
+        >
+          <img src={nextButton} alt="nexButton" />
+        </button>
       </ButtonContainer>
     </Wrapper>
   );
