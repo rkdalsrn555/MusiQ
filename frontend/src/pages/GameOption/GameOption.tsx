@@ -1,26 +1,37 @@
-import React, { useState } from 'react';
-import { SelectLevelBtn } from '../../components/features';
-import { Logo } from '../../components/utils';
+import { useNavigate } from 'react-router-dom';
+import { SelectLevelBtn, SelectYearBtn } from '../../components/features';
+import { ReactComponent as StartIcon } from '../../assets/svgs/startBtn.svg';
+import { Logo, BackBtn } from '../../components/utils';
 import * as S from './GameOption.styled';
 
-const yearList = [
-  { title: '70년대', select: false },
-  { title: '80년대', select: false },
-  { title: '90년대', select: false },
-  { title: '00년대', select: false },
-  { title: '10년대', select: false },
-  { title: '20년대', select: false },
-  { title: '30년대', select: false },
-];
-
 export const GameOption = () => {
-  const [selectLevelDifficulty, setLevelDifficulty] = useState<string>('easy');
-  const [selectYearList, setSelectYearList] = useState<string[]>(['00년대']);
+  const navigate = useNavigate();
 
   return (
-    <S.Container>
-      <Logo size="sm" />
-      <SelectLevelBtn />
-    </S.Container>
+    <S.Wrapper>
+      <BackBtn url="/select-mode" />
+      <S.Container>
+        <Logo size="sm" />
+        <S.OptionContainer>
+          <S.TitleContainer>
+            <ul>
+              <li>난이도 선택</li>
+              <li>년도 선택</li>
+              <li>선택한 년도</li>
+            </ul>
+          </S.TitleContainer>
+          <S.ContentContainer>
+            <SelectLevelBtn />
+            <SelectYearBtn />
+          </S.ContentContainer>
+        </S.OptionContainer>
+        <StartIcon
+          width={200}
+          onClick={() => {
+            navigate('/');
+          }}
+        />
+      </S.Container>
+    </S.Wrapper>
   );
 };

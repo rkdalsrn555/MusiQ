@@ -23,7 +23,7 @@ export const Landing = () => {
   useEffect(() => {
     const handleKeyUp = (e: any) => {
       if (e.key === 'Enter') {
-        navigate('/guest/game-option');
+        navigate('/select-mode');
       }
     };
 
@@ -54,7 +54,7 @@ export const Landing = () => {
           <button
             type="button"
             onClick={() => {
-              navigate('/guest/game-option');
+              navigate('/select-mode');
             }}
           >
             Game start
