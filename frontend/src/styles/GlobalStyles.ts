@@ -37,7 +37,7 @@ const GlobalStyles = createGlobalStyle`
         height: 100vh;
         line-height: 1;
         overflow: hidden;
-        background-image: url(${backgroundGif2});
+        background-image: url(${backgroundGif1});
         background-size: cover;
         object-fit: cover;
         object-position: 50% 50%;
