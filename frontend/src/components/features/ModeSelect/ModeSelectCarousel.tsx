@@ -13,19 +13,21 @@ import EnterButton from '../../../assets/svgs/buttonSvgs/Enter.svg';
 export const ModeSelectCarousel: React.FC = () => {
   const [visible, setVisible] = useState<number>(0);
   const [back, setBack] = useState<boolean>(false);
-  const navigate = useNavigate(); // useNavigate 훅을 사용
-  
+  const navigate = useNavigate();
 
   const contents = [
-    { text: 'Single Mode', image: 'path_to_image1', link: '/single-mode' },
-    { text: 'Text 2', image: 'path_to_image2', link: '/guest-mode' },
+    {
+      text: 'Single Mode',
+      image: 'path_to_image1',
+      link: '/single/game-option',
+    }, // 넣을 텍스트, 이미지, 라우팅 될 링크를 설정해주자
+    { text: 'Text 2', image: 'path_to_image2', link: '/guest/game-option' },
     { text: 'Text 3', image: 'path_to_image2', link: '/multi-mode' },
     { text: 'Text 4', image: 'path_to_image2', link: '/mz-mode' },
-    // 여기에 추가 컨텐츠 객체를 넣을 수 있습니다.
   ];
 
   const navigateToLink = () => {
-    navigate(contents[visible].link); // navigate 함수를 사용하여 링크로 이동
+    navigate(contents[visible].link);
   };
 
   const nextPlease = (): void => {
@@ -43,6 +45,7 @@ export const ModeSelectCarousel: React.FC = () => {
   };
 
   useEffect(() => {
+    // 키보드로 조작할 수 있도록 로직 추가
     const handleKeyDown = (event: KeyboardEvent) => {
       switch (event.code) {
         case 'ArrowLeft':
