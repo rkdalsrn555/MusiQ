@@ -1,11 +1,11 @@
 import { Route, Routes } from 'react-router-dom';
-import PublicRoute from './hooks/PublicRoute';
-import { Landing, ModeSelectPage } from './pages';
+import { Landing, ModeSelectPage, GameOption } from './pages';
 
 const Router = () => (
   <Routes>
     <Route path="/" element={<Landing />} />
     <Route path="/select-mode" element={<ModeSelectPage />} />
+    <Route path="/:mode/game-option" element={<GameOption />} />
   </Routes>
 );
 
