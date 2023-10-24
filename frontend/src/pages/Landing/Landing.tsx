@@ -57,7 +57,7 @@ export const Landing = () => {
               navigate('/select-mode');
             }}
           >
-            Game start
+            Press Enter
           </button>
         </Enlarge>
         <Blink>
