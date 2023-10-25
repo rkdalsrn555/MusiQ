@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class MusicServiceImpl {
+public class MusicServiceImpl implements MusicService{
 
 	private final MusicRepository musicRepository;
 }
