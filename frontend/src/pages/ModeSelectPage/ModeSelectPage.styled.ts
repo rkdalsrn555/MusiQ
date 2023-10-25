@@ -15,7 +15,7 @@ export const LogoContainer = styled.div`
   justify-content: center;
   align-items: center;
   position: absolute;
-  height: 16.25vh; /* viewport height를 사용하여 화면 높이에 맞춤 */
+  height: 25vh; /* viewport height를 사용하여 화면 높이에 맞춤 */
   width: 100%; /* 화면 너비에 맞게 설정 */
 `;
 
