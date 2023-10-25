@@ -7,8 +7,8 @@ import {
   RotatedImage,
   StyledImage,
 } from './ModeSelect.styled';
-import nextButton from '../../../assets/svgs/buttonSvgs/nextButton.svg';
-import EnterButton from '../../../assets/svgs/buttonSvgs/Enter.svg';
+import nextButton from '../../../assets/svgs/modeSelectSvgs/nextButton.svg';
+import EnterButton from '../../../assets/svgs/modeSelectSvgs/Enter.svg';
 import singleModeChar from '../../../assets/img/modeSelect/singleMode.png';
 import multiModeChar from '../../../assets/img/modeSelect/multiMode.png';
 import guestModeChar from '../../../assets/img/modeSelect/guestMode.png';
