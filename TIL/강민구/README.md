@@ -1,3 +1,9 @@
+# 10.25 TIL
+- CI 완료
+
+---
+---
+---
 # 10.24 TIL
 ![apidocs.PNG](./resources/apidocs.PNG)
 - ERD 완성
