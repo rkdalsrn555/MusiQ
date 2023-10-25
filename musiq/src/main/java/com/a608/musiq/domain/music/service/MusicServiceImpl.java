@@ -1,14 +1,15 @@
 package com.a608.musiq.domain.music.service;
 
-import org.springframework.stereotype.Service;
+
 
 import com.a608.musiq.domain.music.repository.MusicRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MusicServiceImpl {
+public class MusicServiceImpl implements MusicService{
 
 	private final MusicRepository musicRepository;
 }
