@@ -1,43 +1,55 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  position: relative;
+  display: flex;
+  justify-content: center;
   width: 100vw;
   height: 100vh;
+
+  & .emptyBox {
+    flex-flow: 1;
+    width: 10rem;
+  }
 `;
 
-export const DancingChickPosition = styled.div`
-  position: absolute;
-  top: 45%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+// 가운데 병아리랑 인풋 묶어서 가운데 배치
+export const MiddleContainer = styled.div`
+  padding-left: 8rem;
+  flex-grow: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
-export const AnswerInputPosition = styled.div`
-  position: absolute;
-  top: 77%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+// 옵션, 하트, 기회, 선택버튼 묶어서 우측으로 배치
+export const RightSideContainer = styled.div`
+  flex-grow: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-right: 5%;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
 `;
 
-export const HeartGaugePosition = styled.div`
-  position: absolute;
-  top: 25%;
-  right: 5%;
+export const TopRightSideContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 `;
 
-export const ChanceGaugePosition = styled.div`
-  position: absolute;
-  bottom: 25%;
-  right: 5%;
+export const bottomRightSideContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1rem;
 `;
 
 export const PlayingBtnBoxPosition = styled.div`
-  position: absolute;
-  bottom: 6%;
-  right: 5%;
-  width: 30rem;
-  height: 12rem;
+  width: 24rem;
+  height: 9rem;
   display: flex;
   justify-content: center;
   align-items: center;

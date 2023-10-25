@@ -4,6 +4,7 @@ import answerInput from '../../../../assets/img/playgame/answerInput.png';
 
 const Container = styled.div`
   position: relative;
+  margin-bottom: 4rem;
 
   & p {
     position: absolute;
