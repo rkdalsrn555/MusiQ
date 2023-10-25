@@ -5,6 +5,7 @@ import {
   SingleModePage,
   GameOption,
   GamePlaying,
+  ResultPage,
 } from './pages';
 
 const Router = () => (
@@ -14,6 +15,7 @@ const Router = () => (
     <Route path="/:mode/game-option" element={<GameOption />} />
     <Route path="/single-mode" element={<SingleModePage />} />
     <Route path="/:mode/game-play" element={<GamePlaying />} />
+    <Route path="/result" element={<ResultPage />} />
   </Routes>
 );
 
