@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 const PlayButtonStyle = styled.button`
@@ -18,7 +17,7 @@ const PlayButtonStyle = styled.button`
 
 type OwnProps = {
   btnName: string;
-  onClickHandler: () => void;
+  onClickHandler: (e: any) => void;
 };
 
 export const PlayBtn = (props: OwnProps) => {
