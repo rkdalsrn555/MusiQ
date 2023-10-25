@@ -7,6 +7,7 @@ export const Box = styled(motion.div)`
   background-color: rgba(255, 255, 255, 1);
   border-radius: 2.5rem;
   display: flex;
+  position: absolute;
   justify-content: center;
   align-items: center;
   font-size: 1.75rem;
