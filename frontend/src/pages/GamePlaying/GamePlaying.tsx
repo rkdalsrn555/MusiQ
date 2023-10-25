@@ -6,9 +6,31 @@ import {
   HeartGauge,
   ChanceGauge,
   PlayBtn,
+  NoIdeaBtn,
 } from '../../components/features';
 import { BackBtn } from '../../components/utils';
 import * as S from './GamePlaying.styled';
+
+const playBtnList = [
+  {
+    btnName: '처음',
+    onClickHandler: () => {
+      console.log('처음 클릭했다');
+    },
+  },
+  {
+    btnName: '중간',
+    onClickHandler: () => {
+      console.log('처음 클릭했다');
+    },
+  },
+  {
+    btnName: '끝',
+    onClickHandler: () => {
+      console.log('처음 클릭했다');
+    },
+  },
+];
 
 export const GamePlaying = () => {
   const [lives, setLives] = useState<number>(3);
@@ -17,39 +39,30 @@ export const GamePlaying = () => {
   return (
     <S.Container>
       <BackBtn url="/guest/game-option" />
-      <OptionBox />
-      <S.DancingChickPosition>
+      <div className="emptyBox" />
+      <S.MiddleContainer>
         <DancingChick />
-      </S.DancingChickPosition>
-      <S.AnswerInputPosition>
         <AnswerInput />
-      </S.AnswerInputPosition>
-      <S.HeartGaugePosition>
-        <HeartGauge lives={lives} />
-      </S.HeartGaugePosition>
-      <S.ChanceGaugePosition>
-        <ChanceGauge chanceCnt={chanceCnt} />
-      </S.ChanceGaugePosition>
-      <S.PlayingBtnBoxPosition>
-        <PlayBtn
-          btnName="처음"
-          onClickHandler={() => {
-            console.log('처음 클릭했다');
-          }}
-        />
-        <PlayBtn
-          btnName="중간"
-          onClickHandler={() => {
-            console.log('중간 클릭했다');
-          }}
-        />
-        <PlayBtn
-          btnName="끝"
-          onClickHandler={() => {
-            console.log('끝 클릭했다');
-          }}
-        />
-      </S.PlayingBtnBoxPosition>
+        <S.PlayingBtnBoxPosition>
+          {playBtnList.map((item) => (
+            <PlayBtn
+              btnName={item.btnName}
+              onClickHandler={item.onClickHandler}
+              key={item.btnName}
+            />
+          ))}
+          {/* <NoIdeaBtn /> */}
+        </S.PlayingBtnBoxPosition>
+      </S.MiddleContainer>
+      <S.RightSideContainer>
+        <S.TopRightSideContainer>
+          <OptionBox />
+          <HeartGauge lives={lives} />
+        </S.TopRightSideContainer>
+        <S.bottomRightSideContainer>
+          <ChanceGauge chanceCnt={chanceCnt} />
+        </S.bottomRightSideContainer>
+      </S.RightSideContainer>
     </S.Container>
   );
 };
