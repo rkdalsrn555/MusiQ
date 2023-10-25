@@ -4,6 +4,8 @@ import dancingChick from '../../../../assets/img/playgame/danceChick.gif';
 import waveBg from '../../../../assets/img/playgame/wave.png';
 
 const Container = styled.div`
+  margin-top: 20%;
+  margin-bottom: 2rem;
   position: relative;
   width: 29rem;
   height: 20rem;
