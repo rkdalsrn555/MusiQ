@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { FC, useEffect } from 'react';
 import ShareIcon from '../../../../assets/svgs/ShareIcon.svg';
-import LogoImg from '../../../../assets/svgs/logo.svg';
 
 declare global {
   interface Window {
@@ -8,7 +7,12 @@ declare global {
   }
 }
 
-export const ShareButton = () => {
+interface ShareButtonProps {
+  correctAnswerCnt: number;
+}
+
+export const ShareButton: FC<ShareButtonProps> = ({ correctAnswerCnt }) => {
+
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://developers.kakao.com/sdk/js/kakao.js';
@@ -23,10 +27,9 @@ export const ShareButton = () => {
       {
         objectType: 'feed',
         content: {
-          title: '나 10문제 다 맞춤 ㅅㄱ',
+          title: `나 ${correctAnswerCnt}개나 맞췄지렁이`,
           description: '친구의 기록에 도전해보세요',
-          imageUrl:
-            'https://blog.kakaocdn.net/dn/KSL1k/btqymMhre8M/P0L8qfkVwKgrFvkyac4Ns0/img.jpg',
+          imageUrl: 'https://i3.ruliweb.com/img/22/02/07/17ed283669719ea12.jpg',
           link: {
             mobileWebUrl: 'http://localhost:3000/',
             webUrl: 'http://localhost:3000/',
