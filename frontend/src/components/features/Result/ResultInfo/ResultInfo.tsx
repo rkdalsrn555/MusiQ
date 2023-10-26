@@ -1,4 +1,5 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from '../../../utils/Logo/Logo';
 import { ShareButton } from '../ShareButton';
 import { SpeechBubbleText } from '../SpeechBubbleText';
@@ -13,22 +14,49 @@ import DanceChick from '../../../../assets/img/playgame/danceChick.gif';
 import WaveBar from '../../../../assets/img/playgame/wave.png';
 import SpeechBubble from '../../../../assets/img/playgame/speechBubble.png';
 
-export const ResultInfo = () => (
-  <ResultContainer>
-    <ChickWrapper>
-      <DancingChickContainer>
-        <img src={DanceChick} alt="DanceChick" width={300} />
-        <img src={WaveBar} alt="WaveBar" width={400} />
-        <img src={SpeechBubble} alt="SpeechBubble" width={400} />
-        <SpeechBubbleText />
-      </DancingChickContainer>
-    </ChickWrapper>
-    <InfoWrapper>
-      <div style={{ marginLeft: '3.5rem' }}>
-        <Logo size="lg" />
-      </div>
-      <ResultInfoText />
-      <ShareButton />
-    </InfoWrapper>
-  </ResultContainer>
-);
+// props로 내리기
+
+export const ResultInfo = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // location.state가 존재하지 않으면 홈으로 리다이렉트
+  useEffect(() => {
+    if (!location.state) {
+      navigate('/');
+      console.log('location.state 없음!!! 랜딩페이지로 돌아감');
+    }
+  });
+
+  // location.state가 null이거나 undefined이면 빈 객체를 사용
+  const { mode, selectYear, correctAnswerCnt } = location.state || {};
+
+  // 값 확인용, 테스트 이후 삭제할 것
+  console.log('Mode:', mode);
+  console.log('Select Year:', selectYear);
+  console.log('Correct Answer Count:', correctAnswerCnt);
+
+  return (
+    <ResultContainer>
+      <ChickWrapper>
+        <DancingChickContainer>
+          <img src={DanceChick} alt="DanceChick" width={300} />
+          <img src={WaveBar} alt="WaveBar" width={400} />
+          <img src={SpeechBubble} alt="SpeechBubble" width={400} />
+          <SpeechBubbleText correctAnswerCnt={correctAnswerCnt} />
+        </DancingChickContainer>
+      </ChickWrapper>
+      <InfoWrapper>
+        <div style={{ marginLeft: '3.5rem' }}>
+          <Logo size="lg" />
+        </div>
+        <ResultInfoText
+          mode={mode}
+          selectYear={selectYear}
+          correctAnswerCnt={correctAnswerCnt}
+        />
+        <ShareButton correctAnswerCnt={correctAnswerCnt} />
+      </InfoWrapper>
+    </ResultContainer>
+  );
+};
