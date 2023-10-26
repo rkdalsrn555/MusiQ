@@ -15,7 +15,7 @@ const Router = () => (
     <Route path="/:mode/game-option" element={<GameOption />} />
     <Route path="/single-mode" element={<SingleModePage />} />
     <Route path="/:mode/game-play" element={<GamePlaying />} />
-    <Route path="/result" element={<ResultPage />} />
+    <Route path="/:mode/game-result" element={<ResultPage />} />
   </Routes>
 );
 
