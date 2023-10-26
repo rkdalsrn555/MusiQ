@@ -194,6 +194,7 @@ export const GamePlaying = () => {
         </S.GameStatusExplainContainer>
         <DancingChick />
         <AnswerInput
+          isJudge={isJudge}
           inputText={inputText}
           setInputText={(e: any) => {
             setInputText(e);

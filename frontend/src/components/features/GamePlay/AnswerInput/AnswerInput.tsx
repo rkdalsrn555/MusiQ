@@ -27,6 +27,7 @@ const InputStyle = styled.div`
 `;
 
 type OwnProps = {
+  isJudge: boolean;
   inputText: string;
   setInputText: (e: any) => void;
   activeButton: () => void;
@@ -34,7 +35,7 @@ type OwnProps = {
 };
 
 export const AnswerInput = (props: OwnProps) => {
-  const { inputText, setInputText, activeButton, activeEnter } = props;
+  const { isJudge, inputText, setInputText, activeButton, activeEnter } = props;
   const focusRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -65,6 +66,8 @@ export const AnswerInput = (props: OwnProps) => {
           onChange={(e) => setInputText(e.target.value)}
           onKeyUp={(e) => activeEnter(e)}
           ref={focusRef}
+          disabled={isJudge}
+          readOnly={isJudge}
         />
       </InputStyle>
       <p>enter 키로 활성화, enter키로 정답 제출</p>
