@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import ReactPlayer from 'react-player';
 import { useNavigate } from 'react-router-dom';
+import talkBoxImg from '../../assets/img/playgame/horseBaloon.png';
 import {
   OptionBox,
   DancingChick,
@@ -10,6 +11,8 @@ import {
   ChanceGauge,
   PlayBtn,
   NoIdeaBtn,
+  NextBtn,
+  ResultBtn,
 } from '../../components/features';
 import { BackBtn } from '../../components/utils';
 import * as S from './GamePlaying.styled';
@@ -35,6 +38,9 @@ export const GamePlaying = () => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false); // 게임중인지, 아닌지
   const [isJudge, setIsJudge] = useState<boolean>(false); // 채점중인지 아닌지
   const [musicReady, setMusicReady] = useState<boolean>(true); // 노래가 준비되었는지, 아닌지
+  const [isLose, setIsLose] = useState<boolean>(false); // 졌는지, 안졌는지(결과창으로 라우팅 시 필요)
+  const [isStart, setIsStart] = useState<boolean>(true);
+  const [isWin, setIsWin] = useState<boolean>(false);
   const videoRef = useRef<ReactPlayer>(null);
   const [btn1isDisabled, setIsBtn1Disabled] = useState<boolean>(false);
   const [btn2isDisabled, setIsBtn2Disabled] = useState<boolean>(false);
@@ -98,24 +104,23 @@ export const GamePlaying = () => {
     setIsBtn2Disabled(false);
     setIsBtn3Disabled(false);
     setChanceCnt(3);
-    setIsJudge(false);
+    setIsWin(false);
+    setIsStart(true);
   };
 
-  // 다음 문제로 넘어가기(모르겠어요 클릭)
-  // 하트 0개 이상인지 체크 후 1개 감소, 다음 노래 불러오기, 노래 불러오면 버튼 다시 활성화
-  // 하트 0개이면 결과 페이지로 라우팅
+  // 결과창으로 라우팅
+  const goResultPage = () => {
+    const resultData = {
+      mode: 'easy',
+      selectYear: '70년대',
+      correctAnswerCnt: score,
+    };
+    navigate('/guest/game-result', { state: resultData });
+  };
+
+  // 모르겠어요 클릭 시 졌다고 알려주기
   const skipNextMusic = () => {
-    if (lives > 0) {
-      setMusicReady(false);
-      getNextMusic();
-    } else {
-      const resultData = {
-        mode: 'easy',
-        selectYear: '70년대',
-        correctAnswerCnt: score,
-      };
-      navigate('/', { state: resultData });
-    }
+    setIsLose(true);
   };
 
   // 채점
@@ -134,7 +139,7 @@ export const GamePlaying = () => {
   //     .then((res) => {
   //       if (res.data.data.isCorrect) {
   //         getNextMusic();
-  //         setScore(res.data.data.score);
+  //         setScore((prev)=>prev + 1);
   //       } else {
   //         if (lives === 0) {
   //           const resultData = {
@@ -143,8 +148,8 @@ export const GamePlaying = () => {
   //             correctAnswerCnt: score,
   //           };
   //           navigate('/', { state: resultData });
-  //         }
-  //         setLives((prev) => prev - 1);
+  //         }else{
+  //         setLives((prev) => prev - 1);}
   //       }
   //     })
   //     .catch((err) => console.log(err));
@@ -154,29 +159,28 @@ export const GamePlaying = () => {
     message: 'success',
     data: {
       score: 1,
-      isCorrect: true,
+      isCorrect: false,
     },
   };
   const activeButtonForJudge = () => {
     setIsJudge(true);
+    setIsStart(false);
+
     setTimeout(() => {
       if (mockResData.data.isCorrect) {
         getNextMusic();
-        setScore(mockResData.data.score);
+        setIsWin(false);
+        setScore((prev) => prev + 1);
+      } else if (lives === 0) {
+        setIsLose(true);
+        setIsJudge(false);
       } else {
-        if (lives === 0) {
-          const resultData = {
-            mode: 'easy',
-            selectYear: '70년대',
-            correctAnswerCnt: score,
-          };
-          navigate('/', { state: resultData });
-        }
         setLives((prev) => prev - 1);
+        setIsJudge(false);
       }
-    }, 2000);
+    }, 500);
   };
-  // 정답 채점
+  // Enter 할 시 정답 채점
   // inputText가 ''이면 정답 요청 안보냄
   // inputText가 '정답'이면 요청 보내기
   const activeEnter = (e: any) => {
@@ -209,6 +213,9 @@ export const GamePlaying = () => {
   //     console.log(err);
   //   });
 
+  // 정답, 오답 띄워주기
+  // 맞았으면 다음문제로 가기!
+  // 틀렸으면 하트깎기
   return (
     <S.Container>
       <BackBtn url="/guest/game-option" />
@@ -223,6 +230,25 @@ export const GamePlaying = () => {
         height="0"
         ref={videoRef}
       />
+      <S.TalkBoxPosition>
+        {isStart ? (
+          ''
+        ) : (
+          <div>
+            {isJudge ? (
+              <S.TalkBoxContainer>
+                <img src={talkBoxImg} alt="말풍선" width={200} />
+                <p className="judgeText">채점중</p>
+              </S.TalkBoxContainer>
+            ) : (
+              <S.TalkBoxContainer>
+                <img src={talkBoxImg} alt="말풍선" width={200} />
+                <p className="judgeText">{isWin ? '정답!' : '오답 X!'}</p>
+              </S.TalkBoxContainer>
+            )}
+          </div>
+        )}
+      </S.TalkBoxPosition>
       <div className="emptyBox" />
       <S.MiddleContainer>
         <S.GameStatusExplainContainer>
@@ -236,7 +262,7 @@ export const GamePlaying = () => {
           ) : (
             <div>
               {musicReady ? (
-                <p className="gameStatus">시작 전</p>
+                <p className="gameStatus">...wait</p>
               ) : (
                 <p className="gameStatus">...노래를 불러오는 중</p>
               )}
@@ -245,6 +271,7 @@ export const GamePlaying = () => {
         </S.GameStatusExplainContainer>
         <DancingChick />
         <AnswerInput
+          isJudge={isJudge}
           inputText={inputText}
           setInputText={(e: any) => {
             setInputText(e);
@@ -255,23 +282,35 @@ export const GamePlaying = () => {
           }}
         />
         <S.PlayingBtnBoxPosition>
-          {chanceCnt === 0 ? (
-            <NoIdeaBtn clickHandler={skipNextMusic} />
+          {isLose ? (
+            <ResultBtn clickHandler={goResultPage} />
           ) : (
             <div>
-              {musicReady ? (
-                <>
-                  {playBtnList.map((item) => (
-                    <PlayBtn
-                      btnName={item.btnName}
-                      onClickHandler={item.onClickHandler}
-                      isBtnDisabled={item.isBtnDisabled}
-                      key={item.btnName}
-                    />
-                  ))}
-                </>
+              {chanceCnt === 0 ? (
+                <NoIdeaBtn clickHandler={skipNextMusic} />
               ) : (
-                <p className="loadingMusic">...노래를 불러오는 중</p>
+                <div>
+                  {isWin && !isStart ? (
+                    <NextBtn clickHandler={getNextMusic} />
+                  ) : (
+                    <div>
+                      {isStart || musicReady ? (
+                        <>
+                          {playBtnList.map((item) => (
+                            <PlayBtn
+                              btnName={item.btnName}
+                              onClickHandler={item.onClickHandler}
+                              isBtnDisabled={item.isBtnDisabled}
+                              key={item.btnName}
+                            />
+                          ))}
+                        </>
+                      ) : (
+                        <p className="loadingMusic">...노래를 불러오는 중</p>
+                      )}
+                    </div>
+                  )}
+                </div>
               )}
             </div>
           )}

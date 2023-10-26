@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
+  position: relative;
   display: flex;
   justify-content: center;
   width: 100vw;
@@ -9,6 +10,26 @@ export const Container = styled.div`
   & .emptyBox {
     flex-flow: 1;
     width: 10rem;
+  }
+`;
+
+export const TalkBoxPosition = styled.div`
+  position: absolute;
+  top: 20%;
+  left: 22%;
+`;
+
+export const TalkBoxContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  & .judgeText {
+    position: absolute;
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.8rem;
   }
 `;
 
@@ -25,12 +46,12 @@ export const MiddleContainer = styled.div`
   gap: 1rem;
 
   & .explainGame {
-    font-size: 2rem;
+    font-size: 1.5rem;
     color: #111;
     font-family: 'Galmuri11', sans-serif;
 
     & span {
-      font-size: 2rem;
+      font-size: 1.5rem;
       font-weight: bold;
       color: #fbc92b;
     }
