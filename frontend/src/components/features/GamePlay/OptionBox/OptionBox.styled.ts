@@ -12,7 +12,7 @@ export const Container = styled.div`
 
   & h1 {
     font-size: 2rem;
-    font-weight: bold;
+    font-family: 'Galmuri11', sans-serif;
   }
 
   & p {

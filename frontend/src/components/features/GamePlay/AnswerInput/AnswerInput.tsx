@@ -4,7 +4,7 @@ import answerInput from '../../../../assets/img/playgame/answerInput.png';
 
 const Container = styled.div`
   position: relative;
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
 
   & p {
     position: absolute;
@@ -26,23 +26,16 @@ const InputStyle = styled.div`
   }
 `;
 
-export const AnswerInput = () => {
-  const [inputText, setInputText] = useState<string>('');
+type OwnProps = {
+  inputText: string;
+  setInputText: (e: any) => void;
+  activeButton: () => void;
+  activeEnter: (e: any) => void;
+};
+
+export const AnswerInput = (props: OwnProps) => {
+  const { inputText, setInputText, activeButton, activeEnter } = props;
   const focusRef = useRef<HTMLInputElement>(null);
-
-  const activeButton = () => {
-    alert(`${inputText} 입력 완료`);
-  };
-
-  const activeEnter = (e: any) => {
-    if (inputText === '') {
-      return;
-    }
-    if (e.key === 'Enter') {
-      activeButton();
-      setInputText('');
-    }
-  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

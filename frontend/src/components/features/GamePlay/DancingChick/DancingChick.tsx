@@ -4,7 +4,7 @@ import dancingChick from '../../../../assets/img/playgame/danceChick.gif';
 import waveBg from '../../../../assets/img/playgame/wave.png';
 
 const Container = styled.div`
-  margin-top: 20%;
+  margin-top: -2rem;
   margin-bottom: 2rem;
   position: relative;
   width: 29rem;
@@ -27,6 +27,6 @@ const Container = styled.div`
 export const DancingChick = () => (
   <Container>
     <img src={waveBg} alt="파동" width={400} />
-    <img src={dancingChick} alt="춤추는병아리" width={300} />
+    <img src={dancingChick} alt="춤추는병아리" width={300} height={300} />
   </Container>
 );
