@@ -8,7 +8,8 @@ export const InfoWrapper = styled.div`
   border-radius: 30px;
   display: flex;
   flex-direction: column;
-  margin-left: 5rem;
+  justify-content: center;
+  margin-left: 10rem;
   margin-top: 10rem;
 `;
 
@@ -57,5 +58,11 @@ export const DancingChickContainer = styled.div`
     bottom: 50%;
     left: 30%;
     right: 0;
+  }
+
+  & :nth-child(4) {
+    position: absolute;
+    bottom: 107%; // 원하는 위치로 조정
+    left: 36%; // 원하는 위치로 조정
   }
 `;
