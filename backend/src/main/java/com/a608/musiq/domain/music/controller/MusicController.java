@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.a608.musiq.domain.music.dto.responseDto.GradeAnswerResponseDto;
 import com.a608.musiq.domain.music.service.MusicService;
 
 
@@ -20,13 +21,39 @@ public class MusicController {
 
 	private final MusicService musicService;
 
-	//게스트 모드 문제출제
+	/**
+	 * 게스트 모드 문제 출제
+	 * @param difficulty
+	 * @param year
+	 * @see ProblemForGuestResponseDto
+	 * @return ResponseEntity<BaseResponse<ProblemForGuestResponseDto>>
+	 */
 	@GetMapping("/guest/quiz")
 	private ResponseEntity<BaseResponse<ProblemForGuestResponseDto>> getProblemForGuest(@RequestParam("difficulty") String difficulty, @RequestParam("year") String year){
 
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<ProblemForGuestResponseDto>builder()
 				.data(musicService.getProblemForGuest(difficulty, year))
+				.build());
+	}
+
+	/**
+	 * 게스트 모드 정답 채점
+	 *
+	 * @param musicId
+	 * @param answer
+	 * @see GradeAnswerResponseDto
+	 * @return ResponseEntity<BaseResponse<GradeAnswerResponseDto>>
+	 */
+	@GetMapping("/guest/result")
+	public ResponseEntity<BaseResponse<GradeAnswerResponseDto>> gradeAnswer(
+		@RequestParam("music-id") Integer musicId,
+		@RequestParam("answer") String answer) {
+
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(BaseResponse.<GradeAnswerResponseDto>builder()
+				.code(HttpStatus.OK.value())
+				.data(musicService.gradeAnswer(musicId, answer))
 				.build());
 	}
 }
