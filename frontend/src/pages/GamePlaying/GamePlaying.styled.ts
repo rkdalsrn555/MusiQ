@@ -14,11 +14,40 @@ export const Container = styled.div`
 
 // 가운데 병아리랑 인풋 묶어서 가운데 배치
 export const MiddleContainer = styled.div`
+  padding-top: 2%;
+  padding-bottom: 2%;
   padding-left: 8rem;
   flex-grow: 10;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
+  gap: 1rem;
+
+  & .explainGame {
+    font-size: 2rem;
+    color: #111;
+    font-family: 'Galmuri11', sans-serif;
+
+    & span {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #fbc92b;
+    }
+  }
+
+  & .gameStatus {
+    font-size: 2rem;
+    font-weight: bold;
+    font-family: 'Galmuri11', sans-serif;
+    color: #111;
+  }
+`;
+
+export const GameStatusExplainContainer = styled.div`
+  padding: 1rem 1.5rem;
+  background-color: rgba(255, 255, 255, 0.7);
+  border-radius: 0.5rem;
 `;
 
 // 옵션, 하트, 기회, 선택버튼 묶어서 우측으로 배치
@@ -53,7 +82,18 @@ export const PlayingBtnBoxPosition = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
   border-radius: 0.5rem;
   background-color: rgba(255, 255, 255, 0.7);
+
+  & div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+
+    & .loadingMusic {
+      font-size: 1rem;
+      font-family: 'Galmuri11', sans-serif;
+    }
+  }
 `;

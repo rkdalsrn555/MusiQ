@@ -16,6 +16,14 @@ const NoIdeaButtonStyle = styled.button`
   }
 `;
 
-export const NoIdeaBtn = () => (
-  <NoIdeaButtonStyle>모르겠어요</NoIdeaButtonStyle>
-);
+type OwnProps = {
+  clickHandler: () => void;
+};
+
+export const NoIdeaBtn = (props: OwnProps) => {
+  const { clickHandler } = props;
+
+  return (
+    <NoIdeaButtonStyle onClick={clickHandler}>모르겠어요</NoIdeaButtonStyle>
+  );
+};

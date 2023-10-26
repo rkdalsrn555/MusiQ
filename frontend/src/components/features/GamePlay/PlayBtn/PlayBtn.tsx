@@ -13,18 +13,27 @@ const PlayButtonStyle = styled.button`
   &:hover {
     background-color: #58d158;
   }
+
+  &:disabled {
+    background-color: #888;
+  }
 `;
 
 type OwnProps = {
   btnName: string;
   onClickHandler: (e: any) => void;
+  isBtnDisabled: boolean;
 };
 
 export const PlayBtn = (props: OwnProps) => {
-  const { btnName, onClickHandler } = props;
+  const { btnName, onClickHandler, isBtnDisabled } = props;
 
   return (
-    <PlayButtonStyle type="button" onClick={onClickHandler}>
+    <PlayButtonStyle
+      type="button"
+      onClick={onClickHandler}
+      disabled={isBtnDisabled}
+    >
       {btnName}
     </PlayButtonStyle>
   );

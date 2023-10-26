@@ -39,7 +39,21 @@ export const GamePlaying = () => {
   const [btn1isDisabled, setIsBtn1Disabled] = useState<boolean>(false);
   const [btn2isDisabled, setIsBtn2Disabled] = useState<boolean>(false);
   const [btn3isDisabled, setIsBtn3Disabled] = useState<boolean>(false);
-  const [inputText, setInputText] = useState<string>(''); // 정답 담을 state
+
+  // 정답 담을 state
+  const [inputText, setInputText] = useState<string>('');
+  const activeButton = () => {
+    alert(`${inputText} 입력 완료`);
+  };
+  const activeEnter = (e: any) => {
+    if (inputText === '') {
+      return;
+    }
+    if (e.key === 'Enter') {
+      activeButton();
+      setInputText('');
+    }
+  };
 
   // 게임 플레이 실행
   const playMusic = (musicStartTime: number) => {
@@ -66,6 +80,7 @@ export const GamePlaying = () => {
       onClickHandler: () => {
         playMusic(FirstMusicStartTime);
         setChanceCnt((prev) => prev - 1);
+        setIsBtn1Disabled(true);
       },
       isBtnDisabled: btn1isDisabled,
     },
@@ -74,6 +89,7 @@ export const GamePlaying = () => {
       onClickHandler: () => {
         playMusic(SecondMusicStartTime);
         setChanceCnt((prev) => prev - 1);
+        setIsBtn2Disabled(true);
       },
       isBtnDisabled: btn2isDisabled,
     },
@@ -82,6 +98,7 @@ export const GamePlaying = () => {
       onClickHandler: () => {
         playMusic(ThirdMusicStartTime);
         setChanceCnt((prev) => prev - 1);
+        setIsBtn3Disabled(true);
       },
       isBtnDisabled: btn3isDisabled,
     },
@@ -98,7 +115,7 @@ export const GamePlaying = () => {
     setIsBtn2Disabled(false);
     setIsBtn3Disabled(false);
     setChanceCnt(3);
-    setIsJudge(false);
+    setScore(1);
   };
 
   // 다음 문제로 넘어가기(모르겠어요 클릭)
@@ -106,6 +123,7 @@ export const GamePlaying = () => {
   // 하트 0개이면 결과 페이지로 라우팅
   const skipNextMusic = () => {
     if (lives > 0) {
+      setLives((prev) => prev - 1);
       setMusicReady(false);
       getNextMusic();
     } else {
@@ -119,79 +137,11 @@ export const GamePlaying = () => {
   };
 
   // 채점
-  // const getCheckAnswer = axios.get(
-  //   `${
-  //     process.env.REACT_APP_BASE_URL
-  //   }/music/guest/quiz?difficulty=${'easy'}&year=${'70'}`
-  // );
-
-  // const activeButtonForJudge = () => {
-  //   setIsJudge(true);
-  //   // 요청 보내기
-  //   // 정답일 시 다음 문제로!,
-  //   // 오답일 시 하트 까고, 하트가 0개 미만이면 결과 페이지로 라우팅
-  //   getCheckAnswer
-  //     .then((res) => {
-  //       if (res.data.data.isCorrect) {
-  //         getNextMusic();
-  //         setScore(res.data.data.score);
-  //       } else {
-  //         if (lives === 0) {
-  //           const resultData = {
-  //             mode: 'easy',
-  //             selectYear: '70년대',
-  //             correctAnswerCnt: score,
-  //           };
-  //           navigate('/', { state: resultData });
-  //         }
-  //         setLives((prev) => prev - 1);
-  //       }
-  //     })
-  //     .catch((err) => console.log(err));
-  // };
-  const mockResData = {
-    code: '200',
-    message: 'success',
-    data: {
-      score: 1,
-      isCorrect: true,
-    },
-  };
-  const activeButtonForJudge = () => {
-    setIsJudge(true);
-    setTimeout(() => {
-      if (mockResData.data.isCorrect) {
-        getNextMusic();
-        setScore(mockResData.data.score);
-      } else {
-        if (lives === 0) {
-          const resultData = {
-            mode: 'easy',
-            selectYear: '70년대',
-            correctAnswerCnt: score,
-          };
-          navigate('/', { state: resultData });
-        }
-        setLives((prev) => prev - 1);
-      }
-    }, 2000);
-  };
-  // 정답 채점
-  // inputText가 ''이면 정답 요청 안보냄
-  // inputText가 '정답'이면 요청 보내기
-  const activeEnter = (e: any) => {
-    if (inputText === '') {
-      return;
-    }
-    if (e.key === 'Enter') {
-      activeButtonForJudge();
-      setInputText('');
-    }
-  };
+  // const getCheckAnswer =
 
   // 노래 불러오기
   // const getNextMusic = axios
-  //   .get(`${process.env.REACT_APP_BASE_URL}/music/guest/quiz?difficulty=${difficulty}&year=${year}`)
+  //   .get(`${process.env.REACT_APP_BASE_URL}/`)
   //   .then((res) => {
   //     setMusicData({
   //       musicId: res.data.data.musicId,
@@ -203,7 +153,6 @@ export const GamePlaying = () => {
   //     setIsBtn3Disabled(false);
   //     setChanceCnt(3);
   //     setScore(res.data.data.score);
-  //     setIsJudge(false);
   //   })
   //   .catch((err) => {
   //     console.log(err);
@@ -249,13 +198,13 @@ export const GamePlaying = () => {
           setInputText={(e: any) => {
             setInputText(e);
           }}
-          activeButton={activeButtonForJudge}
+          activeButton={activeButton}
           activeEnter={(e: any) => {
             activeEnter(e);
           }}
         />
         <S.PlayingBtnBoxPosition>
-          {chanceCnt === 0 ? (
+          {btn1isDisabled && btn2isDisabled && btn3isDisabled ? (
             <NoIdeaBtn clickHandler={skipNextMusic} />
           ) : (
             <div>
