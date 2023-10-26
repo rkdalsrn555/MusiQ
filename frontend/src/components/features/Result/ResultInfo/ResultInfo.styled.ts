@@ -10,7 +10,6 @@ export const InfoWrapper = styled.div`
   flex-direction: column;
   justify-content: center;
   margin-left: 10rem;
-  margin-top: 10rem;
 `;
 
 export const ChickWrapper = styled.div`
@@ -18,12 +17,12 @@ export const ChickWrapper = styled.div`
   height: 42rem;
   flex-shrink: 0;
   display: flex;
-  margin-top: 10rem;
   justify-content: center;
   align-items: center;
 `;
 
 export const ResultContainer = styled.div`
+  height: 100vh;
   display: flex;
   flex-direction: row;
   justify-content: center;
