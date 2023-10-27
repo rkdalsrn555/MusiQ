@@ -1,35 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, Dispatch, SetStateAction } from 'react';
 import * as S from './SelectLevelBtn.styled';
 import { ReactComponent as CircleIcon } from '../../../../assets/svgs/circle.svg';
 
-const EASYTIME = 2;
-const NORMALTIME = 1;
-const HARDTIME = 0.5;
+type levelType = { title: string; select: boolean; time: number };
 
-const levelLists = [
-  { title: 'easy', select: false, time: EASYTIME },
-  { title: 'normal', select: false, time: NORMALTIME },
-  { title: 'hard', select: false, time: HARDTIME },
-];
+type OwnProps = {
+  levelLists: levelType[];
+  handleClickRadioButton: (e: any) => void;
+  levelList: levelType;
+};
 
-export const SelectLevelBtn = () => {
-  const [levelList, setLevelList] = useState<{
-    title: string;
-    select: boolean;
-    time: number;
-  }>({ title: 'easy', select: false, time: EASYTIME });
-
-  const handleClickRadioButton = (e: any) => {
-    let tempTime;
-    if (e.target.value === 'easy') {
-      tempTime = EASYTIME;
-    } else if (e.target.value === 'normal') {
-      tempTime = NORMALTIME;
-    } else {
-      tempTime = HARDTIME;
-    }
-    setLevelList({ title: e.target.value, select: true, time: tempTime });
-  };
+export const SelectLevelBtn = (props: OwnProps) => {
+  const { levelLists, handleClickRadioButton, levelList } = props;
 
   return (
     <S.Container>
@@ -57,12 +39,10 @@ export const SelectLevelBtn = () => {
           </li>
         ))}
         <p>
-          노래의 처음, 중간, 끝을 <span>{levelList.time}</span> 초간
+          노래의 처음, 중간, 끝을 <span>{levelList.time / 1000}</span> 초간
           들려드립니다
         </p>
       </ul>
     </S.Container>
   );
 };
-
-export default SelectLevelBtn;

@@ -1,35 +1,38 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import * as S from './SelectYearBtn.styled';
 
-const yearLists = ['70', '80', '90', '00', '10', '20'];
-export const SelectYearBtn = () => {
-  const [checkedList, setCheckedList] = useState<string[]>([]);
-  const [isChecked, setIsChecked] = useState(false);
+const yearLists = [
+  '1970',
+  '1980',
+  '1990',
+  '2000',
+  '2005',
+  '2010',
+  '2015',
+  '2020',
+  '2021',
+  '2022',
+  '2023',
+];
 
-  // eslint-disable-next-line no-shadow
-  const checkedItemHandler = (value: string, isChecked: boolean) => {
-    if (isChecked) {
-      setCheckedList((prev) => [...prev, value]);
+type OwnProps = {
+  checkedList: string[];
+  setCheckedList: Dispatch<SetStateAction<string[]>>;
+  isChecked: boolean;
+  setIsChecked: Dispatch<SetStateAction<boolean>>;
+  checkedItemHandler: (value: string, isChecked: boolean) => void;
+  checkHandler: (e: React.ChangeEvent<HTMLInputElement>, value: string) => void;
+};
 
-      return;
-    }
-
-    if (!isChecked && checkedList.includes(value)) {
-      setCheckedList(checkedList.filter((item) => item !== value));
-    }
-  };
-
-  const checkHandler = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    value: string
-  ) => {
-    setIsChecked(!isChecked);
-    checkedItemHandler(value, e.target.checked);
-  };
-
-  const test = () => {
-    console.log(checkedList);
-  };
+export const SelectYearBtn = (props: OwnProps) => {
+  const {
+    checkedList,
+    setCheckedList,
+    isChecked,
+    setIsChecked,
+    checkedItemHandler,
+    checkHandler,
+  } = props;
 
   return (
     <S.Container>
@@ -45,7 +48,7 @@ export const SelectYearBtn = () => {
                 className={checkedList.includes(item) ? 'selected' : 'checkbox'}
                 key={item}
               >
-                <label htmlFor={item}>{item}년대</label>
+                <label htmlFor={item}>{item}년 ~</label>
                 <input
                   type="checkbox"
                   id={item}
@@ -67,7 +70,7 @@ export const SelectYearBtn = () => {
                 className={checkedList.includes(item) ? 'selected' : 'checkbox'}
                 key={item}
               >
-                <label htmlFor={item}>{item}년대</label>
+                <label htmlFor={item}>{item}년 ~</label>
                 <input
                   type="checkbox"
                   id={item}

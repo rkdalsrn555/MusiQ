@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 import ReactPlayer from 'react-player';
-import { useNavigate } from 'react-router-dom';
 import talkBoxImg from '../../assets/img/playgame/horseBaloon.png';
 import {
   OptionBox,
@@ -17,6 +17,15 @@ import {
 import { BackBtn } from '../../components/utils';
 import * as S from './GamePlaying.styled';
 
+type GameOptionDataType = {
+  difficulty: {
+    title: string;
+    select: boolean;
+    time: number;
+  };
+  yearList: string[];
+};
+
 type musicDataType = {
   musicId: number;
   musicUrl: string;
@@ -28,10 +37,13 @@ const ThirdMusicStartTime = 120;
 
 export const GamePlaying = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [musicData, setMusicData] = useState<musicDataType>({
     musicId: 2,
     musicUrl: 'https://www.youtube.com/watch?v=JeceYRagnQE',
   });
+  const [loading, setLoading] = useState<boolean>(true);
+  const [gameOptionData, setGameOptionData] = useState<GameOptionDataType>();
   const [score, setScore] = useState<number>(0);
   const [lives, setLives] = useState<number>(3); // 생명
   const [chanceCnt, setChanceCnt] = useState<number>(3); // 기회
@@ -93,21 +105,46 @@ export const GamePlaying = () => {
     },
   ];
 
-  // 서버에서 노래 받아오기 (목데이터)
-  const getNextMusic = () => {
-    setMusicData({
-      musicId: 1,
-      musicUrl: 'https://www.youtube.com/watch?v=l-jZOXa7gQY',
-    });
-    setMusicReady(true);
-    setIsBtn1Disabled(false);
-    setIsBtn2Disabled(false);
-    setIsBtn3Disabled(false);
-    setChanceCnt(3);
-    setIsWin(false);
-    setIsStart(true);
-  };
+  // // 서버에서 노래 받아오기 (목데이터)
+  // const getMusic = () => {
+  //   setMusicData({
+  //     musicId: 1,
+  //     musicUrl: 'https://www.youtube.com/watch?v=l-jZOXa7gQY',
+  //   });
+  //   setMusicReady(true);
+  //   setIsBtn1Disabled(false);
+  //   setIsBtn2Disabled(false);
+  //   setIsBtn3Disabled(false);
+  //   setChanceCnt(3);
+  //   setIsWin(false);
+  //   setIsStart(true);
+  // };
+  // const mockResData = {
+  //   code: '200',
+  //   message: 'success',
+  //   data: {
+  //     score: 1,
+  //     isCorrect: false,
+  //   },
+  // };
+  // const activeButtonForJudge = () => {
+  //   setIsJudge(true);
+  //   setIsStart(false);
 
+  //   setTimeout(() => {
+  //     if (mockResData.data.isCorrect) {
+  //       getMusic();
+  //       setIsWin(false);
+  //       setScore((prev) => prev + 1);
+  //     } else if (lives === 0) {
+  //       setIsLose(true);
+  //       setIsJudge(false);
+  //     } else {
+  //       setLives((prev) => prev - 1);
+  //       setIsJudge(false);
+  //     }
+  //   }, 500);
+  // };
   // 결과창으로 라우팅
   const goResultPage = () => {
     const resultData = {
@@ -124,67 +161,69 @@ export const GamePlaying = () => {
   };
 
   // 채점
-  // const getCheckAnswer = axios.get(
-  //   `${
-  //     process.env.REACT_APP_BASE_URL
-  //   }/music/guest/quiz?difficulty=${'easy'}&year=${'70'}`
-  // );
+  const getCheckAnswer = async () => {
+    const res = await axios.get(
+      `${process.env.REACT_APP_BASE_URL}/music/guest/result?music-id=${musicData.musicId}&answer=${inputText}`
+    );
 
-  // const activeButtonForJudge = () => {
-  //   setIsJudge(true);
-  //   // 요청 보내기
-  //   // 정답일 시 다음 문제로!,
-  //   // 오답일 시 하트 까고, 하트가 0개 미만이면 결과 페이지로 라우팅
-  //   getCheckAnswer
-  //     .then((res) => {
-  //       if (res.data.data.isCorrect) {
-  //         getNextMusic();
-  //         setScore((prev)=>prev + 1);
-  //       } else {
-  //         if (lives === 0) {
-  //           const resultData = {
-  //             mode: 'easy',
-  //             selectYear: '70년대',
-  //             correctAnswerCnt: score,
-  //           };
-  //           navigate('/', { state: resultData });
-  //         }else{
-  //         setLives((prev) => prev - 1);}
-  //       }
-  //     })
-  //     .catch((err) => console.log(err));
-  // };
-  const mockResData = {
-    code: '200',
-    message: 'success',
-    data: {
-      score: 1,
-      isCorrect: false,
-    },
+    return res;
   };
-  const activeButtonForJudge = () => {
+
+  // 노래 불러오기
+  const getMusic = async () => {
+    await axios
+      .get(
+        `${
+          process.env.REACT_APP_BASE_URL
+        }/music/guest/quiz?difficulty=${location.state.checkDifficulty.title.toUpperCase()}&year=${location.state.yearCheckedList.join(
+          ' '
+        )}`
+      )
+      .then((res) => {
+        setMusicData({
+          musicId: res.data.data.musicId,
+          musicUrl: res.data.data.musicUrl,
+        });
+        setMusicReady(true);
+        setIsBtn1Disabled(false);
+        setIsBtn2Disabled(false);
+        setIsBtn3Disabled(false);
+        setChanceCnt(3);
+        setIsWin(false);
+        setIsStart(true);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const activeButtonForJudge = async () => {
     setIsJudge(true);
     setIsStart(false);
 
-    setTimeout(() => {
-      if (mockResData.data.isCorrect) {
-        getNextMusic();
-        setIsWin(false);
-        setScore((prev) => prev + 1);
-      } else if (lives === 0) {
-        setIsLose(true);
-        setIsJudge(false);
-      } else {
-        setLives((prev) => prev - 1);
-        setIsJudge(false);
-      }
-    }, 500);
+    await getCheckAnswer()
+      .then(async (res) => {
+        console.log(res);
+        if (res.data.data.isCorrect) {
+          setIsWin(true);
+          setScore((prev) => prev + 1);
+          setIsJudge(false);
+        } else if (lives === 0) {
+          setIsLose(true);
+          setIsJudge(false);
+        } else {
+          setLives((prev) => prev - 1);
+          setIsJudge(false);
+        }
+      })
+      .catch((err) => console.log(err));
   };
+
   // Enter 할 시 정답 채점
   // inputText가 ''이면 정답 요청 안보냄
   // inputText가 '정답'이면 요청 보내기
   const activeEnter = (e: any) => {
-    if (inputText === '') {
+    if (e.key !== 'Enter' || inputText === '') {
       return;
     }
     if (e.key === 'Enter') {
@@ -193,25 +232,15 @@ export const GamePlaying = () => {
     }
   };
 
-  // 노래 불러오기
-  // const getNextMusic = axios
-  //   .get(`${process.env.REACT_APP_BASE_URL}/music/guest/quiz?difficulty=${difficulty}&year=${year}`)
-  //   .then((res) => {
-  //     setMusicData({
-  //       musicId: res.data.data.musicId,
-  //       musicUrl: res.data.data.musicUrl,
-  //     });
-  //     setMusicReady(true);
-  //     setIsBtn1Disabled(false);
-  //     setIsBtn2Disabled(false);
-  //     setIsBtn3Disabled(false);
-  //     setChanceCnt(3);
-  //     setScore(res.data.data.score);
-  //     setIsJudge(false);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
+  useEffect(() => {
+    setGameOptionData({
+      difficulty: location.state.checkDifficulty,
+      yearList: location.state.yearCheckedList,
+    });
+    setLoading(false);
+
+    getMusic();
+  }, []);
 
   // 정답, 오답 띄워주기
   // 맞았으면 다음문제로 가기!
@@ -219,112 +248,131 @@ export const GamePlaying = () => {
   return (
     <S.Container>
       <BackBtn url="/guest/game-option" />
-      <ReactPlayer
-        url={musicData.musicUrl}
-        controls
-        playing={isPlaying}
-        onPlay={() => {
-          stopAfterSecond(1000);
-        }}
-        width="0"
-        height="0"
-        ref={videoRef}
-      />
-      <S.TalkBoxPosition>
-        {isStart ? (
-          ''
-        ) : (
-          <div>
-            {isJudge ? (
-              <S.TalkBoxContainer>
-                <img src={talkBoxImg} alt="말풍선" width={200} />
-                <p className="judgeText">채점중</p>
-              </S.TalkBoxContainer>
+      {loading ? (
+        <p>게임 준비중...</p>
+      ) : (
+        <>
+          <ReactPlayer
+            url={musicData.musicUrl}
+            controls
+            playing={isPlaying}
+            onPlay={() => {
+              stopAfterSecond(
+                gameOptionData ? gameOptionData.difficulty.time : 1000
+              );
+            }}
+            width="0"
+            height="0"
+            ref={videoRef}
+          />
+          <S.TalkBoxPosition>
+            {isStart ? (
+              ''
             ) : (
-              <S.TalkBoxContainer>
-                <img src={talkBoxImg} alt="말풍선" width={200} />
-                <p className="judgeText">{isWin ? '정답!' : '오답 X!'}</p>
-              </S.TalkBoxContainer>
+              <div>
+                {isJudge ? (
+                  <S.TalkBoxContainer>
+                    <img src={talkBoxImg} alt="말풍선" width={200} />
+                    <p className="judgeText">채점중</p>
+                  </S.TalkBoxContainer>
+                ) : (
+                  <S.TalkBoxContainer>
+                    <img src={talkBoxImg} alt="말풍선" width={200} />
+                    <p className="judgeText">{isWin ? '정답!' : '오답 X!'}</p>
+                  </S.TalkBoxContainer>
+                )}
+              </div>
             )}
-          </div>
-        )}
-      </S.TalkBoxPosition>
-      <div className="emptyBox" />
-      <S.MiddleContainer>
-        <S.GameStatusExplainContainer>
-          <p className="explainGame">
-            처음부터 <span>{1}초간</span> 들려드립니다
-          </p>
-        </S.GameStatusExplainContainer>
-        <S.GameStatusExplainContainer>
-          {isPlaying ? (
-            <p className="gameStatus">...Playing</p>
-          ) : (
-            <div>
-              {musicReady ? (
-                <p className="gameStatus">...wait</p>
-              ) : (
-                <p className="gameStatus">...노래를 불러오는 중</p>
-              )}
-            </div>
-          )}
-        </S.GameStatusExplainContainer>
-        <DancingChick />
-        <AnswerInput
-          isJudge={isJudge}
-          inputText={inputText}
-          setInputText={(e: any) => {
-            setInputText(e);
-          }}
-          activeButton={activeButtonForJudge}
-          activeEnter={(e: any) => {
-            activeEnter(e);
-          }}
-        />
-        <S.PlayingBtnBoxPosition>
-          {isLose ? (
-            <ResultBtn clickHandler={goResultPage} />
-          ) : (
-            <div>
-              {chanceCnt === 0 ? (
-                <NoIdeaBtn clickHandler={skipNextMusic} />
+          </S.TalkBoxPosition>
+          <div className="emptyBox" />
+          <S.MiddleContainer>
+            <S.GameStatusExplainContainer>
+              <p className="explainGame">
+                처음부터{' '}
+                <span>
+                  {gameOptionData ? gameOptionData.difficulty.time / 1000 : ''}
+                  초간
+                </span>{' '}
+                들려드립니다
+              </p>
+            </S.GameStatusExplainContainer>
+            <S.GameStatusExplainContainer>
+              {isPlaying ? (
+                <p className="gameStatus">...Playing</p>
               ) : (
                 <div>
-                  {isWin && !isStart ? (
-                    <NextBtn clickHandler={getNextMusic} />
+                  {musicReady ? (
+                    <p className="gameStatus">...wait</p>
+                  ) : (
+                    <p className="gameStatus">...노래를 불러오는 중</p>
+                  )}
+                </div>
+              )}
+            </S.GameStatusExplainContainer>
+            <DancingChick />
+            <AnswerInput
+              isJudge={isJudge}
+              inputText={inputText}
+              setInputText={(e: any) => {
+                setInputText(e);
+              }}
+              activeButton={activeButtonForJudge}
+              activeEnter={(e: any) => {
+                activeEnter(e);
+              }}
+            />
+            <S.PlayingBtnBoxPosition>
+              {isLose ? (
+                <ResultBtn clickHandler={goResultPage} />
+              ) : (
+                <div>
+                  {chanceCnt === 0 ? (
+                    <NoIdeaBtn clickHandler={skipNextMusic} />
                   ) : (
                     <div>
-                      {isStart || musicReady ? (
-                        <>
-                          {playBtnList.map((item) => (
-                            <PlayBtn
-                              btnName={item.btnName}
-                              onClickHandler={item.onClickHandler}
-                              isBtnDisabled={item.isBtnDisabled}
-                              key={item.btnName}
-                            />
-                          ))}
-                        </>
+                      {isWin && !isStart ? (
+                        <NextBtn clickHandler={getMusic} />
                       ) : (
-                        <p className="loadingMusic">...노래를 불러오는 중</p>
+                        <div>
+                          {isStart || musicReady ? (
+                            <>
+                              {playBtnList.map((item) => (
+                                <PlayBtn
+                                  btnName={item.btnName}
+                                  onClickHandler={item.onClickHandler}
+                                  isBtnDisabled={item.isBtnDisabled}
+                                  key={item.btnName}
+                                />
+                              ))}
+                            </>
+                          ) : (
+                            <p className="loadingMusic">
+                              ...노래를 불러오는 중
+                            </p>
+                          )}
+                        </div>
                       )}
                     </div>
                   )}
                 </div>
               )}
-            </div>
-          )}
-        </S.PlayingBtnBoxPosition>
-      </S.MiddleContainer>
-      <S.RightSideContainer>
-        <S.TopRightSideContainer>
-          <OptionBox />
-          <HeartGauge lives={lives} />
-        </S.TopRightSideContainer>
-        <S.bottomRightSideContainer>
-          <ChanceGauge chanceCnt={chanceCnt} />
-        </S.bottomRightSideContainer>
-      </S.RightSideContainer>
+            </S.PlayingBtnBoxPosition>
+          </S.MiddleContainer>
+          <S.RightSideContainer>
+            <S.TopRightSideContainer>
+              <OptionBox
+                difficulty={
+                  gameOptionData ? gameOptionData.difficulty.title : ''
+                }
+              />
+              <HeartGauge lives={lives} />
+            </S.TopRightSideContainer>
+            <S.bottomRightSideContainer>
+              <ChanceGauge chanceCnt={chanceCnt} />
+            </S.bottomRightSideContainer>
+          </S.RightSideContainer>
+        </>
+      )}
     </S.Container>
   );
 };
