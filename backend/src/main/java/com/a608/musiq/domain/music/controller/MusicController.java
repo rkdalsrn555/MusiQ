@@ -46,7 +46,7 @@ public class MusicController {
 	 * @return ResponseEntity<BaseResponse<GradeAnswerResponseDto>>
 	 */
 	@GetMapping("/guest/result")
-	public ResponseEntity<BaseResponse<GradeAnswerResponseDto>> gradeAnswer(
+	private ResponseEntity<BaseResponse<GradeAnswerResponseDto>> gradeAnswer(
 		@RequestParam("music-id") Integer musicId,
 		@RequestParam("answer") String answer) {
 
