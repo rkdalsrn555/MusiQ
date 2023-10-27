@@ -10,8 +10,10 @@ import com.a608.musiq.global.exception.exception.MusicException;
 import com.a608.musiq.global.exception.info.MusicExceptionInfo;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.StringTokenizer;
 import lombok.RequiredArgsConstructor;
 
@@ -38,6 +40,7 @@ public class MusicServiceImpl implements MusicService {
 
 		List<Music> musicList = new ArrayList<>();
 
+
 		while (st.hasMoreTokens()){
 			List<Music> eachMusicListByYear=musicRepository.findAllByYear(st.nextToken());
 			musicList.addAll(eachMusicListByYear);
@@ -47,10 +50,34 @@ public class MusicServiceImpl implements MusicService {
 		if(musicListSize == 0){
 			throw new MusicException(MusicExceptionInfo.INVALID_YEAR);
 		}
+		Set<String> titleSet = new HashSet<>();
+		Set<String> singerSet = new HashSet<>();
+		List<Music> finalMusicList = new ArrayList<>();
+
+		for (int i = 0; i <musicListSize ; i++) {
+			Music nowMusic = musicList.get(i);
+
+			int beforeTitleSetSize = titleSet.size();
+			titleSet.add(nowMusic.getTitle());
+			int afterTitleSetSize = titleSet.size();
+
+			int beforeSingerSetSize = singerSet.size();
+			singerSet.add(nowMusic.getSinger());
+			int afterSingerSetSize = singerSet.size();
+
+
+			//추가 x
+			if(beforeTitleSetSize == afterTitleSetSize && beforeSingerSetSize == afterSingerSetSize) continue;
+
+			finalMusicList.add(nowMusic);
+
+		}
+
+		int finalMusicListSize= finalMusicList.size();
 
 		Random random = new Random();
 
-		int selectedMusicIndex = random.nextInt(musicListSize);
+		int selectedMusicIndex = random.nextInt(finalMusicListSize);
 
 		Music selectedMusic = musicList.get(selectedMusicIndex);
 
