@@ -22,7 +22,7 @@ export const ShareButton: FC<ShareButtonProps> = ({ correctAnswerCnt }) => {
   }, []);
 
   const handleShare = () => {
-    let titleMessage = ''; // 맞춘 개수에 따라 다르게 대사를 출력해주자
+    let titleMessage = ''; // 맞힌 개수에 따라 다르게 대사를 출력해주자
     let imageUrl = ''; // imageUrl를 동적으로 설정할 변수
 
     // correctAnswerCnt 값에 따라 titleMessage와 imageUrl 변경
@@ -47,7 +47,7 @@ export const ShareButton: FC<ShareButtonProps> = ({ correctAnswerCnt }) => {
         objectType: 'feed',
         content: {
           title: titleMessage,
-          description: '친구와 같이 퀴즈를 맞춰보세요',
+          description: '친구와 같이 퀴즈를 맞혀보세요',
           imageUrl,
           link: {
             mobileWebUrl: 'http://localhost:3000/',

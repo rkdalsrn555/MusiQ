@@ -33,7 +33,7 @@ export const SpeechBubbleText: FC<SpeechBubbleTextProps> = ({
     messages = [
       '하나도 못 맞혔어...',
       '다음번엔 맞힐 수 있을거야.',
-      '친구와 같이 맞혀봐!!!',
+      '친구와 같이 도전해봐!!!',
     ];
   }
 
