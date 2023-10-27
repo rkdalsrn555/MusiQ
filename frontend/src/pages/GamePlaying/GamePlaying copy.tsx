@@ -229,7 +229,7 @@ export const GamePlaying = () => {
       </S.MiddleContainer>
       <S.RightSideContainer>
         <S.TopRightSideContainer>
-          <OptionBox />
+          <OptionBox difficulty="" />
           <HeartGauge lives={lives} />
         </S.TopRightSideContainer>
         <S.bottomRightSideContainer>

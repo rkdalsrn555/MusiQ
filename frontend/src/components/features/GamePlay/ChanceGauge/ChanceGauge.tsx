@@ -8,7 +8,7 @@ import headset from '../../../../assets/img/playgame/headset.png';
 
 const Container = styled.div`
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
 `;
 
 const batteryChanceArray = [
@@ -20,12 +20,12 @@ const batteryChanceArray = [
 
 export const ChanceGauge = ({ chanceCnt }: { chanceCnt: number }) => (
   <Container>
-    <img src={headset} alt="헤드셋" width={70} height={60} />
+    <img src={headset} alt="헤드셋" width={60} height={50} />
     <img
       src={batteryChanceArray[chanceCnt]}
       alt="배터리"
-      width={100}
-      height={60}
+      width={90}
+      height={50}
     />
   </Container>
 );
