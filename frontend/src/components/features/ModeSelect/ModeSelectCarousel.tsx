@@ -13,29 +13,65 @@ import singleModeChar from '../../../assets/img/modeSelect/singleMode.png';
 import multiModeChar from '../../../assets/img/modeSelect/multiMode.png';
 import guestModeChar from '../../../assets/img/modeSelect/guestMode.png';
 import mzModeChar from '../../../assets/img/modeSelect/mzMode.png';
+import singleLock from '../../../assets/img/modeSelect/singleLock.png';
+import guestLock from '../../../assets/img/modeSelect/guestLock.png';
+import multiLock from '../../../assets/img/modeSelect/multiLock.png';
+import mzLock from '../../../assets/img/modeSelect/mzLock.png';
 
 export const ModeSelectCarousel: React.FC = () => {
-  const [visible, setVisible] = useState<number>(0);
   const [back, setBack] = useState<boolean>(false);
   const navigate = useNavigate();
   const [lastInputTime, setLastInputTime] = useState<number>(0); // 키보드, 마우스 연타 방지용으로 시간 측정
-  const INPUT_INTERVAL = 350; // ms
+  const INPUT_INTERVAL = 400;
 
-  const contents = [
-    // 박스 안에 넣을 텍스트, 이미지, 그리고 엔터 누르면 라우팅 될 링크를 설정!
+  const accessToken = localStorage.getItem('accessToken');
+  const [visible, setVisible] = useState<number>(accessToken ? 0 : 1); // accessToken이 없을 때 visible의 초기값을 1로 설정하여 2번 콘텐츠가 먼저 보이게 함
+  const isLoggedIn = Boolean(accessToken); // 로그인 검증
+
+  const [contents, setContents] = useState([
+    // 토큰 존재 여부에 따라 다른 화면 보여주기
     {
       id: 1,
       text: '',
-      image: singleModeChar,
+      image: isLoggedIn ? singleModeChar : singleLock,
       link: '/single/game-option',
     },
-    { id: 2, text: '', image: guestModeChar, link: '/guest/game-option' },
-    { id: 3, text: '', image: multiModeChar, link: '/multi-mode' },
-    { id: 4, text: '', image: mzModeChar, link: '/mz-mode' },
-  ];
-
+    {
+      id: 2,
+      text: '',
+      image: isLoggedIn ? guestLock : guestModeChar,
+      link: '/guest/game-option',
+    },
+    {
+      id: 3,
+      text: '',
+      image: isLoggedIn ? multiModeChar : multiLock,
+      link: '/multi-mode',
+    },
+    {
+      id: 4,
+      text: '',
+      image: isLoggedIn ? mzModeChar : mzLock,
+      link: '/mz-mode',
+    },
+  ]);
   const navigateToLink = () => {
-    navigate(contents[visible].link);
+    const content = contents[visible];
+
+    if (content.id === 2 && localStorage.getItem('accessToken')) {
+      alert('비회원만 이용할 수 있는 서비스입니다.');
+      return; // navigation을 수행하지 않고 함수를 종료
+    }
+
+    if (
+      !localStorage.getItem('accessToken') &&
+      (content.id === 1 || content.id === 3 || content.id === 4)
+    ) {
+      alert('로그인이 필요한 서비스입니다.');
+      return; // navigation을 수행하지 않고 함수를 종료
+    }
+
+    navigate(content.link); // 조건이 맞으면 navigation을 수행
   };
 
   const nextPlease = (): void => {
