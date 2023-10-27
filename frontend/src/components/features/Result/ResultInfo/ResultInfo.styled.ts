@@ -61,7 +61,7 @@ export const DancingChickContainer = styled.div`
 
   & :nth-child(4) {
     position: absolute;
-    bottom: 107%; // 원하는 위치로 조정
-    left: 36%; // 원하는 위치로 조정
+    bottom: 107%; 
+    left: 36%; 
   }
 `;
