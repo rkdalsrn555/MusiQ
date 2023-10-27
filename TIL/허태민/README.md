@@ -437,3 +437,8 @@ while cap.isOpened():
 
 - ERD 작성
   ![기능명세](./img/erd_first.JPG)
+
+## 10/27
+
+- Database 삽입
+- 70년대, 80년대, 90년대, 00년대, 2010 노래
