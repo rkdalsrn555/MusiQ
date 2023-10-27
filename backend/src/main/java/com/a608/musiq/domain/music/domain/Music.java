@@ -49,13 +49,8 @@ public class Music {
 	@Column
 	private Integer runTime;
 
-	@Size(max = 20)
-	@NotNull
-	@Column
-	private String singerHint;
-
 	@Size(max = 50)
 	@NotNull
 	@Column
-	private String titleHint;
+	private String hint;
 }
