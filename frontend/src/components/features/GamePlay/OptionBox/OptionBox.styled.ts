@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  width: 15rem;
-  padding: 2rem 3rem;
+  width: 12rem;
+  padding: 1rem 1rem;
   background-color: rgba(255, 255, 255, 0.7);
   text-align: center;
   border-radius: 0.5rem;
@@ -11,11 +11,11 @@ export const Container = styled.div`
   gap: 1rem;
 
   & h1 {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-family: 'Galmuri11', sans-serif;
   }
 
   & p {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
   }
 `;

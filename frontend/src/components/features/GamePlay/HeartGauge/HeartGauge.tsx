@@ -10,7 +10,7 @@ const Container = styled.div`
 export const HeartGauge = ({ lives }: { lives: number }) => (
   <Container>
     {Array.from({ length: lives }, (v, i) => i + 1).map((item) => (
-      <img src={heartIcon} alt="하트" key={item} />
+      <img src={heartIcon} alt="하트" key={item} width={50} />
     ))}
   </Container>
 );
