@@ -30,14 +30,14 @@ export const ShareButton: FC<ShareButtonProps> = ({ correctAnswerCnt }) => {
       titleMessage = '하나도 못 맞혔어요... 도와주세요😭';
       imageUrl =
         'https://image.musinsa.com/mfile_s01/2016/03/21/317b6935907bfd5e33f103fa503b07e4165530.jpg';
-    } else if (correctAnswerCnt >= 1 && correctAnswerCnt <= 3) {
+    } else if (correctAnswerCnt >= 1 && correctAnswerCnt <= 7) {
       titleMessage = `아쉽게도 ${correctAnswerCnt}개밖에 못 맞혔어요. 😢`;
       imageUrl =
         'https://i.namu.wiki/i/UBEFd5cRRJVob63HQ8TToGVLr1Sva5FPIFF7ZUw_LB9zCbjqTQHaktxrEclsWkNkTgI6M0v_JydZlw17evQOKw.webp';
-    } else if (correctAnswerCnt >= 4 && correctAnswerCnt <= 7) {
+    } else if (correctAnswerCnt >= 8 && correctAnswerCnt <= 15) {
       titleMessage = `우와! ${correctAnswerCnt}개나 맞혔어요! 🎉`;
       imageUrl = 'https://pbs.twimg.com/media/EFogp8wUcAAkydU.jpg';
-    } else if (correctAnswerCnt >= 8 && correctAnswerCnt <= 10) {
+    } else if (correctAnswerCnt >= 16) {
       titleMessage = `대단해요! ${correctAnswerCnt}개나 맞혔어요! 🚀`;
       imageUrl = 'https://i3.ruliweb.com/img/22/02/07/17ed283669719ea12.jpg';
     }
