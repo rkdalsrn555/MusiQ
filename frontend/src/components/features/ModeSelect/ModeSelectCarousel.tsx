@@ -24,13 +24,14 @@ export const ModeSelectCarousel: React.FC = () => {
   const contents = [
     // 박스 안에 넣을 텍스트, 이미지, 그리고 엔터 누르면 라우팅 될 링크를 설정!
     {
+      id: 1,
       text: '',
       image: singleModeChar,
       link: '/single/game-option',
     },
-    { text: '', image: guestModeChar, link: '/guest/game-option' },
-    { text: '', image: multiModeChar, link: '/multi-mode' },
-    { text: '', image: mzModeChar, link: '/mz-mode' },
+    { id: 2, text: '', image: guestModeChar, link: '/guest/game-option' },
+    { id: 3, text: '', image: multiModeChar, link: '/multi-mode' },
+    { id: 4, text: '', image: mzModeChar, link: '/mz-mode' },
   ];
 
   const navigateToLink = () => {
@@ -88,40 +89,67 @@ export const ModeSelectCarousel: React.FC = () => {
     };
   }, [visible]);
 
-  const boxVariants = {
-    // 박스 애니메이션
-    entry: (isBack: boolean) => ({
-      opacity: 0,
-      scale: 0,
-      x: isBack ? -500 : 500,
-    }),
-    visible: { opacity: 1, scale: 1, x: 0, transition: { duration: 0.3 } },
-    exit: (isBack: boolean) => ({
-      opacity: 0,
-      scale: 0,
-      x: isBack ? 500 : -500,
-      transition: { duration: 0.3 },
-    }),
-  };
-
   return (
     <>
-      <AnimatePresence custom={back}>
-        <Box
-          custom={back}
-          key={visible.toString()}
-          variants={boxVariants}
-          initial="entry"
-          animate="visible"
-          exit="exit"
-        >
-          <StyledImage
-            src={contents[visible].image}
-            alt={contents[visible].text}
-          />
-          <p>{contents[visible].text}</p>
-        </Box>
+      <AnimatePresence initial={false}>
+        {contents.map((content, index) => {
+          let position;
+          let zIndexValue;
+          let opacityValue;
+          let scaleValue;
+          let initialPosition;
+
+          if (index === visible) {
+            position = '0%';
+            zIndexValue = 2;
+            opacityValue = 1;
+            scaleValue = 1;
+            initialPosition = back ? '-80%' : '80%';
+          } else if (index === visible - 1) {
+            position = '-80%';
+            zIndexValue = 1;
+            opacityValue = 0.5;
+            scaleValue = 0.8;
+            initialPosition = '-80%';
+          } else if (index === visible + 1) {
+            position = '80%';
+            zIndexValue = 1;
+            opacityValue = 0.5;
+            scaleValue = 0.8;
+            initialPosition = '80%';
+          } else {
+            return null;
+          }
+
+          return (
+            <Box
+              key={content.id}
+              initial={{
+                x: initialPosition,
+                zIndex: 1,
+                opacity: 0.5,
+                scale: 0.8,
+              }}
+              animate={{
+                x: position,
+                zIndex: zIndexValue,
+                opacity: opacityValue,
+                scale: scaleValue,
+              }}
+              exit={{
+                x: back ? '80%' : '-80%',
+                zIndex: 1,
+                opacity: 0,
+                scale: 0.8,
+              }}
+              transition={{ duration: 0.5 }}
+            >
+              <StyledImage src={content.image} alt={content.text} />
+            </Box>
+          );
+        })}
       </AnimatePresence>
+
       <ButtonContainer>
         <button
           type="button"
