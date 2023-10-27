@@ -12,7 +12,6 @@ interface ShareButtonProps {
 }
 
 export const ShareButton: FC<ShareButtonProps> = ({ correctAnswerCnt }) => {
-
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://developers.kakao.com/sdk/js/kakao.js';
@@ -23,11 +22,25 @@ export const ShareButton: FC<ShareButtonProps> = ({ correctAnswerCnt }) => {
   }, []);
 
   const handleShare = () => {
+    // 맞춘 개수에 따라 다르게 대사를 출력해주자
+    let titleMessage = ''; // titleMessage를 동적으로 설정할 변수
+
+    // correctAnswerCnt 값에 따라 titleMessage 변경
+    if (correctAnswerCnt >= 1 && correctAnswerCnt <= 3) {
+      titleMessage = `아쉽게도 ${correctAnswerCnt}개밖에 못 맞혔어요. 😢`;
+    } else if (correctAnswerCnt >= 4 && correctAnswerCnt <= 7) {
+      titleMessage = `우와! ${correctAnswerCnt}개나 맞혔어요! 🎉`;
+    } else if (correctAnswerCnt >= 8 && correctAnswerCnt <= 10) {
+      titleMessage = `대단해요! ${correctAnswerCnt}개나 맞혔어요! 🚀`;
+    } else {
+      titleMessage = '하나도 못 맞혔어요... 도와주세요😭';
+    }
+
     window.Kakao.Link.sendDefault(
       {
         objectType: 'feed',
         content: {
-          title: `나 ${correctAnswerCnt}개나 맞췄지렁이`,
+          title: titleMessage,
           description: '친구의 기록에 도전해보세요',
           imageUrl: 'https://i3.ruliweb.com/img/22/02/07/17ed283669719ea12.jpg',
           link: {
