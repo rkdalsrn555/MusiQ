@@ -2,6 +2,7 @@ import { FC, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Logo } from '../../../utils/Logo/Logo';
 import { ShareButton } from '../ShareButton';
+import { RetryButton } from '../RetryButton';
 import { SpeechBubbleText } from '../SpeechBubbleText';
 import {
   InfoWrapper,
@@ -47,7 +48,7 @@ export const ResultInfo = () => {
         </DancingChickContainer>
       </ChickWrapper>
       <InfoWrapper>
-        <div style={{ marginLeft: '3.5rem' }}>
+        <div >
           <Logo size="lg" />
         </div>
         <ResultInfoText
@@ -55,7 +56,10 @@ export const ResultInfo = () => {
           selectYear={selectYear}
           correctAnswerCnt={correctAnswerCnt}
         />
-        <ShareButton correctAnswerCnt={correctAnswerCnt} />
+        <div style={{ marginTop: '1rem' }}>
+          <RetryButton mode={mode} selectYear={selectYear} />
+          <ShareButton correctAnswerCnt={correctAnswerCnt} />
+        </div>
       </InfoWrapper>
     </ResultContainer>
   );

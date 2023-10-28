@@ -1,4 +1,5 @@
 import React, { FC, useEffect } from 'react';
+import styled from 'styled-components';
 import ShareIcon from '../../../../assets/svgs/ShareIcon.svg';
 
 declare global {
@@ -6,6 +7,12 @@ declare global {
     Kakao: any;
   }
 }
+
+const HoverStyled = styled.img`
+  &:hover {
+    filter: sepia(100%);
+  }
+`
 
 interface ShareButtonProps {
   correctAnswerCnt: number;
@@ -65,8 +72,8 @@ export const ShareButton: FC<ShareButtonProps> = ({ correctAnswerCnt }) => {
     );
   };
   return (
-    <button type="button" onClick={handleShare}>
-      <img src={ShareIcon} alt="Share Icon" />
-    </button>
+      <button type="button" onClick={handleShare}>
+        <HoverStyled src={ShareIcon} alt="Share Icon" width={150} />
+      </button>
   );
 };
