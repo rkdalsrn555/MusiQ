@@ -81,7 +81,7 @@ export const GamePlaying = () => {
     {
       btnName: '처음',
       // 버튼 클릭하면 노래 시작하고, 기회 감소, 버튼 못누르게 disabled 처리
-      onClickHandler: () => {
+      onClickHandler: (e: any) => {
         playMusic(FirstMusicStartTime);
         setChanceCnt((prev) => prev - 1);
       },
@@ -89,7 +89,7 @@ export const GamePlaying = () => {
     },
     {
       btnName: '중간',
-      onClickHandler: () => {
+      onClickHandler: (e: any) => {
         playMusic(SecondMusicStartTime);
         setChanceCnt((prev) => prev - 1);
       },
@@ -97,7 +97,7 @@ export const GamePlaying = () => {
     },
     {
       btnName: '끝',
-      onClickHandler: () => {
+      onClickHandler: (e: any) => {
         playMusic(ThirdMusicStartTime);
         setChanceCnt((prev) => prev - 1);
       },
@@ -105,51 +105,11 @@ export const GamePlaying = () => {
     },
   ];
 
-  // // 서버에서 노래 받아오기 (목데이터)
-  // const getMusic = () => {
-  //   setMusicData({
-  //     musicId: 1,
-  //     musicUrl: 'https://www.youtube.com/watch?v=l-jZOXa7gQY',
-  //   });
-  //   setMusicReady(true);
-  //   setIsBtn1Disabled(false);
-  //   setIsBtn2Disabled(false);
-  //   setIsBtn3Disabled(false);
-  //   setChanceCnt(3);
-  //   setIsWin(false);
-  //   setIsStart(true);
-  // };
-  // const mockResData = {
-  //   code: '200',
-  //   message: 'success',
-  //   data: {
-  //     score: 1,
-  //     isCorrect: false,
-  //   },
-  // };
-  // const activeButtonForJudge = () => {
-  //   setIsJudge(true);
-  //   setIsStart(false);
-
-  //   setTimeout(() => {
-  //     if (mockResData.data.isCorrect) {
-  //       getMusic();
-  //       setIsWin(false);
-  //       setScore((prev) => prev + 1);
-  //     } else if (lives === 0) {
-  //       setIsLose(true);
-  //       setIsJudge(false);
-  //     } else {
-  //       setLives((prev) => prev - 1);
-  //       setIsJudge(false);
-  //     }
-  //   }, 500);
-  // };
   // 결과창으로 라우팅
   const goResultPage = () => {
     const resultData = {
-      mode: 'easy',
-      selectYear: '70년대',
+      mode: location.state.checkDifficulty.title,
+      selectYear: location.state.yearCheckedList,
       correctAnswerCnt: score,
     };
     navigate('/guest/game-result', { state: resultData });
@@ -189,6 +149,7 @@ export const GamePlaying = () => {
         setIsBtn2Disabled(false);
         setIsBtn3Disabled(false);
         setChanceCnt(3);
+        setLives(3);
         setIsWin(false);
         setIsStart(true);
       })
@@ -203,7 +164,6 @@ export const GamePlaying = () => {
 
     await getCheckAnswer()
       .then(async (res) => {
-        console.log(res);
         if (res.data.data.isCorrect) {
           setIsWin(true);
           setScore((prev) => prev + 1);
@@ -233,6 +193,29 @@ export const GamePlaying = () => {
   };
 
   useEffect(() => {
+    const handleKeyUp = (e: any) => {
+      if (chanceCnt === 0) {
+        return;
+      }
+      if (e.key === '1') {
+        playMusic(FirstMusicStartTime);
+        setChanceCnt((prev) => prev - 1);
+      }
+      if (e.key === '2') {
+        playMusic(SecondMusicStartTime);
+        setChanceCnt((prev) => prev - 1);
+      }
+      if (e.key === '3') {
+        playMusic(ThirdMusicStartTime);
+        setChanceCnt((prev) => prev - 1);
+      }
+      if (e.keyCode === 32) {
+        getMusic();
+      }
+    };
+
+    window.addEventListener('keyup', handleKeyUp);
+
     setGameOptionData({
       difficulty: location.state.checkDifficulty,
       yearList: location.state.yearCheckedList,
@@ -240,6 +223,10 @@ export const GamePlaying = () => {
     setLoading(false);
 
     getMusic();
+
+    return () => {
+      window.removeEventListener('keyup', handleKeyUp);
+    };
   }, []);
 
   // 정답, 오답 띄워주기
@@ -311,6 +298,8 @@ export const GamePlaying = () => {
             </S.GameStatusExplainContainer>
             <DancingChick />
             <AnswerInput
+              isWin={isWin}
+              isLose={isLose}
               isJudge={isJudge}
               inputText={inputText}
               setInputText={(e: any) => {
@@ -326,12 +315,12 @@ export const GamePlaying = () => {
                 <ResultBtn clickHandler={goResultPage} />
               ) : (
                 <div>
-                  {chanceCnt === 0 ? (
-                    <NoIdeaBtn clickHandler={skipNextMusic} />
+                  {isWin && !isStart ? (
+                    <NextBtn clickHandler={getMusic} />
                   ) : (
                     <div>
-                      {isWin && !isStart ? (
-                        <NextBtn clickHandler={getMusic} />
+                      {chanceCnt === 0 ? (
+                        <NoIdeaBtn clickHandler={skipNextMusic} />
                       ) : (
                         <div>
                           {isStart || musicReady ? (
