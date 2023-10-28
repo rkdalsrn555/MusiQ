@@ -59,6 +59,7 @@ export const GamePlaying = () => {
   const [score, setScore] = useState<number>(0);
   const [lives, setLives] = useState<number>(3); // 생명
   const [chanceCnt, setChanceCnt] = useState<number>(3); // 기회
+  const chanceCntRef = useRef(3);
   const [isPlaying, setIsPlaying] = useState<boolean>(false); // 게임중인지, 아닌지
   const [isJudge, setIsJudge] = useState<boolean>(false); // 채점중인지 아닌지
   const [musicReady, setMusicReady] = useState<boolean>(true); // 노래가 준비되었는지, 아닌지
@@ -96,6 +97,7 @@ export const GamePlaying = () => {
       onClickHandler: (e: any) => {
         playMusic(FirstMusicStartTime);
         setChanceCnt((prev) => prev - 1);
+        chanceCntRef.current -= 1;
       },
       isBtnDisabled: btn1isDisabled,
     },
@@ -104,6 +106,7 @@ export const GamePlaying = () => {
       onClickHandler: (e: any) => {
         playMusic(SecondMusicStartTime);
         setChanceCnt((prev) => prev - 1);
+        chanceCntRef.current -= 1;
       },
       isBtnDisabled: btn2isDisabled,
     },
@@ -112,6 +115,7 @@ export const GamePlaying = () => {
       onClickHandler: (e: any) => {
         playMusic(ThirdMusicStartTime);
         setChanceCnt((prev) => prev - 1);
+        chanceCntRef.current -= 1;
       },
       isBtnDisabled: btn3isDisabled,
     },
@@ -161,6 +165,7 @@ export const GamePlaying = () => {
         setIsBtn2Disabled(false);
         setIsBtn3Disabled(false);
         setChanceCnt(3);
+        chanceCntRef.current = 3;
         setLives(3);
         setIsWin(false);
         setIsStart(true);
@@ -214,20 +219,23 @@ export const GamePlaying = () => {
     getMusic();
 
     const handleKeyUp = (e: any) => {
-      if (chanceCnt === 0) {
+      if (chanceCntRef.current <= 0) {
         return;
       }
-      if (e.key === '1') {
+      if (e.key === 'ArrowLeft') {
         playMusic(FirstMusicStartTime);
         setChanceCnt((prev) => prev - 1);
+        chanceCntRef.current -= 1;
       }
-      if (e.key === '2') {
+      if (e.key === 'ArrowDown') {
         playMusic(SecondMusicStartTime);
         setChanceCnt((prev) => prev - 1);
+        chanceCntRef.current -= 1;
       }
-      if (e.key === '3') {
+      if (e.key === 'ArrowRight') {
         playMusic(ThirdMusicStartTime);
         setChanceCnt((prev) => prev - 1);
+        chanceCntRef.current -= 1;
       }
       if (e.keyCode === 32) {
         getMusic();
@@ -359,7 +367,7 @@ export const GamePlaying = () => {
                     <NextBtn clickHandler={getMusic} />
                   ) : (
                     <div>
-                      {chanceCnt === 0 ? (
+                      {chanceCnt <= 0 ? (
                         <NoIdeaBtn clickHandler={skipNextMusic} />
                       ) : (
                         <div>

@@ -70,10 +70,11 @@ export const GameExplain = () => (
       <h1>게임 규칙 Tip</h1>
       <p>모든 정답은 한글로 제출해야 인정됩니다</p>
       <h1>키보드 조작</h1>
-      <p>숫자 1 : 처음 버튼</p>
-      <p>숫자 2 : 중간 버튼</p>
-      <p>숫자 3 : 끝 버튼</p>
-      <p>Enter : 활성화 및 정답제출</p>
+      <p>⬅ : 처음 버튼</p>
+      <p>⬇ : 중간 버튼</p>
+      <p>➡ : 끝 버튼</p>
+      <p>enter : 정답창 활성화 및 정답제출</p>
+      <p>spacebar : 다음문제 출제</p>
     </ExplainBox>
   </Container>
 );
