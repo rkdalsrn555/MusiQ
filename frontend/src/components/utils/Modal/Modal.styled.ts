@@ -14,7 +14,7 @@ export const GreyBackground = styled.div`
 
 export const ModalContainer = styled(motion.div)`
   position: absolute;
-  top: 20%;
+  top: 30%;
   left: 50%;
   transform: translate3d(-50%, 0, 0);
   z-index: 9999;
@@ -44,10 +44,10 @@ export const ModalContent = styled.div`
     height: 80px;
     border-radius: 50%;
     background-color: #dfdfe6;
-    font-size: 40px;
     margin-bottom: 16px;
 
     & p {
+      font-size: 2rem;
       padding: 0;
       margin: 0;
     }
@@ -59,7 +59,7 @@ export const ModalContent = styled.div`
   }
 `;
 
-export const ModalBtn = styled.button<{ result: boolean }>`
+export const ModalBtn = styled.button<{ result: string }>`
   z-index: 999;
   display: flex;
   align-items: center;
@@ -69,6 +69,7 @@ export const ModalBtn = styled.button<{ result: boolean }>`
   border: none;
   border-radius: 100px;
   font-size: 20px;
-  background-color: ${(props) => (props.result ? '#3772FF' : '#F1F1F1')};
-  color: ${(props) => (props.result ? '#fff' : '#23262F')};
+  background-color: ${(props) =>
+    props.result === 'true' ? '#3772FF' : '#F1F1F1'};
+  color: ${(props) => (props.result === 'true' ? '#fff' : '#23262F')};
 `;
