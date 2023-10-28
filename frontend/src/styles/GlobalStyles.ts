@@ -15,9 +15,9 @@ const GlobalStyles = createGlobalStyle`
         color: inherit;
         font-family: "Galmuri14", sans-serif;
     }
-    *{
-        box-sizing: border-box;
+    *{        
         font-family: "Galmuri14", sans-serif;
+        box-sizing: border-box;
         cursor: url(${cursorIcon}) 2 2, auto;
     }
     *:hover{
@@ -37,7 +37,7 @@ const GlobalStyles = createGlobalStyle`
         height: 100vh;
         line-height: 1;
         overflow: hidden;
-        background-image: url(${backgroundGif2});
+        background-image: url(${backgroundGif1});
         background-size: cover;
         object-fit: cover;
         object-position: 50% 50%;
