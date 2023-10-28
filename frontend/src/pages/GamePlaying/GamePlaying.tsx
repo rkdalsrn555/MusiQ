@@ -219,7 +219,8 @@ export const GamePlaying = () => {
     getMusic();
 
     const handleKeyUp = (e: any) => {
-      if (chanceCntRef.current <= 0) {
+      console.log(e.target.nodeName);
+      if (chanceCntRef.current <= 0 || e.target.nodeName === 'INPUT') {
         return;
       }
       if (e.key === 'ArrowLeft') {
