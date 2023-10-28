@@ -9,7 +9,9 @@ export const InfoWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   margin-left: 10rem;
+  background-color: rgba(255, 255, 255, 0.4); /* 반투명한 흰색 배경 추가 */
 `;
 
 export const ChickWrapper = styled.div`

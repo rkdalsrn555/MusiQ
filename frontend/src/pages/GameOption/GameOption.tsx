@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { SelectLevelBtn, SelectYearBtn } from '../../components/features';
@@ -26,6 +26,26 @@ export const GameOption = () => {
     select: boolean;
     time: number;
   }>({ title: 'easy', select: false, time: EASYTIME });
+
+  // 결과창에서 다시하기 버튼 클릭 시 옵션 그대로 가져오기 위해 작성한 코드
+  useEffect(() => {
+    if (location.state) { // location.state 있을 경우에만 실행. RetryButton 컴포넌트에서 전달된 state 객체
+      const { mode, selectYear } = location.state; // location.state 객체에서 mode와 selectYear 추출
+      setCheckedList(selectYear); // 
+      
+      const timeMapping = {
+        easy: EASYTIME,
+        normal: NORMALTIME,
+        hard: HARDTIME
+      };
+      
+      setLevelList({ // 난이도에 따라 동적으로 time 할당
+        title: mode,
+        select: true,
+        time: timeMapping[mode as 'easy' | 'normal' | 'hard']
+      });
+    }
+  }, []); 
 
   // eslint-disable-next-line no-shadow
   const checkedItemHandler = (value: string, isChecked: boolean) => {
