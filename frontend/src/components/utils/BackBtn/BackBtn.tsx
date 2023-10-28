@@ -14,18 +14,22 @@ const PositionStyle = styled.div`
   }
 `;
 
-export const BackBtn = (props: { url: string }) => {
-  const { url } = props;
+// eslint-disable-next-line react/require-default-props
+export const BackBtn = (props: { url: string; handleClick?: () => void }) => {
   const navigate = useNavigate();
+  const {
+    url,
+    handleClick = () => {
+      navigate(url);
+    },
+  } = props;
 
   return (
     <PositionStyle>
       <BackBtnIcon
         width={150}
         height={100}
-        onClick={() => {
-          navigate(url);
-        }}
+        onClick={handleClick}
         fill="rgba(164, 164, 164, 0.8)"
       />
     </PositionStyle>

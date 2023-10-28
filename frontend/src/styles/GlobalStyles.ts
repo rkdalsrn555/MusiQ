@@ -15,9 +15,9 @@ const GlobalStyles = createGlobalStyle`
         color: inherit;
         font-family: "Galmuri14", sans-serif;
     }
-    *{
-        box-sizing: border-box;
+    *{        
         font-family: "Galmuri14", sans-serif;
+        box-sizing: border-box;
         cursor: url(${cursorIcon}) 2 2, auto;
     }
     *:hover{
