@@ -108,6 +108,7 @@ export const PlayingBtnBoxPosition = styled.div`
 
   & div {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 1rem;
@@ -115,6 +116,11 @@ export const PlayingBtnBoxPosition = styled.div`
     & .loadingMusic {
       font-size: 1rem;
       font-family: 'Galmuri11', sans-serif;
+    }
+
+    & .btnContainer {
+      display: flex;
+      flex-direction: row;
     }
   }
 `;

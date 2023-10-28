@@ -13,8 +13,9 @@ import {
   NoIdeaBtn,
   NextBtn,
   ResultBtn,
+  GameExplain,
 } from '../../components/features';
-import { BackBtn } from '../../components/utils';
+import { BackBtn, Modal } from '../../components/utils';
 import * as S from './GamePlaying.styled';
 
 type GameOptionDataType = {
@@ -36,6 +37,17 @@ const SecondMusicStartTime = 60;
 const ThirdMusicStartTime = 120;
 
 export const GamePlaying = () => {
+  // useBeforeunload((event: any) => event.preventDefault()); // 새로고침 막기
+  const [modalData, setModalData] = useState<{
+    data: {
+      title: string;
+      message: string;
+    };
+    noBtnClick?: () => void | null;
+    yesBtnClick?: () => void | null;
+  }>({ data: { title: '', message: '' } });
+  const [isToggled, setIsToggled] = useState<boolean>(false); // 모달 창 toggle
+
   const navigate = useNavigate();
   const location = useLocation();
   const [musicData, setMusicData] = useState<musicDataType>({
@@ -193,6 +205,14 @@ export const GamePlaying = () => {
   };
 
   useEffect(() => {
+    setGameOptionData({
+      difficulty: location.state.checkDifficulty,
+      yearList: location.state.yearCheckedList,
+    });
+    setLoading(false);
+
+    getMusic();
+
     const handleKeyUp = (e: any) => {
       if (chanceCnt === 0) {
         return;
@@ -214,27 +234,46 @@ export const GamePlaying = () => {
       }
     };
 
+    const preventRefresh = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+
     window.addEventListener('keyup', handleKeyUp);
-
-    setGameOptionData({
-      difficulty: location.state.checkDifficulty,
-      yearList: location.state.yearCheckedList,
-    });
-    setLoading(false);
-
-    getMusic();
-
+    window.addEventListener('beforeunload', preventRefresh);
     return () => {
       window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('beforeunload', preventRefresh);
     };
   }, []);
 
   // 정답, 오답 띄워주기
   // 맞았으면 다음문제로 가기!
   // 틀렸으면 하트깎기
+  /* eslint-disable react/jsx-props-no-spreading */
   return (
     <S.Container>
-      <BackBtn url="/guest/game-option" />
+      <Modal {...modalData} isToggled={isToggled} setIsToggled={setIsToggled} />
+      <BackBtn
+        url="/guest/game-option"
+        handleClick={() => {
+          setIsToggled(true);
+          setModalData({
+            data: {
+              title: '😥',
+              message: '노래 맞추기 게임을 그만 하시겠어요?',
+            },
+            yesBtnClick: () => {
+              setIsToggled(false);
+              navigate('/guest/game-option');
+            },
+            noBtnClick: () => {
+              setIsToggled(false);
+            },
+          });
+        }}
+      />
+      <GameExplain />
       {loading ? (
         <p>게임 준비중...</p>
       ) : (
@@ -252,6 +291,7 @@ export const GamePlaying = () => {
             height="0"
             ref={videoRef}
           />
+
           <S.TalkBoxPosition>
             {isStart ? (
               ''
@@ -324,7 +364,7 @@ export const GamePlaying = () => {
                       ) : (
                         <div>
                           {isStart || musicReady ? (
-                            <>
+                            <div className="btnContainer">
                               {playBtnList.map((item) => (
                                 <PlayBtn
                                   btnName={item.btnName}
@@ -333,7 +373,7 @@ export const GamePlaying = () => {
                                   key={item.btnName}
                                 />
                               ))}
-                            </>
+                            </div>
                           ) : (
                             <p className="loadingMusic">
                               ...노래를 불러오는 중

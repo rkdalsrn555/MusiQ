@@ -6,7 +6,7 @@ const Container = styled.div`
   position: relative;
   margin-bottom: 2rem;
 
-  & p {
+  & .explainKey {
     position: absolute;
     bottom: -1.5rem;
     left: 0.9rem;
@@ -57,7 +57,6 @@ export const AnswerInput = (props: OwnProps) => {
       }
 
       window.addEventListener('keydown', handleKeyDown);
-
       return () => {
         window.removeEventListener('keydown', handleKeyDown);
       };
@@ -80,7 +79,7 @@ export const AnswerInput = (props: OwnProps) => {
           readOnly={isJudge || isWin || isLose}
         />
       </InputStyle>
-      <p>enter 키로 활성화, enter키로 정답 제출</p>
+      <p className="explainKey">enter 키로 활성화, enter키로 정답 제출</p>
     </Container>
   );
 };
