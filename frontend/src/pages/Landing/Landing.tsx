@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { BgmBtn } from '../../components/utils/BgmBtn/BgmBtn';
 import * as S from './Landing.styled';
 import { Logo } from '../../components/utils';
 import {
@@ -65,6 +66,7 @@ export const Landing = () => {
           <p>please insert (1) coin</p>
         </Blink>
       </FadeInFromBottom>
+        <BgmBtn />
     </S.LandingPageContainer>
   );
 };
