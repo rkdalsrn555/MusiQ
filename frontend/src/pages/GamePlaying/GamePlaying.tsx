@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import talkBoxImg from '../../assets/img/playgame/horseBaloon.png';
@@ -261,156 +262,163 @@ export const GamePlaying = () => {
   // 틀렸으면 하트깎기
   /* eslint-disable react/jsx-props-no-spreading */
   return (
-    <S.Container>
-      <Modal {...modalData} isToggled={isToggled} setIsToggled={setIsToggled} />
-      <BackBtn
-        url="/guest/game-option"
-        handleClick={() => {
-          setIsToggled(true);
-          setModalData({
-            data: {
-              title: '😥',
-              message: '노래 맞추기 게임을 그만 하시겠어요?',
-            },
-            yesBtnClick: () => {
-              setIsToggled(false);
-              navigate('/guest/game-option');
-            },
-            noBtnClick: () => {
-              setIsToggled(false);
-            },
-          });
-        }}
-      />
-      <GameExplain />
-      {loading ? (
-        <p>게임 준비중...</p>
-      ) : (
-        <>
-          <ReactPlayer
-            url={musicData.musicUrl}
-            controls
-            playing={isPlaying}
-            onPlay={() => {
-              stopAfterSecond(
-                gameOptionData ? gameOptionData.difficulty.time : 1000
-              );
-            }}
-            width="0"
-            height="0"
-            ref={videoRef}
-          />
-
-          <S.TalkBoxPosition>
-            {isStart ? (
-              ''
-            ) : (
-              <div>
-                {isJudge ? (
-                  <S.TalkBoxContainer>
-                    <img src={talkBoxImg} alt="말풍선" width={200} />
-                    <p className="judgeText">채점중</p>
-                  </S.TalkBoxContainer>
-                ) : (
-                  <S.TalkBoxContainer>
-                    <img src={talkBoxImg} alt="말풍선" width={200} />
-                    <p className="judgeText">{isWin ? '정답!' : '오답 X!'}</p>
-                  </S.TalkBoxContainer>
-                )}
-              </div>
-            )}
-          </S.TalkBoxPosition>
-          <div className="emptyBox" />
-          <S.MiddleContainer>
-            <S.GameStatusExplainContainer>
-              <p className="explainGame">
-                처음부터{' '}
-                <span>
-                  {gameOptionData ? gameOptionData.difficulty.time / 1000 : ''}
-                  초간
-                </span>{' '}
-                들려드립니다
-              </p>
-            </S.GameStatusExplainContainer>
-            <S.GameStatusExplainContainer>
-              {isPlaying ? (
-                <p className="gameStatus">...Playing</p>
-              ) : (
-                <div>
-                  {musicReady ? (
-                    <p className="gameStatus">...wait</p>
-                  ) : (
-                    <p className="gameStatus">...노래를 불러오는 중</p>
-                  )}
-                </div>
-              )}
-            </S.GameStatusExplainContainer>
-            <DancingChick />
-            <AnswerInput
-              isWin={isWin}
-              isLose={isLose}
-              isJudge={isJudge}
-              inputText={inputText}
-              setInputText={(e: any) => {
-                setInputText(e);
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1 }}
+    >
+      <S.Container>
+        <Modal {...modalData} isToggled={isToggled} setIsToggled={setIsToggled} />
+        <BackBtn
+          url="/guest/game-option"
+          handleClick={() => {
+            setIsToggled(true);
+            setModalData({
+              data: {
+                title: '😥',
+                message: '노래 맞추기 게임을 그만 하시겠어요?',
+              },
+              yesBtnClick: () => {
+                setIsToggled(false);
+                navigate('/guest/game-option');
+              },
+              noBtnClick: () => {
+                setIsToggled(false);
+              },
+            });
+          }}
+        />
+        <GameExplain />
+        {loading ? (
+          <p>게임 준비중...</p>
+        ) : (
+          <>
+            <ReactPlayer
+              url={musicData.musicUrl}
+              controls
+              playing={isPlaying}
+              onPlay={() => {
+                stopAfterSecond(
+                  gameOptionData ? gameOptionData.difficulty.time : 1000
+                );
               }}
-              activeButton={activeButtonForJudge}
-              activeEnter={(e: any) => {
-                activeEnter(e);
-              }}
+              width="0"
+              height="0"
+              ref={videoRef}
             />
-            <S.PlayingBtnBoxPosition>
-              {isLose ? (
-                <ResultBtn clickHandler={goResultPage} />
+
+            <S.TalkBoxPosition>
+              {isStart ? (
+                ''
               ) : (
                 <div>
-                  {isWin && !isStart ? (
-                    <NextBtn clickHandler={getMusic} />
+                  {isJudge ? (
+                    <S.TalkBoxContainer>
+                      <img src={talkBoxImg} alt="말풍선" width={200} />
+                      <p className="judgeText">채점중</p>
+                    </S.TalkBoxContainer>
                   ) : (
-                    <div>
-                      {chanceCnt <= 0 ? (
-                        <NoIdeaBtn clickHandler={skipNextMusic} />
-                      ) : (
-                        <div>
-                          {isStart || musicReady ? (
-                            <div className="btnContainer">
-                              {playBtnList.map((item) => (
-                                <PlayBtn
-                                  btnName={item.btnName}
-                                  onClickHandler={item.onClickHandler}
-                                  isBtnDisabled={item.isBtnDisabled}
-                                  key={item.btnName}
-                                />
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="loadingMusic">
-                              ...노래를 불러오는 중
-                            </p>
-                          )}
-                        </div>
-                      )}
-                    </div>
+                    <S.TalkBoxContainer>
+                      <img src={talkBoxImg} alt="말풍선" width={200} />
+                      <p className="judgeText">{isWin ? '정답!' : '오답 X!'}</p>
+                    </S.TalkBoxContainer>
                   )}
                 </div>
               )}
-            </S.PlayingBtnBoxPosition>
-          </S.MiddleContainer>
-          <S.RightSideContainer>
-            <S.TopRightSideContainer>
-              <OptionBox
-                difficulty={
-                  gameOptionData ? gameOptionData.difficulty.title : ''
-                }
+            </S.TalkBoxPosition>
+            <div className="emptyBox" />
+            <S.MiddleContainer>
+              <S.GameStatusExplainContainer>
+                <p className="explainGame">
+                  처음부터{' '}
+                  <span>
+                    {gameOptionData ? gameOptionData.difficulty.time / 1000 : ''}
+                    초간
+                  </span>{' '}
+                  들려드립니다
+                </p>
+              </S.GameStatusExplainContainer>
+              <S.GameStatusExplainContainer>
+                {isPlaying ? (
+                  <p className="gameStatus">...Playing</p>
+                ) : (
+                  <div>
+                    {musicReady ? (
+                      <p className="gameStatus">...wait</p>
+                    ) : (
+                      <p className="gameStatus">...노래를 불러오는 중</p>
+                    )}
+                  </div>
+                )}
+              </S.GameStatusExplainContainer>
+              <DancingChick />
+              <AnswerInput
+                isWin={isWin}
+                isLose={isLose}
+                isJudge={isJudge}
+                inputText={inputText}
+                setInputText={(e: any) => {
+                  setInputText(e);
+                }}
+                activeButton={activeButtonForJudge}
+                activeEnter={(e: any) => {
+                  activeEnter(e);
+                }}
               />
-              <HeartGauge lives={lives} />
-            </S.TopRightSideContainer>
-            <S.bottomRightSideContainer>
-              <ChanceGauge chanceCnt={chanceCnt} />
-            </S.bottomRightSideContainer>
-          </S.RightSideContainer>
-        </>
-      )}
-    </S.Container>
+              <S.PlayingBtnBoxPosition>
+                {isLose ? (
+                  <ResultBtn clickHandler={goResultPage} />
+                ) : (
+                  <div>
+                    {isWin && !isStart ? (
+                      <NextBtn clickHandler={getMusic} />
+                    ) : (
+                      <div>
+                        {chanceCnt <= 0 ? (
+                          <NoIdeaBtn clickHandler={skipNextMusic} />
+                        ) : (
+                          <div>
+                            {isStart || musicReady ? (
+                              <div className="btnContainer">
+                                {playBtnList.map((item) => (
+                                  <PlayBtn
+                                    btnName={item.btnName}
+                                    onClickHandler={item.onClickHandler}
+                                    isBtnDisabled={item.isBtnDisabled}
+                                    key={item.btnName}
+                                  />
+                                ))}
+                              </div>
+                            ) : (
+                              <p className="loadingMusic">
+                                ...노래를 불러오는 중
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </S.PlayingBtnBoxPosition>
+            </S.MiddleContainer>
+            <S.RightSideContainer>
+              <S.TopRightSideContainer>
+                <OptionBox
+                  difficulty={
+                    gameOptionData ? gameOptionData.difficulty.title : ''
+                  }
+                />
+                <HeartGauge lives={lives} />
+              </S.TopRightSideContainer>
+              <S.bottomRightSideContainer>
+                <ChanceGauge chanceCnt={chanceCnt} />
+              </S.bottomRightSideContainer>
+            </S.RightSideContainer>
+          </>
+        )}
+      </S.Container>
+    </motion.div>
   );
 };

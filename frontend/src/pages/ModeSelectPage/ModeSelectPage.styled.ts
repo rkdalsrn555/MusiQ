@@ -15,12 +15,12 @@ export const LogoContainer = styled.div`
   justify-content: center;
   align-items: center;
   position: absolute;
-  height: 25vh; /* viewport height를 사용하여 화면 높이에 맞춤 */
-  width: 100%; /* 화면 너비에 맞게 설정 */
+  height: 25vh; 
+  width: 100%; 
 `;
 
 export const StyledLogo = styled.img`
-  width: 200px; /* 로고의 너비 설정 */
-  max-width: 100%; /* 반응형을 위해 max-width 설정 */
+  width: 200px; 
+  max-width: 100%; 
 `;
 

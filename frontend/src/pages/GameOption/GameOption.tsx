@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 import { SelectLevelBtn, SelectYearBtn } from '../../components/features';
 import { ReactComponent as StartIcon } from '../../assets/svgs/startBtn.svg';
 import { Logo, BackBtn } from '../../components/utils';
@@ -96,36 +97,43 @@ export const GameOption = () => {
   };
 
   return (
-    <S.Wrapper>
-      <BackBtn url="/select-mode" />
-      <S.Container>
-        <Logo size="sm" />
-        <S.OptionContainer>
-          <S.TitleContainer>
-            <ul>
-              {optionList.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </S.TitleContainer>
-          <S.ContentContainer>
-            <SelectLevelBtn
-              levelLists={levelLists}
-              handleClickRadioButton={handleClickRadioButton}
-              levelList={levelList}
-            />
-            <SelectYearBtn
-              checkedList={checkedList}
-              setCheckedList={setCheckedList}
-              isChecked={isChecked}
-              setIsChecked={setIsChecked}
-              checkedItemHandler={checkedItemHandler}
-              checkHandler={checkHandler}
-            />
-          </S.ContentContainer>
-        </S.OptionContainer>
-        <StartIcon width={200} onClick={sendOptionToGamePlayPage} />
-      </S.Container>
-    </S.Wrapper>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1 }}
+    >
+      <S.Wrapper>
+        <BackBtn url="/select-mode" />
+        <S.Container>
+          <Logo size="sm" />
+          <S.OptionContainer>
+            <S.TitleContainer>
+              <ul>
+                {optionList.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </S.TitleContainer>
+            <S.ContentContainer>
+              <SelectLevelBtn
+                levelLists={levelLists}
+                handleClickRadioButton={handleClickRadioButton}
+                levelList={levelList}
+              />
+              <SelectYearBtn
+                checkedList={checkedList}
+                setCheckedList={setCheckedList}
+                isChecked={isChecked}
+                setIsChecked={setIsChecked}
+                checkedItemHandler={checkedItemHandler}
+                checkHandler={checkHandler}
+              />
+            </S.ContentContainer>
+          </S.OptionContainer>
+          <StartIcon width={200} onClick={sendOptionToGamePlayPage} />
+        </S.Container>
+      </S.Wrapper>
+    </motion.div>
   );
 };
