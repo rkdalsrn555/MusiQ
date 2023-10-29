@@ -5,7 +5,7 @@ import muteButton from '../../../assets/svgs/bgmController/muteButton.svg';
 
 export const BgmBtn = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(true); 
+  const [isPlaying, setIsPlaying] = useState(false); 
 
   useEffect(() => {
     if (audioRef.current) {
