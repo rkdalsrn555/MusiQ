@@ -1,7 +1,10 @@
 package com.a608.musiq.domain.music.controller;
 
 import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.ProblemForGuestResponseDto;
 import com.a608.musiq.global.common.response.BaseResponse;
+
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,23 +42,23 @@ public class MusicController {
 				.build());
 	}
 
-	// /**
-	//  * 게스트 모드 문제 출제
-	//  * @param difficulty
-	//  * @param year
-	//  * @see ProblemForGuestResponseDto
-	//  * @return ResponseEntity<BaseResponse<ProblemForGuestResponseDto>>
-	//  */
-	// @GetMapping("/guest/quiz")
-	// private ResponseEntity<BaseResponse<ProblemForGuestResponseDto>> getProblemForGuest(
-	// 	@RequestParam("difficulty") String difficulty,
-	// 	@RequestParam("year") String year){
-	//
-	// 	return ResponseEntity.status(HttpStatus.OK)
-	// 		.body(BaseResponse.<ProblemForGuestResponseDto>builder()
-	// 			.data(musicService.getProblemForGuest(difficulty, year))
-	// 			.build());
-	// }
+	/**
+	 * 게스트 모드 문제 출제
+	 * 
+	 * @param roomId
+	 * @param streak
+	 * @return
+	 */
+	@GetMapping("/guest/quiz")
+	private ResponseEntity<BaseResponse<ProblemForGuestResponseDto>> getProblemForGuest(
+		@RequestParam("room-id") int roomId,
+		@RequestParam("streak") int streak
+	) {
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(BaseResponse.<ProblemForGuestResponseDto>builder()
+				.data(musicService.getProblemForGuest(roomId, streak))
+				.build());
+	}
 
 	/**
 	 * 게스트 모드 정답 채점

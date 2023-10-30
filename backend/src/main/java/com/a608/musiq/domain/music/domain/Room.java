@@ -5,8 +5,10 @@ import java.util.List;
 import com.a608.musiq.domain.music.data.Difficulty;
 
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
+@Getter
 public class Room {
 	private static final int STREAK_START_NUMBER = 0;
 
@@ -21,4 +23,6 @@ public class Room {
 			.difficulty(difficulty)
 			.build();
 	}
+
+
 }

@@ -34,7 +34,7 @@ public class MusicServiceImpl implements MusicService {
 	private final MusicRepository musicRepository;
 
 	/**
-	 * 게스트모드 방 생성
+	 * 게스트 모드 방 생성
 	 *
 	 * @param difficulty
 	 * @param year
@@ -51,6 +51,22 @@ public class MusicServiceImpl implements MusicService {
 		int roomId = roomManager.addRoom(room);
 
 		return CreateRoomResponseDto.from(roomId, musicList.size());
+	}
+
+	/**
+	 * 게스트 모드 문제 출제
+	 *
+	 * @param roomId
+	 * @param streak
+	 * @return
+	 */
+	@Override
+	public ProblemForGuestResponseDto getProblemForGuest(int roomId, int streak) {
+		Room room = roomManager.getRooms().get(roomId);
+
+		Music music = room.getMusicList().get(streak);
+
+		return ProblemForGuestResponseDto.create(room.getDifficulty(), music.getId(), music.getUrl());
 	}
 
 	/**
