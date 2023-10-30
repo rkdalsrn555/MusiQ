@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import modalBg from '../../../assets/img/modalBg.png';
 
 export const GreyBackground = styled.div`
   background: rgba(0, 0, 0, 0.7);
@@ -21,14 +22,15 @@ export const ModalContainer = styled(motion.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 32px;
   width: 618px;
   min-height: 252px;
   border-radius: 12px;
   text-align: center;
   padding: 24px 32px;
-  background-color: #fff;
+  background: url(${modalBg});
+  background-size: cover;
 `;
 
 export const ModalContent = styled.div`
@@ -64,12 +66,16 @@ export const ModalBtn = styled.button<{ result: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 232px;
+  width: 150px;
   height: 56px;
-  border: none;
-  border-radius: 100px;
+  border: 1px solid #23262f;
   font-size: 20px;
-  background-color: ${(props) =>
-    props.result === 'true' ? '#3772FF' : '#F1F1F1'};
-  color: ${(props) => (props.result === 'true' ? '#fff' : '#23262F')};
+  color: #23262f;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+
+  &:hover {
+    background-color: #23262f;
+    color: #fff;
+  }
 `;

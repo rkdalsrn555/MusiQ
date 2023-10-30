@@ -26,6 +26,11 @@ type GameOptionDataType = {
     time: number;
   };
   yearList: string[];
+  gameRoomData: {
+    roomId: number;
+    streak: number;
+    problems: number;
+  };
 };
 
 type musicDataType = {
@@ -56,6 +61,7 @@ export const GamePlaying = () => {
   });
   const [loading, setLoading] = useState<boolean>(true);
   const [gameOptionData, setGameOptionData] = useState<GameOptionDataType>();
+  const [streak, setStreak] = useState<number>(0);
   const [score, setScore] = useState<number>(0);
   const [lives, setLives] = useState<number>(3); // 생명
   const [chanceCnt, setChanceCnt] = useState<number>(3); // 기회
@@ -63,7 +69,6 @@ export const GamePlaying = () => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false); // 게임중인지, 아닌지
   const [isJudge, setIsJudge] = useState<boolean>(false); // 채점중인지 아닌지
   const [musicReady, setMusicReady] = useState<boolean>(true); // 노래가 준비되었는지, 아닌지
-  const [currentMusicClick, setCurrentMusicClick] = useState<number>(0);
   const [isLose, setIsLose] = useState<boolean>(false); // 졌는지, 안졌는지(결과창으로 라우팅 시 필요)
   const isLoseRef = useRef(false);
   const [isStart, setIsStart] = useState<boolean>(true);
@@ -129,7 +134,7 @@ export const GamePlaying = () => {
     const resultData = {
       mode: location.state.checkDifficulty.title,
       selectYear: location.state.yearCheckedList,
-      correctAnswerCnt: score,
+      correctAnswerCnt: streak,
     };
     navigate('/guest/game-result', { state: resultData });
   };
@@ -143,7 +148,7 @@ export const GamePlaying = () => {
   // 채점
   const getCheckAnswer = async () => {
     const res = await axios.get(
-      `${process.env.REACT_APP_BASE_URL}/music/guest/result?music-id=${musicData.musicId}&answer=${inputText}`
+      `${process.env.REACT_APP_BASE_URL}/music/guest/result?room-id=${location.state.gameRoomData.roomId}&streak=${streak}&answer=${inputText}`
     );
 
     return res;
@@ -153,11 +158,7 @@ export const GamePlaying = () => {
   const getMusic = async () => {
     await axios
       .get(
-        `${
-          process.env.REACT_APP_BASE_URL
-        }/music/guest/quiz?difficulty=${location.state.checkDifficulty.title.toUpperCase()}&year=${location.state.yearCheckedList.join(
-          ' '
-        )}`
+        `${process.env.REACT_APP_BASE_URL}/music/guest/quiz?room-id=${location.state.gameRoomData.roomId}&streak=${streak}`
       )
       .then((res) => {
         setMusicData({
@@ -191,13 +192,16 @@ export const GamePlaying = () => {
           isWinRef.current = true;
           setScore((prev) => prev + 1);
           setIsJudge(false);
+          setStreak(res.data.data.streak);
         } else if (lives === 0) {
           setIsLose(true);
           isLoseRef.current = true;
           setIsJudge(false);
+          setStreak(res.data.data.streak);
         } else {
           setLives((prev) => prev - 1);
           setIsJudge(false);
+          setStreak(res.data.data.streak);
         }
       })
       .catch((err) => console.log(err));
@@ -220,7 +224,9 @@ export const GamePlaying = () => {
     setGameOptionData({
       difficulty: location.state.checkDifficulty,
       yearList: location.state.yearCheckedList,
+      gameRoomData: location.state.gameRoomData,
     });
+    setStreak(location.state.gameRoomData.streak);
     setLoading(false);
 
     getMusic();
@@ -238,23 +244,16 @@ export const GamePlaying = () => {
         playMusic(FirstMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
-        setCurrentMusicClick(1);
       }
       if (e.key === 'ArrowDown') {
         playMusic(SecondMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
-        setCurrentMusicClick(2);
       }
       if (e.key === 'ArrowRight') {
         playMusic(ThirdMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
-        setCurrentMusicClick(3);
-      }
-      if (e.keyCode === 32) {
-        getMusic();
-        setCurrentMusicClick(0);
       }
     };
 
