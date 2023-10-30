@@ -133,13 +133,15 @@ public class MusicServiceImpl implements MusicService {
 	 */
 	@Override
 	public GradeAnswerResponseDto gradeAnswer(Integer roomId, Integer streak, String answer) {
-		String title = roomManager.getRooms().get(roomId).getMusicList().get(streak).getTitle();
+		Room room = roomManager.getRooms().get(roomId);
+		Music music = room.getMusicList().get(streak);
 
 		GradeAnswerResponseDto gradeAnswerResponseDto;
-		if (answer.equals(title)) {
-			gradeAnswerResponseDto = GradeAnswerResponseDto.of(Boolean.TRUE);
+		if (answer.equals(music.getTitle())) {
+			room.addStreak();
+			gradeAnswerResponseDto = GradeAnswerResponseDto.from(Boolean.TRUE, room.getStreak(), music);
 		} else {
-			gradeAnswerResponseDto = GradeAnswerResponseDto.of(Boolean.FALSE);
+			gradeAnswerResponseDto = GradeAnswerResponseDto.from(Boolean.FALSE, room.getStreak(), music);
 		}
 
 		return gradeAnswerResponseDto;

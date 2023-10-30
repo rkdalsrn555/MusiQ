@@ -24,5 +24,9 @@ public class Room {
 			.build();
 	}
 
+	public void addStreak() {
+		this.streak++;
+	}
+
 
 }
