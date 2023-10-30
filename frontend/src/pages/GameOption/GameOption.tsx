@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { useRecoilState } from 'recoil';
+import { TempLocationStateGameInfo } from '../../atoms/atoms';
 import { SelectLevelBtn, SelectYearBtn } from '../../components/features';
 import { ReactComponent as StartIcon } from '../../assets/svgs/startBtn.svg';
 import { Logo, BackBtn, Modal } from '../../components/utils';
@@ -18,6 +20,9 @@ const levelLists = [
 ];
 
 export const GameOption = () => {
+  const [locationState, setLocationState] = useRecoilState(
+    TempLocationStateGameInfo
+  );
   const [modalData, setModalData] = useState<{
     data: {
       title: string;
@@ -122,6 +127,11 @@ export const GameOption = () => {
           yearCheckedList: checkedList,
           gameRoomData: res.data,
         };
+        setLocationState({
+          difficulty: levelList,
+          yearList: checkedList,
+          gameRoomData: res.data,
+        });
         navigate('/guest/game-play', { state: selectOptionList });
       })
       .catch((err) => {

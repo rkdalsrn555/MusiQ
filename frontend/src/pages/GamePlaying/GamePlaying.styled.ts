@@ -126,6 +126,24 @@ export const PlayingBtnBoxPosition = styled.div`
 `;
 
 export const AnswerYouTubePlayerPosition = styled.div`
-  /* z-index: 9; */
   transition: opacity 0.2s linear;
+  width: 300px;
+  height: 420px;
+  position: relative;
+  padding-top: 64px;
+
+  & p {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 300px;
+    padding: 0.5rem;
+    line-height: 30px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 0.5rem;
+    text-align: center;
+  }
 `;
