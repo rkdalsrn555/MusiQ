@@ -6,7 +6,8 @@ import lombok.Getter;
 
 @Getter
 public enum MusicExceptionInfo {
-	NOT_FOUND_MUSIC(HttpStatus.NOT_FOUND, 1200, "노래를 찾을 수 없습니다.");
+	NOT_FOUND_MUSIC(HttpStatus.NOT_FOUND, 1200, "노래를 찾을 수 없습니다."),
+	INVALID_YEAR(HttpStatus.NOT_FOUND, 1201, "해당 연도의 찾을 수 없습니다.");
 
 	private final HttpStatus status;
 	private final Integer code;
