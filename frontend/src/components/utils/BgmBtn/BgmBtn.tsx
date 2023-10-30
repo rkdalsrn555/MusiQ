@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { StyledBgmBtn } from './BgmBtn.styled';
 import playButton from '../../../assets/svgs/bgmController/playButton.svg';
 import muteButton from '../../../assets/svgs/bgmController/muteButton.svg';
@@ -6,12 +6,6 @@ import muteButton from '../../../assets/svgs/bgmController/muteButton.svg';
 export const BgmBtn = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.play();
-    }
-  }, []);
 
   const handlePlayPause = () => {
     if (audioRef.current) {
@@ -33,7 +27,7 @@ export const BgmBtn = () => {
 
       <StyledBgmBtn type="button" onClick={handlePlayPause}>
         <img
-          src={isPlaying ? playButton : muteButton}
+          src={isPlaying ? playButton : muteButton} // 이미지 순서를 바꿨습니다.
           alt={isPlaying ? 'Mute' : 'Play'}
           width={120}
         />
