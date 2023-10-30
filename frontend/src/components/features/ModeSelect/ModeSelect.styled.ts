@@ -62,13 +62,13 @@ export const StyledGuideBtn = styled.button`
 
 export const StyledGuideText = styled.div`
   position: absolute;
-  font-size: 30px; /* 글씨 크기 조정 */
-  background-color: rgba(0, 0, 0, 0.5); /* 반투명한 검은색 배경 */
-  color: white; /* 텍스트 색상 */
-  padding: 10px; /* 패딩 추가 */
-  border-radius: 5px; /* 모서리 둥글게 */
-  top: 50%; /* 상단에서 50% 떨어트리기 */
-  left: 50%; /* 왼쪽에서 50% 떨어트리기 */
-  transform: translate(-50%, -50%); /* 중앙 정렬 */
+  font-size: 30px; 
+  background-color: rgba(0, 0, 0, 0.5); 
+  color: white; 
+  padding: 10px; 
+  border-radius: 5px; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%); 
   line-height: 1.5;
 `;

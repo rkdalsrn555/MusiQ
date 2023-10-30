@@ -37,19 +37,19 @@ export const ModeSelectCarousel: React.FC = () => {
     // 토큰 존재 여부에 따라 다른 화면 보여주기
     {
       id: 1,
-      text: '혼자 게임을 즐길 수 있는 모드입니다. 많이 맞춰서 랭킹 상위권에 도전해보세요.',
+      text: '혼자 게임을 즐길 수 있는 모드입니다. 많이 맞혀서 랭킹 상위권에 도전해보세요.',
       image: isLoggedIn ? singleModeChar : singleLock,
       link: '/single/game-option',
     },
     {
       id: 2,
-      text: '로그인 없이 가볍게 즐길 수 있는 모드입니다. 퀴즈를 맞추고 친구들에게 기록을 공유해보세요.',
+      text: '로그인 없이 가볍게 즐길 수 있는 모드입니다. 퀴즈를 맞히고 친구들에게 기록을 공유해보세요.',
       image: isLoggedIn ? guestLock : guestModeChar,
       link: '/guest/game-option',
     },
     {
       id: 3,
-      text: '최대 6인과 함께 게임을 즐길 수 있는 모드입니다. 멀리 떨어진 친구들과 즐기거나, 빠른 입장을 통해 다른 사람들과 경쟁해보세요.',
+      text: '최대 6인과 함께 게임을 즐길 수 있는 모드입니다. 친구를 초대하거나, 빠른 입장을 통해 다른 사람들과 경쟁해보세요.',
       image: isLoggedIn ? multiModeChar : multiLock,
       link: '/multi-mode',
     },

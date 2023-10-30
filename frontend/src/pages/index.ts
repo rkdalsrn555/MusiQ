@@ -4,3 +4,4 @@ export * from './GameOption';
 export * from './SingleModePage/SingleModePage';
 export * from './GamePlaying';
 export * from './ResultPage/ResultPage';
+export * from './MobilePage';
