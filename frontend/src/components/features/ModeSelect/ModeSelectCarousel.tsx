@@ -6,6 +6,8 @@ import {
   ButtonContainer,
   RotatedImage,
   StyledImage,
+  StyledGuideBtn,
+  StyledGuideText,
 } from './ModeSelect.styled';
 import nextButton from '../../../assets/svgs/modeSelectSvgs/nextButton.svg';
 import EnterButton from '../../../assets/svgs/modeSelectSvgs/Enter.svg';
@@ -17,6 +19,7 @@ import singleLock from '../../../assets/img/modeSelect/singleLock.png';
 import guestLock from '../../../assets/img/modeSelect/guestLock.png';
 import multiLock from '../../../assets/img/modeSelect/multiLock.png';
 import mzLock from '../../../assets/img/modeSelect/mzLock.png';
+import guideBtn from '../../../assets/svgs/gameGuideButton.svg';
 
 export const ModeSelectCarousel: React.FC = () => {
   const [back, setBack] = useState<boolean>(false);
@@ -28,32 +31,34 @@ export const ModeSelectCarousel: React.FC = () => {
   const [visible, setVisible] = useState<number>(accessToken ? 0 : 1); // accessToken이 없을 때 visible의 초기값을 1로 설정하여 2번 콘텐츠가 먼저 보이게 함
   const isLoggedIn = Boolean(accessToken); // 로그인 검증
 
+  const [showDescription, setShowDescription] = useState<number | null>(null); // 설명을 보여줄 아이템의 인덱스
+
   const [contents, setContents] = useState([
     // 토큰 존재 여부에 따라 다른 화면 보여주기
     {
       id: 1,
-      text: '',
+      text: '혼자 게임을 즐길 수 있는 모드입니다. 많이 맞춰서 랭킹 상위권에 도전해보세요.',
       image: isLoggedIn ? singleModeChar : singleLock,
       link: '/single/game-option',
     },
     {
       id: 2,
-      text: '',
+      text: '로그인 없이 가볍게 즐길 수 있는 모드입니다. 퀴즈를 맞추고 친구들에게 기록을 공유해보세요.',
       image: isLoggedIn ? guestLock : guestModeChar,
       link: '/guest/game-option',
     },
-    // {
-    //   id: 3,
-    //   text: '',
-    //   image: isLoggedIn ? multiModeChar : multiLock,
-    //   link: '/multi-mode',
-    // },
-    // {
-    //   id: 4,
-    //   text: '',
-    //   image: isLoggedIn ? mzModeChar : mzLock,
-    //   link: '/mz-mode',
-    // },
+    {
+      id: 3,
+      text: '최대 6인과 함께 게임을 즐길 수 있는 모드입니다. 멀리 떨어진 친구들과 즐기거나, 빠른 입장을 통해 다른 사람들과 경쟁해보세요.',
+      image: isLoggedIn ? multiModeChar : multiLock,
+      link: '/multi-mode',
+    },
+    {
+      id: 4,
+      text: '온 가족이 즐길 수 있는 모드입니다. 손을 들고 정답을 외쳐보세요!',
+      image: isLoggedIn ? mzModeChar : mzLock,
+      link: '/mz-mode',
+    },
   ]);
   const navigateToLink = () => {
     const content = contents[visible];
@@ -181,6 +186,19 @@ export const ModeSelectCarousel: React.FC = () => {
               transition={{ duration: 0.5 }}
             >
               <StyledImage src={content.image} alt={content.text} />
+              {/* 모드 가이드(설명) 버튼 */}
+              <StyledGuideBtn
+                type="button"
+                onMouseEnter={() => setShowDescription(index)}
+                onMouseLeave={() => setShowDescription(null)}
+              >
+                <img src={guideBtn} alt="game mode guide button" width={30} />
+              </StyledGuideBtn>
+              {showDescription === index && (
+                <StyledGuideText className="description">
+                  {content.text}
+                </StyledGuideText>
+              )}
             </Box>
           );
         })}
