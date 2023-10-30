@@ -61,6 +61,10 @@ const Container = styled.div`
   }
 `;
 
+type OwnProps = {
+  explainList: { isTitle: boolean; content: string }[];
+};
+
 export const GameExplain = () => (
   <Container>
     <HoverImg className="hoverImg">

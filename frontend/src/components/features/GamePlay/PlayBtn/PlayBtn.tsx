@@ -9,7 +9,7 @@ const PlayButtonStyle = styled.button`
   font-size: 2rem;
   font-weight: bold;
   color: #fff;
-  z-index: 99;
+  z-index: 9;
 
   &:hover {
     background-color: #58d158;
