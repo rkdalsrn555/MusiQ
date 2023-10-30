@@ -108,6 +108,7 @@ export const PlayingBtnBoxPosition = styled.div`
 
   & div {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 1rem;
@@ -116,5 +117,15 @@ export const PlayingBtnBoxPosition = styled.div`
       font-size: 1rem;
       font-family: 'Galmuri11', sans-serif;
     }
+
+    & .btnContainer {
+      display: flex;
+      flex-direction: row;
+    }
   }
+`;
+
+export const AnswerYouTubePlayerPosition = styled.div`
+  /* z-index: 9; */
+  transition: opacity 0.2s linear;
 `;

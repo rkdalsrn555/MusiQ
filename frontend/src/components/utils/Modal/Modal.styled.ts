@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import modalBg from '../../../assets/img/modalBg.png';
 
 export const GreyBackground = styled.div`
   background: rgba(0, 0, 0, 0.7);
@@ -14,21 +15,22 @@ export const GreyBackground = styled.div`
 
 export const ModalContainer = styled(motion.div)`
   position: absolute;
-  top: 20%;
+  top: 30%;
   left: 50%;
   transform: translate3d(-50%, 0, 0);
   z-index: 9999;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 32px;
   width: 618px;
   min-height: 252px;
   border-radius: 12px;
   text-align: center;
   padding: 24px 32px;
-  background-color: #fff;
+  background: url(${modalBg});
+  background-size: cover;
 `;
 
 export const ModalContent = styled.div`
@@ -44,10 +46,10 @@ export const ModalContent = styled.div`
     height: 80px;
     border-radius: 50%;
     background-color: #dfdfe6;
-    font-size: 40px;
     margin-bottom: 16px;
 
     & p {
+      font-size: 2rem;
       padding: 0;
       margin: 0;
     }
@@ -59,16 +61,21 @@ export const ModalContent = styled.div`
   }
 `;
 
-export const ModalBtn = styled.button<{ result: boolean }>`
+export const ModalBtn = styled.button<{ result: string }>`
   z-index: 999;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 232px;
+  width: 150px;
   height: 56px;
-  border: none;
-  border-radius: 100px;
+  border: 1px solid #23262f;
   font-size: 20px;
-  background-color: ${(props) => (props.result ? '#3772FF' : '#F1F1F1')};
-  color: ${(props) => (props.result ? '#fff' : '#23262F')};
+  color: #23262f;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+
+  &:hover {
+    background-color: #23262f;
+    color: #fff;
+  }
 `;

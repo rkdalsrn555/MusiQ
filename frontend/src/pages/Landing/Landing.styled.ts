@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const LandingPageContainer = styled.div`
+  position: relative;
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -32,4 +33,14 @@ export const LandingPageContainer = styled.div`
     font-size: 1.5rem;
     font-weight: bold;
   }
+`;
+
+export const Version = styled.div`
+  position: absolute;
+  bottom: 5%;
+  right: 5%;
+  font-size: 1.7rem;
+  font-family: 'Galmuri11', sans-serif;
+  font-weight: bold;
+  color: rgba(25, 25, 25, 0.9);
 `;
