@@ -42,18 +42,18 @@ export const ModeSelectCarousel: React.FC = () => {
       image: isLoggedIn ? guestLock : guestModeChar,
       link: '/guest/game-option',
     },
-    {
-      id: 3,
-      text: '',
-      image: isLoggedIn ? multiModeChar : multiLock,
-      link: '/multi-mode',
-    },
-    {
-      id: 4,
-      text: '',
-      image: isLoggedIn ? mzModeChar : mzLock,
-      link: '/mz-mode',
-    },
+    // {
+    //   id: 3,
+    //   text: '',
+    //   image: isLoggedIn ? multiModeChar : multiLock,
+    //   link: '/multi-mode',
+    // },
+    // {
+    //   id: 4,
+    //   text: '',
+    //   image: isLoggedIn ? mzModeChar : mzLock,
+    //   link: '/mz-mode',
+    // },
   ]);
   const navigateToLink = () => {
     const content = contents[visible];
