@@ -38,7 +38,6 @@ const SecondMusicStartTime = 60;
 const ThirdMusicStartTime = 120;
 
 export const GamePlaying = () => {
-  // useBeforeunload((event: any) => event.preventDefault()); // 새로고침 막기
   const [modalData, setModalData] = useState<{
     data: {
       title: string;
@@ -65,8 +64,10 @@ export const GamePlaying = () => {
   const [isJudge, setIsJudge] = useState<boolean>(false); // 채점중인지 아닌지
   const [musicReady, setMusicReady] = useState<boolean>(true); // 노래가 준비되었는지, 아닌지
   const [isLose, setIsLose] = useState<boolean>(false); // 졌는지, 안졌는지(결과창으로 라우팅 시 필요)
+  const isLoseRef = useRef(false);
   const [isStart, setIsStart] = useState<boolean>(true);
   const [isWin, setIsWin] = useState<boolean>(false);
+  const isWinRef = useRef(false);
   const videoRef = useRef<ReactPlayer>(null);
   const [btn1isDisabled, setIsBtn1Disabled] = useState<boolean>(false);
   const [btn2isDisabled, setIsBtn2Disabled] = useState<boolean>(false);
@@ -135,6 +136,7 @@ export const GamePlaying = () => {
   // 모르겠어요 클릭 시 졌다고 알려주기
   const skipNextMusic = () => {
     setIsLose(true);
+    isLoseRef.current = true;
   };
 
   // 채점
@@ -169,6 +171,7 @@ export const GamePlaying = () => {
         chanceCntRef.current = 3;
         setLives(3);
         setIsWin(false);
+        isWinRef.current = false;
         setIsStart(true);
       })
       .catch((err) => {
@@ -184,10 +187,12 @@ export const GamePlaying = () => {
       .then(async (res) => {
         if (res.data.data.isCorrect) {
           setIsWin(true);
+          isWinRef.current = true;
           setScore((prev) => prev + 1);
           setIsJudge(false);
         } else if (lives === 0) {
           setIsLose(true);
+          isLoseRef.current = true;
           setIsJudge(false);
         } else {
           setLives((prev) => prev - 1);
@@ -220,8 +225,12 @@ export const GamePlaying = () => {
     getMusic();
 
     const handleKeyUp = (e: any) => {
-      console.log(e.target.nodeName);
-      if (chanceCntRef.current <= 0 || e.target.nodeName === 'INPUT') {
+      if (
+        chanceCntRef.current <= 0 ||
+        e.target.nodeName === 'INPUT' ||
+        isWinRef.current ||
+        isLoseRef.current
+      ) {
         return;
       }
       if (e.key === 'ArrowLeft') {
@@ -269,7 +278,11 @@ export const GamePlaying = () => {
       transition={{ duration: 1 }}
     >
       <S.Container>
-        <Modal {...modalData} isToggled={isToggled} setIsToggled={setIsToggled} />
+        <Modal
+          {...modalData}
+          isToggled={isToggled}
+          setIsToggled={setIsToggled}
+        />
         <BackBtn
           url="/guest/game-option"
           handleClick={() => {
@@ -333,7 +346,9 @@ export const GamePlaying = () => {
                 <p className="explainGame">
                   처음부터{' '}
                   <span>
-                    {gameOptionData ? gameOptionData.difficulty.time / 1000 : ''}
+                    {gameOptionData
+                      ? gameOptionData.difficulty.time / 1000
+                      : ''}
                     초간
                   </span>{' '}
                   들려드립니다
