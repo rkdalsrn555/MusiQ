@@ -4,7 +4,7 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { SelectLevelBtn, SelectYearBtn } from '../../components/features';
 import { ReactComponent as StartIcon } from '../../assets/svgs/startBtn.svg';
-import { Logo, BackBtn } from '../../components/utils';
+import { Logo, BackBtn, Modal } from '../../components/utils';
 import * as S from './GameOption.styled';
 
 const EASYTIME = 2000;
@@ -18,6 +18,16 @@ const levelLists = [
 ];
 
 export const GameOption = () => {
+  const [modalData, setModalData] = useState<{
+    data: {
+      title: string;
+      message: string;
+    };
+    noBtnClick?: () => void | null;
+    yesBtnClick?: () => void | null;
+  }>({ data: { title: '', message: '' } });
+  const [isToggled, setIsToggled] = useState<boolean>(false); // 모달 창 toggle
+
   const navigate = useNavigate();
   const location = useLocation();
   const [checkedList, setCheckedList] = useState<string[]>([]);
@@ -93,7 +103,8 @@ export const GameOption = () => {
         )}`
       )
       .then((response) => response.data)
-      .catch((err) => console.log(err));
+      .catch((err) => err);
+
     return res;
   };
 
@@ -104,21 +115,30 @@ export const GameOption = () => {
       return;
     }
 
-    const gameRoomData = await getGameRoomData();
-
-    const selectOptionList = {
-      checkDifficulty: levelList,
-      yearCheckedList: checkedList,
-      gameRoomData: gameRoomData.data,
-    };
-
-    if (gameRoomData) {
-      navigate('/guest/game-play', { state: selectOptionList });
-    } else {
-      alert('방 만들기 실패');
-    }
+    await getGameRoomData()
+      .then((res) => {
+        const selectOptionList = {
+          checkDifficulty: levelList,
+          yearCheckedList: checkedList,
+          gameRoomData: res.data,
+        };
+        navigate('/guest/game-play', { state: selectOptionList });
+      })
+      .catch((err) => {
+        setIsToggled(true);
+        setModalData({
+          data: {
+            title: '😥',
+            message: '게임 방 만들기에 실패했어요',
+          },
+          yesBtnClick: () => {
+            setIsToggled(false);
+          },
+        });
+      });
   };
 
+  /* eslint-disable react/jsx-props-no-spreading */
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -126,6 +146,7 @@ export const GameOption = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 1 }}
     >
+      <Modal {...modalData} isToggled={isToggled} setIsToggled={setIsToggled} />
       <S.Wrapper>
         <BackBtn url="/select-mode" />
         <S.Container>

@@ -221,21 +221,24 @@ export const GamePlaying = () => {
   };
 
   useEffect(() => {
-    setGameOptionData({
-      difficulty: location.state.checkDifficulty,
-      yearList: location.state.yearCheckedList,
-      gameRoomData: location.state.gameRoomData,
-    });
-    setStreak(location.state.gameRoomData.streak);
-    setLoading(false);
+    if (!location.state) {
+      navigate('/');
+    } else {
+      setGameOptionData({
+        difficulty: location.state?.checkDifficulty,
+        yearList: location.state?.yearCheckedList,
+        gameRoomData: location.state?.gameRoomData,
+      });
+      setStreak(location.state?.gameRoomData.streak);
+      setLoading(false);
 
-    getMusic();
+      getMusic();
+    }
 
     const handleKeyUp = (e: any) => {
       if (
         chanceCntRef.current <= 0 ||
         e.target.nodeName === 'INPUT' ||
-        isWinRef.current ||
         isLoseRef.current
       ) {
         return;
@@ -255,15 +258,20 @@ export const GamePlaying = () => {
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
       }
+      if (e.keyCode === 32) {
+        getMusic();
+      }
     };
 
     const preventRefresh = (e: BeforeUnloadEvent) => {
       e.preventDefault();
       e.returnValue = '';
+      navigate('/');
     };
 
     window.addEventListener('keyup', handleKeyUp);
     window.addEventListener('beforeunload', preventRefresh);
+
     return () => {
       window.removeEventListener('keyup', handleKeyUp);
       window.removeEventListener('beforeunload', preventRefresh);
@@ -274,7 +282,9 @@ export const GamePlaying = () => {
   // 맞았으면 다음문제로 가기!
   // 틀렸으면 하트깎기
   /* eslint-disable react/jsx-props-no-spreading */
-  return (
+  return !location.state ? (
+    <div />
+  ) : (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -384,6 +394,7 @@ export const GamePlaying = () => {
                     width="300px"
                     height="390px"
                     ref={videoRef}
+                    muted={false}
                   />
                 </S.AnswerYouTubePlayerPosition>
               ) : (
