@@ -63,6 +63,7 @@ export const GamePlaying = () => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false); // 게임중인지, 아닌지
   const [isJudge, setIsJudge] = useState<boolean>(false); // 채점중인지 아닌지
   const [musicReady, setMusicReady] = useState<boolean>(true); // 노래가 준비되었는지, 아닌지
+  const [currentMusicClick, setCurrentMusicClick] = useState<number>(0);
   const [isLose, setIsLose] = useState<boolean>(false); // 졌는지, 안졌는지(결과창으로 라우팅 시 필요)
   const isLoseRef = useRef(false);
   const [isStart, setIsStart] = useState<boolean>(true);
@@ -237,19 +238,23 @@ export const GamePlaying = () => {
         playMusic(FirstMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
+        setCurrentMusicClick(1);
       }
       if (e.key === 'ArrowDown') {
         playMusic(SecondMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
+        setCurrentMusicClick(2);
       }
       if (e.key === 'ArrowRight') {
         playMusic(ThirdMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
+        setCurrentMusicClick(3);
       }
       if (e.keyCode === 32) {
         getMusic();
+        setCurrentMusicClick(0);
       }
     };
 
@@ -307,19 +312,23 @@ export const GamePlaying = () => {
           <p>게임 준비중...</p>
         ) : (
           <>
-            <ReactPlayer
-              url={musicData.musicUrl}
-              controls
-              playing={isPlaying}
-              onPlay={() => {
-                stopAfterSecond(
-                  gameOptionData ? gameOptionData.difficulty.time : 1000
-                );
-              }}
-              width="0"
-              height="0"
-              ref={videoRef}
-            />
+            {(isWin && !isStart) || isLose ? (
+              ''
+            ) : (
+              <ReactPlayer
+                url={musicData.musicUrl}
+                controls
+                playing={isPlaying}
+                onPlay={() => {
+                  stopAfterSecond(
+                    gameOptionData ? gameOptionData.difficulty.time : 1000
+                  );
+                }}
+                width="0"
+                height="0"
+                ref={videoRef}
+              />
+            )}
 
             <S.TalkBoxPosition>
               {isStart ? (
@@ -367,20 +376,36 @@ export const GamePlaying = () => {
                   </div>
                 )}
               </S.GameStatusExplainContainer>
-              <DancingChick />
-              <AnswerInput
-                isWin={isWin}
-                isLose={isLose}
-                isJudge={isJudge}
-                inputText={inputText}
-                setInputText={(e: any) => {
-                  setInputText(e);
-                }}
-                activeButton={activeButtonForJudge}
-                activeEnter={(e: any) => {
-                  activeEnter(e);
-                }}
-              />
+              {(isWin && !isStart) || isLose ? (
+                <S.AnswerYouTubePlayerPosition>
+                  <ReactPlayer
+                    url={musicData.musicUrl}
+                    controls
+                    playing
+                    width="300px"
+                    height="390px"
+                    ref={videoRef}
+                  />
+                </S.AnswerYouTubePlayerPosition>
+              ) : (
+                <>
+                  <DancingChick />
+                  <AnswerInput
+                    isWin={isWin}
+                    isLose={isLose}
+                    isJudge={isJudge}
+                    inputText={inputText}
+                    setInputText={(e: any) => {
+                      setInputText(e);
+                    }}
+                    activeButton={activeButtonForJudge}
+                    activeEnter={(e: any) => {
+                      activeEnter(e);
+                    }}
+                  />
+                </>
+              )}
+
               <S.PlayingBtnBoxPosition>
                 {isLose ? (
                   <ResultBtn clickHandler={goResultPage} />

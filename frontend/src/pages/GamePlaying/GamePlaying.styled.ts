@@ -124,3 +124,8 @@ export const PlayingBtnBoxPosition = styled.div`
     }
   }
 `;
+
+export const AnswerYouTubePlayerPosition = styled.div`
+  /* z-index: 9; */
+  transition: opacity 0.2s linear;
+`;
