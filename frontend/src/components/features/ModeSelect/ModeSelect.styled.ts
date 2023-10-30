@@ -42,3 +42,36 @@ export const StyledImage = styled.img`
   height: 30rem;
   border-radius: 2.5rem;
 `;
+<<<<<<< Updated upstream
+=======
+
+export const StyledGuideBtn = styled.button`
+  position: absolute;
+  width: 6rem;
+  height: 6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #C8C8C8;
+  border-radius: 50%;
+  margin-top: 35%;
+  margin-right: 80%;
+
+  &:hover {
+    background-color: #FAE100;
+  }
+`;
+
+export const StyledGuideText = styled.div`
+  position: absolute;
+  font-size: 30px; 
+  background-color: rgba(0, 0, 0, 0.5); 
+  color: white; 
+  padding: 10px; 
+  border-radius: 5px; 
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  line-height: 1.5;
+`;
+>>>>>>> Stashed changes

@@ -9,6 +9,7 @@ import {
   GameOption,
   GamePlaying,
   ResultPage,
+  MobilePage,
 } from './pages';
 
 const Router = () => {
@@ -24,6 +25,7 @@ const Router = () => {
         <Route path="/single-mode" element={<SingleModePage />} />
         <Route path="/:mode/game-play" element={<GamePlaying />} />
         <Route path="/:mode/game-result" element={<ResultPage />} />
+        <Route path="/mobile-restriction" element={<MobilePage />} /> 
       </Routes>
       {isMusicRoute && <BgmBtn />}
     </AnimatePresence>
