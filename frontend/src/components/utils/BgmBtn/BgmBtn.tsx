@@ -1,17 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { StyledBgmBtn } from './BgmBtn.styled';
-import playButton from '../../../assets/svgs/bgmController/playButton.svg'; 
-import muteButton from '../../../assets/svgs/bgmController/muteButton.svg'; 
+import playButton from '../../../assets/svgs/bgmController/playButton.svg';
+import muteButton from '../../../assets/svgs/bgmController/muteButton.svg';
 
 export const BgmBtn = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false); 
+  const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.play(); 
+      audioRef.current.play();
     }
-  }, []); 
+  }, []);
 
   const handlePlayPause = () => {
     if (audioRef.current) {
@@ -31,11 +31,11 @@ export const BgmBtn = () => {
         <track kind="captions" />
       </audio>
 
-      <StyledBgmBtn type='button' onClick={handlePlayPause}>
+      <StyledBgmBtn type="button" onClick={handlePlayPause}>
         <img
           src={isPlaying ? playButton : muteButton}
           alt={isPlaying ? 'Mute' : 'Play'}
-          width={150}
+          width={120}
         />
       </StyledBgmBtn>
     </div>
