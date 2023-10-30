@@ -78,7 +78,6 @@ export const GameExplain = () => (
       <p>⬇ : 중간 버튼</p>
       <p>➡ : 끝 버튼</p>
       <p>enter : 정답창 활성화 및 정답제출</p>
-      <p>spacebar : 다음문제 출제</p>
     </ExplainBox>
   </Container>
 );

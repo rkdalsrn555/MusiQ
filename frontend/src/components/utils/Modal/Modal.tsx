@@ -28,9 +28,6 @@ export const Modal = (props: OwnProps) => {
             exit={{ y: 100, opacity: 0 }}
           >
             <S.ModalContent>
-              <div className="imojiContainer">
-                <p>{data.title}</p>
-              </div>
               {data.message.split('.').map((item) =>
                 item !== '' ? (
                   <p className="contentText" key={item}>
@@ -41,7 +38,7 @@ export const Modal = (props: OwnProps) => {
                 )
               )}
             </S.ModalContent>
-            <div style={{ display: 'flex', gap: '16px' }}>
+            <div style={{ display: 'flex', gap: '50px' }}>
               {noBtnClick ? (
                 <S.ModalBtn
                   onClick={() => {

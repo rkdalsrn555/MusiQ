@@ -30,23 +30,25 @@ export const GameOption = () => {
 
   // 결과창에서 다시하기 버튼 클릭 시 옵션 그대로 가져오기 위해 작성한 코드
   useEffect(() => {
-    if (location.state) { // location.state 있을 경우에만 실행. RetryButton 컴포넌트에서 전달된 state 객체
+    if (location.state) {
+      // location.state 있을 경우에만 실행. RetryButton 컴포넌트에서 전달된 state 객체
       const { mode, selectYear } = location.state; // location.state 객체에서 mode와 selectYear 추출
-      setCheckedList(selectYear); // 
-      
+      setCheckedList(selectYear); //
+
       const timeMapping = {
         easy: EASYTIME,
         normal: NORMALTIME,
-        hard: HARDTIME
+        hard: HARDTIME,
       };
-      
-      setLevelList({ // 난이도에 따라 동적으로 time 할당
+
+      setLevelList({
+        // 난이도에 따라 동적으로 time 할당
         title: mode,
         select: true,
-        time: timeMapping[mode as 'easy' | 'normal' | 'hard']
+        time: timeMapping[mode as 'easy' | 'normal' | 'hard'],
       });
     }
-  }, []); 
+  }, []);
 
   // eslint-disable-next-line no-shadow
   const checkedItemHandler = (value: string, isChecked: boolean) => {
@@ -81,19 +83,40 @@ export const GameOption = () => {
     setLevelList({ title: e.target.value, select: true, time: tempTime });
   };
 
+  const getGameRoomData = async () => {
+    const res = await axios
+      .get(
+        `${
+          process.env.REACT_APP_BASE_URL
+        }/music/guest/room?difficulty=${levelList.title.toUpperCase()}&year=${checkedList.join(
+          ' '
+        )}`
+      )
+      .then((response) => response.data)
+      .catch((err) => console.log(err));
+    return res;
+  };
+
   // 옵션 선택한거 play 페이지로 location.state로 넘겨주기
-  const sendOptionToGamePlayPage = () => {
+  const sendOptionToGamePlayPage = async () => {
     if (checkedList.length === 0) {
       alert('년도를 선택해주세요');
       return;
     }
 
+    const gameRoomData = await getGameRoomData();
+
     const selectOptionList = {
       checkDifficulty: levelList,
       yearCheckedList: checkedList,
+      gameRoomData: gameRoomData.data,
     };
 
-    navigate('/guest/game-play', { state: selectOptionList });
+    if (gameRoomData) {
+      navigate('/guest/game-play', { state: selectOptionList });
+    } else {
+      alert('방 만들기 실패');
+    }
   };
 
   return (
