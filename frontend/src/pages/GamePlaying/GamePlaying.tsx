@@ -235,7 +235,6 @@ export const GamePlaying = () => {
       if (
         chanceCntRef.current <= 0 ||
         e.target.nodeName === 'INPUT' ||
-        isWinRef.current ||
         isLoseRef.current
       ) {
         return;
@@ -255,20 +254,32 @@ export const GamePlaying = () => {
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
       }
+      if (e.keyCode === 32) {
+        getMusic();
+      }
     };
 
     const preventRefresh = (e: BeforeUnloadEvent) => {
       e.preventDefault();
-      e.returnValue = '';
+      const message = '새로고침 시 게임 옵션 선택 페이지로 이동합니다.';
+      e.returnValue = message;
+    };
+
+    const handleUnload = () => {
+      // 페이지를 떠날 때 실행할 로직
+      navigate('/guest/game-option');
     };
 
     window.addEventListener('keyup', handleKeyUp);
     window.addEventListener('beforeunload', preventRefresh);
+    window.addEventListener('unload', handleUnload);
+
     return () => {
       window.removeEventListener('keyup', handleKeyUp);
       window.removeEventListener('beforeunload', preventRefresh);
+      window.addEventListener('unload', handleUnload);
     };
-  }, []);
+  }, [navigate]);
 
   // 정답, 오답 띄워주기
   // 맞았으면 다음문제로 가기!
@@ -384,6 +395,7 @@ export const GamePlaying = () => {
                     width="300px"
                     height="390px"
                     ref={videoRef}
+                    muted={false}
                   />
                 </S.AnswerYouTubePlayerPosition>
               ) : (
