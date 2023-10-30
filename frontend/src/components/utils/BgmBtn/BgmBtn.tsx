@@ -27,7 +27,7 @@ export const BgmBtn = () => {
 
       <StyledBgmBtn type="button" onClick={handlePlayPause}>
         <img
-          src={isPlaying ? playButton : muteButton} // 이미지 순서를 바꿨습니다.
+          src={isPlaying ? playButton : muteButton}
           alt={isPlaying ? 'Mute' : 'Play'}
           width={120}
         />
