@@ -9,5 +9,5 @@ public interface MusicService {
 	CreateRoomResponseDto createRoom(String difficulty, String year);
     // ProblemForGuestResponseDto getProblemForGuest(String difficulty, String year);
 	ProblemForGuestResponseDto getProblemForGuest(int roomId, int streak);
-	GradeAnswerResponseDto gradeAnswer(Integer musicId, String answer);
+	GradeAnswerResponseDto gradeAnswer(Integer roomId, Integer streak, String answer);
 }

@@ -63,20 +63,22 @@ public class MusicController {
 	/**
 	 * 게스트 모드 정답 채점
 	 *
-	 * @param musicId
+	 * @param roomId
+	 * @param streak
 	 * @param answer
 	 * @see GradeAnswerResponseDto
 	 * @return ResponseEntity<BaseResponse<GradeAnswerResponseDto>>
 	 */
 	@GetMapping("/guest/result")
 	private ResponseEntity<BaseResponse<GradeAnswerResponseDto>> gradeAnswer(
-		@RequestParam("music-id") Integer musicId,
+		@RequestParam("room-id") Integer roomId,
+		@RequestParam("streak") Integer streak,
 		@RequestParam("answer") String answer) {
 
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<GradeAnswerResponseDto>builder()
 				.code(HttpStatus.OK.value())
-				.data(musicService.gradeAnswer(musicId, answer))
+				.data(musicService.gradeAnswer(roomId, streak, answer))
 				.build());
 	}
 }

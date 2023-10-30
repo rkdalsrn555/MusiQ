@@ -122,87 +122,18 @@ public class MusicServiceImpl implements MusicService {
 		return finalMusicList;
 	}
 
-
-
-	// /**
-	//  * 게스트 모드 문제 출제
-	//  *
-	//  * @param difficulty
-	//  * @param year
-	//  * @see ProblemForGuestResponseDto
-	//  * @return ProblemForGuestResponseDto
-	//  */
-	// @Override
-	// public ProblemForGuestResponseDto getProblemForGuest(String difficulty, String year) {
-	// 	StringTokenizer st = new StringTokenizer(year," ");
-	// 	difficulty = difficulty.toUpperCase();
-	//
-	// 	List<Music> musicList = new ArrayList<>();
-	//
-	//
-	// 	while (st.hasMoreTokens()){
-	// 		List<Music> eachMusicListByYear=musicRepository.findAllByYear(st.nextToken());
-	// 		musicList.addAll(eachMusicListByYear);
-	// 	}
-	// 	int musicListSize = musicList.size();
-	//
-	// 	if(musicListSize == 0){
-	// 		throw new MusicException(MusicExceptionInfo.INVALID_YEAR);
-	// 	}
-	// 	Set<String> titleSet = new HashSet<>();
-	// 	Set<String> singerSet = new HashSet<>();
-	// 	List<Music> finalMusicList = new ArrayList<>();
-	//
-	// 	for (int i = 0; i <musicListSize ; i++) {
-	// 		Music nowMusic = musicList.get(i);
-	//
-	// 		int beforeTitleSetSize = titleSet.size();
-	// 		titleSet.add(nowMusic.getTitle());
-	// 		int afterTitleSetSize = titleSet.size();
-	//
-	// 		int beforeSingerSetSize = singerSet.size();
-	// 		singerSet.add(nowMusic.getSinger());
-	// 		int afterSingerSetSize = singerSet.size();
-	//
-	// 		if(beforeTitleSetSize == afterTitleSetSize && beforeSingerSetSize == afterSingerSetSize) continue;
-	//
-	// 		finalMusicList.add(nowMusic);
-	//
-	// 	}
-	//
-	// 	int finalMusicListSize= finalMusicList.size();
-	//
-	// 	Random random = new Random();
-	//
-	// 	int selectedMusicIndex = random.nextInt(finalMusicListSize);
-	//
-	// 	Music selectedMusic = musicList.get(selectedMusicIndex);
-	//
-	//
-	//
-	//
-	// 	return ProblemForGuestResponseDto.create(
-	// 		Difficulty.valueOf(difficulty),
-	// 		selectedMusic.getId(),
-	// 		selectedMusic.getUrl()
-	// 	);
-	//
-	//
-	// }
-
 	/**
 	 * 정답 채점
 	 *
-	 * @param musicId
+	 * @param roomId
+	 * @param streak
 	 * @param answer
 	 * @see GradeAnswerResponseDto
 	 * @return GradeAnswerResponseDto
 	 */
 	@Override
-	public GradeAnswerResponseDto gradeAnswer(Integer musicId, String answer) {
-		String title = musicRepository.findTitleById(musicId)
-			.orElseThrow(() -> new MusicException(MusicExceptionInfo.NOT_FOUND_MUSIC))
-			.getTitle();
+	public GradeAnswerResponseDto gradeAnswer(Integer roomId, Integer streak, String answer) {
+		String title = roomManager.getRooms().get(roomId).getMusicList().get(streak).getTitle();
 
 		GradeAnswerResponseDto gradeAnswerResponseDto;
 		if (answer.equals(title)) {
