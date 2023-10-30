@@ -3,6 +3,8 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReactPlayer from 'react-player';
+import { useRecoilState } from 'recoil';
+import { TempLocationStateGameInfo } from '../../atoms/atoms';
 import talkBoxImg from '../../assets/img/playgame/horseBaloon.png';
 import {
   OptionBox,
@@ -38,11 +40,19 @@ type musicDataType = {
   musicUrl: string;
 };
 
+type answerDataType = {
+  title: string;
+  singer: string;
+};
+
 const FirstMusicStartTime = 0;
 const SecondMusicStartTime = 60;
 const ThirdMusicStartTime = 120;
 
 export const GamePlaying = () => {
+  const [locationState, setLocationState] = useRecoilState(
+    TempLocationStateGameInfo
+  );
   const [modalData, setModalData] = useState<{
     data: {
       title: string;
@@ -62,6 +72,11 @@ export const GamePlaying = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [gameOptionData, setGameOptionData] = useState<GameOptionDataType>();
   const [streak, setStreak] = useState<number>(0);
+  const streakRef = useRef(0);
+  const [answerData, setAnswerData] = useState<answerDataType>({
+    title: '',
+    singer: '',
+  });
   const [score, setScore] = useState<number>(0);
   const [lives, setLives] = useState<number>(3); // 생명
   const [chanceCnt, setChanceCnt] = useState<number>(3); // 기회
@@ -158,7 +173,7 @@ export const GamePlaying = () => {
   const getMusic = async () => {
     await axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/music/guest/quiz?room-id=${location.state.gameRoomData.roomId}&streak=${streak}`
+        `${process.env.REACT_APP_BASE_URL}/music/guest/quiz?room-id=${location.state.gameRoomData.roomId}&streak=${streakRef.current}`
       )
       .then((res) => {
         setMusicData({
@@ -193,15 +208,26 @@ export const GamePlaying = () => {
           setScore((prev) => prev + 1);
           setIsJudge(false);
           setStreak(res.data.data.streak);
+          streakRef.current = res.data.data.streak;
+          setAnswerData({
+            title: res.data.data.title,
+            singer: res.data.data.singer,
+          });
         } else if (lives === 0) {
           setIsLose(true);
           isLoseRef.current = true;
           setIsJudge(false);
           setStreak(res.data.data.streak);
+          streakRef.current = res.data.data.streak;
+          setAnswerData({
+            title: res.data.data.title,
+            singer: res.data.data.singer,
+          });
         } else {
           setLives((prev) => prev - 1);
           setIsJudge(false);
           setStreak(res.data.data.streak);
+          streakRef.current = res.data.data.streak;
         }
       })
       .catch((err) => console.log(err));
@@ -221,7 +247,7 @@ export const GamePlaying = () => {
   };
 
   useEffect(() => {
-    if (!location.state) {
+    if (!location.state || locationState.difficulty.title === '') {
       navigate('/');
     } else {
       setGameOptionData({
@@ -230,6 +256,7 @@ export const GamePlaying = () => {
         gameRoomData: location.state?.gameRoomData,
       });
       setStreak(location.state?.gameRoomData.streak);
+      streakRef.current = location.state?.gameRoomData.streak;
       setLoading(false);
 
       getMusic();
@@ -266,7 +293,6 @@ export const GamePlaying = () => {
     const preventRefresh = (e: BeforeUnloadEvent) => {
       e.preventDefault();
       e.returnValue = '';
-      navigate('/');
     };
 
     window.addEventListener('keyup', handleKeyUp);
@@ -387,12 +413,15 @@ export const GamePlaying = () => {
               </S.GameStatusExplainContainer>
               {(isWin && !isStart) || isLose ? (
                 <S.AnswerYouTubePlayerPosition>
+                  <p>
+                    {answerData.singer} - {answerData.title}
+                  </p>
                   <ReactPlayer
                     url={musicData.musicUrl}
                     controls
                     playing
                     width="300px"
-                    height="390px"
+                    height="340px"
                     ref={videoRef}
                     muted={false}
                   />
