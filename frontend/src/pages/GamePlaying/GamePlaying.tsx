@@ -82,6 +82,7 @@ export const GamePlaying = () => {
   const [chanceCnt, setChanceCnt] = useState<number>(3); // 기회
   const chanceCntRef = useRef(3);
   const [isPlaying, setIsPlaying] = useState<boolean>(false); // 게임중인지, 아닌지
+  const isPlayingRef = useRef(false);
   const [isJudge, setIsJudge] = useState<boolean>(false); // 채점중인지 아닌지
   const [musicReady, setMusicReady] = useState<boolean>(true); // 노래가 준비되었는지, 아닌지
   const [isLose, setIsLose] = useState<boolean>(false); // 졌는지, 안졌는지(결과창으로 라우팅 시 필요)
@@ -100,6 +101,7 @@ export const GamePlaying = () => {
     if (videoRef.current) {
       videoRef.current.seekTo(musicStartTime);
       setIsPlaying(true);
+      isPlayingRef.current = true;
     }
   };
 
@@ -108,6 +110,7 @@ export const GamePlaying = () => {
     if (isPlaying) {
       setTimeout(() => {
         setIsPlaying(false);
+        isPlayingRef.current = false;
       }, second);
     }
   };
@@ -280,7 +283,8 @@ export const GamePlaying = () => {
       if (
         chanceCntRef.current <= 0 ||
         e.target.nodeName === 'INPUT' ||
-        isLoseRef.current
+        isLoseRef.current ||
+        isPlayingRef.current
       ) {
         return;
       }
@@ -477,7 +481,7 @@ export const GamePlaying = () => {
                                   <PlayBtn
                                     btnName={item.btnName}
                                     onClickHandler={item.onClickHandler}
-                                    isBtnDisabled={item.isBtnDisabled}
+                                    isBtnDisabled={isPlaying}
                                     key={item.btnName}
                                   />
                                 ))}
