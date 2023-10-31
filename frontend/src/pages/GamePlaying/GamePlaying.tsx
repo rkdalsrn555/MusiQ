@@ -303,7 +303,7 @@ export const GamePlaying = () => {
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
       }
-      if (e.keyCode === 32) {
+      if (e.keyCode === 32 && isWinRef.current) {
         getMusic();
       }
     };
@@ -380,6 +380,7 @@ export const GamePlaying = () => {
                 width="0"
                 height="0"
                 ref={videoRef}
+                volume={1}
               />
             )}
 
@@ -452,6 +453,7 @@ export const GamePlaying = () => {
                     width="300px"
                     height="340px"
                     ref={videoRef}
+                    volume={1}
                   />
                 </S.AnswerYouTubePlayerPosition>
               ) : (
