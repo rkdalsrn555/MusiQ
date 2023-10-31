@@ -25,17 +25,11 @@ export const ResultInfo = () => {
   useEffect(() => {
     if (!location.state) {
       navigate('/');
-      console.log('location.state 없음!!! 랜딩페이지로 돌아감');
     }
   });
 
   // location.state가 null이거나 undefined이면 빈 객체를 사용
   const { mode, selectYear, correctAnswerCnt } = location.state || {};
-
-  // 값 확인용, 테스트 이후 삭제할 것
-  console.log('Mode:', mode);
-  console.log('Select Year:', selectYear);
-  console.log('Correct Answer Count:', correctAnswerCnt);
 
   return (
     <ResultContainer>
@@ -48,7 +42,7 @@ export const ResultInfo = () => {
         </DancingChickContainer>
       </ChickWrapper>
       <InfoWrapper>
-        <div >
+        <div>
           <Logo size="lg" />
         </div>
         <ResultInfoText
