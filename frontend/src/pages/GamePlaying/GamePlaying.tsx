@@ -423,7 +423,6 @@ export const GamePlaying = () => {
                     width="300px"
                     height="340px"
                     ref={videoRef}
-                    muted={false}
                   />
                 </S.AnswerYouTubePlayerPosition>
               ) : (
