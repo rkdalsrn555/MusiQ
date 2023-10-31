@@ -140,6 +140,20 @@ export const GameOption = () => {
       });
   };
 
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Enter') {
+        sendOptionToGamePlayPage();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [sendOptionToGamePlayPage]);
+
   /* eslint-disable react/jsx-props-no-spreading */
   return (
     <motion.div

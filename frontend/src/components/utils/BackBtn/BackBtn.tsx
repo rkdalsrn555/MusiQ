@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { ReactComponent as BackBtnIcon } from '../../../assets/svgs/backBtn.svg';
@@ -23,6 +23,20 @@ export const BackBtn = (props: { url: string; handleClick?: () => void }) => {
       navigate(url);
     },
   } = props;
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        handleClick();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [handleClick]);
 
   return (
     <PositionStyle>
