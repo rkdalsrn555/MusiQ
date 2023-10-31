@@ -25,6 +25,7 @@ public abstract class BaseTimeEntity {
 	@UpdateTimestamp
 	@ColumnDefault("CURRENT_TIMESTAMP")
 	@Column(nullable = false)
+
 	private LocalDateTime updatedAt;
 
 }
