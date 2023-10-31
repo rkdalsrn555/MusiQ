@@ -5,7 +5,14 @@ export const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  /* gap: 1rem; */
+
+  & li:hover {
+    background-color: #5024ff;
+
+    label {
+      color: #fff;
+    }
+  }
 
   & .selected {
     width: 9rem;
@@ -16,6 +23,7 @@ export const Container = styled.div`
     margin-right: 1rem;
 
     & label {
+      padding: 1rem;
       line-height: 4rem;
       font-size: 1.5rem;
       font-weight: bold;
@@ -32,6 +40,7 @@ export const Container = styled.div`
     margin-right: 1rem;
 
     & label {
+      padding: 1rem;
       line-height: 4rem;
       font-size: 1.5rem;
       font-weight: bold;
