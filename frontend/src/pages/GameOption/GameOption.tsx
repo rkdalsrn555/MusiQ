@@ -122,6 +122,7 @@ export const GameOption = () => {
 
     await getGameRoomData()
       .then((res) => {
+        console.log('성공해서 여기들어왔당');
         const selectOptionList = {
           checkDifficulty: levelList,
           yearCheckedList: checkedList,
@@ -135,6 +136,8 @@ export const GameOption = () => {
         navigate('/guest/game-play', { state: selectOptionList });
       })
       .catch((err) => {
+        console.log('실패해서 여기들어왔당');
+
         setIsToggled(true);
         setModalData({
           data: {
