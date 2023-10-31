@@ -405,30 +405,41 @@ export const GamePlaying = () => {
             <div className="emptyBox" />
             <S.MiddleContainer>
               <S.GameStatusExplainContainer>
-                <p className="explainGame">
-                  처음부터{' '}
-                  <span>
-                    {gameOptionData
-                      ? gameOptionData.difficulty.time / 1000
-                      : ''}
-                    초간
-                  </span>{' '}
-                  들려드립니다
-                </p>
-              </S.GameStatusExplainContainer>
-              <S.GameStatusExplainContainer>
-                {isPlaying ? (
-                  <p className="gameStatus">...Playing</p>
+                {location.state.gameRoomData.problems === streak ? (
+                  <p className="explainGame">
+                    축하드립니다 선택한 년도의 모든 문제를 맞추셨습니다!
+                  </p>
                 ) : (
-                  <div>
-                    {musicReady ? (
-                      <p className="gameStatus">...wait</p>
-                    ) : (
-                      <p className="gameStatus">...노래를 불러오는 중</p>
-                    )}
-                  </div>
+                  <p className="explainGame">
+                    처음부터{' '}
+                    <span>
+                      {gameOptionData
+                        ? gameOptionData.difficulty.time / 1000
+                        : ''}
+                      초간
+                    </span>{' '}
+                    들려드립니다
+                  </p>
                 )}
               </S.GameStatusExplainContainer>
+              {location.state.gameRoomData.problems === streak ? (
+                ''
+              ) : (
+                <S.GameStatusExplainContainer>
+                  {isPlaying ? (
+                    <p className="gameStatus">...Playing</p>
+                  ) : (
+                    <div>
+                      {musicReady ? (
+                        <p className="gameStatus">...wait</p>
+                      ) : (
+                        <p className="gameStatus">...노래를 불러오는 중</p>
+                      )}
+                    </div>
+                  )}
+                </S.GameStatusExplainContainer>
+              )}
+
               {(isWin && !isStart) || isLose ? (
                 <S.AnswerYouTubePlayerPosition>
                   <p>
@@ -463,7 +474,7 @@ export const GamePlaying = () => {
               )}
 
               <S.PlayingBtnBoxPosition>
-                {isLose ? (
+                {isLose || location.state.gameRoomData.problems === streak ? (
                   <ResultBtn clickHandler={goResultPage} />
                 ) : (
                   <div>
