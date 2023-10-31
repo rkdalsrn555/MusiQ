@@ -7,5 +7,3 @@ export const MobilePage = () => (
       <img src={mobileRestriction} alt="moblie page" />
     </StyledMobileDiv>
   );
-
-export default MobilePage;
