@@ -57,8 +57,8 @@ export const ShareButton: FC<ShareButtonProps> = ({ correctAnswerCnt }) => {
           description: '친구와 같이 퀴즈를 맞혀보세요',
           imageUrl,
           link: {
-            mobileWebUrl: 'http://localhost:3000/mobile-restriction',
-            webUrl: 'http://localhost:3000/',
+            mobileWebUrl: `${process.env.REACT_APP_BASE_URL}/mobile-restriction`,
+            webUrl: `${process.env.REACT_APP_BASE_URL}`,
           },
         },
       },
