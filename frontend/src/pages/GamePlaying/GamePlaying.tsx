@@ -154,19 +154,29 @@ export const GamePlaying = () => {
     navigate('/guest/game-result', { state: resultData });
   };
 
-  // 모르겠어요 클릭 시 졌다고 알려주기
-  const skipNextMusic = () => {
-    setIsLose(true);
-    isLoseRef.current = true;
+  const dontKnowBtnHandler = async () => {
+    await axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/music/guest/result?room-id=${location.state.gameRoomData.roomId}&streak=${streak}&answer=${inputText}`
+      )
+      .then(async (res) => {
+        setStreak(res.data.data.streak);
+        streakRef.current = res.data.data.streak;
+        setAnswerData({
+          title: res.data.data.title,
+          singer: res.data.data.singer,
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
-  // 채점
-  const getCheckAnswer = async () => {
-    const res = await axios.get(
-      `${process.env.REACT_APP_BASE_URL}/music/guest/result?room-id=${location.state.gameRoomData.roomId}&streak=${streak}&answer=${inputText}`
-    );
-
-    return res;
+  // 모르겠어요 클릭 시 졌다고 알려주기
+  const skipNextMusic = async () => {
+    await dontKnowBtnHandler();
+    setIsLose(true);
+    isLoseRef.current = true;
   };
 
   // 노래 불러오기
@@ -200,7 +210,11 @@ export const GamePlaying = () => {
     setIsJudge(true);
     setIsStart(false);
 
-    await getCheckAnswer()
+    // 채점
+    await axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/music/guest/result?room-id=${location.state.gameRoomData.roomId}&streak=${streak}&answer=${inputText}`
+      )
       .then(async (res) => {
         if (res.data.data.isCorrect) {
           setIsWin(true);

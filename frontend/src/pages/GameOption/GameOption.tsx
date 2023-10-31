@@ -98,21 +98,6 @@ export const GameOption = () => {
     setLevelList({ title: e.target.value, select: true, time: tempTime });
   };
 
-  const getGameRoomData = async () => {
-    const res = await axios
-      .get(
-        `${
-          process.env.REACT_APP_BASE_URL
-        }/music/guest/room?difficulty=${levelList.title.toUpperCase()}&year=${checkedList.join(
-          ' '
-        )}`
-      )
-      .then((response) => response.data)
-      .catch((err) => err);
-
-    return res;
-  };
-
   // 옵션 선택한거 play 페이지로 location.state로 넘겨주기
   const sendOptionToGamePlayPage = async () => {
     if (checkedList.length === 0) {
@@ -120,24 +105,28 @@ export const GameOption = () => {
       return;
     }
 
-    await getGameRoomData()
+    await axios
+      .get(
+        `${
+          process.env.REACT_APP_BASE_URL
+        }/music/guest/room?difficulty=${levelList.title.toUpperCase()}&year=${checkedList.join(
+          ' '
+        )}`
+      )
       .then((res) => {
-        console.log('성공해서 여기들어왔당');
         const selectOptionList = {
           checkDifficulty: levelList,
           yearCheckedList: checkedList,
-          gameRoomData: res.data,
+          gameRoomData: res.data.data,
         };
         setLocationState({
           difficulty: levelList,
           yearList: checkedList,
-          gameRoomData: res.data,
+          gameRoomData: res.data.data,
         });
         navigate('/guest/game-play', { state: selectOptionList });
       })
       .catch((err) => {
-        console.log('실패해서 여기들어왔당');
-
         setIsToggled(true);
         setModalData({
           data: {
