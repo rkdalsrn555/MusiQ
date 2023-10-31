@@ -288,17 +288,17 @@ export const GamePlaying = () => {
       ) {
         return;
       }
-      if (e.key === 'ArrowLeft') {
+      if (e.key === 'ArrowLeft' && !isWinRef.current) {
         playMusic(FirstMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
       }
-      if (e.key === 'ArrowDown') {
+      if (e.key === 'ArrowDown' && !isWinRef.current) {
         playMusic(SecondMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
       }
-      if (e.key === 'ArrowRight') {
+      if (e.key === 'ArrowRight' && !isWinRef.current) {
         playMusic(ThirdMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
