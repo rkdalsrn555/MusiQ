@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import axios from 'axios';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { BgmBtn } from './components/utils/BgmBtn';
@@ -15,6 +16,13 @@ import {
 const Router = () => {
   const location = useLocation(); // 게임 플레이 페이지를 제외하고 bgm을 재생하기 위한 로직 추가
   const isMusicRoute = !location.pathname.includes('/game-play');
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}/member/visit`)
+      .then((res) => res)
+      .catch((err) => err);
+  }, []);
 
   return (
     <AnimatePresence mode="wait">
