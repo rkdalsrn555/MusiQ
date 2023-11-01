@@ -20,6 +20,7 @@ import guestLock from '../../../assets/img/modeSelect/guestLock.png';
 import multiLock from '../../../assets/img/modeSelect/multiLock.png';
 import mzLock from '../../../assets/img/modeSelect/mzLock.png';
 import guideBtn from '../../../assets/svgs/gameGuideButton.svg';
+import ranking from '../../../assets/img/modeSelect/rankingMode.png';
 
 export const ModeSelectCarousel: React.FC = () => {
   const [back, setBack] = useState<boolean>(false);
@@ -59,6 +60,12 @@ export const ModeSelectCarousel: React.FC = () => {
       image: isLoggedIn ? mzModeChar : mzLock,
       link: '/mz-mode',
     },
+    {
+      id: 5,
+      text: '유저들의 순위와 경험치를 확인할 수 있습니다.',
+      image: ranking,
+      link: '/ranking',
+    }
   ]);
   const navigateToLink = () => {
     const content = contents[visible];
