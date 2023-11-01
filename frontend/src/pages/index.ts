@@ -5,4 +5,5 @@ export * from './SingleModePage/SingleModePage';
 export * from './GamePlaying';
 export * from './ResultPage/ResultPage';
 export * from './MobilePage';
+export * from './Login';
 export * from './RankingPage';
