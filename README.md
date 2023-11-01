@@ -46,10 +46,10 @@
 
 ### 👩‍💻 FE Dev
 
-|                          오병철                          |                          이채련                           |
-| :------------------------------------------------------: | :-------------------------------------------------------: |
-|          [@ping9oo](https://github.com/ping9oo)          |    [@CHAERYEON-LEE](https://github.com/CHAERYEON-LEE)     |
-| <img src="./img/Character/오병철캐릭터.jpg" width="100"> | <img src="./img/Character/이채련캐릭터.jfif" width="100"> |
+|                          오병철                          |                          이채련                          |
+| :------------------------------------------------------: | :------------------------------------------------------: |
+|          [@ping9oo](https://github.com/ping9oo)          |    [@CHAERYEON-LEE](https://github.com/CHAERYEON-LEE)    |
+| <img src="./img/Character/오병철캐릭터.jpg" width="100"> | <img src="./img/Character/이채련캐릭터.jpg" width="100"> |
 
 <br/>
 
