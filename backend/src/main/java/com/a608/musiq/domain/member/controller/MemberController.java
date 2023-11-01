@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,7 +35,16 @@ public class MemberController {
 	}
 
 	@PostMapping("/signup")
-	private ResponseEntity<BaseResponse<JoinResponseDto>> signUp(JoinRequestDto joinRequestDto) {
+	private ResponseEntity<BaseResponse<JoinResponseDto>> signUp(@RequestBody JoinRequestDto joinRequestDto) {
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(BaseResponse.<JoinResponseDto>builder()
+				.code(HttpStatus.OK.value())
+				.data(memberService.signUp(joinRequestDto))
+				.build());
+	}
+
+	@PostMapping("/login")
+	private ResponseEntity<BaseResponse<JoinResponseDto>> login(JoinRequestDto joinRequestDto) {
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<JoinResponseDto>builder()
 				.code(HttpStatus.OK.value())

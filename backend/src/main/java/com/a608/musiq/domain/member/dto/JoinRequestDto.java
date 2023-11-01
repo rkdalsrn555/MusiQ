@@ -8,5 +8,5 @@ public class JoinRequestDto {
 
 	private String password;
 
-	private String nickName;
+	private String nickname;
 }

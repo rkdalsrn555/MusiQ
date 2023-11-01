@@ -14,7 +14,6 @@ import com.a608.musiq.domain.member.dto.JoinResponseDto;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.member.repository.MemberRepository;
 import com.a608.musiq.domain.member.repository.VisitorRepository;
-import com.a608.musiq.global.config.JwtProvider;
 
 import lombok.RequiredArgsConstructor;
 
@@ -41,7 +40,7 @@ public class MemberServiceImpl implements MemberService {
 
 		MemberInfo memberInfo = memberInfoRepository.save(MemberInfo.builder()
 			.id(memberUUID)
-			.nickname(joinRequestDto.getNickName())
+			.nickname(joinRequestDto.getNickname())
 			.exp(EXP_INITIAL_NUMBER)
 			.build());
 
