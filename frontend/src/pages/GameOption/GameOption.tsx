@@ -43,6 +43,14 @@ export const GameOption = () => {
     time: number;
   }>({ title: 'easy', select: false, time: EASYTIME });
 
+  useEffect(() => { // 모바일 기기 접근을 막기 위해 추가한 코드
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      navigate('/mobile-restriction');
+    }
+  }, []);
+
   // 결과창에서 다시하기 버튼 클릭 시 옵션 그대로 가져오기 위해 작성한 코드
   useEffect(() => {
     if (location.state) {
