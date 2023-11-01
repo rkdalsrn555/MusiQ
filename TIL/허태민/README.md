@@ -447,3 +447,8 @@ while cap.isOpened():
 
 - Database 삽입
 - 2015 ~ 2023 노래 20개씩
+
+## 11/1
+
+- Database 노래 제목 수정
+- 랭킹 로직 설계
