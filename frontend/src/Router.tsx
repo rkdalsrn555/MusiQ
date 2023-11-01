@@ -11,6 +11,7 @@ import {
   GamePlaying,
   ResultPage,
   MobilePage,
+  RankingPage,
 } from './pages';
 
 const Router = () => {
@@ -34,6 +35,7 @@ const Router = () => {
         <Route path="/:mode/game-play" element={<GamePlaying />} />
         <Route path="/:mode/game-result" element={<ResultPage />} />
         <Route path="/mobile-restriction" element={<MobilePage />} />
+        <Route path="/ranking" element={<RankingPage />} />
       </Routes>
       {isMusicRoute && <BgmBtn />}
     </AnimatePresence>
