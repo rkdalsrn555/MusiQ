@@ -40,7 +40,7 @@ export const ShareButton: FC<ShareButtonProps> = ({ correctAnswerCnt }) => {
     } else if (correctAnswerCnt >= 1 && correctAnswerCnt <= 7) {
       titleMessage = `아쉽게도 ${correctAnswerCnt}개밖에 못 맞혔어요. 😢`;
       imageUrl =
-        'https://i.namu.wiki/i/UBEFd5cRRJVob63HQ8TToGVLr1Sva5FPIFF7ZUw_LB9zCbjqTQHaktxrEclsWkNkTgI6M0v_JydZlw17evQOKw.webp';
+        'https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/product/1973494215/B.jpg?765000000';
     } else if (correctAnswerCnt >= 8 && correctAnswerCnt <= 15) {
       titleMessage = `우와! ${correctAnswerCnt}개나 맞혔어요! 🎉`;
       imageUrl = 'https://pbs.twimg.com/media/EFogp8wUcAAkydU.jpg';

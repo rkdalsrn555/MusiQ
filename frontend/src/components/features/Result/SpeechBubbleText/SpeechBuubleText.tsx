@@ -27,7 +27,7 @@ export const SpeechBubbleText: FC<SpeechBubbleTextProps> = ({
     messages = [
       `${correctAnswerCnt}개 맞혔어!`,
       '잘했어! 계속 노력하자!',
-      '더 많은 문제를 맞혀볼 수 있을 거야!',
+      '더 많은 문제를 맞힐 수 있을 거야!',
     ];
   } else if (correctAnswerCnt >= 16) {
     messages = [
