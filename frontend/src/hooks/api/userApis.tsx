@@ -1,9 +1,35 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable consistent-return */
 import axios from 'axios';
 
 // axios 인스턴스 생성
 export const userApis = axios.create({
   baseURL: `${process.env.REACT_APP_BASE_URL}`,
 });
+
+// 액세스토큰 재발급받는 함수
+async function postRefreshToken() {
+  try {
+    const refreshToken = window.localStorage.getItem('userRefreshToken');
+    const { data } = await axios.post(
+      `${process.env.REACT_APP_BASE_URL}/user/token`,
+      {},
+      {
+        headers: {
+          refreshToken,
+        },
+      }
+    );
+
+    // 서버로부터 받은 데이터에 accessToken이 있다면 return
+    if (data.accessToken) {
+      return data.accessToken;
+    }
+    return false;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 // request를 보내기 전에 가로채서 헤더에 토큰을 넣어준다.
 // 기본 형태 axios.interceptor.request.use(onFulfilled, onRejected)
@@ -19,9 +45,8 @@ userApis.interceptors.request.use(
     if (!userAccessToken) {
       window.location.href = '/login';
       return;
-    } else {
-      config.headers['accessToken'] = `${userAccessToken}`;
     }
+    config.headers.accessToken = `${userAccessToken}`;
 
     return config;
   },
@@ -45,16 +70,16 @@ userApis.interceptors.response.use(
         window.localStorage.setItem('userAccessToken', response);
 
         // 원래 api 요청의 headers의 accessToken변경
-        err.config.headers['accessToken'] = response;
+        err.config.headers.accessToken = response;
         // 원래 요청을 다시 날려준다!
         const originalResponse = await axios.request(err.config);
         return originalResponse; // 원래 api 요청의 response return
-      } else {
-        // 리프레시 토큰도 만료되었다면 login페이지로 이동
-        window.localStorage.removeItem('userAccessToken');
-        window.localStorage.removeItem('userRefreshToken');
-        window.location.href = '/login';
-      } // 액세스토큰을 넣어서 보냈는데 멤버가 없을 때, 로컬스토리지의 토큰 모두 지우고 로그인 창으로 라우팅
+      }
+      // 리프레시 토큰도 만료되었다면 login페이지로 이동
+      window.localStorage.removeItem('userAccessToken');
+      window.localStorage.removeItem('userRefreshToken');
+      window.location.href = '/login';
+      // 액세스토큰을 넣어서 보냈는데 멤버가 없을 때, 로컬스토리지의 토큰 모두 지우고 로그인 창으로 라우팅
     } else if (err.response.status === 406) {
       window.localStorage.removeItem('userAccessToken');
       window.localStorage.removeItem('userRefreshToken');
@@ -64,26 +89,3 @@ userApis.interceptors.response.use(
     return Promise.reject(err);
   }
 );
-
-// 액세스토큰 재발급받는 함수
-async function postRefreshToken() {
-  try {
-    const refreshToken = window.localStorage.getItem('userRefreshToken');
-    const { data } = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}/user/token`,
-      {},
-      {
-        headers: {
-          refreshToken: refreshToken,
-        },
-      }
-    );
-
-    // 서버로부터 받은 데이터에 accessToken이 있다면 return
-    if (data.accessToken) {
-      return data.accessToken;
-    } else {
-      return false;
-    }
-  } catch (error) {}
-}
