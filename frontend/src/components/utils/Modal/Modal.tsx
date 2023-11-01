@@ -44,7 +44,6 @@ export const Modal = (props: OwnProps) => {
                   onClick={() => {
                     noBtnClick();
                   }}
-                  result="false"
                 >
                   아니오
                 </S.ModalBtn>
@@ -59,7 +58,6 @@ export const Modal = (props: OwnProps) => {
                     setIsToggled((prev) => !prev);
                   }
                 }}
-                result="true"
               >
                 네
               </S.ModalBtn>
