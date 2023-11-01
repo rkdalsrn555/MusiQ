@@ -1,5 +1,7 @@
 package com.a608.musiq.domain.member.service;
 
-public interface MemberService {
+import com.a608.musiq.domain.member.dto.VisitResponseDto;
 
+public interface MemberService {
+	VisitResponseDto visit(String userIp);
 }
