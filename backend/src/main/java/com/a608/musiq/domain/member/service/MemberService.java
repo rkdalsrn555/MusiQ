@@ -7,7 +7,7 @@ import com.a608.musiq.domain.member.dto.JoinResponseDto;
 
 public interface MemberService {
 
-	JoinResponseDto simpleJoin(JoinRequestDto joinRequestDto);
+	JoinResponseDto signUp(JoinRequestDto joinRequestDto);
 
 	VisitResponseDto visit(String userIp);
 }

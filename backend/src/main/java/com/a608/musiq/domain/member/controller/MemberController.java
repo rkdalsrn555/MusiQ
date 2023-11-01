@@ -33,12 +33,12 @@ public class MemberController {
 				.build());
 	}
 
-	@PostMapping("/simple-join")
-	private ResponseEntity<BaseResponse<JoinResponseDto>> simpleJoin(JoinRequestDto joinRequestDto) {
+	@PostMapping("/signup")
+	private ResponseEntity<BaseResponse<JoinResponseDto>> signUp(JoinRequestDto joinRequestDto) {
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<JoinResponseDto>builder()
 				.code(HttpStatus.OK.value())
-				.data(memberService.simpleJoin(joinRequestDto))
+				.data(memberService.signUp(joinRequestDto))
 				.build());
 	}
 }
