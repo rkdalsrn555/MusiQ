@@ -26,124 +26,131 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class MusicServiceImpl implements MusicService {
-	private static final int EMPTY_LIST_SIZE = 0;
-	private static final int LOOP_START_INDEX = 0;
 
-	private final RoomManager roomManager = new RoomManager();
+    private static final int EMPTY_LIST_SIZE = 0;
+    private static final int LOOP_START_INDEX = 0;
 
-	private final MusicRepository musicRepository;
+    private final RoomManager roomManager = new RoomManager();
 
-	/**
-	 * 게스트 모드 방 생성
-	 *
-	 * @param difficulty
-	 * @param year
-	 * @return CreateRoomResponseDto
-	 */
-	@Override
-	public CreateRoomResponseDto createRoom(String difficulty, String year) {
-		StringTokenizer st = new StringTokenizer(year, " ");
-		Difficulty difficultyType = Difficulty.valueOf(difficulty.toUpperCase());
+    private final MusicRepository musicRepository;
 
-		List<Music> musicList = insertMusic(st);
-		Collections.shuffle(musicList);
-		Room room = Room.from(musicList, difficultyType);
-		int roomId = roomManager.addRoom(room);
+    /**
+     * 게스트 모드 방 생성
+     *
+     * @param difficulty
+     * @param year
+     * @return CreateRoomResponseDto
+     */
+    @Override
+    public CreateRoomResponseDto createRoom(String difficulty, String year) {
+        StringTokenizer st = new StringTokenizer(year, " ");
+        Difficulty difficultyType = Difficulty.valueOf(difficulty.toUpperCase());
 
-		return CreateRoomResponseDto.from(roomId, musicList.size());
-	}
+        List<Music> musicList = insertMusic(st);
+        Collections.shuffle(musicList);
+        Room room = Room.from(musicList, difficultyType);
+        int roomId = roomManager.addRoom(room);
 
-	/**
-	 * 게스트 모드 문제 출제
-	 *
-	 * @param roomId
-	 * @param streak
-	 * @return
-	 */
-	@Override
-	public ProblemForGuestResponseDto getProblemForGuest(int roomId, int streak) {
-		Room room = roomManager.getRooms().get(roomId);
+        return CreateRoomResponseDto.from(roomId, musicList.size());
+    }
 
-		Music music = room.getMusicList().get(streak);
+    /**
+     * 게스트 모드 문제 출제
+     *
+     * @param roomId
+     * @param streak
+     * @return
+     */
+    @Override
+    public ProblemForGuestResponseDto getProblemForGuest(int roomId, int streak) {
+        Room room = roomManager.getRooms().get(roomId);
 
-		return ProblemForGuestResponseDto.create(room.getDifficulty(), music.getId(), music.getUrl());
-	}
+        Music music = room.getMusicList().get(streak);
 
-	/**
-	 * 방에 노래 추가
-	 *
-	 * @param st
-	 * @return List<Music>
-	 */
-	private List<Music> insertMusic(StringTokenizer st) {
-		List<Music> musicList = new ArrayList<>();
+        return ProblemForGuestResponseDto.create(room.getDifficulty(), music.getId(),
+            music.getUrl());
+    }
 
-		while (st.hasMoreTokens()) {
-			List<Music> eachMusicListByYear = musicRepository.findAllByYear(st.nextToken());
-			musicList.addAll(eachMusicListByYear);
-		}
-		int musicListSize = musicList.size();
+    /**
+     * 방에 노래 추가
+     *
+     * @param st
+     * @return List<Music>
+     */
+    private List<Music> insertMusic(StringTokenizer st) {
+        List<Music> musicList = new ArrayList<>();
 
-		if (musicListSize == EMPTY_LIST_SIZE) {
-			throw new MusicException(MusicExceptionInfo.INVALID_YEAR);
-		}
+        while (st.hasMoreTokens()) {
+            List<Music> eachMusicListByYear = musicRepository.findAllByYear(st.nextToken());
+            musicList.addAll(eachMusicListByYear);
+        }
+        int musicListSize = musicList.size();
 
-		return deleteDuplicatedMusic(musicList);
-	}
+        if (musicListSize == EMPTY_LIST_SIZE) {
+            throw new MusicException(MusicExceptionInfo.INVALID_YEAR);
+        }
 
-	/**
-	 * 중복된 노래 제거
-	 *
-	 * @param musicList
-	 * @return List<Music>
-	 */
-	private List<Music> deleteDuplicatedMusic(List<Music> musicList) {
-		Set<String> titleSet = new HashSet<>();
-		Set<String> singerSet = new HashSet<>();
-		List<Music> finalMusicList = new ArrayList<>();
+        return deleteDuplicatedMusic(musicList);
+    }
 
-		for (int i = LOOP_START_INDEX; i < musicList.size(); i++) {
-			Music nowMusic = musicList.get(i);
+    /**
+     * 중복된 노래 제거
+     *
+     * @param musicList
+     * @return List<Music>
+     */
+    private List<Music> deleteDuplicatedMusic(List<Music> musicList) {
+        Set<String> titleSet = new HashSet<>();
+        Set<String> singerSet = new HashSet<>();
+        List<Music> finalMusicList = new ArrayList<>();
 
-			int beforeTitleSetSize = titleSet.size();
-			titleSet.add(nowMusic.getTitle());
-			int afterTitleSetSize = titleSet.size();
+        for (int i = LOOP_START_INDEX; i < musicList.size(); i++) {
+            Music nowMusic = musicList.get(i);
 
-			int beforeSingerSetSize = singerSet.size();
-			singerSet.add(nowMusic.getSinger());
-			int afterSingerSetSize = singerSet.size();
+            int beforeTitleSetSize = titleSet.size();
+            titleSet.add(nowMusic.getTitle());
+            int afterTitleSetSize = titleSet.size();
 
-			if (beforeTitleSetSize == afterTitleSetSize && beforeSingerSetSize == afterSingerSetSize)
-				continue;
+            int beforeSingerSetSize = singerSet.size();
+            singerSet.add(nowMusic.getSinger());
+            int afterSingerSetSize = singerSet.size();
 
-			finalMusicList.add(nowMusic);
-		}
+            if (beforeTitleSetSize == afterTitleSetSize
+                && beforeSingerSetSize == afterSingerSetSize) {
+                continue;
+            }
 
-		return finalMusicList;
-	}
+            finalMusicList.add(nowMusic);
+        }
 
-	/**
-	 * 정답 채점
-	 *
-	 * @param roomId
-	 * @param streak
-	 * @param answer
-	 * @see GradeAnswerResponseDto
-	 * @return GradeAnswerResponseDto
-	 */
-	@Override
-	public GradeAnswerResponseDto gradeAnswer(Integer roomId, Integer streak, String answer) {
-		Room room = roomManager.getRooms().get(roomId);
-		Music music = room.getMusicList().get(streak);
+        return finalMusicList;
+    }
 
-		GradeAnswerResponseDto gradeAnswerResponseDto;
-		if (answer.equals(music.getTitle())) {
-			room.addStreak();
-			gradeAnswerResponseDto = GradeAnswerResponseDto.from(Boolean.TRUE, room.getStreak(), music);
-		} else {
-			gradeAnswerResponseDto = GradeAnswerResponseDto.from(Boolean.FALSE, room.getStreak(), music);
-		}
+    /**
+     * 정답 채점
+     *
+     * @param roomId
+     * @param streak
+     * @param answer
+     * @return GradeAnswerResponseDto
+     * @see GradeAnswerResponseDto
+     */
+    @Override
+    public GradeAnswerResponseDto gradeAnswer(Integer roomId, Integer streak, String answer) {
+        Room room = roomManager.getRooms().get(roomId);
+        Music music = room.getMusicList().get(streak);
+        answer = answer.replaceAll(" ", "");
 
-		return gradeAnswerResponseDto;
-	}
+        GradeAnswerResponseDto gradeAnswerResponseDto;
+        if (answer.equals(music.getTitle())) {
+            room.addStreak();
+            gradeAnswerResponseDto = GradeAnswerResponseDto.from(Boolean.TRUE, room.getStreak(),
+                music);
+        } else {
+            gradeAnswerResponseDto = GradeAnswerResponseDto.from(Boolean.FALSE, room.getStreak(),
+                music);
+        }
+
+        return gradeAnswerResponseDto;
+    }
 }
