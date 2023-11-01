@@ -288,22 +288,22 @@ export const GamePlaying = () => {
       ) {
         return;
       }
-      if (e.key === 'ArrowLeft') {
+      if (e.key === 'ArrowLeft' && !isWinRef.current) {
         playMusic(FirstMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
       }
-      if (e.key === 'ArrowDown') {
+      if (e.key === 'ArrowDown' && !isWinRef.current) {
         playMusic(SecondMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
       }
-      if (e.key === 'ArrowRight') {
+      if (e.key === 'ArrowRight' && !isWinRef.current) {
         playMusic(ThirdMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
       }
-      if (e.keyCode === 32) {
+      if (e.keyCode === 32 && isWinRef.current) {
         getMusic();
       }
     };
@@ -380,6 +380,7 @@ export const GamePlaying = () => {
                 width="0"
                 height="0"
                 ref={videoRef}
+                volume={1}
               />
             )}
 
@@ -452,6 +453,7 @@ export const GamePlaying = () => {
                     width="300px"
                     height="340px"
                     ref={videoRef}
+                    volume={1}
                   />
                 </S.AnswerYouTubePlayerPosition>
               ) : (
