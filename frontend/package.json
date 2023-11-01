@@ -12,13 +12,14 @@
     "@types/react-dom": "^18.2.14",
     "@types/stompjs": "^2.3.5",
     "axios": "1.4.0",
+    "env-cmd": "^10.1.0",
     "framer-motion": "10.15.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-player": "^2.13.0",
     "react-query": "3.39.3",
     "react-router-dom": "^6.16.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "recoil": "0.7.7",
     "recoil-persist": "5.1.0",
     "styled-components": "^6.1.0",
@@ -27,10 +28,11 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start:test": "env-cmd -f .env.test react-scripts start",
+    "start:dev": "env-cmd -f .env.development react-scripts start",
+    "start:prod": "env-cmd -f .env.production react-scripts start",
+    "build:dev": "env-cmd -f .env.development react-scripts build",
+    "build:prod": "env-cmd -f .env.production react-scripts build"
   },
   "eslintConfig": {
     "extends": [
