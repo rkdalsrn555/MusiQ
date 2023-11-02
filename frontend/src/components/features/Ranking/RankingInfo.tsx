@@ -22,7 +22,7 @@ const rankingData = Array.from({ length: 100 }, (_, index) => ({
 export const RankingInfo = () => (
   <CenteredContainer>
     <BackBtn url="/select-mode" />
-    <RankingLogoImg src={rankingLogo} alt="Ranking Logo" width={500} />
+    <RankingLogoImg src={rankingLogo} alt="Ranking Logo" width={400} />
     <RankingWrapper>
       <RankingContainer>
         <RankingHeader>
