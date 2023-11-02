@@ -65,7 +65,7 @@ export const ModeSelectCarousel: React.FC = () => {
       text: '유저들의 순위와 경험치를 확인할 수 있습니다.',
       image: ranking,
       link: '/ranking',
-    }
+    },
   ]);
   const navigateToLink = () => {
     const content = contents[visible];

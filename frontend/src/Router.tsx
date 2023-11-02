@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
@@ -22,10 +22,16 @@ const Router = () => {
   const isLoginRoute = location.pathname.includes('/select-mode');
 
   useEffect(() => {
-    axios
-      .get(`${process.env.REACT_APP_BASE_URL}/member/visit`)
-      .then((res) => res)
-      .catch((err) => err);
+    axios.get('https://geolocation-db.com/json/').then((res) => {
+      const userIp = res.data.IPv4;
+
+      axios
+        .post(`${process.env.REACT_APP_BASE_URL}/member/visit`, {
+          userIp,
+        })
+        .then((response) => response)
+        .catch((err) => err);
+    });
   }, []);
 
   return (
