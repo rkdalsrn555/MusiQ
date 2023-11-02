@@ -22,7 +22,7 @@ export const ResultPage: FC = () => {
         exit={{ opacity: 0 }}
         transition={{ duration: 1 }}
       >
-      <HomeBtn url="/" />;
+      <HomeBtn url="/select-mode" />;
       <ResultInfo />
     </motion.div>
   )
