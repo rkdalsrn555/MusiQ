@@ -26,9 +26,13 @@ const HoverStyled = styled.img`
 
 interface ShareButtonProps {
   correctAnswerCnt: number;
+  mode: string;
 }
 
-export const ShareButton: FC<ShareButtonProps> = ({ correctAnswerCnt }) => {
+export const ShareButton: FC<ShareButtonProps> = ({
+  correctAnswerCnt,
+  mode,
+}) => {
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://developers.kakao.com/sdk/js/kakao.js';
@@ -44,18 +48,18 @@ export const ShareButton: FC<ShareButtonProps> = ({ correctAnswerCnt }) => {
 
     // correctAnswerCnt 값에 따라 titleMessage와 imageUrl 변경
     if (correctAnswerCnt === 0) {
-      titleMessage = '하나도 못 맞혔어요... 도와주세요😭';
+      titleMessage = `${mode}난이도로 하나도 못 맞혔어요... 도와주세요😭`;
       imageUrl =
         'https://image.musinsa.com/mfile_s01/2016/03/21/317b6935907bfd5e33f103fa503b07e4165530.jpg';
     } else if (correctAnswerCnt >= 1 && correctAnswerCnt <= 7) {
-      titleMessage = `아쉽게도 ${correctAnswerCnt}개밖에 못 맞혔어요. 😢`;
+      titleMessage = `아쉽게도 ${mode}난이도로 ${correctAnswerCnt}개밖에 못 맞혔어요. 😢`;
       imageUrl =
         'https://cdn.011st.com/11dims/resize/600x600/quality/75/11src/product/1973494215/B.jpg?765000000';
     } else if (correctAnswerCnt >= 8 && correctAnswerCnt <= 15) {
-      titleMessage = `우와! ${correctAnswerCnt}개나 맞혔어요! 🎉`;
+      titleMessage = `우와! ${mode}난이도로 ${correctAnswerCnt}개나 맞혔어요! 🎉`;
       imageUrl = 'https://pbs.twimg.com/media/EFogp8wUcAAkydU.jpg';
     } else if (correctAnswerCnt >= 16) {
-      titleMessage = `대단해요! ${correctAnswerCnt}개나 맞혔어요! 🚀`;
+      titleMessage = `대단해요! ${mode}난이도로 ${correctAnswerCnt}개나 맞혔어요! 🚀`;
       imageUrl = 'https://i3.ruliweb.com/img/22/02/07/17ed283669719ea12.jpg';
     }
 
