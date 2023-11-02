@@ -49,9 +49,13 @@ export const RankingHeader = styled.div`
   background-color: #f8f8f8; 
   border-bottom: 2px solid #eee; 
   width: 38rem;
+  border-radius: 2px;
 `;
 
 export const HeaderCell = styled.div`
+  font-weight: bold;
+  font-size: large;
+  color: red;
   flex-basis: 33.33%; 
   text-align: center;
 `;
