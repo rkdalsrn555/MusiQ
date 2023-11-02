@@ -10,4 +10,8 @@ public interface MemberService {
 	JoinResponseDto signUp(JoinRequestDto joinRequestDto);
 
 	VisitResponseDto visit(String userIp);
+
+	boolean validateDuplicatedLoginId(String loginId);
+
+	boolean validateDuplicatedNickname(String nickname);
 }

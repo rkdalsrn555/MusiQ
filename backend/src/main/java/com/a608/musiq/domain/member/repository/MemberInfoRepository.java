@@ -12,8 +12,8 @@ import com.a608.musiq.domain.member.domain.MemberInfo;
 @Repository
 public interface MemberInfoRepository extends JpaRepository<MemberInfo, UUID> {
 
-	@Query("select count(i.nickname) > 0 "
+	@Query("select count(i.nickname) = 0 "
 		+ "from MemberInfo i "
 		+ "where i.nickname = :nickname ")
-	boolean findByNicknameExists(@Param("nickname") String nickname);
+	boolean findByNicknameNotExists(@Param("nickname") String nickname);
 }

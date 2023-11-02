@@ -12,8 +12,8 @@ import com.a608.musiq.domain.member.domain.Member;
 @Repository
 public interface MemberRepository extends JpaRepository<Member , UUID> {
 
-	@Query("select count(m.loginId) > 0 "
+	@Query("select count(m.loginId) = 0 "
 		+ "from Member m "
 		+ "where m.loginId = :loginId")
-	boolean findByLoginIdExists(@Param("loginId") String loginId);
+	boolean findByLoginIdNotExists(@Param("loginId") String loginId);
 }

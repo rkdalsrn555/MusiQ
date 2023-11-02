@@ -33,7 +33,9 @@ public class MemberServiceImpl implements MemberService {
 	@Transactional
 	public JoinResponseDto signUp(JoinRequestDto joinRequestDto) {
 
-		validateDuplicatedLoginId(joinRequestDto.getLoginId());
+		if (!validateDuplicatedLoginId(joinRequestDto.getLoginId())) {
+			throw new MemberException(MemberExceptionInfo.DUPLICATED_LONGIN_ID);
+		}
 
 		UUID memberUUID = UUID.randomUUID();
 		memberRepository.save(Member.builder()
@@ -43,7 +45,9 @@ public class MemberServiceImpl implements MemberService {
 			.loginType(LoginType.SIMPLE)
 			.build());
 
-		validateDuplicatedNickname(joinRequestDto.getNickname());
+		if(!validateDuplicatedNickname(joinRequestDto.getNickname())) {
+			throw new MemberException(MemberExceptionInfo.DUPLICATED_NICKNAME);
+		}
 
 		MemberInfo memberInfo = memberInfoRepository.save(MemberInfo.builder()
 			.id(memberUUID)
@@ -61,15 +65,13 @@ public class MemberServiceImpl implements MemberService {
 		return VisitResponseDto.of(userIp);
 	}
 
-	private void validateDuplicatedLoginId(String loginId) {
-		if (memberRepository.findByLoginIdExists(loginId)) {
-			throw new MemberException(MemberExceptionInfo.DUPLICATED_LONGIN_ID);
-		}
+	@Override
+	public boolean validateDuplicatedLoginId(String loginId) {
+		return memberRepository.findByLoginIdNotExists(loginId);
 	}
 
-	private void validateDuplicatedNickname(String nickname) {
-		if (memberInfoRepository.findByNicknameExists(nickname)) {
-			throw new MemberException(MemberExceptionInfo.DUPLICATED_NICKNAME);
-		}
+	@Override
+	public boolean validateDuplicatedNickname(String nickname) {
+		return memberInfoRepository.findByNicknameNotExists(nickname);
 	}
 }
