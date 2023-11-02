@@ -2,14 +2,14 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ReactComponent as KeyLogo } from '../../../../assets/svgs/login/loginKey.svg';
+import hoverCursorIcon from '../../../../assets/img/hoverCursorIcon.png';
 
 const Container = styled.div`
-  position: absolute;
-  top: 4%;
-  right: 10%;
   display: flex;
   align-items: center;
   gap: 0.7rem;
+  padding-top: 0.5rem;
+  padding-right: 8rem;
 
   & p {
     font-size: 2rem;
@@ -17,15 +17,36 @@ const Container = styled.div`
     font-weight: bold;
   }
 
+  :hover,
+  :active {
+    cursor:
+      url(${hoverCursorIcon}) 2 2,
+      auto !important;
+  }
+
   &:hover {
     & .keyLogo {
       fill: #ffe500;
-      transition: all 0.5s;
+      transition: all 0.3s;
+
+      :hover,
+      :active {
+        cursor:
+          url(${hoverCursorIcon}) 2 2,
+          auto !important;
+      }
     }
 
     & p {
       color: #ffe500;
-      transition: all 0.5s;
+      transition: all 0.3s;
+
+      :hover,
+      :active {
+        cursor:
+          url(${hoverCursorIcon}) 2 2,
+          auto !important;
+      }
     }
   }
 `;
