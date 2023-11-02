@@ -7,8 +7,9 @@ export const StyledBubble = styled.div`
   justify-content: space-around;
   align-items: center;
   flex-direction: column;
+  font-weight: bold;
 `;
 
 export const StyledFont = styled.div`
   font-size: 20px;
-`
+`;
