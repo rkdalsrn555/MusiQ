@@ -45,6 +45,7 @@ export const BgmBtn = () => {
           src={isPlaying ? playButton : muteButton}
           alt={isPlaying ? 'Mute' : 'Play'}
           width={100}
+          className="megaphone"
         />
         <ExplainBox time={time}>
           <p>배경음악을 틀어보세요!</p>

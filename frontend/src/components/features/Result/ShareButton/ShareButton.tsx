@@ -1,6 +1,7 @@
 import React, { FC, useEffect } from 'react';
 import styled from 'styled-components';
 import ShareIcon from '../../../../assets/svgs/ShareIcon.svg';
+import hoverCursorIcon from '../../../../assets/img/hoverCursorIcon.png';
 
 declare global {
   interface Window {
@@ -8,11 +9,20 @@ declare global {
   }
 }
 
+const Container = styled.button`
+  :hover,
+  :active {
+    cursor:
+      url(${hoverCursorIcon}) 2 2,
+      auto !important;
+  }
+`;
+
 const HoverStyled = styled.img`
   &:hover {
     filter: sepia(100%);
   }
-`
+`;
 
 interface ShareButtonProps {
   correctAnswerCnt: number;
@@ -72,8 +82,8 @@ export const ShareButton: FC<ShareButtonProps> = ({ correctAnswerCnt }) => {
     );
   };
   return (
-      <button type="button" onClick={handleShare}>
-        <HoverStyled src={ShareIcon} alt="Share Icon" width={150} />
-      </button>
+    <Container type="button" onClick={handleShare}>
+      <HoverStyled src={ShareIcon} alt="Share Icon" width={150} />
+    </Container>
   );
 };
