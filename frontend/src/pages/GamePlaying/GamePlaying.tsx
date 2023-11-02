@@ -423,34 +423,48 @@ export const GamePlaying = () => {
                     축하드립니다 선택한 연도의 모든 문제를 맞추셨습니다!
                   </p>
                 ) : (
-                  <p className="explainGame">
-                    처음부터{' '}
-                    <span>
-                      {gameOptionData
-                        ? gameOptionData.difficulty.time / 1000
-                        : ''}
-                      초간
-                    </span>{' '}
-                    들려드립니다
-                  </p>
+                  <div>
+                    {isLose ? (
+                      <p className="explainGame">
+                        게임이 끝났습니다. 결과를 확인해주세요
+                      </p>
+                    ) : (
+                      <p className="explainGame">
+                        처음부터{' '}
+                        <span>
+                          {gameOptionData
+                            ? gameOptionData.difficulty.time / 1000
+                            : ''}
+                          초간
+                        </span>{' '}
+                        들려드립니다
+                      </p>
+                    )}
+                  </div>
                 )}
               </S.GameStatusExplainContainer>
               {location.state.gameRoomData.problems === streak ? (
                 ''
               ) : (
-                <S.GameStatusExplainContainer>
-                  {isPlaying ? (
-                    <p className="gameStatus">...Playing</p>
+                <div>
+                  {isLose ? (
+                    ''
                   ) : (
-                    <div>
-                      {musicReady ? (
-                        <p className="gameStatus">...wait</p>
+                    <S.GameStatusExplainContainer>
+                      {isPlaying ? (
+                        <p className="gameStatus">...Playing</p>
                       ) : (
-                        <p className="gameStatus">...노래를 불러오는 중</p>
+                        <div>
+                          {musicReady ? (
+                            <p className="gameStatus">...wait</p>
+                          ) : (
+                            <p className="gameStatus">...노래를 불러오는 중</p>
+                          )}
+                        </div>
                       )}
-                    </div>
+                    </S.GameStatusExplainContainer>
                   )}
-                </S.GameStatusExplainContainer>
+                </div>
               )}
 
               {(isWin && !isStart) || isLose ? (
