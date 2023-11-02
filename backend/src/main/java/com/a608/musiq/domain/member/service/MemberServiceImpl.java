@@ -7,11 +7,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.domain.Visitor;
-import com.a608.musiq.domain.member.dto.VisitResponseDto;
+import com.a608.musiq.domain.member.dto.responseDto.ValidateDuplicatedLoginIdResponseDto;
+import com.a608.musiq.domain.member.dto.responseDto.ValidateDuplicatedNicknameResponseDto;
+import com.a608.musiq.domain.member.dto.responseDto.VisitResponseDto;
 import com.a608.musiq.domain.member.domain.LoginType;
 import com.a608.musiq.domain.member.domain.Member;
-import com.a608.musiq.domain.member.dto.JoinRequestDto;
-import com.a608.musiq.domain.member.dto.JoinResponseDto;
+import com.a608.musiq.domain.member.dto.requestDto.JoinRequestDto;
+import com.a608.musiq.domain.member.dto.responseDto.JoinResponseDto;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.member.repository.MemberRepository;
 import com.a608.musiq.domain.member.repository.VisitorRepository;
@@ -33,7 +35,7 @@ public class MemberServiceImpl implements MemberService {
 	@Transactional
 	public JoinResponseDto signUp(JoinRequestDto joinRequestDto) {
 
-		if (!validateDuplicatedLoginId(joinRequestDto.getLoginId())) {
+		if (!validateDuplicatedLoginId(joinRequestDto.getLoginId()).isValid()) {
 			throw new MemberException(MemberExceptionInfo.DUPLICATED_LONGIN_ID);
 		}
 
@@ -45,7 +47,7 @@ public class MemberServiceImpl implements MemberService {
 			.loginType(LoginType.SIMPLE)
 			.build());
 
-		if(!validateDuplicatedNickname(joinRequestDto.getNickname())) {
+		if (!validateDuplicatedNickname(joinRequestDto.getNickname()).isValid()) {
 			throw new MemberException(MemberExceptionInfo.DUPLICATED_NICKNAME);
 		}
 
@@ -59,6 +61,7 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public VisitResponseDto visit(String userIp) {
 		visitorRepository.save(Visitor.of(userIp));
 
@@ -66,12 +69,14 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public boolean validateDuplicatedLoginId(String loginId) {
-		return memberRepository.findByLoginIdNotExists(loginId);
+	@Transactional(readOnly = true)
+	public ValidateDuplicatedLoginIdResponseDto validateDuplicatedLoginId(String loginId) {
+		return new ValidateDuplicatedLoginIdResponseDto(memberRepository.findByLoginIdNotExists(loginId));
 	}
 
 	@Override
-	public boolean validateDuplicatedNickname(String nickname) {
-		return memberInfoRepository.findByNicknameNotExists(nickname);
+	@Transactional(readOnly = true)
+	public ValidateDuplicatedNicknameResponseDto validateDuplicatedNickname(String nickname) {
+		return new ValidateDuplicatedNicknameResponseDto(memberInfoRepository.findByNicknameNotExists(nickname));
 	}
 }

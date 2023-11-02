@@ -1,9 +1,11 @@
 package com.a608.musiq.domain.member.service;
 
-import com.a608.musiq.domain.member.dto.VisitResponseDto;
+import com.a608.musiq.domain.member.dto.responseDto.ValidateDuplicatedLoginIdResponseDto;
+import com.a608.musiq.domain.member.dto.responseDto.ValidateDuplicatedNicknameResponseDto;
+import com.a608.musiq.domain.member.dto.responseDto.VisitResponseDto;
 
-import com.a608.musiq.domain.member.dto.JoinRequestDto;
-import com.a608.musiq.domain.member.dto.JoinResponseDto;
+import com.a608.musiq.domain.member.dto.requestDto.JoinRequestDto;
+import com.a608.musiq.domain.member.dto.responseDto.JoinResponseDto;
 
 public interface MemberService {
 
@@ -11,7 +13,7 @@ public interface MemberService {
 
 	VisitResponseDto visit(String userIp);
 
-	boolean validateDuplicatedLoginId(String loginId);
+	ValidateDuplicatedLoginIdResponseDto validateDuplicatedLoginId(String loginId);
 
-	boolean validateDuplicatedNickname(String nickname);
+	ValidateDuplicatedNicknameResponseDto validateDuplicatedNickname(String nickname);
 }
