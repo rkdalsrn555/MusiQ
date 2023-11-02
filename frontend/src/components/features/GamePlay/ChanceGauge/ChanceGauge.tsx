@@ -11,21 +11,38 @@ const Container = styled.div`
   gap: 1rem;
 `;
 
-const batteryChanceArray = [
-  battery0Chance,
-  battery1Chance,
-  battery2Chance,
-  battery3Chance,
-];
+// const batteryChanceArray = [
+//   battery0Chance,
+//   battery1Chance,
+//   battery2Chance,
+//   battery3Chance,
+// ];
 
 export const ChanceGauge = ({ chanceCnt }: { chanceCnt: number }) => (
   <Container>
-    <img src={headset} alt="헤드셋" width={60} height={50} />
     <img
+      src={headset}
+      alt="헤드셋"
+      width={45}
+      height={chanceCnt <= 0 ? 0 : 40}
+    />
+    <img
+      src={headset}
+      alt="헤드셋"
+      width={45}
+      height={chanceCnt <= 1 ? 0 : 40}
+    />
+    <img
+      src={headset}
+      alt="헤드셋"
+      width={45}
+      height={chanceCnt <= 2 ? 0 : 40}
+    />
+    {/* <img
       src={batteryChanceArray[chanceCnt]}
       alt="배터리"
       width={90}
       height={50}
-    />
+    /> */}
   </Container>
 );

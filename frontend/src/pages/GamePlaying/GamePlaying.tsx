@@ -96,8 +96,12 @@ export const GamePlaying = () => {
   const [btn3isDisabled, setIsBtn3Disabled] = useState<boolean>(false);
   const [inputText, setInputText] = useState<string>(''); // 정답 담을 state
 
-  useEffect(() => { // 모바일 기기 접근을 막기 위해 추가한 코드
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  useEffect(() => {
+    // 모바일 기기 접근을 막기 위해 추가한 코드
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
 
     if (isMobile) {
       navigate('/mobile-restriction');
@@ -416,7 +420,7 @@ export const GamePlaying = () => {
               <S.GameStatusExplainContainer>
                 {location.state.gameRoomData.problems === streak ? (
                   <p className="explainGame">
-                    축하드립니다 선택한 년도의 모든 문제를 맞추셨습니다!
+                    축하드립니다 선택한 연도의 모든 문제를 맞추셨습니다!
                   </p>
                 ) : (
                   <p className="explainGame">
