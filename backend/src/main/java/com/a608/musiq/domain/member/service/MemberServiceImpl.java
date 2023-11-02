@@ -31,6 +31,14 @@ public class MemberServiceImpl implements MemberService {
 	private final MemberInfoRepository memberInfoRepository;
 	private final VisitorRepository visitorRepository;
 
+	/**
+	 * 회원가입
+	 *
+	 * @param joinRequestDto
+	 * @see JoinResponseDto
+	 * @return JoinResponseDto
+	 *
+	 */
 	@Override
 	@Transactional
 	public JoinResponseDto signUp(JoinRequestDto joinRequestDto) {
@@ -60,20 +68,41 @@ public class MemberServiceImpl implements MemberService {
 		return JoinResponseDto.of(memberInfo.getNickname());
 	}
 
+	/**
+	 * 방문자 체크
+	 *
+	 * @param userIp
+	 * @see VisitResponseDto
+	 * @return VisitResponseDto
+	 */
 	@Override
-	@Transactional(readOnly = true)
+	@Transactional
 	public VisitResponseDto visit(String userIp) {
 		visitorRepository.save(Visitor.of(userIp));
 
 		return VisitResponseDto.of(userIp);
 	}
 
+	/**
+	 * 로그인 아이디 중복 검사
+	 *
+	 * @param loginId
+	 * @see ValidateDuplicatedLoginIdResponseDto
+	 * @return ValidateDuplicatedLoginIdResponseDto
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public ValidateDuplicatedLoginIdResponseDto validateDuplicatedLoginId(String loginId) {
 		return new ValidateDuplicatedLoginIdResponseDto(memberRepository.findByLoginIdNotExists(loginId));
 	}
 
+	/**
+	 * 닉네임 중복 검사
+	 *
+	 * @param nickname
+	 * @see ValidateDuplicatedNicknameResponseDto
+	 * @return ValidateDuplicatedNicknameResponseDto
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public ValidateDuplicatedNicknameResponseDto validateDuplicatedNickname(String nickname) {

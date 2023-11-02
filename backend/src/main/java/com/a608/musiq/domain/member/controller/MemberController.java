@@ -27,6 +27,13 @@ public class MemberController {
 
 	private final MemberService memberService;
 
+	/**
+	 * 방문자 체크
+	 *
+	 * @param request
+	 * @see VisitResponseDto
+	 * @return ResponseEntity<BaseResponse<VisitResponseDto>>
+	 */
 	@GetMapping("/visit")
 	private ResponseEntity<BaseResponse<VisitResponseDto>> visit(HttpServletRequest request) {
 
@@ -37,6 +44,13 @@ public class MemberController {
 				.build());
 	}
 
+	/**
+	 * 회원가입
+	 *
+	 * @param joinRequestDto
+	 * @see JoinResponseDto
+	 * @return ResponseEntity<BaseResponse<JoinResponseDto>>
+	 */
 	@PostMapping("/signup")
 	private ResponseEntity<BaseResponse<JoinResponseDto>> signUp(@RequestBody JoinRequestDto joinRequestDto) {
 		return ResponseEntity.status(HttpStatus.OK)
@@ -46,15 +60,22 @@ public class MemberController {
 				.build());
 	}
 
-	@PostMapping("/login")
-	private ResponseEntity<BaseResponse<JoinResponseDto>> login(JoinRequestDto joinRequestDto) {
-		return ResponseEntity.status(HttpStatus.OK)
-			.body(BaseResponse.<JoinResponseDto>builder()
-				.code(HttpStatus.OK.value())
-				.data(memberService.signUp(joinRequestDto))
-				.build());
-	}
+	// @PostMapping("/login")
+	// private ResponseEntity<BaseResponse<JoinResponseDto>> login(JoinRequestDto joinRequestDto) {
+	// 	return ResponseEntity.status(HttpStatus.OK)
+	// 		.body(BaseResponse.<JoinResponseDto>builder()
+	// 			.code(HttpStatus.OK.value())
+	// 			.data(memberService.signUp(joinRequestDto))
+	// 			.build());
+	// }
 
+	/**
+	 * 로그인 아이디 중복 검사
+	 *
+	 * @param loginId
+	 * @see ValidateDuplicatedLoginIdResponseDto
+	 * @return ResponseEntity<BaseResponse<ValidateDuplicatedLoginIdResponseDto>>
+	 */
 	@GetMapping("/validate-login-id/{login-id}")
 	private ResponseEntity<BaseResponse<ValidateDuplicatedLoginIdResponseDto>> validateDuplicatedLoginId(
 		@PathVariable("login-id") String loginId) {
@@ -66,6 +87,13 @@ public class MemberController {
 				.build());
 	}
 
+	/**
+	 * 닉네임 중복 검사
+	 *
+	 * @param nickname
+	 * @see ValidateDuplicatedNicknameResponseDto
+	 * @return ResponseEntity<BaseResponse<ValidateDuplicatedNicknameResponseDto>>
+	 */
 	@GetMapping("/validate-nickname/{nickname}")
 	private ResponseEntity<BaseResponse<ValidateDuplicatedNicknameResponseDto>> validateDuplicatedNickname(
 		@PathVariable("nickname") String nickname) {
