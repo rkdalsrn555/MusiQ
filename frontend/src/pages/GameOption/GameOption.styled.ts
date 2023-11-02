@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import cursorIcon from '../../assets/img/cursor.png';
 
 export const Wrapper = styled.div`
   position: relative;
@@ -14,7 +15,17 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: 2rem;
+  gap: 1rem;
+
+  &.startIcon {
+    margin-top: -1rem;
+
+    &:hover {
+      cursor:
+        url(${cursorIcon}) 2 2,
+        auto;
+    }
+  }
 `;
 
 export const OptionContainer = styled.div`

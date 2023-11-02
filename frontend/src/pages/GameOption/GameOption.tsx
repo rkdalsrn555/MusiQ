@@ -43,8 +43,12 @@ export const GameOption = () => {
     time: number;
   }>({ title: 'easy', select: false, time: EASYTIME });
 
-  useEffect(() => { // 모바일 기기 접근을 막기 위해 추가한 코드
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  useEffect(() => {
+    // 모바일 기기 접근을 막기 위해 추가한 코드
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
 
     if (isMobile) {
       navigate('/mobile-restriction');
@@ -199,7 +203,12 @@ export const GameOption = () => {
               />
             </S.ContentContainer>
           </S.OptionContainer>
-          <StartIcon width={200} onClick={sendOptionToGamePlayPage} />
+          <StartIcon
+            width={200}
+            height={60}
+            onClick={sendOptionToGamePlayPage}
+            className="startIcon"
+          />
         </S.Container>
       </S.Wrapper>
     </motion.div>
