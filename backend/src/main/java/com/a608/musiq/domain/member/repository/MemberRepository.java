@@ -1,5 +1,6 @@
 package com.a608.musiq.domain.member.repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,6 @@ public interface MemberRepository extends JpaRepository<Member , UUID> {
 		+ "from Member m "
 		+ "where m.loginId = :loginId")
 	boolean findByLoginIdNotExists(@Param("loginId") String loginId);
+
+	Optional<Member> findByLoginIdAndPassword(@Param("loginId") String loginId, @Param("password") String password);
 }

@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.a608.musiq.domain.member.dto.requestDto.LoginRequestDto;
+import com.a608.musiq.domain.member.dto.responseDto.LoginResponseDto;
 import com.a608.musiq.domain.member.dto.responseDto.ValidateDuplicatedLoginIdResponseDto;
 import com.a608.musiq.domain.member.dto.responseDto.ValidateDuplicatedNicknameResponseDto;
 import com.a608.musiq.domain.member.dto.responseDto.VisitResponseDto;
@@ -60,14 +62,21 @@ public class MemberController {
 				.build());
 	}
 
-	// @PostMapping("/login")
-	// private ResponseEntity<BaseResponse<JoinResponseDto>> login(JoinRequestDto joinRequestDto) {
-	// 	return ResponseEntity.status(HttpStatus.OK)
-	// 		.body(BaseResponse.<JoinResponseDto>builder()
-	// 			.code(HttpStatus.OK.value())
-	// 			.data(memberService.signUp(joinRequestDto))
-	// 			.build());
-	// }
+	/**
+	 * 로그인
+	 *
+	 * @param loginRequestDto
+	 * @see LoginResponseDto
+	 * @return ResponseEntity<BaseResponse<LoginResponseDto>>
+	 */
+	@PostMapping("/login")
+	private ResponseEntity<BaseResponse<LoginResponseDto>> login(LoginRequestDto loginRequestDto) {
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(BaseResponse.<LoginResponseDto>builder()
+				.code(HttpStatus.OK.value())
+				.data(memberService.login(loginRequestDto))
+				.build());
+	}
 
 	/**
 	 * 로그인 아이디 중복 검사
