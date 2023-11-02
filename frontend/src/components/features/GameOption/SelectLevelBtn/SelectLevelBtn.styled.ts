@@ -1,10 +1,18 @@
 import styled from 'styled-components';
+import hoverCursorIcon from '../../../../assets/img/hoverCursorIcon.png';
 
 export const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 3rem;
+
+  :hover,
+  :active {
+    cursor:
+      url(${hoverCursorIcon}) 2 2,
+      auto !important;
+  }
 
   & h2 {
     font-size: 2rem;

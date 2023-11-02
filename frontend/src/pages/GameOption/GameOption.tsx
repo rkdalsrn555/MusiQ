@@ -12,7 +12,7 @@ import * as S from './GameOption.styled';
 const EASYTIME = 2000;
 const NORMALTIME = 1000;
 const HARDTIME = 500;
-const optionList = ['난이도 선택', '년도 선택', '선택한 년도'];
+const optionList = ['난이도 선택', '연도 선택', '선택한 연도'];
 const levelLists = [
   { title: 'easy', select: false, time: EASYTIME },
   { title: 'normal', select: false, time: NORMALTIME },
@@ -113,7 +113,7 @@ export const GameOption = () => {
   // 옵션 선택한거 play 페이지로 location.state로 넘겨주기
   const sendOptionToGamePlayPage = async () => {
     if (checkedList.length === 0) {
-      alert('년도를 선택해주세요');
+      alert('연도를 선택해주세요');
       return;
     }
 

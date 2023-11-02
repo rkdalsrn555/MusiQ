@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import cursorIcon from '../../assets/img/cursor.png';
+import hoverCursorIcon from '../../assets/img/hoverCursorIcon.png';
 
 export const Wrapper = styled.div`
   position: relative;
@@ -8,6 +8,18 @@ export const Wrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  &.startIcon {
+    width: 200px;
+    height: 60px;
+    margin-top: -1rem;
+  }
+
+  &.startIcon:hover {
+    cursor:
+      url(${hoverCursorIcon}) 2 2,
+      auto !important;
+  }
 `;
 
 export const Container = styled.div`
@@ -16,16 +28,6 @@ export const Container = styled.div`
   align-items: center;
   justify-content: flex-start;
   gap: 1rem;
-
-  &.startIcon {
-    margin-top: -1rem;
-
-    &:hover {
-      cursor:
-        url(${cursorIcon}) 2 2,
-        auto;
-    }
-  }
 `;
 
 export const OptionContainer = styled.div`
