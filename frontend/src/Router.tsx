@@ -27,7 +27,7 @@ const Router = () => {
 
       axios
         .post(`${process.env.REACT_APP_BASE_URL}/member/visit`, {
-          userIP: userIp,
+          userIp,
         })
         .then((response) => response)
         .catch((err) => err);
