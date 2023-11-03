@@ -44,7 +44,7 @@ export const BgmBtn = () => {
         <source src="/assets/bgm/pixelLand.mp3" type="audio/mp3" />
         <track kind="captions" />
       </audio>
-      {isLoginRoute ? <LoginRouterBtn /> : ''}
+      {/* {isLoginRoute ? <LoginRouterBtn /> : ''} */}
       <StyledBgmBtn type="button" onClick={handlePlayPause}>
         <img
           src={isPlaying ? playButton : muteButton}
