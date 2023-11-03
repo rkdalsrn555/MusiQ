@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import hoverCursorIcon from '../../../../assets/img/hoverCursorIcon.png';
 
 export const Container = styled.div`
   display: flex;
@@ -22,6 +23,13 @@ export const Container = styled.div`
     background-color: #5024ff;
     margin-right: 1rem;
 
+    :hover,
+    :active {
+      cursor:
+        url(${hoverCursorIcon}) 2 2,
+        auto !important;
+    }
+
     & label {
       padding: 1rem;
       line-height: 4rem;
@@ -38,6 +46,13 @@ export const Container = styled.div`
     text-align: center;
     background-color: #fff;
     margin-right: 1rem;
+
+    :hover,
+    :active {
+      cursor:
+        url(${hoverCursorIcon}) 2 2,
+        auto !important;
+    }
 
     & label {
       padding: 1rem;

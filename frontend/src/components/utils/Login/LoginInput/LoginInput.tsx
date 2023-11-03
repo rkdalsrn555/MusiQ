@@ -14,6 +14,7 @@ type OwnProps = {
   errorMessage?: string;
   inputValue: string;
   setInputValue: React.Dispatch<React.SetStateAction<string>>;
+  inputRef: React.MutableRefObject<string>;
 };
 
 export const LoginInput = (props: OwnProps) => {
@@ -27,6 +28,7 @@ export const LoginInput = (props: OwnProps) => {
     successMessage,
     inputValue,
     setInputValue,
+    inputRef,
   } = props;
   const [showPwd, setShowPwd] = useState<boolean>(true);
 
@@ -41,6 +43,7 @@ export const LoginInput = (props: OwnProps) => {
           value={inputValue}
           onChange={(e: any) => {
             setInputValue(e.target.value);
+            inputRef.current = e.target.value;
           }}
         />
         <div>

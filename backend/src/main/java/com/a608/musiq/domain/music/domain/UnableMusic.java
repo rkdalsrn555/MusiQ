@@ -17,12 +17,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Music {
+public class UnableMusic {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@Size(max = 200)
+	@Size(max = 50)
 	@NotNull
 	@Column
 	private String title;
@@ -46,7 +46,7 @@ public class Music {
 	@Column
 	private Integer runTime;
 
-	@Size(max = 200)
+	@Size(max = 50)
 	@NotNull
 	@Column
 	private String hint;

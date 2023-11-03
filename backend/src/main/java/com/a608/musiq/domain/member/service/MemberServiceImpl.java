@@ -3,6 +3,7 @@ package com.a608.musiq.domain.member.service;
 import org.springframework.stereotype.Service;
 
 import com.a608.musiq.domain.member.domain.Visitor;
+import com.a608.musiq.domain.member.dto.VisitRequestDto;
 import com.a608.musiq.domain.member.dto.VisitResponseDto;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.member.repository.MemberRepository;
@@ -19,9 +20,9 @@ public class MemberServiceImpl implements MemberService {
 	private final VisitorRepository visitorRepository;
 
 	@Override
-	public VisitResponseDto visit(String userIp) {
-		visitorRepository.save(Visitor.of(userIp));
+	public VisitResponseDto visit(VisitRequestDto visitRequestDto) {
+		visitorRepository.save(Visitor.of(visitRequestDto.getUserIp()));
 
-		return VisitResponseDto.of(userIp);
+		return VisitResponseDto.of(visitRequestDto.getUserIp());
 	}
 }

@@ -1,6 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 import reset from 'styled-reset';
 import cursorIcon from '../assets/img/cursor.png';
+import hoverCursorIcon from '../assets/img/hoverCursorIcon.png';
 import backgroundGif1 from '../assets/img/background/backgroundGif1.gif';
 import backgroundGif2 from '../assets/img/background/waterBackground.gif';
 
@@ -20,8 +21,11 @@ const GlobalStyles = createGlobalStyle`
         box-sizing: border-box;
         cursor: url(${cursorIcon}) 2 2, auto;
     }
-    *:hover{
-    cursor: url(${cursorIcon}) 2 2, auto;
+    button:hover, a:hover {
+        cursor: url(${hoverCursorIcon}) 2 2, auto !important; 
+    }
+    button:active, a:hover{
+        cursor: url(${hoverCursorIcon}) 2 2, auto; 
     }
     html, body, div, span, h1, h2, h3, h4, h5, h6, p, 
     a, dl, dt, dd, ol, ul, li, form, label, table{

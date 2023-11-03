@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import answerInput from '../../../../assets/img/playgame/answerInput.png';
+import hoverCursorIcon from '../../../../assets/img/hoverCursorIcon.png';
 
 const Container = styled.div`
   position: relative;
@@ -23,6 +24,13 @@ const InputStyle = styled.div`
     background-color: rgba(0, 0, 0, 0);
     padding: 1rem;
     font-size: 2rem;
+  }
+
+  & input:hover,
+  & input:active {
+    cursor:
+      url(${hoverCursorIcon}) 2 2,
+      auto !important;
   }
 `;
 

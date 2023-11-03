@@ -52,7 +52,7 @@ export const ResultInfo = () => {
         />
         <div style={{ marginTop: '1rem' }}>
           <RetryButton mode={mode} selectYear={selectYear} />
-          <ShareButton correctAnswerCnt={correctAnswerCnt} />
+          <ShareButton correctAnswerCnt={correctAnswerCnt} mode={mode} />
         </div>
       </InfoWrapper>
     </ResultContainer>

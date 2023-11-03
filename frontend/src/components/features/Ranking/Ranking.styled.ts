@@ -10,7 +10,7 @@ height: 100vh;
 
 export const RankingWrapper = styled.div`
   width: 45rem;
-  height: 40rem;
+  height: 38rem;
   flex-shrink: 0;
   border: solid 5px rgba(235, 226, 255, 0.4);
   border-radius: 30px;
@@ -39,7 +39,7 @@ export const RankingItemsWrapper = styled.div`
 
 export const RankingLogoImg = styled.img`
   display: flex;
-  margin-bottom: 2%;
+  margin-bottom: 1.5%;
 `
 
 export const RankingHeader = styled.div`
@@ -49,9 +49,13 @@ export const RankingHeader = styled.div`
   background-color: #f8f8f8; 
   border-bottom: 2px solid #eee; 
   width: 38rem;
+  border-radius: 2px;
 `;
 
 export const HeaderCell = styled.div`
+  font-weight: bold;
+  font-size: large;
+  color: red;
   flex-basis: 33.33%; 
   text-align: center;
 `;
