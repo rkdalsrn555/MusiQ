@@ -224,13 +224,15 @@ export const GamePlaying = () => {
   const activeButtonForJudge = async () => {
     setIsJudge(true);
     setIsStart(false);
+    const encodedInputText = encodeURIComponent(inputText);
 
     // 채점
     await axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/music/guest/result?room-id=${location.state.gameRoomData.roomId}&streak=${streak}&answer=${inputText}`
+        `${process.env.REACT_APP_BASE_URL}/music/guest/result?room-id=${location.state.gameRoomData.roomId}&streak=${streak}&answer=${encodedInputText}`
       )
       .then(async (res) => {
+        console.log(encodedInputText);
         if (res.data.data.isCorrect) {
           setIsWin(true);
           isWinRef.current = true;
