@@ -2,15 +2,35 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { ReactComponent as BackBtnIcon } from '../../../assets/svgs/backBtn.svg';
+import hoverCursorIcon from '../../../assets/img/hoverCursorIcon.png';
 
 const PositionStyle = styled.div`
   position: absolute;
   top: 5%;
   left: 5%;
+  width: 150px;
+  height: 100px;
+  z-index: 99;
+
+  :hover,
+  :active {
+    cursor:
+      url(${hoverCursorIcon}) 2 2,
+      auto !important;
+  }
 
   & svg:hover {
     fill: #414141;
     transition: 0.7s;
+    cursor:
+      url(${hoverCursorIcon}) 2 2,
+      auto !important;
+  }
+
+  & svg:active {
+    cursor:
+      url(${hoverCursorIcon}) 2 2,
+      auto !important;
   }
 `;
 

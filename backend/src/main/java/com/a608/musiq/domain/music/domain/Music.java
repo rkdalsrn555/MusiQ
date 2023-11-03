@@ -1,8 +1,5 @@
 package com.a608.musiq.domain.music.domain;
 
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,7 +22,7 @@ public class Music {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 
-	@Size(max = 50)
+	@Size(max = 200)
 	@NotNull
 	@Column
 	private String title;
@@ -49,7 +46,7 @@ public class Music {
 	@Column
 	private Integer runTime;
 
-	@Size(max = 50)
+	@Size(max = 200)
 	@NotNull
 	@Column
 	private String hint;

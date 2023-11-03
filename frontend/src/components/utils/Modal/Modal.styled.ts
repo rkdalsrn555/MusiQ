@@ -61,7 +61,7 @@ export const ModalContent = styled.div`
   }
 `;
 
-export const ModalBtn = styled.button<{ result: string }>`
+export const ModalBtn = styled.button`
   z-index: 999;
   display: flex;
   align-items: center;

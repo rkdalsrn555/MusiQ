@@ -29,6 +29,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web-services'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.springframework.boot:spring-boot-starter-validation:2.4.0'
+	implementation 'org.springframework.boot:spring-boot-starter-quartz'
 
 	// JWT
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'

@@ -7,6 +7,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.domain.Visitor;
+import com.a608.musiq.domain.member.dto.VisitRequestDto;
+import com.a608.musiq.domain.member.dto.VisitResponseDto;
 import com.a608.musiq.domain.member.dto.requestDto.LoginRequestDto;
 import com.a608.musiq.domain.member.dto.responseDto.LoginResponseDto;
 import com.a608.musiq.domain.member.dto.responseDto.ValidateDuplicatedLoginIdResponseDto;
@@ -93,11 +95,10 @@ public class MemberServiceImpl implements MemberService {
 	 * @return VisitResponseDto
 	 */
 	@Override
-	@Transactional
-	public VisitResponseDto visit(String userIp) {
-		visitorRepository.save(Visitor.of(userIp));
+	public VisitResponseDto visit(VisitRequestDto visitRequestDto) {
+		visitorRepository.save(Visitor.of(visitRequestDto.getUserIp()));
 
-		return VisitResponseDto.of(userIp);
+		return VisitResponseDto.of(visitRequestDto.getUserIp());
 	}
 
 	/**

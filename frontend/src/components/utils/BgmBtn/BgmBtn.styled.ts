@@ -1,7 +1,7 @@
 import styled from 'styled-components';
+import hoverCursorIcon from '../../../assets/img/hoverCursorIcon.png';
 
 export const Container = styled.div`
-  width: 15rem;
   height: 15rem;
   position: absolute;
   top: 3%;
@@ -12,6 +12,13 @@ export const StyledBgmBtn = styled.button`
   position: absolute;
   top: 0;
   right: 0;
+
+  .megaphone:hover,
+  .megaphone:active {
+    cursor:
+      url(${hoverCursorIcon}) 2 2,
+      auto !important;
+  }
 `;
 
 export const ExplainBox = styled.div<{ time: number }>`

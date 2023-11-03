@@ -1,5 +1,7 @@
 package com.a608.musiq.domain.member.service;
 
+import com.a608.musiq.domain.member.dto.VisitRequestDto;
+import com.a608.musiq.domain.member.dto.VisitResponseDto;
 import com.a608.musiq.domain.member.dto.requestDto.LoginRequestDto;
 import com.a608.musiq.domain.member.dto.responseDto.LoginResponseDto;
 import com.a608.musiq.domain.member.dto.responseDto.ValidateDuplicatedLoginIdResponseDto;
@@ -10,12 +12,11 @@ import com.a608.musiq.domain.member.dto.requestDto.JoinRequestDto;
 import com.a608.musiq.domain.member.dto.responseDto.JoinResponseDto;
 
 public interface MemberService {
+	VisitResponseDto visit(VisitRequestDto visitRequestDto);
 
 	JoinResponseDto signUp(JoinRequestDto joinRequestDto);
 
 	LoginResponseDto login(LoginRequestDto loginRequestDto);
-
-	VisitResponseDto visit(String userIp);
 
 	ValidateDuplicatedLoginIdResponseDto validateDuplicatedLoginId(String loginId);
 

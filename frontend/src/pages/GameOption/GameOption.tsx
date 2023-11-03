@@ -12,7 +12,7 @@ import * as S from './GameOption.styled';
 const EASYTIME = 2000;
 const NORMALTIME = 1000;
 const HARDTIME = 500;
-const optionList = ['난이도 선택', '년도 선택', '선택한 년도'];
+const optionList = ['난이도 선택', '연도 선택', '선택한 연도'];
 const levelLists = [
   { title: 'easy', select: false, time: EASYTIME },
   { title: 'normal', select: false, time: NORMALTIME },
@@ -42,6 +42,18 @@ export const GameOption = () => {
     select: boolean;
     time: number;
   }>({ title: 'easy', select: false, time: EASYTIME });
+
+  useEffect(() => {
+    // 모바일 기기 접근을 막기 위해 추가한 코드
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+
+    if (isMobile) {
+      navigate('/mobile-restriction');
+    }
+  }, []);
 
   // 결과창에서 다시하기 버튼 클릭 시 옵션 그대로 가져오기 위해 작성한 코드
   useEffect(() => {
@@ -101,7 +113,7 @@ export const GameOption = () => {
   // 옵션 선택한거 play 페이지로 location.state로 넘겨주기
   const sendOptionToGamePlayPage = async () => {
     if (checkedList.length === 0) {
-      alert('년도를 선택해주세요');
+      alert('연도를 선택해주세요');
       return;
     }
 
@@ -191,7 +203,12 @@ export const GameOption = () => {
               />
             </S.ContentContainer>
           </S.OptionContainer>
-          <StartIcon width={200} onClick={sendOptionToGamePlayPage} />
+          <StartIcon
+            width={200}
+            height={60}
+            onClick={sendOptionToGamePlayPage}
+            className="startIcon"
+          />
         </S.Container>
       </S.Wrapper>
     </motion.div>

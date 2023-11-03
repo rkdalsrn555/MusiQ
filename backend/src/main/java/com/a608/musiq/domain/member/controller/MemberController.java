@@ -3,12 +3,14 @@ package com.a608.musiq.domain.member.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.a608.musiq.domain.member.dto.VisitRequestDto;
+import com.a608.musiq.domain.member.dto.VisitResponseDto;
 import com.a608.musiq.domain.member.dto.requestDto.LoginRequestDto;
 import com.a608.musiq.domain.member.dto.responseDto.LoginResponseDto;
 import com.a608.musiq.domain.member.dto.responseDto.ValidateDuplicatedLoginIdResponseDto;
@@ -19,7 +21,6 @@ import com.a608.musiq.domain.member.dto.responseDto.JoinResponseDto;
 import com.a608.musiq.domain.member.service.MemberService;
 import com.a608.musiq.global.common.response.BaseResponse;
 
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -29,20 +30,13 @@ public class MemberController {
 
 	private final MemberService memberService;
 
-	/**
-	 * 방문자 체크
-	 *
-	 * @param request
-	 * @see VisitResponseDto
-	 * @return ResponseEntity<BaseResponse<VisitResponseDto>>
-	 */
-	@GetMapping("/visit")
-	private ResponseEntity<BaseResponse<VisitResponseDto>> visit(HttpServletRequest request) {
+	@PostMapping("/visit")
+	private ResponseEntity<BaseResponse<VisitResponseDto>> visit(@RequestBody VisitRequestDto visitRequestDto) {
 
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<VisitResponseDto>builder()
 				.code(HttpStatus.OK.value())
-				.data(memberService.visit(request.getRemoteAddr()))
+				.data(memberService.visit(visitRequestDto))
 				.build());
 	}
 

@@ -96,6 +96,18 @@ export const GamePlaying = () => {
   const [btn3isDisabled, setIsBtn3Disabled] = useState<boolean>(false);
   const [inputText, setInputText] = useState<string>(''); // 정답 담을 state
 
+  useEffect(() => {
+    // 모바일 기기 접근을 막기 위해 추가한 코드
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
+
+    if (isMobile) {
+      navigate('/mobile-restriction');
+    }
+  }, []);
+
   // 게임 플레이 실행
   const playMusic = (musicStartTime: number) => {
     if (videoRef.current) {
@@ -212,13 +224,15 @@ export const GamePlaying = () => {
   const activeButtonForJudge = async () => {
     setIsJudge(true);
     setIsStart(false);
+    const encodedInputText = encodeURIComponent(inputText);
 
     // 채점
     await axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/music/guest/result?room-id=${location.state.gameRoomData.roomId}&streak=${streak}&answer=${inputText}`
+        `${process.env.REACT_APP_BASE_URL}/music/guest/result?room-id=${location.state.gameRoomData.roomId}&streak=${streak}&answer=${encodedInputText}`
       )
       .then(async (res) => {
+        console.log(encodedInputText);
         if (res.data.data.isCorrect) {
           setIsWin(true);
           isWinRef.current = true;
@@ -408,37 +422,51 @@ export const GamePlaying = () => {
               <S.GameStatusExplainContainer>
                 {location.state.gameRoomData.problems === streak ? (
                   <p className="explainGame">
-                    축하드립니다 선택한 년도의 모든 문제를 맞추셨습니다!
+                    축하드립니다 선택한 연도의 모든 문제를 맞추셨습니다!
                   </p>
                 ) : (
-                  <p className="explainGame">
-                    처음부터{' '}
-                    <span>
-                      {gameOptionData
-                        ? gameOptionData.difficulty.time / 1000
-                        : ''}
-                      초간
-                    </span>{' '}
-                    들려드립니다
-                  </p>
+                  <div>
+                    {isLose ? (
+                      <p className="explainGame">
+                        게임이 끝났습니다. 결과를 확인해주세요
+                      </p>
+                    ) : (
+                      <p className="explainGame">
+                        처음부터{' '}
+                        <span>
+                          {gameOptionData
+                            ? gameOptionData.difficulty.time / 1000
+                            : ''}
+                          초간
+                        </span>{' '}
+                        들려드립니다
+                      </p>
+                    )}
+                  </div>
                 )}
               </S.GameStatusExplainContainer>
               {location.state.gameRoomData.problems === streak ? (
                 ''
               ) : (
-                <S.GameStatusExplainContainer>
-                  {isPlaying ? (
-                    <p className="gameStatus">...Playing</p>
+                <div>
+                  {isLose ? (
+                    ''
                   ) : (
-                    <div>
-                      {musicReady ? (
-                        <p className="gameStatus">...wait</p>
+                    <S.GameStatusExplainContainer>
+                      {isPlaying ? (
+                        <p className="gameStatus">...Playing</p>
                       ) : (
-                        <p className="gameStatus">...노래를 불러오는 중</p>
+                        <div>
+                          {musicReady ? (
+                            <p className="gameStatus">...wait</p>
+                          ) : (
+                            <p className="gameStatus">...노래를 불러오는 중</p>
+                          )}
+                        </div>
                       )}
-                    </div>
+                    </S.GameStatusExplainContainer>
                   )}
-                </S.GameStatusExplainContainer>
+                </div>
               )}
 
               {(isWin && !isStart) || isLose ? (

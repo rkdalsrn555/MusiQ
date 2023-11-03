@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import hoverCursorIcon from '../../../assets/img/hoverCursorIcon.png';
 
 export const Box = styled(motion.div)`
   width: 54rem;
@@ -31,6 +32,13 @@ export const ButtonContainer = styled.div`
     position: absolute;
     right: -5rem;
   }
+
+  img:hover,
+  img:active {
+    cursor:
+      url(${hoverCursorIcon}) 2 2,
+      auto !important;
+  }
 `;
 
 export const RotatedImage = styled.img`
@@ -50,25 +58,34 @@ export const StyledGuideBtn = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #C8C8C8;
+  background-color: #c8c8c8;
   border-radius: 50%;
   margin-top: 35%;
   margin-right: 80%;
 
   &:hover {
-    background-color: #FAE100;
+    background-color: #fae100;
+    cursor:
+      url(${hoverCursorIcon}) 2 2,
+      auto !important;
+  }
+
+  img:hover {
+    cursor:
+      url(${hoverCursorIcon}) 2 2,
+      auto !important;
   }
 `;
 
 export const StyledGuideText = styled.div`
   position: absolute;
-  font-size: 30px; 
-  background-color: rgba(0, 0, 0, 0.5); 
-  color: white; 
-  padding: 10px; 
-  border-radius: 5px; 
-  top: 50%; 
-  left: 50%; 
-  transform: translate(-50%, -50%); 
+  font-size: 30px;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   line-height: 1.5;
 `;
