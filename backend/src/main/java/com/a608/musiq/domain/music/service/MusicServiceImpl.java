@@ -145,11 +145,11 @@ public class MusicServiceImpl implements MusicService {
         Music music = room.getMusicList().get(streak);
         List<Title> titles = titleRepository.findAllByMusicId(music.getId());
 
-        answer = answer.replaceAll(SPACE, EMPTY_STRING);
+        answer = answer.toLowerCase().replaceAll(SPACE, EMPTY_STRING);
 
         GradeAnswerResponseDto gradeAnswerResponseDto = null;
         for (Title title: titles) {
-            String musicTitle = title.getAnswer().toLowerCase().replace(SPACE, EMPTY_STRING);
+            String musicTitle = title.getAnswer().toLowerCase().replaceAll(SPACE, EMPTY_STRING);
 
             if (answer.equals(musicTitle)) {
                 room.addStreak(streak);
