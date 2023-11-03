@@ -24,8 +24,8 @@ public class Room {
 			.build();
 	}
 
-	public void addStreak() {
-		this.streak++;
+	public void addStreak(Integer streak) {
+		this.streak = streak + 1;
 	}
 
 

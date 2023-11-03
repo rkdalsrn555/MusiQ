@@ -152,7 +152,7 @@ public class MusicServiceImpl implements MusicService {
             String musicTitle = title.getAnswer().toLowerCase().replace(SPACE, EMPTY_STRING);
 
             if (answer.equals(musicTitle)) {
-                room.addStreak();
+                room.addStreak(streak);
                 gradeAnswerResponseDto = GradeAnswerResponseDto.from(Boolean.TRUE, room.getStreak(), music);
                 break;
             }
