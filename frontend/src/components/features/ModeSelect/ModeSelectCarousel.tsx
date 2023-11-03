@@ -48,24 +48,24 @@ export const ModeSelectCarousel: React.FC = () => {
       image: isLoggedIn ? guestLock : guestModeChar,
       link: '/guest/game-option',
     },
-    {
-      id: 3,
-      text: '최대 6인과 함께 게임을 즐길 수 있는 모드입니다. 친구를 초대하거나, 빠른 입장을 통해 다른 사람들과 경쟁해보세요.',
-      image: isLoggedIn ? multiModeChar : multiLock,
-      link: '/multi-mode',
-    },
-    {
-      id: 4,
-      text: '온 가족이 즐길 수 있는 모드입니다. 손을 들고 정답을 외쳐보세요!',
-      image: isLoggedIn ? mzModeChar : mzLock,
-      link: '/mz-mode',
-    },
-    {
-      id: 5,
-      text: '유저들의 순위와 경험치를 확인할 수 있습니다.',
-      image: ranking,
-      link: '/ranking',
-    },
+    // {
+    //   id: 3,
+    //   text: '최대 6인과 함께 게임을 즐길 수 있는 모드입니다. 친구를 초대하거나, 빠른 입장을 통해 다른 사람들과 경쟁해보세요.',
+    //   image: isLoggedIn ? multiModeChar : multiLock,
+    //   link: '/multi-mode',
+    // },
+    // {
+    //   id: 4,
+    //   text: '온 가족이 즐길 수 있는 모드입니다. 손을 들고 정답을 외쳐보세요!',
+    //   image: isLoggedIn ? mzModeChar : mzLock,
+    //   link: '/mz-mode',
+    // },
+    // {
+    //   id: 5,
+    //   text: '유저들의 순위와 경험치를 확인할 수 있습니다.',
+    //   image: ranking,
+    //   link: '/ranking',
+    // },
   ]);
   const navigateToLink = () => {
     const content = contents[visible];
