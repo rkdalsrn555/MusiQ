@@ -36,7 +36,9 @@ export const signupText = styled.p`
   color: #444b59;
 
   & .link {
-    color: #8699da;
+    color: #fcff5d;
+    font-size: 20px;
+    font-weight: bold;
     text-decoration: underline;
     text-underline-position: under;
     margin-left: 16px;

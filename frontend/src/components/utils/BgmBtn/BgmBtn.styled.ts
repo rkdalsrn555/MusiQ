@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import hoverCursorIcon from '../../../assets/img/hoverCursorIcon.png';
 
 export const Container = styled.div`
-  width: 15rem;
   height: 15rem;
   position: absolute;
   top: 3%;

@@ -49,7 +49,7 @@ const Router = () => {
         <Route path="/ranking" element={<RankingPage />} />
       </Routes>
       {isMusicRoute && <BgmBtn />}
-      {isLoginRoute ? <LoginRouterBtn /> : ''}
+      {/* {isLoginRoute ? <LoginRouterBtn /> : ''} */}
     </AnimatePresence>
   );
 };
