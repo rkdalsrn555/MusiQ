@@ -10,6 +10,7 @@ const PositionStyle = styled.div`
   left: 5%;
   width: 150px;
   height: 100px;
+  z-index: 9;
 
   :hover,
   :active {

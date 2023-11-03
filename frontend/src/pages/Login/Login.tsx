@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
@@ -17,6 +17,8 @@ export const Login = () => {
 
   const [userId, setUserId] = useState<string>('');
   const [pw, setPw] = useState<string>('');
+  const userIdRef = useRef('');
+  const pwRef = useRef('');
 
   const [isToggled, setIsToggled] = useState<boolean>(false); // 모달 창 toggle
   const [modalData, setModalData] = useState<{
@@ -52,15 +54,87 @@ export const Login = () => {
         });
         setUserId('');
         setPw('');
+        userIdRef.current = '';
+        pwRef.current = '';
       });
   };
 
-  useEffect(() => { // 모바일 기기 접근을 막기 위해 추가한 코드
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const checkLogin = () => {
+    if (userId === '') {
+      setIsToggled(true);
+      setModalData({
+        data: {
+          title: '😥',
+          message: '아이디를 적어주세요',
+        },
+        yesBtnClick: () => {
+          setIsToggled(false);
+        },
+      });
+    } else if (pw === '') {
+      setIsToggled(true);
+      setModalData({
+        data: {
+          title: '😥',
+          message: '비밀번호를 적어주세요',
+        },
+        yesBtnClick: () => {
+          setIsToggled(false);
+        },
+      });
+    } else if (userId && pw) {
+      getLogin();
+    }
+  };
+
+  useEffect(() => {
+    // 모바일 기기 접근을 막기 위해 추가한 코드
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
 
     if (isMobile) {
       navigate('/mobile-restriction');
     }
+  }, []);
+
+  useEffect(() => {
+    const handleKeyUp = (e: any) => {
+      if (e.key === 'Enter') {
+        if (userIdRef.current === '') {
+          setIsToggled(true);
+          setModalData({
+            data: {
+              title: '😥',
+              message: '아이디를 적어주세요',
+            },
+            yesBtnClick: () => {
+              setIsToggled(false);
+            },
+          });
+        } else if (pwRef.current === '') {
+          setIsToggled(true);
+          setModalData({
+            data: {
+              title: '😥',
+              message: '비밀번호를 적어주세요',
+            },
+            yesBtnClick: () => {
+              setIsToggled(false);
+            },
+          });
+        } else if (userIdRef.current && pwRef.current) {
+          getLogin();
+        }
+      }
+    };
+
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keyup', handleKeyUp);
+    };
   }, []);
 
   return (
@@ -79,6 +153,7 @@ export const Login = () => {
         <S.LoginWrapper>
           <h1>Login</h1>
           <LoginInput
+            inputRef={userIdRef}
             labelId="userId"
             labelContent="아이디"
             placeholder=""
@@ -86,6 +161,7 @@ export const Login = () => {
             setInputValue={setUserId}
           />
           <LoginInput
+            inputRef={pwRef}
             labelId="userPwd"
             labelContent="비밀번호"
             inputValue={pw}
@@ -95,7 +171,7 @@ export const Login = () => {
           <LoginBtn
             content="로그인"
             isDisabled={false}
-            handleClick={getLogin}
+            handleClick={checkLogin}
           />
 
           <S.signupText>

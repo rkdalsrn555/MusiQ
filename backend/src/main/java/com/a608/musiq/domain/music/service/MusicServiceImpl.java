@@ -4,10 +4,12 @@ import com.a608.musiq.domain.music.data.Difficulty;
 import com.a608.musiq.domain.music.domain.Music;
 import com.a608.musiq.domain.music.domain.Room;
 import com.a608.musiq.domain.music.domain.RoomManager;
+import com.a608.musiq.domain.music.domain.Title;
 import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.ProblemForGuestResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.GradeAnswerResponseDto;
 import com.a608.musiq.domain.music.repository.MusicRepository;
+import com.a608.musiq.domain.music.repository.TitleRepository;
 import com.a608.musiq.global.exception.exception.MusicException;
 import com.a608.musiq.global.exception.info.MusicExceptionInfo;
 
@@ -26,13 +28,15 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class MusicServiceImpl implements MusicService {
-
+    private static final String SPACE = " ";
+    private static final String EMPTY_STRING = "";
     private static final int EMPTY_LIST_SIZE = 0;
     private static final int LOOP_START_INDEX = 0;
 
     private final RoomManager roomManager = new RoomManager();
 
     private final MusicRepository musicRepository;
+    private final TitleRepository titleRepository;
 
     /**
      * 게스트 모드 방 생성
@@ -139,14 +143,22 @@ public class MusicServiceImpl implements MusicService {
     public GradeAnswerResponseDto gradeAnswer(Integer roomId, Integer streak, String answer) {
         Room room = roomManager.getRooms().get(roomId);
         Music music = room.getMusicList().get(streak);
-        answer = answer.replaceAll(" ", "");
+        List<Title> titles = titleRepository.findAllByMusicId(music.getId());
 
-        GradeAnswerResponseDto gradeAnswerResponseDto;
-        if (answer.equals(music.getTitle())) {
-            room.addStreak();
-            gradeAnswerResponseDto = GradeAnswerResponseDto.from(Boolean.TRUE, room.getStreak(),
-                music);
-        } else {
+        answer = answer.replaceAll(SPACE, EMPTY_STRING);
+
+        GradeAnswerResponseDto gradeAnswerResponseDto = null;
+        for (Title title: titles) {
+            String musicTitle = title.getAnswer().toLowerCase().replace(SPACE, EMPTY_STRING);
+
+            if (answer.equals(musicTitle)) {
+                room.addStreak(streak);
+                gradeAnswerResponseDto = GradeAnswerResponseDto.from(Boolean.TRUE, room.getStreak(), music);
+                break;
+            }
+        }
+
+        if (gradeAnswerResponseDto == null) {
             gradeAnswerResponseDto = GradeAnswerResponseDto.from(Boolean.FALSE, room.getStreak(),
                 music);
         }

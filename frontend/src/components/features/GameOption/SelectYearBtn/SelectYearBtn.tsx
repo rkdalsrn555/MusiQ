@@ -139,6 +139,9 @@ export const SelectYearBtn = (props: OwnProps) => {
           {checkedList.length === 0
             ? ' 플레이 할 연도를 선택해주세요 '
             : checkedList.map((item, idx) => {
+                if (idx === 0 && checkedList.length === 1) {
+                  return ` ${item} `;
+                }
                 if (idx === 0) {
                   return ` ${item}, `;
                 }
