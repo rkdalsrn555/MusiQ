@@ -62,6 +62,16 @@ export const ErrorMessage = styled.div<{ isError?: boolean }>`
   visibility: ${(props) => (props.isError ? 'visible' : 'hidden')};
 `;
 
+export const DuplicatedMessage = styled.div<{ isDuplicate?: boolean }>`
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -25px;
+  color: #ff0f0f;
+  font-size: 14px;
+  visibility: ${(props) => (props.isDuplicate ? 'visible' : 'hidden')};
+`;
+
 export const SuccessMessage = styled.div<{ isSuccess?: boolean }>`
   position: absolute;
   left: 0;
