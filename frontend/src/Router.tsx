@@ -14,6 +14,7 @@ import {
   MobilePage,
   Login,
   RankingPage,
+  Signup,
 } from './pages';
 
 const Router = () => {
@@ -46,6 +47,7 @@ const Router = () => {
         <Route path="/mobile-restriction" element={<MobilePage />} />
 
         <Route path="/login" element={<Login />} />
+        <Route path="/sign-up" element={<Signup />} />
         <Route path="/ranking" element={<RankingPage />} />
       </Routes>
       {isMusicRoute && <BgmBtn />}
