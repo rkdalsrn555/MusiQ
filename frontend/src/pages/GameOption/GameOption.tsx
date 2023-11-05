@@ -9,14 +9,16 @@ import { ReactComponent as StartIcon } from '../../assets/svgs/startBtn.svg';
 import { Logo, BackBtn, Modal } from '../../components/utils';
 import * as S from './GameOption.styled';
 
-const EASYTIME = 2000;
-const NORMALTIME = 1000;
-const HARDTIME = 500;
+const EASYTIME = 3000;
+const NORMALTIME = 2000;
+const HARDTIME = 1000;
+const CRAZYTIME = 500;
 const optionList = ['난이도 선택', '연도 선택', '선택한 연도'];
 const levelLists = [
   { title: 'easy', select: false, time: EASYTIME },
   { title: 'normal', select: false, time: NORMALTIME },
   { title: 'hard', select: false, time: HARDTIME },
+  { title: 'crazy', select: false, time: CRAZYTIME },
 ];
 
 export const GameOption = () => {
@@ -66,13 +68,14 @@ export const GameOption = () => {
         easy: EASYTIME,
         normal: NORMALTIME,
         hard: HARDTIME,
+        crazy: CRAZYTIME,
       };
 
       setLevelList({
         // 난이도에 따라 동적으로 time 할당
         title: mode,
         select: true,
-        time: timeMapping[mode as 'easy' | 'normal' | 'hard'],
+        time: timeMapping[mode as 'easy' | 'normal' | 'hard' | 'crazy'],
       });
     }
   }, []);
@@ -104,8 +107,10 @@ export const GameOption = () => {
       tempTime = EASYTIME;
     } else if (e.target.value === 'normal') {
       tempTime = NORMALTIME;
-    } else {
+    } else if (e.target.value === 'hard') {
       tempTime = HARDTIME;
+    } else {
+      tempTime = CRAZYTIME;
     }
     setLevelList({ title: e.target.value, select: true, time: tempTime });
   };
