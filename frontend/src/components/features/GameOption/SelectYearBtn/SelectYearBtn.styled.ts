@@ -6,6 +6,22 @@ export const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
+  margin-top: 2.3rem;
+
+  & .secondUl {
+    margin-bottom: 1.2rem;
+  }
+
+  & ul {
+    padding: 1rem;
+    border: 1px solid #fff;
+    border-radius: 1rem;
+    background-color: rgba(255, 255, 255, 0.3);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    width: 37rem;
+  }
 
   & li:hover {
     background-color: #5024ff;
@@ -16,10 +32,9 @@ export const Container = styled.div`
   }
 
   & .selected {
-    width: 9rem;
-    height: 4rem;
+    width: 7rem;
+    height: 3rem;
     border-radius: 1rem;
-    text-align: center;
     background-color: #5024ff;
     margin-right: 1rem;
 
@@ -32,18 +47,17 @@ export const Container = styled.div`
 
     & label {
       padding: 1rem;
-      line-height: 4rem;
-      font-size: 1.5rem;
+      line-height: 3rem;
+      font-size: 1.2rem;
       font-weight: bold;
       color: #fff;
     }
   }
 
   & .checkbox {
-    width: 9rem;
-    height: 4rem;
+    width: 7rem;
+    height: 3rem;
     border-radius: 1rem;
-    text-align: center;
     background-color: #fff;
     margin-right: 1rem;
 
@@ -56,8 +70,8 @@ export const Container = styled.div`
 
     & label {
       padding: 1rem;
-      line-height: 4rem;
-      font-size: 1.5rem;
+      line-height: 3rem;
+      font-size: 1.2rem;
       font-weight: bold;
     }
   }
@@ -71,18 +85,6 @@ export const Container = styled.div`
     flex-direction: column;
     justify-content: center;
     gap: 1rem;
-
-    & h2 {
-      font-size: 2rem;
-      font-weight: bold;
-    }
-
-    & ul {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      width: 45rem;
-    }
   }
 
   & .selectList {
@@ -93,11 +95,6 @@ export const Container = styled.div`
     width: 43rem;
     line-height: 2.5rem;
     margin-top: 1rem;
-
-    & h2 {
-      font-size: 2rem;
-      font-weight: bold;
-    }
 
     & p {
       font-size: 1.5rem;
