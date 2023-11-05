@@ -40,28 +40,46 @@ type OwnProps = {
   isJudge: boolean;
   inputText: string;
   setInputText: (e: any) => void;
-  activeButton: () => void;
-  activeEnter: (e: any) => void;
+  activeButton: (inputText: string) => void;
 };
 
+// Enter 할 시 정답 채점
+// inputText가 ''이면 정답 요청 안보냄
+// inputText가 '정답'이면 요청 보내기
+// const activeEnter = (e: any) => {
+//   if (e.key !== 'Enter') {
+//     return;
+//   }
+//   if (e.key === 'Enter' && inputText !== '') {
+//     activeButtonForJudge();
+//     setInputText('');
+//   }
+// };
+
 export const AnswerInput = (props: OwnProps) => {
-  const {
-    isWin,
-    isLose,
-    isJudge,
-    inputText,
-    setInputText,
-    activeButton,
-    activeEnter,
-  } = props;
+  const { isWin, isLose, isJudge, inputText, setInputText, activeButton } =
+    props;
   const focusRef = useRef<HTMLInputElement>(null);
+  const inputFocusRef = useRef<boolean>(false);
+  const inputTextRef = useRef<string>('');
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Enter' && inputText === '') {
+      if (e.key === 'Enter' && inputTextRef.current === '') {
         if (focusRef.current) {
-          focusRef.current.focus();
+          if (inputFocusRef.current) {
+            focusRef.current.blur();
+            inputFocusRef.current = false;
+          } else {
+            focusRef.current.focus();
+            inputFocusRef.current = true;
+          }
         }
+      } else if (e.key === 'Enter' && inputTextRef.current !== '') {
+        activeButton(inputTextRef.current);
+        setInputText('');
+        inputTextRef.current = '';
+        inputFocusRef.current = false;
       }
 
       window.addEventListener('keydown', handleKeyDown);
@@ -80,8 +98,10 @@ export const AnswerInput = (props: OwnProps) => {
           type="text"
           placeholder="text"
           value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          onKeyUp={(e) => activeEnter(e)}
+          onChange={(e) => {
+            setInputText(e.target.value);
+            inputTextRef.current = e.target.value;
+          }}
           ref={focusRef}
           disabled={isJudge || isWin || isLose}
           readOnly={isJudge || isWin || isLose}

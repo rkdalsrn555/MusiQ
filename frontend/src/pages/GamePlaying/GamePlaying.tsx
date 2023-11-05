@@ -79,6 +79,7 @@ export const GamePlaying = () => {
   });
   const [score, setScore] = useState<number>(0);
   const [lives, setLives] = useState<number>(3); // 생명
+  const livesRef = useRef<number>(3);
   const [chanceCnt, setChanceCnt] = useState<number>(3); // 기회
   const chanceCntRef = useRef(3);
   const [isPlaying, setIsPlaying] = useState<boolean>(false); // 게임중인지, 아닌지
@@ -212,6 +213,7 @@ export const GamePlaying = () => {
         setChanceCnt(3);
         chanceCntRef.current = 3;
         setLives(3);
+        livesRef.current = 3;
         setIsWin(false);
         isWinRef.current = false;
         setIsStart(true);
@@ -221,10 +223,10 @@ export const GamePlaying = () => {
       });
   };
 
-  const activeButtonForJudge = async () => {
+  const activeButtonForJudge = async (answerInputText: string) => {
     setIsJudge(true);
     setIsStart(false);
-    const encodedInputText = encodeURIComponent(inputText);
+    const encodedInputText = encodeURIComponent(answerInputText);
 
     // 채점
     await axios
@@ -232,7 +234,6 @@ export const GamePlaying = () => {
         `${process.env.REACT_APP_BASE_URL}/music/guest/result?room-id=${location.state.gameRoomData.roomId}&streak=${streak}&answer=${encodedInputText}`
       )
       .then(async (res) => {
-        console.log(encodedInputText);
         if (res.data.data.isCorrect) {
           setIsWin(true);
           isWinRef.current = true;
@@ -244,7 +245,7 @@ export const GamePlaying = () => {
             title: res.data.data.title,
             singer: res.data.data.singer,
           });
-        } else if (lives === 0) {
+        } else if (livesRef.current === 0) {
           setIsLose(true);
           isLoseRef.current = true;
           setIsJudge(false);
@@ -256,25 +257,13 @@ export const GamePlaying = () => {
           });
         } else {
           setLives((prev) => prev - 1);
+          livesRef.current -= 1;
           setIsJudge(false);
           setStreak(res.data.data.streak);
           streakRef.current = res.data.data.streak;
         }
       })
       .catch((err) => console.log(err));
-  };
-
-  // Enter 할 시 정답 채점
-  // inputText가 ''이면 정답 요청 안보냄
-  // inputText가 '정답'이면 요청 보내기
-  const activeEnter = (e: any) => {
-    if (e.key !== 'Enter' || inputText === '') {
-      return;
-    }
-    if (e.key === 'Enter') {
-      activeButtonForJudge();
-      setInputText('');
-    }
   };
 
   useEffect(() => {
@@ -431,16 +420,7 @@ export const GamePlaying = () => {
                         게임이 끝났습니다. 결과를 확인해주세요
                       </p>
                     ) : (
-                      <p className="explainGame">
-                        처음부터{' '}
-                        <span>
-                          {gameOptionData
-                            ? gameOptionData.difficulty.time / 1000
-                            : ''}
-                          초간
-                        </span>{' '}
-                        들려드립니다
-                      </p>
+                      <p className="explainGame">현재 {streak} 문제 맞춤</p>
                     )}
                   </div>
                 )}
@@ -496,9 +476,6 @@ export const GamePlaying = () => {
                       setInputText(e);
                     }}
                     activeButton={activeButtonForJudge}
-                    activeEnter={(e: any) => {
-                      activeEnter(e);
-                    }}
                   />
                 </>
               )}
