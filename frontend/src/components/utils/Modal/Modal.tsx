@@ -21,7 +21,11 @@ export const Modal = (props: OwnProps) => {
     <AnimatePresence>
       {isToggled && (
         <>
-          <S.GreyBackground />
+          <S.GreyBackground
+            onClick={() => {
+              setIsToggled(false);
+            }}
+          />
           <S.ModalContainer
             initial={{ y: 10, x: '-50%', opacity: 0 }}
             animate={{ y: 50, opacity: 1 }}
