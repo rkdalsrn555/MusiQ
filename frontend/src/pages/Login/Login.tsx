@@ -169,7 +169,7 @@ export const Login = () => {
           />
 
           <LoginBtn
-            content="로그인"
+            content="login"
             isDisabled={false}
             handleClick={checkLogin}
           />

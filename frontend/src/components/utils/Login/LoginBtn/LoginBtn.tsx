@@ -14,12 +14,17 @@ export const LoginBtn = (props: OwnProps) => {
   return (
     <div>
       {isDisabled ? (
-        <S.LoginButtonContainer disabled={isDisabled} isDisabled={isDisabled} />
+        <S.LoginButtonContainer
+          disabled={isDisabled}
+          isDisabled={isDisabled}
+          content={content}
+        />
       ) : (
         <S.LoginButtonContainer
           disabled={isDisabled}
           isDisabled={isDisabled}
           onClick={handleClick}
+          content={content}
         />
       )}
     </div>
