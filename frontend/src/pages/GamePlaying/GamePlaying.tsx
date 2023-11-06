@@ -477,7 +477,7 @@ export const GamePlaying = () => {
                   )}
                 </div>
               )}
-
+              <DancingChick />
               {(isWin && !isStart) || isLose ? (
                 <S.AnswerYouTubePlayerPosition>
                   <p>
@@ -494,22 +494,18 @@ export const GamePlaying = () => {
                   />
                 </S.AnswerYouTubePlayerPosition>
               ) : (
-                <>
-                  <DancingChick />
-                  <AnswerInput
-                    isWin={isWin}
-                    isLose={isLose}
-                    isJudge={isJudge}
-                    inputText={inputText}
-                    setInputText={(e: any) => {
-                      setInputText(e);
-                    }}
-                    activeButton={activeButtonForJudge}
-                    setIsInputFocus={setIsInputFocus}
-                  />
-                </>
+                <AnswerInput
+                  isWin={isWin}
+                  isLose={isLose}
+                  isJudge={isJudge}
+                  inputText={inputText}
+                  setInputText={(e: any) => {
+                    setInputText(e);
+                  }}
+                  activeButton={activeButtonForJudge}
+                  setIsInputFocus={setIsInputFocus}
+                />
               )}
-
               <S.PlayingBtnBoxPosition>
                 {isLose || location.state.gameRoomData.problems === streak ? (
                   <ResultBtn clickHandler={goResultPage} />

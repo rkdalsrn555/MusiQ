@@ -57,7 +57,7 @@ const Router = () => {
 
   return (
     <AnimatePresence mode="wait">
-      <Routes>
+      <Routes key={0}>
         {PrivatePath.map((item) => (
           <Route
             key={item.path}
@@ -85,7 +85,7 @@ const Router = () => {
           />
         ))}
       </Routes>
-      {isMusicRoute && <BgmBtn />}
+      {isMusicRoute && <BgmBtn key={1} />}
     </AnimatePresence>
   );
 };
