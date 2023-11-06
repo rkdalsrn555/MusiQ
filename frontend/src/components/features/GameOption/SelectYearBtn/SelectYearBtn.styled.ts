@@ -9,7 +9,7 @@ export const Container = styled.div`
   margin-top: 2.3rem;
 
   & .secondUl {
-    margin-bottom: 1.2rem;
+    margin-bottom: 2.5rem;
   }
 
   & ul {
@@ -94,10 +94,10 @@ export const Container = styled.div`
     flex-wrap: wrap;
     width: 43rem;
     line-height: 2.5rem;
-    margin-top: 1rem;
+    margin-top: 0.8rem;
 
     & p {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: bold;
       color: #fcff5d;
     }
