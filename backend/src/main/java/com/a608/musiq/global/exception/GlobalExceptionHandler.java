@@ -8,6 +8,7 @@ import com.a608.musiq.global.common.response.BaseResponse;
 import com.a608.musiq.global.exception.exception.MemberException;
 import com.a608.musiq.global.exception.exception.MemberInfoException;
 import com.a608.musiq.global.exception.exception.MusicException;
+import com.a608.musiq.global.exception.exception.RankingException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -37,5 +38,14 @@ public class GlobalExceptionHandler {
 				.code(exception.getInfo().getCode())
 				.message(exception.getInfo().getMessage())
 				.build());
+	}
+
+	@ExceptionHandler(RankingException.class)
+	public ResponseEntity<BaseResponse<RankingException>> rankingExceptionHandler(RankingException exception) {
+		return ResponseEntity.status(exception.getInfo().getStatus())
+				.body(BaseResponse.<RankingException>builder()
+						.code(exception.getInfo().getCode())
+						.message(exception.getInfo().getMessage())
+						.build());
 	}
 }
