@@ -7,9 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.domain.Visitor;
+import com.a608.musiq.domain.member.dto.requestDto.ReissueTokenRequestDto;
 import com.a608.musiq.domain.member.dto.requestDto.VisitRequestDto;
 import com.a608.musiq.domain.member.dto.requestDto.LoginRequestDto;
 import com.a608.musiq.domain.member.dto.responseDto.LoginResponseDto;
+import com.a608.musiq.domain.member.dto.responseDto.ReissueTokenResponseDto;
 import com.a608.musiq.domain.member.dto.responseDto.ValidateDuplicatedLoginIdResponseDto;
 import com.a608.musiq.domain.member.dto.responseDto.ValidateDuplicatedNicknameResponseDto;
 import com.a608.musiq.domain.member.dto.responseDto.VisitResponseDto;
@@ -26,6 +28,7 @@ import com.a608.musiq.global.exception.exception.MemberException;
 import com.a608.musiq.global.exception.exception.MemberInfoException;
 import com.a608.musiq.global.exception.info.MemberExceptionInfo;
 import com.a608.musiq.global.exception.info.MemberInfoExceptionInfo;
+import com.a608.musiq.global.jwt.JwtValidator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -39,6 +42,7 @@ public class MemberServiceImpl implements MemberService {
 	private final VisitorRepository visitorRepository;
 	private final Util util;
 	private final JwtProvider jwtProvider;
+	private final JwtValidator jwtValidator;
 
 	/**
 	 * 회원가입
@@ -142,4 +146,20 @@ public class MemberServiceImpl implements MemberService {
 
 		return new ValidateDuplicatedNicknameResponseDto(memberInfoRepository.findByNicknameNotExists(nickname));
 	}
+
+	/**
+	 * 토큰 재발급
+	 *
+	 * @param reissueTokenRequestDto
+	 * @see ReissueTokenResponseDto
+	 * @return ReissueTokenResponseDto
+	 */
+	@Override
+	public ReissueTokenResponseDto reissueToken(ReissueTokenRequestDto reissueTokenRequestDto) {
+
+		String memberId = jwtValidator.validateRefreshToken(reissueTokenRequestDto.getRefreshToken());
+
+		return new ReissueTokenResponseDto(jwtProvider.createAccessToken(memberId));
+	}
+
 }

@@ -7,16 +7,23 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.a608.musiq.global.Util;
 import com.a608.musiq.global.exception.exception.MemberException;
 import com.a608.musiq.global.exception.info.MemberExceptionInfo;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
+import lombok.RequiredArgsConstructor;
 
 @Component
+@RequiredArgsConstructor
 public class JwtValidator {
+
+	private final Util util;
 
 	@Value("${jwt.secret-key}")
 	private String SECRET_KEY;
@@ -34,19 +41,27 @@ public class JwtValidator {
 			if (claims.getExpiration() != null && claims.getExpiration().before(now)) {
 				throw new MemberException(MemberExceptionInfo.INVALID_TOKEN);
 			}
-		} catch (ExpiredJwtException e) {
+		} catch (MalformedJwtException | ExpiredJwtException | SignatureException e) {
+
 			throw new MemberException(MemberExceptionInfo.INVALID_TOKEN);
 		}
 	}
 
-	public void validateRefreshToken(String refreshToken) {
+	public String validateRefreshToken(String refreshToken) {
 		validateToken(refreshToken);
 
-		// redis에서 확인하고 없으면 다시 발급하라는 예외
+		String memberId = getData(refreshToken);
 
+		String token = util.getRefreshToken(memberId);
+
+		if (!refreshToken.equals(token)) {
+			throw new MemberException(MemberExceptionInfo.INVALID_TOKEN);
+		}
+
+		return memberId;
 	}
 
-	public String getData(String token) {
+	private String getData(String token) {
 		Claims claims = Jwts.parserBuilder()
 			.setSigningKey(SECRET_KEY.getBytes(StandardCharsets.UTF_8))
 			.build()
