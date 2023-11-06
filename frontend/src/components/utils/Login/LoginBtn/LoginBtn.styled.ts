@@ -8,8 +8,8 @@ export const LoginButtonContainer = styled.button<{
   isDisabled: boolean;
   content: string;
 }>`
-  width: 400px;
-  height: 72px;
+  width: 310px;
+  height: 56px;
   background-image: ${(props) =>
     props.content === 'login' ? `url(${LoginBtnPng})` : `url(${SignupBtnPng})`};
   background-size: cover;

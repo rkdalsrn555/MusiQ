@@ -84,7 +84,7 @@ type OwnProps = {
 };
 
 export const GameExplain = () => {
-  const [time, setTime] = useState<number>(3);
+  const [time, setTime] = useState<number>(10);
 
   useEffect(() => {
     const timerInterval = setInterval(() => {

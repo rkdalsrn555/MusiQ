@@ -31,3 +31,10 @@ export const TempLocationStateGameInfo = atom<GameOptionDataType>({
     },
   },
 });
+
+export const UserDataAtom = atom({
+  key: 'UserDataAtom',
+  default: {
+    nickname: '',
+  },
+});
