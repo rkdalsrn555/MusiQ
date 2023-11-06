@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 public class Scheduler {
 
     private final Util util;
+    
     private final MemberInfoRepository memberInfoRepository;
 
 
