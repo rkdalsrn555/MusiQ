@@ -10,30 +10,30 @@ import disabledfirstMusicPlayKey from '../../../../assets/img/playgame/disabledf
 import disabledmiddleMusicPlayKey from '../../../../assets/img/playgame/disabledmiddleMusicPlayKey.png';
 import disabledendMusicPlayKey from '../../../../assets/img/playgame/disabledendMusicPlayKey.png';
 
-const PlayButtonStyle = styled.button<{ btnName: string; keyEvent: string }>`
+const PlayButtonStyle = styled.button<{ btnname: string; keyevent: string }>`
   width: 6rem;
   height: 6rem;
   background-image: ${(props) =>
-    props.btnName === 'firstMusicPlayKey' ? `url(${firstMusicPlayKey})` : ''};
+    props.btnname === 'firstMusicPlayKey' ? `url(${firstMusicPlayKey})` : ''};
   background-image: ${(props) =>
-    props.btnName === 'middleMusicPlayKey' ? `url(${middleMusicPlayKey})` : ''};
+    props.btnname === 'middleMusicPlayKey' ? `url(${middleMusicPlayKey})` : ''};
   background-image: ${(props) =>
-    props.btnName === 'endMusicPlayKey' ? `url(${endMusicPlayKey})` : ''};
+    props.btnname === 'endMusicPlayKey' ? `url(${endMusicPlayKey})` : ''};
   background-size: contain;
   z-index: 9;
 
   /* 클릭할때 */
   &:active {
     background-image: ${(props) =>
-      props.btnName === 'firstMusicPlayKey'
+      props.btnname === 'firstMusicPlayKey'
         ? `url(${clickfirstMusicPlayKey})`
         : ''};
     background-image: ${(props) =>
-      props.btnName === 'middleMusicPlayKey'
+      props.btnname === 'middleMusicPlayKey'
         ? `url(${clickmiddleMusicPlayKey})`
         : ''};
     background-image: ${(props) =>
-      props.btnName === 'endMusicPlayKey'
+      props.btnname === 'endMusicPlayKey'
         ? `url(${clickendMusicPlayKey})`
         : ''};
     background-size: contain;
@@ -42,15 +42,15 @@ const PlayButtonStyle = styled.button<{ btnName: string; keyEvent: string }>`
   /* disabled 상태일때 */
   &.disabled {
     background-image: ${(props) =>
-      props.btnName === 'firstMusicPlayKey'
+      props.btnname === 'firstMusicPlayKey'
         ? `url(${disabledfirstMusicPlayKey})`
         : ''};
     background-image: ${(props) =>
-      props.btnName === 'middleMusicPlayKey'
+      props.btnname === 'middleMusicPlayKey'
         ? `url(${disabledmiddleMusicPlayKey})`
         : ''};
     background-image: ${(props) =>
-      props.btnName === 'endMusicPlayKey'
+      props.btnname === 'endMusicPlayKey'
         ? `url(${disabledendMusicPlayKey})`
         : ''};
     background-size: contain;
@@ -58,15 +58,15 @@ const PlayButtonStyle = styled.button<{ btnName: string; keyEvent: string }>`
 
   /* 키보드이벤트로 조작했을 때 */
   background-image: ${(props) =>
-    props.keyEvent === 'ArrowLeft' && props.btnName === 'firstMusicPlayKey'
+    props.keyevent === 'ArrowLeft' && props.btnname === 'firstMusicPlayKey'
       ? `url(${clickfirstMusicPlayKey})`
       : ''};
   background-image: ${(props) =>
-    props.keyEvent === 'ArrowDown' && props.btnName === 'middleMusicPlayKey'
+    props.keyevent === 'ArrowDown' && props.btnname === 'middleMusicPlayKey'
       ? `url(${clickmiddleMusicPlayKey})`
       : ''};
   background-image: ${(props) =>
-    props.keyEvent === 'ArrowRight' && props.btnName === 'endMusicPlayKey'
+    props.keyevent === 'ArrowRight' && props.btnname === 'endMusicPlayKey'
       ? `url(${clickendMusicPlayKey})`
       : ''};
 `;
@@ -86,9 +86,9 @@ export const PlayBtn = (props: OwnProps) => {
       type="button"
       onClick={onClickHandler}
       disabled={isBtnDisabled}
-      btnName={btnName}
+      btnname={btnName}
       className={isBtnDisabled ? 'disabled' : ''}
-      keyEvent={keyEvent}
+      keyevent={keyEvent}
     />
   );
 };

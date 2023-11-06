@@ -47,7 +47,7 @@ export const Landing = () => {
 
   return (
     <S.LandingPageContainer onMouseMove={xyHandler}>
-      <S.Version>v0.1.0</S.Version>
+      <S.Version>v{process.env.REACT_APP_VERSION}</S.Version>
       {/* <Cursor xy={xy} /> */}
       <FadeInFromBottom>
         <h1>실시간 노래 맞추기 게임</h1>
