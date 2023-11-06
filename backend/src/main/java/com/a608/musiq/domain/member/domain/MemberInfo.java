@@ -37,7 +37,7 @@ public class MemberInfo extends BaseTimeEntity {
 
 	@NotNull
 	@Column
-	private Integer exp;
+	private Double exp;
 
 	@NotNull
 	@Builder.Default
