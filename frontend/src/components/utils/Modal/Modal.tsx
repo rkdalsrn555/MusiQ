@@ -12,10 +12,18 @@ type OwnProps = {
   };
   noBtnClick?: () => void | null;
   yesBtnClick?: () => void | null;
+  isToggledRef?: React.MutableRefObject<boolean>;
 };
 
 export const Modal = (props: OwnProps) => {
-  const { isToggled, setIsToggled, data, noBtnClick, yesBtnClick } = props;
+  const {
+    isToggled,
+    setIsToggled,
+    data,
+    noBtnClick,
+    yesBtnClick,
+    isToggledRef,
+  } = props;
 
   return (
     <AnimatePresence>
@@ -24,6 +32,9 @@ export const Modal = (props: OwnProps) => {
           <S.GreyBackground
             onClick={() => {
               setIsToggled(false);
+              if (isToggledRef !== undefined) {
+                isToggledRef.current = false;
+              }
             }}
           />
           <S.ModalContainer
@@ -60,6 +71,9 @@ export const Modal = (props: OwnProps) => {
                     yesBtnClick();
                   } else {
                     setIsToggled((prev) => !prev);
+                    if (isToggledRef !== undefined) {
+                      isToggledRef.current = false;
+                    }
                   }
                 }}
               >
