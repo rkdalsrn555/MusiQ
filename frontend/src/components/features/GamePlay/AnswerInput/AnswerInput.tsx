@@ -41,27 +41,22 @@ type OwnProps = {
   inputText: string;
   setInputText: (e: any) => void;
   activeButton: (inputText: string) => void;
+  setIsInputFocus: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-// Enter 할 시 정답 채점
-// inputText가 ''이면 정답 요청 안보냄
-// inputText가 '정답'이면 요청 보내기
-// const activeEnter = (e: any) => {
-//   if (e.key !== 'Enter') {
-//     return;
-//   }
-//   if (e.key === 'Enter' && inputText !== '') {
-//     activeButtonForJudge();
-//     setInputText('');
-//   }
-// };
-
 export const AnswerInput = (props: OwnProps) => {
-  const { isWin, isLose, isJudge, inputText, setInputText, activeButton } =
-    props;
+  const {
+    isWin,
+    isLose,
+    isJudge,
+    inputText,
+    setInputText,
+    activeButton,
+    setIsInputFocus,
+  } = props;
   const focusRef = useRef<HTMLInputElement>(null);
-  const inputFocusRef = useRef<boolean>(false);
   const inputTextRef = useRef<string>('');
+  const inputFocusRef = useRef<boolean>(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -70,9 +65,11 @@ export const AnswerInput = (props: OwnProps) => {
           if (inputFocusRef.current) {
             focusRef.current.blur();
             inputFocusRef.current = false;
+            setIsInputFocus(false);
           } else {
             focusRef.current.focus();
             inputFocusRef.current = true;
+            setIsInputFocus(true);
           }
         }
       } else if (e.key === 'Enter' && inputTextRef.current !== '') {
@@ -80,6 +77,7 @@ export const AnswerInput = (props: OwnProps) => {
         setInputText('');
         inputTextRef.current = '';
         inputFocusRef.current = false;
+        setIsInputFocus(false);
       }
 
       window.addEventListener('keydown', handleKeyDown);

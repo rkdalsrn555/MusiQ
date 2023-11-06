@@ -62,6 +62,7 @@ export const GamePlaying = () => {
     yesBtnClick?: () => void | null;
   }>({ data: { title: '', message: '' } });
   const [isToggled, setIsToggled] = useState<boolean>(false); // 모달 창 toggle
+  const isToggledRef = useRef<boolean>(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -96,6 +97,7 @@ export const GamePlaying = () => {
   const [btn2isDisabled, setIsBtn2Disabled] = useState<boolean>(false);
   const [btn3isDisabled, setIsBtn3Disabled] = useState<boolean>(false);
   const [inputText, setInputText] = useState<string>(''); // 정답 담을 state
+  const [isInputFocus, setIsInputFocus] = useState<boolean>(false);
 
   useEffect(() => {
     // 모바일 기기 접근을 막기 위해 추가한 코드
@@ -287,7 +289,8 @@ export const GamePlaying = () => {
         chanceCntRef.current <= 0 ||
         e.target.nodeName === 'INPUT' ||
         isLoseRef.current ||
-        isPlayingRef.current
+        isPlayingRef.current ||
+        isToggledRef.current
       ) {
         return;
       }
@@ -348,6 +351,7 @@ export const GamePlaying = () => {
           url="/guest/game-option"
           handleClick={() => {
             setIsToggled(true);
+            isToggledRef.current = true;
             setModalData({
               data: {
                 title: '😥',
@@ -355,10 +359,12 @@ export const GamePlaying = () => {
               },
               yesBtnClick: () => {
                 setIsToggled(false);
+                isToggledRef.current = false;
                 navigate('/guest/game-option');
               },
               noBtnClick: () => {
                 setIsToggled(false);
+                isToggledRef.current = false;
               },
             });
           }}
@@ -429,21 +435,13 @@ export const GamePlaying = () => {
                 ''
               ) : (
                 <div>
-                  {isLose ? (
-                    ''
+                  {isInputFocus ? (
+                    <S.GameStatusExplainContainer>
+                      <p className="gameStatus">정답을 입력해삐약</p>
+                    </S.GameStatusExplainContainer>
                   ) : (
                     <S.GameStatusExplainContainer>
-                      {isPlaying ? (
-                        <p className="gameStatus">...Playing</p>
-                      ) : (
-                        <div>
-                          {musicReady ? (
-                            <p className="gameStatus">...wait</p>
-                          ) : (
-                            <p className="gameStatus">...노래를 불러오는 중</p>
-                          )}
-                        </div>
-                      )}
+                      <p className="gameStatus">노래를 들어봐삐약</p>
                     </S.GameStatusExplainContainer>
                   )}
                 </div>
@@ -476,6 +474,7 @@ export const GamePlaying = () => {
                       setInputText(e);
                     }}
                     activeButton={activeButtonForJudge}
+                    setIsInputFocus={setIsInputFocus}
                   />
                 </>
               )}

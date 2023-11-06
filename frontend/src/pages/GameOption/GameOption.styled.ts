@@ -9,16 +9,13 @@ export const Wrapper = styled.div`
   align-items: center;
   justify-content: center;
 
-  &.startIcon {
-    width: 200px;
-    height: 60px;
-    margin-top: -1rem;
-  }
-
-  &.startIcon:hover {
-    cursor:
-      url(${hoverCursorIcon}) 2 2,
-      auto !important;
+  .startIcon {
+    :hover,
+    :active {
+      cursor:
+        url(${hoverCursorIcon}) 2 2,
+        auto !important;
+    }
   }
 `;
 

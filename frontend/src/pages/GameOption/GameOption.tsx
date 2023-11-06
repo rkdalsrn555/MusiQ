@@ -209,7 +209,7 @@ export const GameOption = () => {
             </S.ContentContainer>
           </S.OptionContainer>
           <StartIcon
-            width={200}
+            width={180}
             height={60}
             onClick={sendOptionToGamePlayPage}
             className="startIcon"
