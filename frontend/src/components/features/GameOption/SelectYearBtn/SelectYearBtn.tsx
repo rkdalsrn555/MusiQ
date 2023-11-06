@@ -49,7 +49,6 @@ export const SelectYearBtn = (props: OwnProps) => {
   return (
     <S.Container>
       <div className="selectYear">
-        <h2>1900년</h2>
         <ul>
           {yearLists.map((item, idx) => {
             if (idx >= 3) {
@@ -71,8 +70,7 @@ export const SelectYearBtn = (props: OwnProps) => {
             );
           })}
         </ul>
-        <h2>2000년</h2>
-        <ul>
+        <ul className="secondUl">
           {yearLists.map((item, idx) => {
             if (idx < 3) {
               return '';
@@ -95,7 +93,7 @@ export const SelectYearBtn = (props: OwnProps) => {
                         onChange={(e) => checkHandler(e, item)}
                       />
                     </li>
-                    <div style={{ width: '6rem' }} />
+                    <div style={{ width: '1rem' }} />
                   </>
                 );
               }

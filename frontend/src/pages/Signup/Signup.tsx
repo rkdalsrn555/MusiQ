@@ -41,7 +41,6 @@ export const Signup = () => {
   const duplicatedNicknameRef = useRef<boolean>(false);
   const debounceCheckNickname = useDebounce<string>(nickname, 200);
 
-  const [isDisabled, setIsDisabled] = useState<boolean>(true); // 회원가입 버튼 disabled
   const [isToggled, setIsToggled] = useState<boolean>(false); // 모달 창 toggle
   const [modalData, setModalData] = useState<{
     data: {
@@ -51,14 +50,6 @@ export const Signup = () => {
     noBtnClick?: () => void | null;
     yesBtnClick?: () => void | null;
   }>({ data: { title: '', message: '' } });
-
-  useEffect(() => {
-    if (successUserId && successPw && successNickname) {
-      setIsDisabled(false);
-    } else {
-      setIsDisabled(true);
-    }
-  }, [successUserId, successPw, successNickname]);
 
   // 모바일 기기 접근을 막기 위해 추가한 코드
   useEffect(() => {
@@ -87,11 +78,11 @@ export const Signup = () => {
     if (reg.test(debounceCheckUserId)) {
       axios
         .get(
-          `${process.env.REACT_APP_BASE_URL}/user/duplicate/${debounceCheckUserId}`
+          `${process.env.REACT_APP_BASE_URL}/member/validate-login-id/${debounceCheckUserId}`
         )
         .then((res) => {
           // 유저아이디가 중복이면
-          if (res.data.duplicated) {
+          if (!res.data.data.valid) {
             setErrorUserId(false);
             errorUserIdRef.current = false;
             setDuplicatedUserId(true);
@@ -144,10 +135,10 @@ export const Signup = () => {
     if (reg.test(debounceCheckNickname)) {
       axios
         .get(
-          `${process.env.REACT_APP_BASE_URL}/user/nickname/${debounceCheckNickname}`
+          `${process.env.REACT_APP_BASE_URL}/member/validate-nickname/${debounceCheckNickname}`
         )
         .then((res) => {
-          if (res.data.duplicated) {
+          if (!res.data.data.valid) {
             setErrorNickname(false);
             errorNicknameRef.current = false;
             setDuplicatedNickname(true);
@@ -205,12 +196,12 @@ export const Signup = () => {
   }, [debouncePw]);
 
   // 회원가입 요청
-  const postSignup = () => {
-    axios
-      .post(`${process.env.REACT_APP_BASE_URL}/user`, {
-        userId: debounceCheckUserId,
+  const postSignup = async () => {
+    await axios
+      .post(`${process.env.REACT_APP_BASE_URL}/member/signup`, {
+        loginId: debounceCheckUserId,
+        password: debouncePw,
         nickname: debounceCheckNickname,
-        pw: debouncePw,
       })
       .then((res) => {
         // 회원가입 성공 시 로그인 페이지로 라우팅, 로그인 페이지에서 다시 로그인 할 수 있게 하기!
@@ -218,7 +209,7 @@ export const Signup = () => {
         setModalData({
           data: {
             title: '😆',
-            message: `환영합니다! ${nickname}님, 다시 한번 로그인 해주세요`,
+            message: `환영합니다! ${res.data.data.nickname}님, 다시 한번 로그인 해주세요`,
           },
           yesBtnClick: () => {
             navigate('/login');
@@ -240,86 +231,90 @@ export const Signup = () => {
       });
   };
 
+  const checkSignupCondition = async () => {
+    if (userIdRef.current === '') {
+      setIsToggled(true);
+      setModalData({
+        data: {
+          title: '😥',
+          message: '아이디를 적어주세요',
+        },
+        yesBtnClick: () => {
+          setIsToggled(false);
+        },
+      });
+    } else if (errorUserIdRef.current || duplicatedUserIdRef.current) {
+      setIsToggled(true);
+      setModalData({
+        data: {
+          title: '😥',
+          message: '아이디를 올바르게 적어주세요',
+        },
+        yesBtnClick: () => {
+          setIsToggled(false);
+        },
+      });
+    } else if (pwRef.current === '') {
+      setIsToggled(true);
+      setModalData({
+        data: {
+          title: '😥',
+          message: '비밀번호를 적어주세요',
+        },
+        yesBtnClick: () => {
+          setIsToggled(false);
+        },
+      });
+    } else if (errorPwRef.current) {
+      setIsToggled(true);
+      setModalData({
+        data: {
+          title: '😥',
+          message: '비밀번호를 올바르게 적어주세요',
+        },
+        yesBtnClick: () => {
+          setIsToggled(false);
+        },
+      });
+    } else if (nicknameRef.current === '') {
+      setIsToggled(true);
+      setModalData({
+        data: {
+          title: '😥',
+          message: '닉네임을 적어주세요',
+        },
+        yesBtnClick: () => {
+          setIsToggled(false);
+        },
+      });
+    } else if (duplicatedNicknameRef.current) {
+      setIsToggled(true);
+      setModalData({
+        data: {
+          title: '😥',
+          message: '닉네임이 중복입니다',
+        },
+        yesBtnClick: () => {
+          setIsToggled(false);
+        },
+      });
+    } else if (
+      userIdRef.current &&
+      pwRef.current &&
+      nicknameRef.current &&
+      successUserId &&
+      successPw &&
+      successNickname
+    ) {
+      await postSignup();
+    }
+  };
+
   // 엔터키로 회원가입
   useEffect(() => {
-    const handleKeyUp = (e: any) => {
+    const handleKeyUp = async (e: any) => {
       if (e.key === 'Enter') {
-        if (userIdRef.current === '') {
-          setIsToggled(true);
-          setModalData({
-            data: {
-              title: '😥',
-              message: '아이디를 적어주세요',
-            },
-            yesBtnClick: () => {
-              setIsToggled(false);
-            },
-          });
-        } else if (errorUserIdRef || duplicatedUserIdRef) {
-          setIsToggled(true);
-          setModalData({
-            data: {
-              title: '😥',
-              message: '아이디를 올바르게 적어주세요',
-            },
-            yesBtnClick: () => {
-              setIsToggled(false);
-            },
-          });
-        } else if (pwRef.current === '') {
-          setIsToggled(true);
-          setModalData({
-            data: {
-              title: '😥',
-              message: '비밀번호를 적어주세요',
-            },
-            yesBtnClick: () => {
-              setIsToggled(false);
-            },
-          });
-        } else if (errorPwRef) {
-          setIsToggled(true);
-          setModalData({
-            data: {
-              title: '😥',
-              message: '비밀번호를 올바르게 적어주세요',
-            },
-            yesBtnClick: () => {
-              setIsToggled(false);
-            },
-          });
-        } else if (nicknameRef.current === '') {
-          setIsToggled(true);
-          setModalData({
-            data: {
-              title: '😥',
-              message: '닉네임을 적어주세요',
-            },
-            yesBtnClick: () => {
-              setIsToggled(false);
-            },
-          });
-        } else if (duplicatedNicknameRef) {
-          setIsToggled(true);
-          setModalData({
-            data: {
-              title: '😥',
-              message: '닉네임이 중복입니다',
-            },
-            yesBtnClick: () => {
-              setIsToggled(false);
-            },
-          });
-        } else if (
-          userIdRef.current &&
-          pwRef.current &&
-          nicknameRef.current &&
-          successUserId &&
-          successPw &&
-          successNickname
-        ) {
-          postSignup();
-        }
+        await checkSignupCondition();
       }
     };
 
@@ -384,8 +379,10 @@ export const Signup = () => {
           />
           <LoginBtn
             content="signup"
-            isDisabled={isDisabled}
-            handleClick={postSignup}
+            isDisabled={false}
+            handleClick={async () => {
+              await checkSignupCondition();
+            }}
           />
           <S.signupText>
             이미 계정이 있다면,

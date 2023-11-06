@@ -40,8 +40,8 @@ type OwnProps = {
   isJudge: boolean;
   inputText: string;
   setInputText: (e: any) => void;
-  activeButton: () => void;
-  activeEnter: (e: any) => void;
+  activeButton: (inputText: string) => void;
+  setIsInputFocus: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const AnswerInput = (props: OwnProps) => {
@@ -52,16 +52,32 @@ export const AnswerInput = (props: OwnProps) => {
     inputText,
     setInputText,
     activeButton,
-    activeEnter,
+    setIsInputFocus,
   } = props;
   const focusRef = useRef<HTMLInputElement>(null);
+  const inputTextRef = useRef<string>('');
+  const inputFocusRef = useRef<boolean>(false);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Enter' && inputText === '') {
+      if (e.key === 'Enter' && inputTextRef.current === '') {
         if (focusRef.current) {
-          focusRef.current.focus();
+          if (inputFocusRef.current) {
+            focusRef.current.blur();
+            inputFocusRef.current = false;
+            setIsInputFocus(false);
+          } else {
+            focusRef.current.focus();
+            inputFocusRef.current = true;
+            setIsInputFocus(true);
+          }
         }
+      } else if (e.key === 'Enter' && inputTextRef.current !== '') {
+        activeButton(inputTextRef.current);
+        setInputText('');
+        inputTextRef.current = '';
+        inputFocusRef.current = false;
+        setIsInputFocus(false);
       }
 
       window.addEventListener('keydown', handleKeyDown);
@@ -80,8 +96,10 @@ export const AnswerInput = (props: OwnProps) => {
           type="text"
           placeholder="text"
           value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          onKeyUp={(e) => activeEnter(e)}
+          onChange={(e) => {
+            setInputText(e.target.value);
+            inputTextRef.current = e.target.value;
+          }}
           ref={focusRef}
           disabled={isJudge || isWin || isLose}
           readOnly={isJudge || isWin || isLose}
