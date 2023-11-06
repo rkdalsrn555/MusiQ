@@ -15,3 +15,35 @@ export const UsersListWrapper = styled.div`
   top: 18%;
   left: 4.5%;
 `;
+
+export const UserCellWrapper = styled.div`
+  width: 12vw;
+  height: 65vh;
+  flex-shrink: 0;
+  border: solid 5px rgba(235, 226, 255, 0.4);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.5);
+  bottom: 2%;
+  position: absolute;
+  overflow-y: auto; 
+
+  &::-webkit-scrollbar {
+    width: 12px
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 12px;
+    background: whitesmoke;
+  }
+`
+
+export const UserCell = styled.div`
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  display: flex;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+`
