@@ -2,21 +2,22 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   position: absolute;
-  top: 50%;
+  top: 49%;
   left: 50%;
   transform: translate(-50%, -50%);
 `;
 
 export const LoginContainer = styled.div`
-  width: 35rem;
-  height: 48rem;
+  width: 32rem;
+  height: 39rem;
+  margin-top: -1rem;
   border: solid 5px rgba(235, 226, 255, 0.4);
   border-radius: 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 2rem;
+  gap: 1.8rem;
   background-color: rgba(255, 255, 255, 0.4);
   text-align: center;
 
@@ -42,13 +43,13 @@ export const LogoContainer = styled.div`
 `;
 
 export const signupText = styled.p`
-  font-size: 18px;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #444b59;
 
   & .link {
     color: #fcff5d;
-    font-size: 20px;
+    font-size: 1.4rem;
     font-weight: bold;
     text-decoration: underline;
     text-underline-position: under;
