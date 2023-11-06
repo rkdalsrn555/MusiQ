@@ -98,6 +98,7 @@ export const GamePlaying = () => {
   const [btn3isDisabled, setIsBtn3Disabled] = useState<boolean>(false);
   const [inputText, setInputText] = useState<string>(''); // 정답 담을 state
   const [isInputFocus, setIsInputFocus] = useState<boolean>(false);
+  const [keyEvent, setKeyEvent] = useState<string>('');
 
   useEffect(() => {
     // 모바일 기기 접근을 막기 위해 추가한 코드
@@ -133,7 +134,7 @@ export const GamePlaying = () => {
   // 버튼 리스트
   const playBtnList = [
     {
-      btnName: '처음',
+      btnName: 'firstMusicPlayKey',
       // 버튼 클릭하면 노래 시작하고, 기회 감소, 버튼 못누르게 disabled 처리
       onClickHandler: (e: any) => {
         playMusic(FirstMusicStartTime);
@@ -141,24 +142,27 @@ export const GamePlaying = () => {
         chanceCntRef.current -= 1;
       },
       isBtnDisabled: btn1isDisabled,
+      keyEvent,
     },
     {
-      btnName: '중간',
+      btnName: 'middleMusicPlayKey',
       onClickHandler: (e: any) => {
         playMusic(SecondMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
       },
       isBtnDisabled: btn2isDisabled,
+      keyEvent,
     },
     {
-      btnName: '끝',
+      btnName: 'endMusicPlayKey',
       onClickHandler: (e: any) => {
         playMusic(ThirdMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
       },
       isBtnDisabled: btn3isDisabled,
+      keyEvent,
     },
   ];
 
@@ -298,19 +302,44 @@ export const GamePlaying = () => {
         playMusic(FirstMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
+        setKeyEvent('');
       }
       if (e.key === 'ArrowDown' && !isWinRef.current) {
         playMusic(SecondMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
+        setKeyEvent('');
       }
       if (e.key === 'ArrowRight' && !isWinRef.current) {
         playMusic(ThirdMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
+        setKeyEvent('');
       }
       if (e.keyCode === 32 && isWinRef.current) {
         getMusic();
+        setKeyEvent('');
+      }
+    };
+
+    const handleKeyDown = (e: any) => {
+      if (
+        chanceCntRef.current <= 0 ||
+        e.target.nodeName === 'INPUT' ||
+        isLoseRef.current ||
+        isPlayingRef.current ||
+        isToggledRef.current
+      ) {
+        return;
+      }
+      if (e.key === 'ArrowLeft' && !isWinRef.current) {
+        setKeyEvent('ArrowLeft');
+      }
+      if (e.key === 'ArrowDown' && !isWinRef.current) {
+        setKeyEvent('ArrowDown');
+      }
+      if (e.key === 'ArrowRight' && !isWinRef.current) {
+        setKeyEvent('ArrowRight');
       }
     };
 
@@ -321,10 +350,12 @@ export const GamePlaying = () => {
 
     window.addEventListener('keyup', handleKeyUp);
     window.addEventListener('beforeunload', preventRefresh);
+    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
       window.removeEventListener('keyup', handleKeyUp);
       window.removeEventListener('beforeunload', preventRefresh);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -500,6 +531,7 @@ export const GamePlaying = () => {
                                     onClickHandler={item.onClickHandler}
                                     isBtnDisabled={isPlaying}
                                     key={item.btnName}
+                                    keyEvent={item.keyEvent}
                                   />
                                 ))}
                               </div>
