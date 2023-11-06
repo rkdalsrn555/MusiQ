@@ -99,6 +99,7 @@ export const GamePlaying = () => {
   const [inputText, setInputText] = useState<string>(''); // 정답 담을 state
   const [isInputFocus, setIsInputFocus] = useState<boolean>(false);
   const [keyEvent, setKeyEvent] = useState<string>('');
+  const [firstAttemp, setFirstAttemp] = useState<boolean>(true);
 
   useEffect(() => {
     // 모바일 기기 접근을 막기 위해 추가한 코드
@@ -137,6 +138,7 @@ export const GamePlaying = () => {
       btnName: 'firstMusicPlayKey',
       // 버튼 클릭하면 노래 시작하고, 기회 감소, 버튼 못누르게 disabled 처리
       onClickHandler: (e: any) => {
+        setFirstAttemp(false);
         playMusic(FirstMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
@@ -147,6 +149,7 @@ export const GamePlaying = () => {
     {
       btnName: 'middleMusicPlayKey',
       onClickHandler: (e: any) => {
+        setFirstAttemp(false);
         playMusic(SecondMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
@@ -157,6 +160,7 @@ export const GamePlaying = () => {
     {
       btnName: 'endMusicPlayKey',
       onClickHandler: (e: any) => {
+        setFirstAttemp(false);
         playMusic(ThirdMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
@@ -303,18 +307,21 @@ export const GamePlaying = () => {
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
         setKeyEvent('');
+        setFirstAttemp(false);
       }
       if (e.key === 'ArrowDown' && !isWinRef.current) {
         playMusic(SecondMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
         setKeyEvent('');
+        setFirstAttemp(false);
       }
       if (e.key === 'ArrowRight' && !isWinRef.current) {
         playMusic(ThirdMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
         setKeyEvent('');
+        setFirstAttemp(false);
       }
       if (e.keyCode === 32 && isWinRef.current) {
         getMusic();
@@ -359,9 +366,6 @@ export const GamePlaying = () => {
     };
   }, []);
 
-  // 정답, 오답 띄워주기
-  // 맞았으면 다음문제로 가기!
-  // 틀렸으면 하트깎기
   /* eslint-disable react/jsx-props-no-spreading */
   return !location.state ? (
     <div />
@@ -425,20 +429,33 @@ export const GamePlaying = () => {
             )}
 
             <S.TalkBoxPosition>
-              {isStart ? (
-                ''
+              {firstAttemp ? (
+                <S.TalkBoxContainer>
+                  <img src={talkBoxImg} alt="말풍선" width={200} />
+                  <p className="firstAttempGame1">게임이 시작되었어요</p>
+                  <p className="firstAttempGame2">키보드를 눌러</p>
+                  <p className="firstAttempGame3">노래를 들어보세요</p>
+                </S.TalkBoxContainer>
               ) : (
                 <div>
-                  {isJudge ? (
-                    <S.TalkBoxContainer>
-                      <img src={talkBoxImg} alt="말풍선" width={200} />
-                      <p className="judgeText">채점중</p>
-                    </S.TalkBoxContainer>
+                  {isStart ? (
+                    ''
                   ) : (
-                    <S.TalkBoxContainer>
-                      <img src={talkBoxImg} alt="말풍선" width={200} />
-                      <p className="judgeText">{isWin ? '정답!' : '오답 X!'}</p>
-                    </S.TalkBoxContainer>
+                    <div>
+                      {isJudge ? (
+                        <S.TalkBoxContainer>
+                          <img src={talkBoxImg} alt="말풍선" width={200} />
+                          <p className="judgeText">채점중</p>
+                        </S.TalkBoxContainer>
+                      ) : (
+                        <S.TalkBoxContainer>
+                          <img src={talkBoxImg} alt="말풍선" width={200} />
+                          <p className="judgeText">
+                            {isWin ? '정답!' : '오답 X!'}
+                          </p>
+                        </S.TalkBoxContainer>
+                      )}
+                    </div>
                   )}
                 </div>
               )}
@@ -462,7 +479,9 @@ export const GamePlaying = () => {
                   </div>
                 )}
               </S.GameStatusExplainContainer>
-              {location.state.gameRoomData.problems === streak ? (
+              {location.state.gameRoomData.problems === streak ||
+              (isWin && !isStart) ||
+              isLose ? (
                 ''
               ) : (
                 <div>
@@ -477,7 +496,6 @@ export const GamePlaying = () => {
                   )}
                 </div>
               )}
-              <DancingChick />
               {(isWin && !isStart) || isLose ? (
                 <S.AnswerYouTubePlayerPosition>
                   <p>
@@ -494,17 +512,20 @@ export const GamePlaying = () => {
                   />
                 </S.AnswerYouTubePlayerPosition>
               ) : (
-                <AnswerInput
-                  isWin={isWin}
-                  isLose={isLose}
-                  isJudge={isJudge}
-                  inputText={inputText}
-                  setInputText={(e: any) => {
-                    setInputText(e);
-                  }}
-                  activeButton={activeButtonForJudge}
-                  setIsInputFocus={setIsInputFocus}
-                />
+                <>
+                  <DancingChick />
+                  <AnswerInput
+                    isWin={isWin}
+                    isLose={isLose}
+                    isJudge={isJudge}
+                    inputText={inputText}
+                    setInputText={(e: any) => {
+                      setInputText(e);
+                    }}
+                    activeButton={activeButtonForJudge}
+                    setIsInputFocus={setIsInputFocus}
+                  />
+                </>
               )}
               <S.PlayingBtnBoxPosition>
                 {isLose || location.state.gameRoomData.problems === streak ? (
