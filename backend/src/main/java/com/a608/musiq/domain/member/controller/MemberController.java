@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.a608.musiq.domain.member.dto.requestDto.ReissueTokenRequestDto;
 import com.a608.musiq.domain.member.dto.requestDto.VisitRequestDto;
 import com.a608.musiq.domain.member.dto.requestDto.LoginRequestDto;
 import com.a608.musiq.domain.member.dto.responseDto.LoginResponseDto;
+import com.a608.musiq.domain.member.dto.responseDto.ReissueTokenResponseDto;
 import com.a608.musiq.domain.member.dto.responseDto.ValidateDuplicatedLoginIdResponseDto;
 import com.a608.musiq.domain.member.dto.responseDto.ValidateDuplicatedNicknameResponseDto;
 import com.a608.musiq.domain.member.dto.responseDto.VisitResponseDto;
@@ -113,6 +115,24 @@ public class MemberController {
 			.body(BaseResponse.<ValidateDuplicatedNicknameResponseDto>builder()
 				.code(HttpStatus.OK.value())
 				.data(memberService.validateDuplicatedNickname(nickname))
+				.build());
+	}
+
+	/**
+	 * 토큰 재발급
+	 *
+	 * @param reissueTokenRequestDto
+	 * @see ReissueTokenResponseDto
+	 * @return ResponseEntity<BaseResponse < ReissueTokenResponseDto>>
+	 */
+	@PostMapping("/token")
+	private ResponseEntity<BaseResponse<ReissueTokenResponseDto>> reissueToken(
+		@RequestBody ReissueTokenRequestDto reissueTokenRequestDto
+	) {
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(BaseResponse.<ReissueTokenResponseDto>builder()
+				.code(HttpStatus.OK.value())
+				.data(memberService.reissueToken(reissueTokenRequestDto))
 				.build());
 	}
 }
