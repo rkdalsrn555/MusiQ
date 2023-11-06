@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.a608.musiq.domain.member.dto.VisitRequestDto;
-import com.a608.musiq.domain.member.dto.VisitResponseDto;
+import com.a608.musiq.domain.member.dto.requestDto.VisitRequestDto;
 import com.a608.musiq.domain.member.dto.requestDto.LoginRequestDto;
 import com.a608.musiq.domain.member.dto.responseDto.LoginResponseDto;
 import com.a608.musiq.domain.member.dto.responseDto.ValidateDuplicatedLoginIdResponseDto;
@@ -30,6 +29,13 @@ public class MemberController {
 
 	private final MemberService memberService;
 
+	/**
+	 * 방문자 체크
+	 *
+	 * @param visitRequestDto
+	 * @see VisitResponseDto
+	 * @return ResponseEntity<BaseResponse < VisitResponseDto>>
+	 */
 	@PostMapping("/visit")
 	private ResponseEntity<BaseResponse<VisitResponseDto>> visit(@RequestBody VisitRequestDto visitRequestDto) {
 
@@ -45,10 +51,11 @@ public class MemberController {
 	 *
 	 * @param joinRequestDto
 	 * @see JoinResponseDto
-	 * @return ResponseEntity<BaseResponse<JoinResponseDto>>
+	 * @return ResponseEntity<BaseResponse < JoinResponseDto>>
 	 */
 	@PostMapping("/signup")
 	private ResponseEntity<BaseResponse<JoinResponseDto>> signUp(@RequestBody JoinRequestDto joinRequestDto) {
+
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<JoinResponseDto>builder()
 				.code(HttpStatus.OK.value())
@@ -61,10 +68,11 @@ public class MemberController {
 	 *
 	 * @param loginRequestDto
 	 * @see LoginResponseDto
-	 * @return ResponseEntity<BaseResponse<LoginResponseDto>>
+	 * @return ResponseEntity<BaseResponse < LoginResponseDto>>
 	 */
 	@PostMapping("/login")
-	private ResponseEntity<BaseResponse<LoginResponseDto>> login(LoginRequestDto loginRequestDto) {
+	private ResponseEntity<BaseResponse<LoginResponseDto>> login(@RequestBody LoginRequestDto loginRequestDto) {
+
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<LoginResponseDto>builder()
 				.code(HttpStatus.OK.value())
@@ -77,7 +85,7 @@ public class MemberController {
 	 *
 	 * @param loginId
 	 * @see ValidateDuplicatedLoginIdResponseDto
-	 * @return ResponseEntity<BaseResponse<ValidateDuplicatedLoginIdResponseDto>>
+	 * @return ResponseEntity<BaseResponse < ValidateDuplicatedLoginIdResponseDto>>
 	 */
 	@GetMapping("/validate-login-id/{login-id}")
 	private ResponseEntity<BaseResponse<ValidateDuplicatedLoginIdResponseDto>> validateDuplicatedLoginId(
@@ -95,7 +103,7 @@ public class MemberController {
 	 *
 	 * @param nickname
 	 * @see ValidateDuplicatedNicknameResponseDto
-	 * @return ResponseEntity<BaseResponse<ValidateDuplicatedNicknameResponseDto>>
+	 * @return ResponseEntity<BaseResponse < ValidateDuplicatedNicknameResponseDto>>
 	 */
 	@GetMapping("/validate-nickname/{nickname}")
 	private ResponseEntity<BaseResponse<ValidateDuplicatedNicknameResponseDto>> validateDuplicatedNickname(

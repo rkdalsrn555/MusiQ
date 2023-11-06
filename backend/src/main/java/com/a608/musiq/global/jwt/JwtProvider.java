@@ -1,4 +1,4 @@
-package com.a608.musiq.global.config;
+package com.a608.musiq.global.jwt;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
