@@ -58,7 +58,7 @@ export const MiddleContainer = styled.div`
   }
 
   & .gameStatus {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: bold;
     font-family: 'Galmuri11', sans-serif;
     color: #111;

@@ -12,7 +12,7 @@ async function postRefreshToken() {
   try {
     const refreshToken = window.localStorage.getItem('userRefreshToken');
     const { data } = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}/user/token`,
+      `${process.env.REACT_APP_BASE_URL}/member/token`,
       {},
       {
         headers: {
@@ -22,8 +22,8 @@ async function postRefreshToken() {
     );
 
     // 서버로부터 받은 데이터에 accessToken이 있다면 return
-    if (data.accessToken) {
-      return data.accessToken;
+    if (data.data.accessToken) {
+      return data.data.accessToken;
     }
     return false;
   } catch (error) {

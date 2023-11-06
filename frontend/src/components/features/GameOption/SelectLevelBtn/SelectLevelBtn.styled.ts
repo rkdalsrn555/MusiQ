@@ -48,7 +48,7 @@ export const Container = styled.div`
 
         & [type='radio'],
         span {
-          font-size: 2rem;
+          font-size: 1.7rem;
           font-weight: bold;
         }
 
