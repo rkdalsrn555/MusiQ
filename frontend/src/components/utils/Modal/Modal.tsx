@@ -1,6 +1,7 @@
 /* eslint-disable react/require-default-props */
 import React from 'react';
 import { AnimatePresence } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 import * as S from './Modal.styled';
 
 type OwnProps = {
@@ -24,6 +25,7 @@ export const Modal = (props: OwnProps) => {
     yesBtnClick,
     isToggledRef,
   } = props;
+  const location = useLocation();
 
   return (
     <AnimatePresence>
@@ -31,6 +33,9 @@ export const Modal = (props: OwnProps) => {
         <>
           <S.GreyBackground
             onClick={() => {
+              if (location.pathname === '/sign-up') {
+                return;
+              }
               setIsToggled(false);
               if (isToggledRef !== undefined) {
                 isToggledRef.current = false;
