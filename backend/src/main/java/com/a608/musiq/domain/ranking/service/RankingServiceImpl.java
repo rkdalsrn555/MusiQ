@@ -25,14 +25,30 @@ public class RankingServiceImpl implements RankingService {
     private final Util util;
 
     /**
+     * 순위를 찾는 메서드
+     * @param nickname
+     * @return String - 순위 값 또는 순위권 밖
+     */
+    private String findMyRank(String nickname) {
+
+        Double myScore = util.getScorefromSortedSet(RedisKey.RANKING.getKey(), nickname);
+        String rankNum = "순위권 외";
+        if(myScore != null) {
+            Long count = util.countInSortedSet(RedisKey.RANKING.getKey(), myScore+0.001, Double.MAX_VALUE);
+            rankNum = String.valueOf(count < 100 ? count+1 : "순위권 외");
+        }
+        return rankNum;
+    }
+
+    /**
+     * 순위를 가져와 Dto에 담는 메서드
      * @param nickname - 조회하려는 사용자의 닉네임
      * @return MyRankResponseDto - 조회된 사용자의 랭킹
      */
     @Override
-    public MyRankResponseDto getMyRank(String nickname) {
+    public MyRankResponseDto RankNumToDto(String nickname) {
 
-        Long resultRank = util.getRankFromRedisSortedSet(RedisKey.RANKING.getKey(), nickname);
-        return MyRankResponseDto.builder().rankNum(resultRank == null ? "순위권 외" : String.valueOf(resultRank + 1)).build();
+        return MyRankResponseDto.builder().rankNum(findMyRank(nickname)).build();
     }
 
     /**
@@ -56,22 +72,12 @@ public class RankingServiceImpl implements RankingService {
                     .build();
         }
 
-        // 내 랭킹을 저장할 변수
-        String myRank;
-
         // nickname null 여부 확인
         if (nickname == null)
             // 닉네임이 없다면 로그인이 되어 있지 않은 것
-            myRank = "로그인이 필요합니다.";
-        else {
-            // util의 메서드를 사용하여 내 랭킹 가져오기
-            Long rankResult = util.getRankFromRedisSortedSet(RedisKey.RANKING.getKey(), nickname);
+            throw new RankingException(RankingExceptionInfo.NOT_LOGIN);
 
-            // 내 닉네임잉 sortedSet에 없다면 "순위권 밖" String을
-            if (rankResult == null) myRank = "순위권 밖";
-            // 있다면 값을 담음
-            else myRank = String.valueOf(rankResult + 1);
-        }
+        String myRank = findMyRank(nickname);
 
         // 결과를 리스트로 옮기기
         List<FullRankItem> fullRankList = rankingSet.stream().map(setElem -> new FullRankItem(setElem)).collect(Collectors.toList());

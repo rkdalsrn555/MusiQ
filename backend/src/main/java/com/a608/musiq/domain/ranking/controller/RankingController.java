@@ -27,7 +27,7 @@ public class RankingController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(BaseResponse.<MyRankResponseDto>builder()
                         .code(HttpStatus.OK.value())
-                        .data(rankingService.getMyRank(nickname))
+                        .data(rankingService.RankNumToDto(nickname))
                         .build());
     }
 

@@ -34,7 +34,6 @@ public class Util {
      */
     public Long getRankFromRedisSortedSet(String key, String member) {
         ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
-        zSetOps.
         return zSetOps.reverseRank(key, member);
     }
 
@@ -66,6 +65,16 @@ public class Util {
     public void insertDatatoRedisSortedSet(String key, String member, double score) {
         ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
         zSetOps.add(key, member, score);
+    }
+
+    public Double getScorefromSortedSet(String key, String member) {
+        ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
+        return zSetOps.score(key, member);
+    }
+
+    public Long countInSortedSet(String key, Double min, Double max ) {
+        ZSetOperations<String, String> zSetOps = redisTemplate.opsForZSet();
+        return zSetOps.count(key, min, max);
     }
 
 }
