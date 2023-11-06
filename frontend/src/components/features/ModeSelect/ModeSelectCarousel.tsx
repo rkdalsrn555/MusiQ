@@ -28,7 +28,7 @@ export const ModeSelectCarousel: React.FC = () => {
   const [lastInputTime, setLastInputTime] = useState<number>(0); // 키보드, 마우스 연타 방지용으로 시간 측정
   const INPUT_INTERVAL = 400;
 
-  const accessToken = localStorage.getItem('userAccessToken');
+  const accessToken = window.localStorage.getItem('userAccessToken');
   const [visible, setVisible] = useState<number>(accessToken ? 0 : 1); // accessToken이 없을 때 visible의 초기값을 1로 설정하여 2번 콘텐츠가 먼저 보이게 함
   const isLoggedIn = Boolean(accessToken); // 로그인 검증
 
@@ -70,13 +70,13 @@ export const ModeSelectCarousel: React.FC = () => {
   const navigateToLink = () => {
     const content = contents[visible];
 
-    if (content.id === 2 && localStorage.getItem('userAccessToken')) {
+    if (content.id === 2 && window.localStorage.getItem('userAccessToken')) {
       alert('비회원만 이용할 수 있는 서비스입니다.');
       return; // navigation을 수행하지 않고 함수를 종료
     }
 
     if (
-      !localStorage.getItem('userAccessToken') &&
+      !window.localStorage.getItem('userAccessToken') &&
       (content.id === 1 || content.id === 3 || content.id === 4)
     ) {
       alert('로그인이 필요한 서비스입니다.');
