@@ -20,8 +20,12 @@ export const Landing = () => {
     setXY({ x: mouseX, y: mouseY });
   };
 
-  useEffect(() => { // 모바일 기기 접근을 막기 위해 추가한 코드
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  useEffect(() => {
+    // 모바일 기기 접근을 막기 위해 추가한 코드
+    const isMobile =
+      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent
+      );
 
     if (isMobile) {
       navigate('/mobile-restriction');
