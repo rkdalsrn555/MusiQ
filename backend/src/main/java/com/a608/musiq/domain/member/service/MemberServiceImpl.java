@@ -20,12 +20,12 @@ import com.a608.musiq.domain.member.dto.responseDto.JoinResponseDto;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.member.repository.MemberRepository;
 import com.a608.musiq.domain.member.repository.VisitorRepository;
+import com.a608.musiq.global.Util;
 import com.a608.musiq.global.jwt.JwtProvider;
 import com.a608.musiq.global.exception.exception.MemberException;
 import com.a608.musiq.global.exception.exception.MemberInfoException;
 import com.a608.musiq.global.exception.info.MemberExceptionInfo;
 import com.a608.musiq.global.exception.info.MemberInfoExceptionInfo;
-import com.a608.musiq.global.jwt.JwtValidator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,8 +37,8 @@ public class MemberServiceImpl implements MemberService {
 	private final MemberRepository memberRepository;
 	private final MemberInfoRepository memberInfoRepository;
 	private final VisitorRepository visitorRepository;
+	private final Util util;
 	private final JwtProvider jwtProvider;
-	private final JwtValidator jwtValidator;
 
 	/**
 	 * 회원가입
@@ -78,22 +78,23 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	@Transactional
 	public LoginResponseDto login(LoginRequestDto loginRequestDto) {
 
 		Member member = memberRepository.findByLoginIdAndPassword(loginRequestDto.getLoginId(),
 				loginRequestDto.getPassword())
 			.orElseThrow(() -> new MemberException(MemberExceptionInfo.LOGIN_FAILED));
 
-		MemberInfo memberInfo = memberInfoRepository.findById(member.getId())
+		String memberNickname = memberInfoRepository.findNicknameById(member.getId())
 			.orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
 
 		String accessToken = jwtProvider.createAccessToken(member.getId());
 		String refreshToken = jwtProvider.createRefreshToken(member.getId());
 
-		jwtValidator.validateToken(accessToken);
+		util.saveRefreshToken(member.getId(), refreshToken);
 
 		return LoginResponseDto.builder()
-			.nickname(memberInfo.getNickname())
+			.nickname(memberNickname)
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
 			.build();

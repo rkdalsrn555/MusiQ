@@ -6,6 +6,8 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -24,6 +26,17 @@ public class Util {
         public String getKey() {
             return key;
         }
+    }
+
+    /**
+     * 리후레쉬 토큰 저장
+     *
+     * @param memberId
+     * @param refreshToken
+     */
+    public void saveRefreshToken(UUID memberId, String refreshToken) {
+        String key = memberId.toString();
+        redisTemplate.opsForValue().set(key, refreshToken, 1, TimeUnit.DAYS);
     }
 
     /**

@@ -21,13 +21,13 @@ public class JwtValidator {
 	@Value("${jwt.secret-key}")
 	private String SECRET_KEY;
 
-	public void validateToken(String jwtToken) {
+	public void validateToken(String token) {
 		try {
 			Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 			Claims claims = Jwts.parserBuilder()
 				.setSigningKey(key)
 				.build()
-				.parseClaimsJws(jwtToken)
+				.parseClaimsJws(token)
 				.getBody();
 
 			Date now = new Date();
@@ -37,6 +37,13 @@ public class JwtValidator {
 		} catch (ExpiredJwtException e) {
 			throw new MemberException(MemberExceptionInfo.INVALID_TOKEN);
 		}
+	}
+
+	public void validateRefreshToken(String refreshToken) {
+		validateToken(refreshToken);
+
+		// redis에서 확인하고 없으면 다시 발급하라는 예외
+
 	}
 
 	public String getData(String token) {
