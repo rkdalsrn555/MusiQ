@@ -18,12 +18,11 @@ import {
   RankingPage,
   Signup,
   MultiGameLobbyPage,
-  MzModePage
-  } from './pages';
+  MzModePage,
+} from './pages';
 
 const PrivatePath = [
   { path: '/single-mode', component: <SingleModePage /> },
-  { path: '/:mode/game-result', component: <ResultPage /> },
   { path: '/multi/lobby', component: <MultiGameLobbyPage /> },
 ];
 
@@ -34,11 +33,12 @@ const PublicPath = [
   { path: '/sign-up', component: <Signup />, restricted: true },
   { path: '/guest/game-play', component: <GamePlaying />, restricted: true },
   { path: '/guest/game-option', component: <GameOption />, restricted: true },
+  { path: '/guest/game-result', component: <ResultPage />, restricted: true },
   { path: '/', component: <Landing />, restricted: false },
   { path: '/select-mode', component: <ModeSelectPage />, restricted: false },
   { path: '/ranking', component: <RankingPage />, restricted: false },
   { path: '/mobile-restriction', component: <MobilePage />, restricted: false },
-  { path: '/mz-mode', component: <MzModePage />},
+  { path: '/mz-mode', component: <MzModePage /> },
 ];
 
 const Router = () => {
