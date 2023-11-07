@@ -3,7 +3,7 @@ import backgroundGif2 from '../../assets/img/background/backgroundGif1.gif';
 
 export const LobbyWrapper = styled.div`
   width: 95vw;
-  height: 92vh;
+  height: 93vh;
   flex-shrink: 0;
   border: solid 5px rgba(235, 226, 255, 0.4);
   border-radius: 30px;
@@ -12,7 +12,7 @@ export const LobbyWrapper = styled.div`
   justify-content: center;
   background-color: rgba(255, 255, 255, 0.4);
   margin: auto;
-  margin-top: 2.5%;
+  margin-top: 2%;
 `;
 
 export const MulitBackGround = styled.div`
