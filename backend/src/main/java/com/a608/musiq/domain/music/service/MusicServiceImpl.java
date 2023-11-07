@@ -11,6 +11,7 @@ import com.a608.musiq.domain.music.dto.responseDto.AddIpInLogResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.ProblemForGuestResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.GradeAnswerResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.SkipRoundResponseDto;
 import com.a608.musiq.domain.music.repository.GuestModeLogRepository;
 import com.a608.musiq.domain.music.repository.MusicRepository;
 import com.a608.musiq.domain.music.repository.TitleRepository;
@@ -195,4 +196,16 @@ public class MusicServiceImpl implements MusicService {
 
 		return gradeAnswerResponseDto;
 	}
+
+	@Override
+	public SkipRoundResponseDto skipRound(int roomId, int round) {
+		Room room = roomManager.getRooms().get(roomId);
+		String title = room.getMusicList().get(round).getTitle();
+		String singer = room.getMusicList().get(round).getSinger();
+
+		room.addRound(round);
+
+		return SkipRoundResponseDto.from(room.getRound(), title, singer);
+	}
+
 }
