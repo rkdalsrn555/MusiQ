@@ -16,7 +16,7 @@ export const UsersListWrapper = styled.div`
 `;
 
 export const UserCellWrapper = styled.div`
-  width: 12vw;
+  width: 13vw;
   height: 65vh;
   border: solid 5px rgba(235, 226, 255, 0.4);
   border-radius: 12px;
