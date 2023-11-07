@@ -87,7 +87,7 @@ public class MusicController {
 	 * 게스트 모드 정답 채점
 	 *
 	 * @param roomId
-	 * @param streak
+	 * @param round
 	 * @param answer
 	 * @see GradeAnswerResponseDto
 	 * @return ResponseEntity<BaseResponse < GradeAnswerResponseDto>>
@@ -95,13 +95,13 @@ public class MusicController {
 	@GetMapping("/guest/result")
 	private ResponseEntity<BaseResponse<GradeAnswerResponseDto>> gradeAnswer(
 		@RequestParam("room-id") Integer roomId,
-		@RequestParam("streak") Integer streak,
+		@RequestParam("round") Integer round,
 		@RequestParam("answer") String answer) {
 
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<GradeAnswerResponseDto>builder()
 				.code(HttpStatus.OK.value())
-				.data(musicService.gradeAnswer(roomId, streak, answer))
+				.data(musicService.gradeAnswer(roomId, round, answer))
 				.build());
 	}
 }
