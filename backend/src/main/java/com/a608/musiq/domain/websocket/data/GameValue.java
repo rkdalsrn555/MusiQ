@@ -26,7 +26,7 @@ public class GameValue {
      */
     private static List<ConcurrentHashMap<UUID, Integer>> gameChannels = new ArrayList<>();
     private static ConcurrentHashMap<Integer, GameRoom> gameRooms = new ConcurrentHashMap<>();
-    private final int CHANNEL_MAX_SIZE = 10;
+    private static final int CHANNEL_MAX_SIZE = 10;
     private static final int CHANNEL_EACH_MAX_SIZE = 100;
 
     @PostConstruct
@@ -38,6 +38,8 @@ public class GameValue {
     public static int getGameChannelSize(int channelNo) {
         return gameChannels.get(channelNo - 1).size();
     }
+
+    public static int getGameChannelMaxSize() { return CHANNEL_MAX_SIZE; }
 
     public static int getGameChannelEachMaxSize() {
         return CHANNEL_EACH_MAX_SIZE;

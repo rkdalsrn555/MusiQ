@@ -1,5 +1,6 @@
 package com.a608.musiq.domain.websocket.controller;
 
+import com.a608.musiq.domain.websocket.dto.AllChannelSizeResponseDto;
 import com.a608.musiq.domain.websocket.dto.ChannelUserResponseDto;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
@@ -29,6 +30,14 @@ public class GameController {
     private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
     private final GameService gameService;
+
+    public ResponseEntity<BaseResponse<AllChannelSizeResponseDto>> getAllChannelSize(
+            @RequestHeader("accessToken") String accessToken) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.<AllChannelSizeResponseDto>builder()
+                .data(gameService.getAllChannelSizeList(accessToken))
+                .build());
+    }
 
     /**
      * @param accessToken
@@ -76,6 +85,8 @@ public class GameController {
                 .data(gameService.getGameRoomList(accessToken, channelNo))
                 .build());
     }
+
+    @PostMapping("/main/")
 
     @MessageMapping("/chat-message/{channelNo}")
     public void sendChatMessage(@DestinationVariable("channelNo") String channelNo, @Payload ChatMessage chatMessage) {
