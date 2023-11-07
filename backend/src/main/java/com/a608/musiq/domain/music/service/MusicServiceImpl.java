@@ -173,6 +173,11 @@ public class MusicServiceImpl implements MusicService {
 	@Override
 	public GradeAnswerResponseDto gradeAnswer(Integer roomId, Integer round, String answer) {
 		Room room = roomManager.getRooms().get(roomId);
+
+		if (room.getRound() != round) {
+			throw new MusicException(MusicExceptionInfo.INVALID_ROUND);
+		}
+
 		Music music = room.getMusicList().get(round);
 		List<Title> titles = titleRepository.findAllByMusicId(music.getId());
 
