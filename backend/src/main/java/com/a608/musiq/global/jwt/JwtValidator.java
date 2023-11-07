@@ -61,15 +61,13 @@ public class JwtValidator {
 		return memberId;
 	}
 
-	private String getData(String token) {
+	public String getData(String token) {
 		Claims claims = Jwts.parserBuilder()
 			.setSigningKey(SECRET_KEY.getBytes(StandardCharsets.UTF_8))
 			.build()
 			.parseClaimsJws(token)
 			.getBody();
 
-		String data = claims.get("data", String.class);
-
-		return data;
+		return claims.get("data", String.class);
 	}
 }
