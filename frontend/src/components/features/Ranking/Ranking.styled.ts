@@ -9,8 +9,8 @@ export const CenteredContainer = styled.div`
 `;
 
 export const RankingWrapper = styled.div`
-  width: 45rem;
-  height: 45rem;
+  width: 44rem;
+  height: 43rem;
   flex-shrink: 0;
   border: solid 5px rgba(235, 226, 255, 0.4);
   border-radius: 30px;
@@ -115,6 +115,7 @@ export const MyRankingGrade = styled.div`
   color: #ff5d70;
 `;
 
-export const LoginButton = styled.button`
-  width: 10rem;
+export const LoginButton = styled.div`
+  display: flex;
+  margin-left: 30%;
 `;
