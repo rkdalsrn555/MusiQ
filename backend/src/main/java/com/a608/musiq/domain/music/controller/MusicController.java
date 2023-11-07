@@ -108,6 +108,14 @@ public class MusicController {
 				.build());
 	}
 
+	/**
+	 * 라운드 스킵
+	 *
+	 * @param roomId
+	 * @param round
+	 * @see SkipRoundResponseDto
+	 * @return ResponseEntity<BaseResponse<SkipRoundResponseDto>>
+	 */
 	@PatchMapping("/guest/skip")
 	private ResponseEntity<BaseResponse<SkipRoundResponseDto>> skipRound(
 		@RequestParam("room-id") int roomId,

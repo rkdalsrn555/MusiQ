@@ -197,6 +197,14 @@ public class MusicServiceImpl implements MusicService {
 		return gradeAnswerResponseDto;
 	}
 
+	/**
+	 * 라운드 스킵
+	 *
+	 * @param roomId
+	 * @param round
+	 * @see SkipRoundResponseDto
+	 * @return SkipRoundResponseDto
+	 */
 	@Override
 	public SkipRoundResponseDto skipRound(int roomId, int round) {
 		Room room = roomManager.getRooms().get(roomId);
