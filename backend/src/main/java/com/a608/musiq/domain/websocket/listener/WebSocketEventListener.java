@@ -28,27 +28,24 @@ public class WebSocketEventListener {
     // 소켓 연결 요청
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-        logger.info("connecting..");
+        logger.info("Received a new web-socket connection");
         MessageHeaderAccessor accessor = NativeMessageHeaderAccessor.getAccessor(event.getMessage(),
                 SimpMessageHeaderAccessor.class);
         GenericMessage<?> generic = (GenericMessage<?>) accessor.getHeader("simpConnectMessage");
         logger.info("generic = {}", generic);
         Map<String, Object> nativeHeaders = (Map<String, Object>) generic.getHeaders().get("nativeHeaders");
         logger.info("nativeHeader = {}", nativeHeaders);
-        String gameRoomId = ((List<String>) nativeHeaders.get("gameRoomId")).get(0);
-        logger.info("gameRoomId = {}", gameRoomId);
-        String sessionId = (String) generic.getHeaders().get("simpSessionId");
-        logger.info("sessionId = {}", sessionId);
-
-        logger.info("[Connected] room id : {} | websocket session id : {}", gameRoomId, sessionId);
-
-        //gameService.connectUser(gameRoomId, sessionId);
+        Integer channelNo = Integer.parseInt(((List<String>) nativeHeaders.get("channelNo")).get(0));
+        logger.info("channelNo = {}", channelNo);
+        String accessToken = ((List<String>) nativeHeaders.get("accessToken")).get(0);
+        logger.info("accessToken = {}", accessToken);
+        gameService.joinGameChannel(accessToken, channelNo);
     }
 
     // 구독 요청
     @EventListener
     public void handleWebSocketSubscribeListener(SessionSubscribeEvent event) {
-        logger.info("Received a new web socket subscribe");
+        logger.info("Received a new web-socket subscribe");
 
 
     }
@@ -60,9 +57,7 @@ public class WebSocketEventListener {
 
         String sessionId = headerAccessor.getSessionId();
 
-        logger.info("[Disconnected] websocket session id : {}", sessionId);
-
-        //gameService.disConnectUser(sessionId);
+        logger.info("[Disconnected] web-socket session id : {}", sessionId);
     }
 
 }
