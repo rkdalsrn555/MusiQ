@@ -61,4 +61,8 @@ public class GuestModeLog {
 			.build();
 	}
 
+	public void addIp(String ip) {
+		this.ip = ip;
+	}
+
 }

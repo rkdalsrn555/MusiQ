@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.a608.musiq.global.common.response.BaseResponse;
+import com.a608.musiq.global.exception.exception.GuestModeLogException;
 import com.a608.musiq.global.exception.exception.MemberException;
 import com.a608.musiq.global.exception.exception.MemberInfoException;
 import com.a608.musiq.global.exception.exception.MusicException;
@@ -43,9 +44,19 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(RankingException.class)
 	public ResponseEntity<BaseResponse<RankingException>> rankingExceptionHandler(RankingException exception) {
 		return ResponseEntity.status(exception.getInfo().getStatus())
-				.body(BaseResponse.<RankingException>builder()
-						.code(exception.getInfo().getCode())
-						.message(exception.getInfo().getMessage())
-						.build());
+			.body(BaseResponse.<RankingException>builder()
+				.code(exception.getInfo().getCode())
+				.message(exception.getInfo().getMessage())
+				.build());
+	}
+
+	@ExceptionHandler(GuestModeLogException.class)
+	public ResponseEntity<BaseResponse<GuestModeLogException>> guestModeLogExceptionHandler(
+		GuestModeLogException exception) {
+		return ResponseEntity.status(exception.getInfo().getStatus())
+			.body(BaseResponse.<GuestModeLogException>builder()
+				.code(exception.getInfo().getCode())
+				.message(exception.getInfo().getMessage())
+				.build());
 	}
 }

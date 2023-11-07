@@ -6,19 +6,24 @@ import com.a608.musiq.domain.music.domain.Music;
 import com.a608.musiq.domain.music.domain.Room;
 import com.a608.musiq.domain.music.domain.RoomManager;
 import com.a608.musiq.domain.music.domain.Title;
+import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
+import com.a608.musiq.domain.music.dto.responseDto.AddIpInLogResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.ProblemForGuestResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.GradeAnswerResponseDto;
 import com.a608.musiq.domain.music.repository.GuestModeLogRepository;
 import com.a608.musiq.domain.music.repository.MusicRepository;
 import com.a608.musiq.domain.music.repository.TitleRepository;
+import com.a608.musiq.global.exception.exception.GuestModeLogException;
 import com.a608.musiq.global.exception.exception.MusicException;
+import com.a608.musiq.global.exception.info.GuestModeLogExceptionInfo;
 import com.a608.musiq.global.exception.info.MusicExceptionInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.StringTokenizer;
 
@@ -62,6 +67,24 @@ public class MusicServiceImpl implements MusicService {
 		roomManager.addRoom(roomId, room);
 
 		return CreateRoomResponseDto.from(roomId, musicList.size());
+	}
+
+	/**
+	 * 로그에 ip 추가
+	 *
+	 * @param addIpInLogRequestDto
+	 * @see AddIpInLogResponseDto
+	 * @return AddIpInLogResponseDto
+	 */
+	@Override
+	@Transactional
+	public AddIpInLogResponseDto addIpInLog(AddIpInLogRequestDto addIpInLogRequestDto) {
+		GuestModeLog log = guestModeLogRepository.findById(addIpInLogRequestDto.getRoomId())
+			.orElseThrow(() -> new GuestModeLogException(GuestModeLogExceptionInfo.NOT_FOUND_LOG));
+
+		log.addIp(addIpInLogRequestDto.getUserIp());
+
+		return AddIpInLogResponseDto.of(log.getIp());
 	}
 
 	/**
