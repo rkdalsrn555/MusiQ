@@ -3,6 +3,7 @@ package com.a608.musiq.domain.music.controller;
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
 import com.a608.musiq.domain.music.dto.responseDto.AddIpInLogResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.GameOverResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.ProblemForGuestResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.SkipRoundResponseDto;
 import com.a608.musiq.global.common.response.BaseResponse;
@@ -125,6 +126,26 @@ public class MusicController {
 			.body(BaseResponse.<SkipRoundResponseDto>builder()
 				.code(HttpStatus.OK.value())
 				.data(musicService.skipRound(roomId, round))
+				.build());
+	}
+
+	/**
+	 * 게임 종료
+	 *
+	 * @param roomId
+	 * @param round
+	 * @see GameOverResponseDto
+	 * @return ResponseEntity<BaseResponse<GameOverResponseDto>>
+	 */
+	@PatchMapping("/guest/over")
+	private ResponseEntity<BaseResponse<GameOverResponseDto>> gameOver(
+		@RequestParam("room-id") int roomId,
+		@RequestParam("round") int round
+	) {
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(BaseResponse.<GameOverResponseDto>builder()
+				.code(HttpStatus.OK.value())
+				.data(musicService.gameOver(roomId, round))
 				.build());
 	}
 }
