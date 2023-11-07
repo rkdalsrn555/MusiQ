@@ -9,6 +9,12 @@ import com.a608.musiq.domain.websocket.dto.ChannelUserResponseItem;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
 import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
+import com.a608.musiq.global.exception.exception.MemberException;
+import com.a608.musiq.global.exception.exception.MemberInfoException;
+import com.a608.musiq.global.exception.exception.MultiModeException;
+import com.a608.musiq.global.exception.info.MemberExceptionInfo;
+import com.a608.musiq.global.exception.info.MemberInfoExceptionInfo;
+import com.a608.musiq.global.exception.info.MultiModeExceptionInfo;
 import com.a608.musiq.global.jwt.JwtValidator;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -56,7 +62,7 @@ public class GameService {
 
         // 정원 초과 확인
         if(GameValue.getGameChannelSize(channelNo) > GameValue.getGameChannelEachMaxSize()) {
-            throw new IllegalArgumentException();
+            throw new MultiModeException(MultiModeExceptionInfo.INVALID_JOIN_REQUEST);
         }
 
         try {
@@ -131,7 +137,8 @@ public class GameService {
 
         while(it.hasNext()) {
             UUID uuid = it.next();
-            MemberInfo memberInfo = memberInfoRepository.findById(uuid).orElseThrow(() -> new NullPointerException());
+            MemberInfo memberInfo = memberInfoRepository.findById(uuid).orElseThrow(() -> new MemberInfoException(
+                    MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
 
             items.add(ChannelUserResponseItem.builder()
                             .nickname(memberInfo.getNickname())
