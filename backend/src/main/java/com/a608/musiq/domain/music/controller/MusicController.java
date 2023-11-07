@@ -68,17 +68,18 @@ public class MusicController {
 	 * 게스트 모드 문제 출제
 	 *
 	 * @param roomId
-	 * @param streak
-	 * @return
+	 * @param round
+	 * @see ProblemForGuestResponseDto
+	 * @return ResponseEntity<BaseResponse<ProblemForGuestResponseDto>>
 	 */
 	@GetMapping("/guest/quiz")
 	private ResponseEntity<BaseResponse<ProblemForGuestResponseDto>> getProblemForGuest(
 		@RequestParam("room-id") int roomId,
-		@RequestParam("streak") int streak
+		@RequestParam("round") int round
 	) {
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<ProblemForGuestResponseDto>builder()
-				.data(musicService.getProblemForGuest(roomId, streak))
+				.data(musicService.getProblemForGuest(roomId, round))
 				.build());
 	}
 
