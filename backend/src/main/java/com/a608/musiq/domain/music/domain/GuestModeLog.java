@@ -3,8 +3,10 @@ package com.a608.musiq.domain.music.domain;
 import java.time.LocalDateTime;
 
 import com.a608.musiq.domain.music.data.Difficulty;
+import com.a608.musiq.domain.music.data.DifficultyConverter;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,6 +35,7 @@ public class GuestModeLog {
 
 	@NotNull
 	@Column
+	@Convert(converter = DifficultyConverter.class)
 	private Difficulty difficulty;
 
 	@Column
