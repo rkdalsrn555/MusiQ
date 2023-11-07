@@ -12,7 +12,7 @@ public interface MusicService {
 
 	AddIpInLogResponseDto addIpInLog(AddIpInLogRequestDto addIpInLogRequestDto);
 
-	ProblemForGuestResponseDto getProblemForGuest(int roomId, int streak);
+	ProblemForGuestResponseDto getProblemForGuest(int roomId, int round);
 
 	GradeAnswerResponseDto gradeAnswer(Integer roomId, Integer streak, String answer);
 }
