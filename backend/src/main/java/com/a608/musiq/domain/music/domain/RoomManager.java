@@ -7,19 +7,14 @@ import lombok.Getter;
 
 @Getter
 public class RoomManager {
-	private static final Integer ROOM_INITIAL_NUMBER = 0;
-
-	private int currentRoomNumber;
 	private Map<Integer, Room> rooms;
 
 	public RoomManager() {
-		this.currentRoomNumber = ROOM_INITIAL_NUMBER;
 		this.rooms = new HashMap<>();
 	}
 
-	public int addRoom(Room room) {
-		rooms.put(currentRoomNumber, room);
-		return currentRoomNumber++;
+	public void addRoom(int roomId, Room room) {
+		rooms.put(roomId, room);
 	}
 
 }
