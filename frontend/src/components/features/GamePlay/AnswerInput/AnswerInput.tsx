@@ -107,7 +107,7 @@ export const AnswerInput = (props: OwnProps) => {
           placeholder={
             tryCntRef.current <= 0
               ? ''
-              : `남은 시도 횟수 : ${tryCntRef.current}회`
+              : `남은 정답 시도 횟수 : ${tryCntRef.current}회`
           }
           value={inputText}
           onChange={(e) => {

@@ -11,7 +11,7 @@ import disabledfirstMusicPlayKey from '../../../../assets/img/playgame/disabledf
 import disabledmiddleMusicPlayKey from '../../../../assets/img/playgame/disabledmiddleMusicPlayKey.png';
 import disabledendMusicPlayKey from '../../../../assets/img/playgame/disabledendMusicPlayKey.png';
 
-const PlayButtonStyle = styled.button<{ btnname: string; keyEventRef: string }>`
+const PlayButtonStyle = styled.button<{ btnname: string; keyEvent: string }>`
   width: 6rem;
   height: 6rem;
   background-image: ${(props) =>
@@ -62,15 +62,15 @@ const PlayButtonStyle = styled.button<{ btnname: string; keyEventRef: string }>`
 
   /* 키보드이벤트로 조작했을 때 */
   background-image: ${(props) =>
-    props.keyEventRef === 'ArrowLeft' && props.btnname === 'firstMusicPlayKey'
+    props.keyEvent === 'ArrowLeft' && props.btnname === 'firstMusicPlayKey'
       ? `url(${clickfirstMusicPlayKey})`
       : ''};
   background-image: ${(props) =>
-    props.keyEventRef === 'ArrowDown' && props.btnname === 'middleMusicPlayKey'
+    props.keyEvent === 'ArrowDown' && props.btnname === 'middleMusicPlayKey'
       ? `url(${clickmiddleMusicPlayKey})`
       : ''};
   background-image: ${(props) =>
-    props.keyEventRef === 'ArrowRight' && props.btnname === 'endMusicPlayKey'
+    props.keyEvent === 'ArrowRight' && props.btnname === 'endMusicPlayKey'
       ? `url(${clickendMusicPlayKey})`
       : ''};
 `;
@@ -79,11 +79,11 @@ type OwnProps = {
   btnName: string;
   onClickHandler: (e: any) => void;
   isBtnDisabled: boolean;
-  keyEventRef: MutableRefObject<string>;
+  keyEvent: string;
 };
 
 export const PlayBtn = (props: OwnProps) => {
-  const { btnName, onClickHandler, isBtnDisabled, keyEventRef } = props;
+  const { btnName, onClickHandler, isBtnDisabled, keyEvent } = props;
 
   return (
     <PlayButtonStyle
@@ -92,7 +92,7 @@ export const PlayBtn = (props: OwnProps) => {
       disabled={isBtnDisabled}
       btnname={btnName}
       className={isBtnDisabled ? 'disabled' : ''}
-      keyEventRef={keyEventRef.current}
+      keyEvent={keyEvent}
     />
   );
 };

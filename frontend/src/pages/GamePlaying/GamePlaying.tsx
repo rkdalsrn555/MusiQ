@@ -16,6 +16,7 @@ import {
   SkipBtn,
   NextBtn,
   ResultBtn,
+  DontKnowBtn,
   GameExplain,
 } from '../../components/features';
 import { BackBtn, Modal } from '../../components/utils';
@@ -68,6 +69,7 @@ export const GamePlaying = () => {
   const livesRef = useRef<number>(3);
   const [chanceCnt, setChanceCnt] = useState<number>(3); // 기회
   const chanceCntRef = useRef(3);
+  const showRoundRef = useRef<number>(0); // 보여주기 위한 게임라운드
   const [round, setRound] = useState<number>(0); // 게임 라운드
   const roundRef = useRef(0);
   const [tryCnt, setTryCnt] = useState<number>(3); // 정답 시도 횟수
@@ -92,8 +94,7 @@ export const GamePlaying = () => {
   const [btn3isDisabled, setIsBtn3Disabled] = useState<boolean>(false);
   const [inputText, setInputText] = useState<string>(''); // 정답 담을 state
   const [isInputFocus, setIsInputFocus] = useState<boolean>(false);
-  // const [keyEvent, setKeyEvent] = useState<string>('');
-  const keyEventRef = useRef<string>('');
+  const [keyEvent, setKeyEvent] = useState<string>('');
   const videoRef = useRef<ReactPlayer>(null);
 
   // 모바일 기기 접근을 막기 위해 추가한 코드
@@ -164,7 +165,7 @@ export const GamePlaying = () => {
         playBtnHandler(FirstMusicStartTime);
       },
       isBtnDisabled: btn1isDisabled,
-      keyEventRef,
+      keyEvent,
     },
     {
       btnName: 'middleMusicPlayKey',
@@ -172,7 +173,7 @@ export const GamePlaying = () => {
         playBtnHandler(SecondMusicStartTime);
       },
       isBtnDisabled: btn2isDisabled,
-      keyEventRef,
+      keyEvent,
     },
     {
       btnName: 'endMusicPlayKey',
@@ -180,9 +181,29 @@ export const GamePlaying = () => {
         playBtnHandler(ThirdMusicStartTime);
       },
       isBtnDisabled: btn3isDisabled,
-      keyEventRef,
+      keyEvent,
     },
   ];
+
+  // 모르겠어요 버튼 handler
+  const dontKnowBtnHandler = async () => {
+    await axios
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/music/guest/giveup?room-id=${location.state.gameRoomData.roomId}&round=${round}`
+      )
+      .then((res) => {
+        setLives(0);
+        setIsLose(true);
+        isLoseRef.current = true;
+        setIsJudge(false);
+        setIsBubbleTime(false);
+        setAnswerData({
+          title: res.data.data.title,
+          singer: res.data.data.singer,
+        });
+      })
+      .catch((err) => console.log(err));
+  };
 
   // 결과창으로 라우팅
   const goResultPage = () => {
@@ -196,11 +217,13 @@ export const GamePlaying = () => {
 
   // 노래 불러오기
   const getMusic = async () => {
-    keyEventRef.current = '';
+    setKeyEvent('');
     setIsSkip(false);
     isSkipRef.current = false;
     setTryCnt(3);
     tryCntRef.current = 3;
+    setIsJudge(false);
+
     await axios
       .get(
         `${process.env.REACT_APP_BASE_URL}/music/guest/quiz?room-id=${location.state.gameRoomData.roomId}&round=${roundRef.current}`
@@ -219,12 +242,13 @@ export const GamePlaying = () => {
         isCorrectRef.current = false;
       })
       .catch((err) => {
-        navigate('/guest/select-mode');
+        navigate('/select-mode');
       });
   };
 
   // 모르겠어요 클릭 시, 현재노래 정답 셋팅, 다음 라운드로 셋팅 (다음문제 불러오기 위해서!)
   const skipBtnHandler = async () => {
+    setFirstAttemp(false);
     await axios
       .patch(
         `${process.env.REACT_APP_BASE_URL}/music/guest/skip?room-id=${location.state.gameRoomData.roomId}&round=${roundRef.current}`
@@ -238,39 +262,30 @@ export const GamePlaying = () => {
         });
       })
       .catch((err) => {
-        navigate('/guest/select-mode');
+        navigate('/select-mode');
       });
   };
 
   // 하트가 0개라서 게임 종료 시
-
   // 스킵 시 하트 감소 다음 문제로 넘어가기
-  // 하트가 0개일 때 짐
   const skipNextMusic = async () => {
-    if (lives <= 1) {
-      // 게임 종료 로직
-      setLives(0);
-      setIsLose(true);
-      isLoseRef.current = true;
-      setIsJudge(false);
-      setIsBubbleTime(false);
-    } else {
-      await skipBtnHandler();
-      setIsJudge(false);
-      setIsSkip(true);
-      setTryCnt(3);
-      tryCntRef.current = 3;
-      isSkipRef.current = true;
-      setLives((prev) => prev - 1);
-      livesRef.current -= 1;
-      setIsBubbleTime(false);
-    }
+    await skipBtnHandler();
+    setKeyEvent('');
+    setIsJudge(false);
+    setIsSkip(true);
+    setTryCnt(3);
+    tryCntRef.current = 3;
+    isSkipRef.current = true;
+    setLives((prev) => prev - 1);
+    livesRef.current -= 1;
+    setIsBubbleTime(false);
   };
 
   // 채점 맞으면 round 갱신, 틀려도 그냥 가만냅두기
   const activeButtonForJudge = async (answerInputText: string) => {
     setIsBubbleTime(true);
     setIsJudge(true);
+    setFirstAttemp(false);
     const encodedInputText = encodeURIComponent(answerInputText);
 
     // 채점
@@ -280,8 +295,6 @@ export const GamePlaying = () => {
       )
       .then(async (res) => {
         if (res.data.data.isCorrect) {
-          setTryCnt((prev) => prev - 1);
-          tryCntRef.current -= 1;
           setIsCorrect(true);
           isCorrectRef.current = true;
           setIsJudge(false);
@@ -291,6 +304,16 @@ export const GamePlaying = () => {
             title: res.data.data.title,
             singer: res.data.data.singer,
           });
+        } else if (
+          !res.data.data.isCorrect &&
+          lives === 1 &&
+          tryCntRef.current <= 1
+        ) {
+          setLives(0);
+          setIsLose(true);
+          isLoseRef.current = true;
+          setIsJudge(false);
+          setIsBubbleTime(false);
         } else if (!res.data.data.isCorrect && tryCntRef.current <= 1) {
           skipNextMusic();
           setAnswerData({
@@ -307,7 +330,7 @@ export const GamePlaying = () => {
           });
         }
       })
-      .catch((err) => navigate('/guest/select-mode'));
+      .catch((err) => navigate('/select-mode'));
   };
 
   // 게임 로그 찍는 요청
@@ -340,42 +363,53 @@ export const GamePlaying = () => {
         return;
       }
       if (
+        e.key === '.' &&
+        !isCorrectRef.current &&
+        !isSkipRef.current &&
+        livesRef.current > 1
+      ) {
+        setFirstAttemp(false);
+        skipNextMusic();
+        setKeyEvent('');
+      }
+      if (
         e.key === 'ArrowLeft' &&
         !isCorrectRef.current &&
         !isSkipRef.current
       ) {
+        setFirstAttemp(false);
         playMusic(FirstMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
-        keyEventRef.current = '';
-        setFirstAttemp(false);
+        setKeyEvent('');
       }
       if (
         e.key === 'ArrowDown' &&
         !isCorrectRef.current &&
         !isSkipRef.current
       ) {
+        setFirstAttemp(false);
         playMusic(SecondMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
-        keyEventRef.current = '';
-        setFirstAttemp(false);
+        setKeyEvent('');
       }
       if (
         e.key === 'ArrowRight' &&
         !isCorrectRef.current &&
         !isSkipRef.current
       ) {
+        setFirstAttemp(false);
         playMusic(ThirdMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
-        keyEventRef.current = '';
-        setFirstAttemp(false);
+        setKeyEvent('');
       }
       if (e.keyCode === 32 && (isCorrectRef.current || isSkipRef.current)) {
-        getMusic();
-        keyEventRef.current = '';
         setFirstAttemp(false);
+        getMusic();
+        showRoundRef.current += 1;
+        setKeyEvent('');
       }
     };
 
@@ -390,29 +424,38 @@ export const GamePlaying = () => {
         return;
       }
       if (
+        e.key === '.' &&
+        !isCorrectRef.current &&
+        !isSkipRef.current &&
+        livesRef.current > 1
+      ) {
+        setKeyEvent('.');
+      }
+      if (
         e.key === 'ArrowLeft' &&
         !isCorrectRef.current &&
         !isSkipRef.current
       ) {
-        keyEventRef.current = 'ArrowLeft';
+        setKeyEvent('ArrowLeft');
       }
       if (
         e.key === 'ArrowDown' &&
         !isCorrectRef.current &&
         !isSkipRef.current
       ) {
-        keyEventRef.current = 'ArrowDown';
+        setKeyEvent('ArrowDown');
       }
       if (
         e.key === 'ArrowRight' &&
         !isCorrectRef.current &&
         !isSkipRef.current
       ) {
-        keyEventRef.current = 'ArrowRight';
+        setKeyEvent('ArrowRight');
       }
       if (e.keyCode === 32 && (isCorrectRef.current || isSkipRef.current)) {
         getMusic();
-        keyEventRef.current = '';
+        showRoundRef.current += 1;
+        setKeyEvent('');
       }
     };
 
@@ -450,8 +493,7 @@ export const GamePlaying = () => {
         />
         <BackBtn url="/guest/game-option" handleClick={backBtnHandler} />
         <GameExplain />
-        {/* 노래 나와야 할 타이밍 - 게임플레이중일때 */}
-        {!isCorrect || !isSkip || !isLose ? (
+        {!isCorrect && !isSkip && !isLose ? (
           <ReactPlayer
             url={musicData.musicUrl}
             controls
@@ -515,7 +557,9 @@ export const GamePlaying = () => {
                     게임이 끝났습니다. 결과를 확인해주세요
                   </p>
                 ) : (
-                  <p className="explainGame">현재 {round ?? 0} 라운드 </p>
+                  <p className="explainGame">
+                    현재 {showRoundRef.current + 1} 라운드
+                  </p>
                 )}
               </div>
             )}
@@ -576,34 +620,35 @@ export const GamePlaying = () => {
             ) : (
               <div>
                 {isCorrect || isSkip ? (
-                  <NextBtn keyEventRef={keyEventRef} clickHandler={getMusic} />
+                  <NextBtn
+                    keyEvent={keyEvent}
+                    clickHandler={() => {
+                      getMusic();
+                      showRoundRef.current += 1;
+                    }}
+                  />
                 ) : (
                   <div>
-                    {chanceCnt <= 0 ? (
-                      <div className="btnContainer">
-                        {playBtnList.map((item) => (
-                          <PlayBtn
-                            btnName={item.btnName}
-                            onClickHandler={item.onClickHandler}
-                            isBtnDisabled
-                            key={item.btnName}
-                            keyEventRef={item.keyEventRef}
-                          />
-                        ))}
-                        <SkipBtn clickHandler={skipNextMusic} />
-                      </div>
+                    {lives <= 1 && chanceCnt === 0 ? (
+                      <DontKnowBtn clickHandler={dontKnowBtnHandler} />
                     ) : (
-                      <div className="btnContainer">
-                        {playBtnList.map((item) => (
-                          <PlayBtn
-                            btnName={item.btnName}
-                            onClickHandler={item.onClickHandler}
-                            isBtnDisabled={isPlaying}
-                            key={item.btnName}
-                            keyEventRef={item.keyEventRef}
+                      <div>
+                        <div className="btnContainer">
+                          {playBtnList.map((item) => (
+                            <PlayBtn
+                              btnName={item.btnName}
+                              onClickHandler={item.onClickHandler}
+                              isBtnDisabled={chanceCnt <= 0 ? true : isPlaying}
+                              key={item.btnName}
+                              keyEvent={item.keyEvent}
+                            />
+                          ))}
+                          <SkipBtn
+                            clickHandler={skipNextMusic}
+                            isBtnDisabled={lives <= 1}
+                            keyEvent={keyEvent}
                           />
-                        ))}
-                        <SkipBtn clickHandler={skipNextMusic} />
+                        </div>
                       </div>
                     )}
                   </div>
