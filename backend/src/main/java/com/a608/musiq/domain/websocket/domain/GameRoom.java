@@ -16,6 +16,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 public class GameRoom {
+    /*
+    !!!!!!!!!!!!!!!!!전체적으로 수정해야 함!!!!!!!!!!!!!!!!!
+     */
     private String roomName;
     private String password;
     private int totalUsers;

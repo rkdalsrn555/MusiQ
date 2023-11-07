@@ -37,7 +37,6 @@ public class GameService {
     }
 
     /**
-     *
      * @param accessToken
      * @param channelNo
      */
@@ -66,7 +65,6 @@ public class GameService {
     }
 
     /**
-     *
      * @param accessToken
      * @param channelNo
      */
@@ -82,7 +80,6 @@ public class GameService {
     }
 
     /**
-     *
      * @param channelNo
      * @param chatMessage
      */
@@ -98,7 +95,6 @@ public class GameService {
     }
 
     /**
-     *
      * @param channelNo
      * @return
      */
@@ -107,19 +103,19 @@ public class GameService {
     }
 
     /**
-     *
      * @param answer
      */
-    private void submitAnswer(String answer) {
+    @Async("asyncThreadPool")
+    public void submitAnswer(String answer) {
         /*
         게임 정답 채점 로직
          */
     }
 
     /**
-     *
      * @param accessToken
      * @param channelNo
+     * @see ChannelUserResponseDto
      * @return
      */
     public ChannelUserResponseDto getUserList(String accessToken, int channelNo) {
@@ -145,20 +141,29 @@ public class GameService {
         return channelUserResponseDto;
     }
 
+    /**
+     * @param accessToken
+     * @param channelNo
+     * @see GameRoomListResponseDto
+     * @return
+     */
     public GameRoomListResponseDto getGameRoomList(String accessToken, int channelNo) {
-        List<GameRoom> gameRoomListResponseDto = new ArrayList<>();
+        GameRoomListResponseDto gameRoomListResponseDto = new GameRoomListResponseDto();
         ConcurrentHashMap<Integer, GameRoom> gameRooms = GameValue.getGameRooms();
         Iterator<Integer> it = gameRooms.keySet().iterator();
 
         while(it.hasNext()) {
-            GameRoom gameRoom = gameRooms.get(it.next());
-            gameRoomListResponseDto.add(GameRoom.builder()
-                            .gameRoomType(gameRoom.getGameRoomType())
-                            .roomName(gameRoom.getRoomName())
-                            .totalUsers(gameRoom.getTotalUsers())
-                            .build());
+            int subscribeNo = it.next();
+            if((subscribeNo / 1000) == channelNo){
+                GameRoom gameRoom = gameRooms.get(subscribeNo);
+                gameRoomListResponseDto.getGameRoomList().add(GameRoom.builder()
+                        .gameRoomType(gameRoom.getGameRoomType())
+                        .roomName(gameRoom.getRoomName())
+                        .totalUsers(gameRoom.getTotalUsers())
+                        .build());
+            }
         }
-        return null;
-//        return gameRoomListResponseDto;
+
+        return gameRoomListResponseDto;
     }
 }

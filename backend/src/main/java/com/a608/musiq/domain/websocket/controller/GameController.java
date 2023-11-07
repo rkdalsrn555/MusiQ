@@ -30,6 +30,12 @@ public class GameController {
 
     private final GameService gameService;
 
+    /**
+     * @param accessToken
+     * @param channelNo
+     * @see ChannelUserResponseDto
+     * @return
+     */
     @GetMapping("/{channelNo}")
     @ResponseBody
     public ResponseEntity<BaseResponse<ChannelUserResponseDto>> getChannelUsers(
@@ -40,6 +46,11 @@ public class GameController {
                 .build());
     }
 
+    /**
+     * @param accessToken
+     * @param channelNo
+     * @return
+     */
     @PostMapping("/{channelNo}")
     @ResponseBody
     public ResponseEntity<BaseResponse<Integer>> disconnectSocket(
@@ -50,6 +61,12 @@ public class GameController {
                 .build());
     }
 
+    /**
+     * @param accessToken
+     * @param channelNo
+     * @see GameRoomListResponseDto
+     * @return
+     */
     @GetMapping("/main/{channelNo}")
     @ResponseBody
     public ResponseEntity<BaseResponse<GameRoomListResponseDto>> getGameRoomList(@RequestHeader("accessToken") String accessToken, @RequestParam int channelNo) {
