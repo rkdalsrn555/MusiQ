@@ -1,10 +1,13 @@
 package com.a608.musiq.domain.music.domain;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import com.a608.musiq.domain.music.data.Difficulty;
+import com.a608.musiq.domain.music.data.DifficultyConverter;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -33,6 +36,7 @@ public class GuestModeLog {
 
 	@NotNull
 	@Column
+	@Convert(converter = DifficultyConverter.class)
 	private Difficulty difficulty;
 
 	@Column
@@ -63,6 +67,15 @@ public class GuestModeLog {
 
 	public void addIp(String ip) {
 		this.ip = ip;
+	}
+
+	public void addEndedAt() {
+		this.endedAt = LocalDateTime.now();
+		calculatePlayTime();
+	}
+
+	private void calculatePlayTime() {
+		this.playTime = (int)Duration.between(startedAt, endedAt).getSeconds();
 	}
 
 }
