@@ -6,6 +6,7 @@ import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.ProblemForGuestResponseDto;
 
 import com.a608.musiq.domain.music.dto.responseDto.GradeAnswerResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.SkipRoundResponseDto;
 
 public interface MusicService {
 	CreateRoomResponseDto createRoom(String difficulty, String year);
@@ -14,5 +15,7 @@ public interface MusicService {
 
 	ProblemForGuestResponseDto getProblemForGuest(int roomId, int round);
 
-	GradeAnswerResponseDto gradeAnswer(Integer roomId, Integer streak, String answer);
+	GradeAnswerResponseDto gradeAnswer(Integer roomId, Integer round, String answer);
+
+	SkipRoundResponseDto skipRound(int roomId, int round);
 }

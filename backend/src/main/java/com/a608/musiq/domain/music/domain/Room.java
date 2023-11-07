@@ -3,6 +3,8 @@ package com.a608.musiq.domain.music.domain;
 import java.util.List;
 
 import com.a608.musiq.domain.music.data.Difficulty;
+import com.a608.musiq.global.exception.exception.MusicException;
+import com.a608.musiq.global.exception.info.MusicExceptionInfo;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -25,8 +27,10 @@ public class Room {
 	}
 
 	public void addRound(Integer round) {
+		if (this.round != round) {
+			throw new MusicException(MusicExceptionInfo.INVALID_ROUND);
+		}
 		this.round = round + 1;
 	}
-
 
 }

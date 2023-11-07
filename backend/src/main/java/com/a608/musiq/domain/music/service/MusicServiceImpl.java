@@ -11,6 +11,7 @@ import com.a608.musiq.domain.music.dto.responseDto.AddIpInLogResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.ProblemForGuestResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.GradeAnswerResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.SkipRoundResponseDto;
 import com.a608.musiq.domain.music.repository.GuestModeLogRepository;
 import com.a608.musiq.domain.music.repository.MusicRepository;
 import com.a608.musiq.domain.music.repository.TitleRepository;
@@ -172,6 +173,11 @@ public class MusicServiceImpl implements MusicService {
 	@Override
 	public GradeAnswerResponseDto gradeAnswer(Integer roomId, Integer round, String answer) {
 		Room room = roomManager.getRooms().get(roomId);
+
+		if (room.getRound() != round) {
+			throw new MusicException(MusicExceptionInfo.INVALID_ROUND);
+		}
+
 		Music music = room.getMusicList().get(round);
 		List<Title> titles = titleRepository.findAllByMusicId(music.getId());
 
@@ -195,4 +201,24 @@ public class MusicServiceImpl implements MusicService {
 
 		return gradeAnswerResponseDto;
 	}
+
+	/**
+	 * 라운드 스킵
+	 *
+	 * @param roomId
+	 * @param round
+	 * @see SkipRoundResponseDto
+	 * @return SkipRoundResponseDto
+	 */
+	@Override
+	public SkipRoundResponseDto skipRound(int roomId, int round) {
+		Room room = roomManager.getRooms().get(roomId);
+		String title = room.getMusicList().get(round).getTitle();
+		String singer = room.getMusicList().get(round).getSinger();
+
+		room.addRound(round);
+
+		return SkipRoundResponseDto.from(room.getRound(), title, singer);
+	}
+
 }

@@ -4,6 +4,7 @@ import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
 import com.a608.musiq.domain.music.dto.responseDto.AddIpInLogResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.ProblemForGuestResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.SkipRoundResponseDto;
 import com.a608.musiq.global.common.response.BaseResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,7 @@ public class MusicController {
 	) {
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<CreateRoomResponseDto>builder()
+				.code(HttpStatus.OK.value())
 				.data(musicService.createRoom(difficulty, year))
 				.build());
 	}
@@ -51,7 +53,7 @@ public class MusicController {
 	 *
 	 * @param addIpInLogRequestDto
 	 * @see AddIpInLogResponseDto
-	 * @return ResponseEntity<BaseResponse<AddIpInLogResponseDto>>
+	 * @return ResponseEntity<BaseResponse < AddIpInLogResponseDto>>
 	 */
 	@PatchMapping("/guest/log")
 	private ResponseEntity<BaseResponse<AddIpInLogResponseDto>> addIpInLog(
@@ -59,10 +61,10 @@ public class MusicController {
 	) {
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<AddIpInLogResponseDto>builder()
+				.code(HttpStatus.OK.value())
 				.data(musicService.addIpInLog(addIpInLogRequestDto))
 				.build());
 	}
-
 
 	/**
 	 * 게스트 모드 문제 출제
@@ -70,7 +72,7 @@ public class MusicController {
 	 * @param roomId
 	 * @param round
 	 * @see ProblemForGuestResponseDto
-	 * @return ResponseEntity<BaseResponse<ProblemForGuestResponseDto>>
+	 * @return ResponseEntity<BaseResponse < ProblemForGuestResponseDto>>
 	 */
 	@GetMapping("/guest/quiz")
 	private ResponseEntity<BaseResponse<ProblemForGuestResponseDto>> getProblemForGuest(
@@ -79,6 +81,7 @@ public class MusicController {
 	) {
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<ProblemForGuestResponseDto>builder()
+				.code(HttpStatus.OK.value())
 				.data(musicService.getProblemForGuest(roomId, round))
 				.build());
 	}
@@ -102,6 +105,26 @@ public class MusicController {
 			.body(BaseResponse.<GradeAnswerResponseDto>builder()
 				.code(HttpStatus.OK.value())
 				.data(musicService.gradeAnswer(roomId, round, answer))
+				.build());
+	}
+
+	/**
+	 * 라운드 스킵
+	 *
+	 * @param roomId
+	 * @param round
+	 * @see SkipRoundResponseDto
+	 * @return ResponseEntity<BaseResponse<SkipRoundResponseDto>>
+	 */
+	@PatchMapping("/guest/skip")
+	private ResponseEntity<BaseResponse<SkipRoundResponseDto>> skipRound(
+		@RequestParam("room-id") int roomId,
+		@RequestParam("round") int round
+	) {
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(BaseResponse.<SkipRoundResponseDto>builder()
+				.code(HttpStatus.OK.value())
+				.data(musicService.skipRound(roomId, round))
 				.build());
 	}
 }
