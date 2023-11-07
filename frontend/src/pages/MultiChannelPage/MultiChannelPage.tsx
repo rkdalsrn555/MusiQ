@@ -1,18 +1,12 @@
 import React, { useEffect } from 'react';
-import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import {
-  LobbyButtons,
-  LobbyChatting,
-  LobbyRooms,
-  LobbyUsersList,
-  RefreshButton,
-} from '../../components/features';
+import { ChannelComponent } from '../../components/features';
 import { BackBtn } from '../../components/utils';
-import { LobbyWrapper, MulitBackGround } from './MultiGameLobby.styled';
+import { ChannelWrapper, CenteredContainer } from './MultiChannelPage.styled';
+import channelIcon from '../../assets/svgs/channelSelectionLogo.svg';
 
-export const MultiGameLobbyPage = () => {
+export const MultiChannelPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,16 +28,13 @@ export const MultiGameLobbyPage = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 1 }}
     >
-      <MulitBackGround>
-        <LobbyWrapper>
-          <RefreshButton />
-          <BackBtn url="/multi/channel" />
-          <LobbyUsersList />
-          <LobbyRooms />
-          <LobbyButtons />
-          <LobbyChatting />
-        </LobbyWrapper>
-      </MulitBackGround>
+      <CenteredContainer>
+        <BackBtn url="/select-mode" />
+        <ChannelWrapper>
+          <img src={channelIcon} alt="채널 아이콘" width={300} />
+          <ChannelComponent />
+        </ChannelWrapper>
+      </CenteredContainer>
     </motion.div>
   );
 };
