@@ -1,5 +1,7 @@
 package com.a608.musiq.domain.websocket.service;
 
+import com.a608.musiq.domain.member.domain.MemberInfo;
+import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.dto.ChannelUserResponseDto;
@@ -7,6 +9,7 @@ import com.a608.musiq.domain.websocket.dto.ChannelUserResponseItem;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
 import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
+import com.a608.musiq.global.jwt.JwtValidator;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,19 +17,23 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class GameService {
 
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
-    @Autowired
+    private final JwtValidator jwtValidator;
+
+    private final MemberInfoRepository memberInfoRepository;
+
     private SimpMessagingTemplate messagingTemplate;
 
     private ReentrantReadWriteLock lock;
@@ -42,13 +49,10 @@ public class GameService {
      */
     @Async("asyncThreadPool")
     public void joinGameChannel(String accessToken, int channelNo) {
-        /*
-        회원 UUID 가져오기
-         */
-        UUID uuid = UUID.randomUUID();
+        UUID uuid = jwtValidator.getData(accessToken);
 
         logger.info("MaxSize = {}", GameValue.getGameChannelEachMaxSize());
-        logger.info("channelSize = {}", GameValue.getGameChannelSize(channelNo));
+        logger.info("CurrentChannelSize = {}", GameValue.getGameChannelSize(channelNo));
 
         // 정원 초과 확인
         if(GameValue.getGameChannelSize(channelNo) > GameValue.getGameChannelEachMaxSize()) {
@@ -69,10 +73,11 @@ public class GameService {
      * @param channelNo
      */
     public Integer disConnectUser(String accessToken, int channelNo){
+        UUID uuid = jwtValidator.getData(accessToken);
+
         /*
-        UUID 찾기
+        로비에서 정상적인 루트로 나가는 사람이 아닌 게임 룸에서 강제로 퇴장 하는 유저 고려해야 함
          */
-        UUID uuid = UUID.randomUUID();
 
         GameValue.removeUserFromChannel(uuid, channelNo);
 
@@ -125,14 +130,12 @@ public class GameService {
         Iterator<UUID> it = channel.keySet().iterator();
 
         while(it.hasNext()) {
-            /*
-            iterator로 nickname, userLevel 찾기
-            */
-            String nickname = "";
-            int userLevel = 0;
+            UUID uuid = it.next();
+            MemberInfo memberInfo = memberInfoRepository.findById(uuid).orElseThrow(() -> new NullPointerException());
+
             items.add(ChannelUserResponseItem.builder()
-                            .nickname(nickname)
-                            .userLevel(userLevel)
+                            .nickname(memberInfo.getNickname())
+                            .userLevel((int)(memberInfo.getExp() / 50))
                             .build());
         }
 
