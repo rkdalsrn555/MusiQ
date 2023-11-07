@@ -7,7 +7,8 @@ public enum Difficulty{
 
 	EASY("EASY"),
 	NORMAL("NORMAL"),
-	HARD("HARD");
+	HARD("HARD"),
+	CRAZY("CRAZY");
 
 	private final String value;
 
