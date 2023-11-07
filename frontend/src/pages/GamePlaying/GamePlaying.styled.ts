@@ -35,7 +35,7 @@ export const TalkBoxContainer = styled.div`
   & .firstAttempGame2 {
     width: 100%;
     position: absolute;
-    top: 43%;
+    top: 40%;
     left: 60%;
     transform: translate(-50%, -50%);
     font-size: 1.2rem;
@@ -44,7 +44,7 @@ export const TalkBoxContainer = styled.div`
   & .firstAttempGame3 {
     width: 100%;
     position: absolute;
-    top: 60%;
+    top: 55%;
     left: 60%;
     transform: translate(-50%, -50%);
     font-size: 1.2rem;

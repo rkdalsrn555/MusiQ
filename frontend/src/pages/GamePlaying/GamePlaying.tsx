@@ -205,8 +205,15 @@ export const GamePlaying = () => {
       .catch((err) => console.log(err));
   };
 
+  const patchGameResult = () => {
+    axios.patch(
+      `${process.env.REACT_APP_BASE_URL}/music/guest/over?room-id=${location.state.gameRoomData.roomId}&round=${roundRef.current}`
+    );
+  };
+
   // 결과창으로 라우팅
   const goResultPage = () => {
+    patchGameResult();
     const resultData = {
       mode: location.state.checkDifficulty.title,
       selectYear: location.state.yearCheckedList,
