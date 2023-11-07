@@ -68,17 +68,18 @@ public class MusicController {
 	 * 게스트 모드 문제 출제
 	 *
 	 * @param roomId
-	 * @param streak
-	 * @return
+	 * @param round
+	 * @see ProblemForGuestResponseDto
+	 * @return ResponseEntity<BaseResponse<ProblemForGuestResponseDto>>
 	 */
 	@GetMapping("/guest/quiz")
 	private ResponseEntity<BaseResponse<ProblemForGuestResponseDto>> getProblemForGuest(
 		@RequestParam("room-id") int roomId,
-		@RequestParam("streak") int streak
+		@RequestParam("round") int round
 	) {
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<ProblemForGuestResponseDto>builder()
-				.data(musicService.getProblemForGuest(roomId, streak))
+				.data(musicService.getProblemForGuest(roomId, round))
 				.build());
 	}
 
@@ -86,7 +87,7 @@ public class MusicController {
 	 * 게스트 모드 정답 채점
 	 *
 	 * @param roomId
-	 * @param streak
+	 * @param round
 	 * @param answer
 	 * @see GradeAnswerResponseDto
 	 * @return ResponseEntity<BaseResponse < GradeAnswerResponseDto>>
@@ -94,13 +95,13 @@ public class MusicController {
 	@GetMapping("/guest/result")
 	private ResponseEntity<BaseResponse<GradeAnswerResponseDto>> gradeAnswer(
 		@RequestParam("room-id") Integer roomId,
-		@RequestParam("streak") Integer streak,
+		@RequestParam("round") Integer round,
 		@RequestParam("answer") String answer) {
 
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<GradeAnswerResponseDto>builder()
 				.code(HttpStatus.OK.value())
-				.data(musicService.gradeAnswer(roomId, streak, answer))
+				.data(musicService.gradeAnswer(roomId, round, answer))
 				.build());
 	}
 }

@@ -92,7 +92,8 @@ public class MusicServiceImpl implements MusicService {
 	 *
 	 * @param roomId
 	 * @param round
-	 * @return
+	 * @see ProblemForGuestResponseDto
+	 * @return ProblemForGuestResponseDto
 	 */
 	@Override
 	public ProblemForGuestResponseDto getProblemForGuest(int roomId, int round) {
@@ -101,7 +102,7 @@ public class MusicServiceImpl implements MusicService {
 		Music music = room.getMusicList().get(round);
 
 		return ProblemForGuestResponseDto.create(room.getDifficulty(), music.getId(),
-			music.getUrl());
+			music.getUrl(), round);
 	}
 
 	/**
