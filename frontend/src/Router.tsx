@@ -18,12 +18,11 @@ import {
   RankingPage,
   Signup,
   MultiGameLobbyPage,
-} from './pages';
+  MzModePage
+  } from './pages';
 
 const PrivatePath = [
-  { path: '/:mode/game-option', component: <GameOption /> },
   { path: '/single-mode', component: <SingleModePage /> },
-  { path: '/:mode/game-play', component: <GamePlaying /> },
   { path: '/:mode/game-result', component: <ResultPage /> },
   { path: '/multi/lobby', component: <MultiGameLobbyPage /> },
 ];
@@ -33,10 +32,13 @@ const PrivatePath = [
 const PublicPath = [
   { path: '/login', component: <Login />, restricted: true },
   { path: '/sign-up', component: <Signup />, restricted: true },
+  { path: '/guest/game-play', component: <GamePlaying />, restricted: true },
+  { path: '/guest/game-option', component: <GameOption />, restricted: true },
   { path: '/', component: <Landing />, restricted: false },
   { path: '/select-mode', component: <ModeSelectPage />, restricted: false },
   { path: '/ranking', component: <RankingPage />, restricted: false },
   { path: '/mobile-restriction', component: <MobilePage />, restricted: false },
+  { path: '/mz-mode', component: <MzModePage />},
 ];
 
 const Router = () => {
@@ -59,7 +61,7 @@ const Router = () => {
 
   return (
     <AnimatePresence mode="wait">
-      <Routes>
+      <Routes key={0}>
         {PrivatePath.map((item) => (
           <Route
             key={item.path}
@@ -87,7 +89,7 @@ const Router = () => {
           />
         ))}
       </Routes>
-      {isMusicRoute && <BgmBtn />}
+      {isMusicRoute && <BgmBtn key={1} />}
     </AnimatePresence>
   );
 };

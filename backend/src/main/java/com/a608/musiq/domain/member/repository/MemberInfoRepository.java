@@ -1,6 +1,7 @@
 package com.a608.musiq.domain.member.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Pageable;
@@ -20,4 +21,9 @@ public interface MemberInfoRepository extends JpaRepository<MemberInfo, UUID> {
 	boolean findByNicknameNotExists(@Param("nickname") String nickname);
 
     List<MemberInfo> findByDeleted(Boolean deleted, Pageable pageable);
+
+	@Query("select i.nickname "
+		+ "from MemberInfo i "
+		+ "where i.id = :id")
+	Optional<String> findNicknameById(@Param("id") UUID id);
 }

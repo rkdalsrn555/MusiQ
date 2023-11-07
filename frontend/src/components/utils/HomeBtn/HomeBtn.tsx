@@ -8,8 +8,8 @@ const HomePosition = styled.div`
   position: absolute;
   top: 5%;
   left: 5%;
-  width: 150px;
-  height: 100px;
+  width: 120px;
+  height: 70px;
 
   :hover,
   :active {
@@ -40,8 +40,8 @@ export const HomeBtn = (props: { url: string }) => {
   return (
     <HomePosition>
       <HomeBtnIcon
-        width={150}
-        height={100}
+        width={120}
+        height={70}
         onClick={() => {
           navigate(url);
         }}

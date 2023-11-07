@@ -7,9 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.domain.Visitor;
+import com.a608.musiq.domain.member.dto.requestDto.ReissueTokenRequestDto;
 import com.a608.musiq.domain.member.dto.requestDto.VisitRequestDto;
 import com.a608.musiq.domain.member.dto.requestDto.LoginRequestDto;
 import com.a608.musiq.domain.member.dto.responseDto.LoginResponseDto;
+import com.a608.musiq.domain.member.dto.responseDto.ReissueTokenResponseDto;
 import com.a608.musiq.domain.member.dto.responseDto.ValidateDuplicatedLoginIdResponseDto;
 import com.a608.musiq.domain.member.dto.responseDto.ValidateDuplicatedNicknameResponseDto;
 import com.a608.musiq.domain.member.dto.responseDto.VisitResponseDto;
@@ -20,6 +22,7 @@ import com.a608.musiq.domain.member.dto.responseDto.JoinResponseDto;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.member.repository.MemberRepository;
 import com.a608.musiq.domain.member.repository.VisitorRepository;
+import com.a608.musiq.global.Util;
 import com.a608.musiq.global.jwt.JwtProvider;
 import com.a608.musiq.global.exception.exception.MemberException;
 import com.a608.musiq.global.exception.exception.MemberInfoException;
@@ -37,6 +40,7 @@ public class MemberServiceImpl implements MemberService {
 	private final MemberRepository memberRepository;
 	private final MemberInfoRepository memberInfoRepository;
 	private final VisitorRepository visitorRepository;
+	private final Util util;
 	private final JwtProvider jwtProvider;
 	private final JwtValidator jwtValidator;
 
@@ -78,22 +82,23 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
+	@Transactional
 	public LoginResponseDto login(LoginRequestDto loginRequestDto) {
 
 		Member member = memberRepository.findByLoginIdAndPassword(loginRequestDto.getLoginId(),
 				loginRequestDto.getPassword())
 			.orElseThrow(() -> new MemberException(MemberExceptionInfo.LOGIN_FAILED));
 
-		MemberInfo memberInfo = memberInfoRepository.findById(member.getId())
+		String memberNickname = memberInfoRepository.findNicknameById(member.getId())
 			.orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
 
 		String accessToken = jwtProvider.createAccessToken(member.getId());
 		String refreshToken = jwtProvider.createRefreshToken(member.getId());
 
-		jwtValidator.validateToken(accessToken);
+		util.saveRefreshToken(member.getId(), refreshToken);
 
 		return LoginResponseDto.builder()
-			.nickname(memberInfo.getNickname())
+			.nickname(memberNickname)
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
 			.build();
@@ -141,4 +146,20 @@ public class MemberServiceImpl implements MemberService {
 
 		return new ValidateDuplicatedNicknameResponseDto(memberInfoRepository.findByNicknameNotExists(nickname));
 	}
+
+	/**
+	 * 토큰 재발급
+	 *
+	 * @param reissueTokenRequestDto
+	 * @see ReissueTokenResponseDto
+	 * @return ReissueTokenResponseDto
+	 */
+	@Override
+	public ReissueTokenResponseDto reissueToken(ReissueTokenRequestDto reissueTokenRequestDto) {
+
+		String memberId = jwtValidator.validateRefreshToken(reissueTokenRequestDto.getRefreshToken());
+
+		return new ReissueTokenResponseDto(jwtProvider.createAccessToken(memberId));
+	}
+
 }

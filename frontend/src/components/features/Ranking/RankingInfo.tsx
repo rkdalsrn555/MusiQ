@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { LoginRouterBtn } from '../../utils';
 import { BackBtn } from '../../utils/BackBtn/BackBtn';
 import {
   RankingWrapper,
@@ -23,7 +24,7 @@ import rankingLogo from '../../../assets/svgs/ranking/rankingIcon.svg';
 import crownImg from '../../../assets/svgs/ranking/Crown.svg';
 import silverImg from '../../../assets/svgs/ranking/silverCrown.svg';
 import bronzeImg from '../../../assets/svgs/ranking/bronzeCrown.svg';
-import loginLogo from '../../../assets/svgs/login/loginKey.svg';
+import hoverCursorIcon from '../../../assets/img/hoverCursorIcon.png';
 
 type RankingData = {
   rankNum: number;
@@ -62,8 +63,7 @@ const MyRanking = ({ rankNum }: { rankNum: string | number | null }) => {
             로그인하고 내 랭킹 확인하기
           </div>
           <LoginButton onClick={handleLoginRedirect}>
-            <img src={loginLogo} alt="로그인 페이지로 이동" width={70} />
-            <div style={{ fontWeight: 'bold', fontSize: '20px' }}>Login</div>
+            <LoginRouterBtn />
           </LoginButton>
         </>
       ) : (
@@ -119,7 +119,7 @@ export const RankingInfo: React.FC = () => {
           </RankingHeader>
           <RankingItemsWrapper>
             {rankingData.map((item) => (
-              <RankingItem key={item.rankNum}>
+              <RankingItem key={item.nickName}>
                 <PrizeCell>
                   {item.rankNum === 1 && (
                     <PrizeImage src={crownImg} alt="1등!" width={30} />
