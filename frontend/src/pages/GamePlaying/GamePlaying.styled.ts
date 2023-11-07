@@ -124,7 +124,7 @@ export const bottomRightSideContainer = styled.div`
 `;
 
 export const PlayingBtnBoxPosition = styled.div`
-  width: 24rem;
+  width: 28rem;
   height: 9rem;
   display: flex;
   justify-content: center;
@@ -137,7 +137,7 @@ export const PlayingBtnBoxPosition = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
 
     & .loadingMusic {
       font-size: 1rem;
