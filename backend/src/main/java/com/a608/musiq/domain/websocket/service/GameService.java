@@ -4,15 +4,14 @@ import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
+import com.a608.musiq.domain.websocket.dto.AllChannelSizeResponseDto;
 import com.a608.musiq.domain.websocket.dto.ChannelUserResponseDto;
 import com.a608.musiq.domain.websocket.dto.ChannelUserResponseItem;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
 import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
-import com.a608.musiq.global.exception.exception.MemberException;
 import com.a608.musiq.global.exception.exception.MemberInfoException;
 import com.a608.musiq.global.exception.exception.MultiModeException;
-import com.a608.musiq.global.exception.info.MemberExceptionInfo;
 import com.a608.musiq.global.exception.info.MemberInfoExceptionInfo;
 import com.a608.musiq.global.exception.info.MultiModeExceptionInfo;
 import com.a608.musiq.global.jwt.JwtValidator;
@@ -72,6 +71,23 @@ public class GameService {
             lock.writeLock().unlock();
         }
 
+    }
+
+    /**
+     * @param accessToken
+     * @see AllChannelSizeResponseDto
+     * @return
+     */
+    public AllChannelSizeResponseDto getAllChannelSizeList(String accessToken) {
+        AllChannelSizeResponseDto allChannelSizeResponseDto = new AllChannelSizeResponseDto();
+        List<Integer> list = new ArrayList<>();
+
+        for(int i = 1; i <= GameValue.getGameChannelMaxSize(); i++) {
+            list.add(GameValue.getGameChannelSize(i));
+        }
+
+        allChannelSizeResponseDto.setChannelSizes(list);
+        return allChannelSizeResponseDto;
     }
 
     /**
