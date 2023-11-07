@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -50,7 +51,7 @@ public class JwtValidator {
 	public String validateRefreshToken(String refreshToken) {
 		validateToken(refreshToken);
 
-		String memberId = getData(refreshToken);
+		String memberId = getData(refreshToken).toString();
 
 		String token = util.getRefreshToken(memberId);
 
@@ -61,13 +62,13 @@ public class JwtValidator {
 		return memberId;
 	}
 
-	public String getData(String token) {
+	public UUID getData(String token) {
 		Claims claims = Jwts.parserBuilder()
 			.setSigningKey(SECRET_KEY.getBytes(StandardCharsets.UTF_8))
 			.build()
 			.parseClaimsJws(token)
 			.getBody();
 
-		return claims.get("data", String.class);
+		return claims.get("data", UUID.class);
 	}
 }
