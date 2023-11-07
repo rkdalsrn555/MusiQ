@@ -8,9 +8,9 @@ const PositionStyle = styled.div`
   position: absolute;
   top: 5%;
   left: 5%;
-  width: 150px;
-  height: 100px;
-  z-index: 99;
+  width: 120px;
+  height: 70px;
+  z-index: 3;
 
   :hover,
   :active {
@@ -61,8 +61,8 @@ export const BackBtn = (props: { url: string; handleClick?: () => void }) => {
   return (
     <PositionStyle>
       <BackBtnIcon
-        width={150}
-        height={100}
+        width={120}
+        height={70}
         onClick={handleClick}
         fill="rgba(164, 164, 164, 0.8)"
       />

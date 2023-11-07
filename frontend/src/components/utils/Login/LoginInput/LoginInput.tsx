@@ -12,6 +12,8 @@ type OwnProps = {
   successMessage?: string;
   isError?: boolean;
   errorMessage?: string;
+  isDuplicate?: boolean;
+  duplicatedMessage?: string;
   inputValue: string;
   setInputValue: React.Dispatch<React.SetStateAction<string>>;
   inputRef: React.MutableRefObject<string>;
@@ -26,6 +28,8 @@ export const LoginInput = (props: OwnProps) => {
     errorMessage,
     isSuccess,
     successMessage,
+    isDuplicate,
+    duplicatedMessage,
     inputValue,
     setInputValue,
     inputRef,
@@ -55,7 +59,7 @@ export const LoginInput = (props: OwnProps) => {
                     setShowPwd(!showPwd);
                   }}
                 >
-                  <img src={closeEye} width={30} alt="가림" />
+                  <img src={closeEye} width={24} alt="가림" />
                 </S.showPwdIcon>
               ) : (
                 <S.showPwdIcon
@@ -63,7 +67,7 @@ export const LoginInput = (props: OwnProps) => {
                     setShowPwd(!showPwd);
                   }}
                 >
-                  <img src={openEye} width={30} alt="보임" />
+                  <img src={openEye} width={24} alt="보임" />
                 </S.showPwdIcon>
               )}
             </div>
@@ -73,6 +77,14 @@ export const LoginInput = (props: OwnProps) => {
         </div>
       </S.LoginInputContainer>
       <S.ErrorMessage isError={isError}>{errorMessage}</S.ErrorMessage>
+      {isDuplicate ? (
+        <S.DuplicatedMessage isDuplicate={isDuplicate}>
+          {duplicatedMessage}
+        </S.DuplicatedMessage>
+      ) : (
+        ''
+      )}
+
       <S.SuccessMessage isSuccess={isSuccess}>
         {successMessage}
       </S.SuccessMessage>

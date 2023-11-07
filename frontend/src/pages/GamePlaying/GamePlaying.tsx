@@ -62,6 +62,7 @@ export const GamePlaying = () => {
     yesBtnClick?: () => void | null;
   }>({ data: { title: '', message: '' } });
   const [isToggled, setIsToggled] = useState<boolean>(false); // 모달 창 toggle
+  const isToggledRef = useRef<boolean>(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -79,6 +80,7 @@ export const GamePlaying = () => {
   });
   const [score, setScore] = useState<number>(0);
   const [lives, setLives] = useState<number>(3); // 생명
+  const livesRef = useRef<number>(3);
   const [chanceCnt, setChanceCnt] = useState<number>(3); // 기회
   const chanceCntRef = useRef(3);
   const [isPlaying, setIsPlaying] = useState<boolean>(false); // 게임중인지, 아닌지
@@ -95,6 +97,9 @@ export const GamePlaying = () => {
   const [btn2isDisabled, setIsBtn2Disabled] = useState<boolean>(false);
   const [btn3isDisabled, setIsBtn3Disabled] = useState<boolean>(false);
   const [inputText, setInputText] = useState<string>(''); // 정답 담을 state
+  const [isInputFocus, setIsInputFocus] = useState<boolean>(false);
+  const [keyEvent, setKeyEvent] = useState<string>('');
+  const [firstAttemp, setFirstAttemp] = useState<boolean>(true);
 
   useEffect(() => {
     // 모바일 기기 접근을 막기 위해 추가한 코드
@@ -130,32 +135,38 @@ export const GamePlaying = () => {
   // 버튼 리스트
   const playBtnList = [
     {
-      btnName: '처음',
+      btnName: 'firstMusicPlayKey',
       // 버튼 클릭하면 노래 시작하고, 기회 감소, 버튼 못누르게 disabled 처리
       onClickHandler: (e: any) => {
+        setFirstAttemp(false);
         playMusic(FirstMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
       },
       isBtnDisabled: btn1isDisabled,
+      keyEvent,
     },
     {
-      btnName: '중간',
+      btnName: 'middleMusicPlayKey',
       onClickHandler: (e: any) => {
+        setFirstAttemp(false);
         playMusic(SecondMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
       },
       isBtnDisabled: btn2isDisabled,
+      keyEvent,
     },
     {
-      btnName: '끝',
+      btnName: 'endMusicPlayKey',
       onClickHandler: (e: any) => {
+        setFirstAttemp(false);
         playMusic(ThirdMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
       },
       isBtnDisabled: btn3isDisabled,
+      keyEvent,
     },
   ];
 
@@ -212,6 +223,7 @@ export const GamePlaying = () => {
         setChanceCnt(3);
         chanceCntRef.current = 3;
         setLives(3);
+        livesRef.current = 3;
         setIsWin(false);
         isWinRef.current = false;
         setIsStart(true);
@@ -221,14 +233,15 @@ export const GamePlaying = () => {
       });
   };
 
-  const activeButtonForJudge = async () => {
+  const activeButtonForJudge = async (answerInputText: string) => {
     setIsJudge(true);
     setIsStart(false);
+    const encodedInputText = encodeURIComponent(answerInputText);
 
     // 채점
     await axios
       .get(
-        `${process.env.REACT_APP_BASE_URL}/music/guest/result?room-id=${location.state.gameRoomData.roomId}&streak=${streak}&answer=${inputText}`
+        `${process.env.REACT_APP_BASE_URL}/music/guest/result?room-id=${location.state.gameRoomData.roomId}&streak=${streak}&answer=${encodedInputText}`
       )
       .then(async (res) => {
         if (res.data.data.isCorrect) {
@@ -242,7 +255,7 @@ export const GamePlaying = () => {
             title: res.data.data.title,
             singer: res.data.data.singer,
           });
-        } else if (lives === 0) {
+        } else if (livesRef.current === 0) {
           setIsLose(true);
           isLoseRef.current = true;
           setIsJudge(false);
@@ -254,25 +267,13 @@ export const GamePlaying = () => {
           });
         } else {
           setLives((prev) => prev - 1);
+          livesRef.current -= 1;
           setIsJudge(false);
           setStreak(res.data.data.streak);
           streakRef.current = res.data.data.streak;
         }
       })
       .catch((err) => console.log(err));
-  };
-
-  // Enter 할 시 정답 채점
-  // inputText가 ''이면 정답 요청 안보냄
-  // inputText가 '정답'이면 요청 보내기
-  const activeEnter = (e: any) => {
-    if (e.key !== 'Enter' || inputText === '') {
-      return;
-    }
-    if (e.key === 'Enter') {
-      activeButtonForJudge();
-      setInputText('');
-    }
   };
 
   useEffect(() => {
@@ -296,7 +297,8 @@ export const GamePlaying = () => {
         chanceCntRef.current <= 0 ||
         e.target.nodeName === 'INPUT' ||
         isLoseRef.current ||
-        isPlayingRef.current
+        isPlayingRef.current ||
+        isToggledRef.current
       ) {
         return;
       }
@@ -304,19 +306,47 @@ export const GamePlaying = () => {
         playMusic(FirstMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
+        setKeyEvent('');
+        setFirstAttemp(false);
       }
       if (e.key === 'ArrowDown' && !isWinRef.current) {
         playMusic(SecondMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
+        setKeyEvent('');
+        setFirstAttemp(false);
       }
       if (e.key === 'ArrowRight' && !isWinRef.current) {
         playMusic(ThirdMusicStartTime);
         setChanceCnt((prev) => prev - 1);
         chanceCntRef.current -= 1;
+        setKeyEvent('');
+        setFirstAttemp(false);
       }
       if (e.keyCode === 32 && isWinRef.current) {
         getMusic();
+        setKeyEvent('');
+      }
+    };
+
+    const handleKeyDown = (e: any) => {
+      if (
+        chanceCntRef.current <= 0 ||
+        e.target.nodeName === 'INPUT' ||
+        isLoseRef.current ||
+        isPlayingRef.current ||
+        isToggledRef.current
+      ) {
+        return;
+      }
+      if (e.key === 'ArrowLeft' && !isWinRef.current) {
+        setKeyEvent('ArrowLeft');
+      }
+      if (e.key === 'ArrowDown' && !isWinRef.current) {
+        setKeyEvent('ArrowDown');
+      }
+      if (e.key === 'ArrowRight' && !isWinRef.current) {
+        setKeyEvent('ArrowRight');
       }
     };
 
@@ -327,16 +357,15 @@ export const GamePlaying = () => {
 
     window.addEventListener('keyup', handleKeyUp);
     window.addEventListener('beforeunload', preventRefresh);
+    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
       window.removeEventListener('keyup', handleKeyUp);
       window.removeEventListener('beforeunload', preventRefresh);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
-  // 정답, 오답 띄워주기
-  // 맞았으면 다음문제로 가기!
-  // 틀렸으면 하트깎기
   /* eslint-disable react/jsx-props-no-spreading */
   return !location.state ? (
     <div />
@@ -357,6 +386,7 @@ export const GamePlaying = () => {
           url="/guest/game-option"
           handleClick={() => {
             setIsToggled(true);
+            isToggledRef.current = true;
             setModalData({
               data: {
                 title: '😥',
@@ -364,10 +394,12 @@ export const GamePlaying = () => {
               },
               yesBtnClick: () => {
                 setIsToggled(false);
+                isToggledRef.current = false;
                 navigate('/guest/game-option');
               },
               noBtnClick: () => {
                 setIsToggled(false);
+                isToggledRef.current = false;
               },
             });
           }}
@@ -397,20 +429,33 @@ export const GamePlaying = () => {
             )}
 
             <S.TalkBoxPosition>
-              {isStart ? (
-                ''
+              {firstAttemp ? (
+                <S.TalkBoxContainer>
+                  <img src={talkBoxImg} alt="말풍선" width={200} />
+                  <p className="firstAttempGame1">게임이 시작되었어요</p>
+                  <p className="firstAttempGame2">키보드를 눌러</p>
+                  <p className="firstAttempGame3">노래를 들어보세요</p>
+                </S.TalkBoxContainer>
               ) : (
                 <div>
-                  {isJudge ? (
-                    <S.TalkBoxContainer>
-                      <img src={talkBoxImg} alt="말풍선" width={200} />
-                      <p className="judgeText">채점중</p>
-                    </S.TalkBoxContainer>
+                  {isStart ? (
+                    ''
                   ) : (
-                    <S.TalkBoxContainer>
-                      <img src={talkBoxImg} alt="말풍선" width={200} />
-                      <p className="judgeText">{isWin ? '정답!' : '오답 X!'}</p>
-                    </S.TalkBoxContainer>
+                    <div>
+                      {isJudge ? (
+                        <S.TalkBoxContainer>
+                          <img src={talkBoxImg} alt="말풍선" width={200} />
+                          <p className="judgeText">채점중</p>
+                        </S.TalkBoxContainer>
+                      ) : (
+                        <S.TalkBoxContainer>
+                          <img src={talkBoxImg} alt="말풍선" width={200} />
+                          <p className="judgeText">
+                            {isWin ? '정답!' : '오답 X!'}
+                          </p>
+                        </S.TalkBoxContainer>
+                      )}
+                    </div>
                   )}
                 </div>
               )}
@@ -429,44 +474,28 @@ export const GamePlaying = () => {
                         게임이 끝났습니다. 결과를 확인해주세요
                       </p>
                     ) : (
-                      <p className="explainGame">
-                        처음부터{' '}
-                        <span>
-                          {gameOptionData
-                            ? gameOptionData.difficulty.time / 1000
-                            : ''}
-                          초간
-                        </span>{' '}
-                        들려드립니다
-                      </p>
+                      <p className="explainGame">현재 {streak} 문제 맞춤</p>
                     )}
                   </div>
                 )}
               </S.GameStatusExplainContainer>
-              {location.state.gameRoomData.problems === streak ? (
+              {location.state.gameRoomData.problems === streak ||
+              (isWin && !isStart) ||
+              isLose ? (
                 ''
               ) : (
                 <div>
-                  {isLose ? (
-                    ''
+                  {isInputFocus ? (
+                    <S.GameStatusExplainContainer>
+                      <p className="gameStatus">정답을 입력해삐약</p>
+                    </S.GameStatusExplainContainer>
                   ) : (
                     <S.GameStatusExplainContainer>
-                      {isPlaying ? (
-                        <p className="gameStatus">...Playing</p>
-                      ) : (
-                        <div>
-                          {musicReady ? (
-                            <p className="gameStatus">...wait</p>
-                          ) : (
-                            <p className="gameStatus">...노래를 불러오는 중</p>
-                          )}
-                        </div>
-                      )}
+                      <p className="gameStatus">노래를 들어봐삐약</p>
                     </S.GameStatusExplainContainer>
                   )}
                 </div>
               )}
-
               {(isWin && !isStart) || isLose ? (
                 <S.AnswerYouTubePlayerPosition>
                   <p>
@@ -494,13 +523,10 @@ export const GamePlaying = () => {
                       setInputText(e);
                     }}
                     activeButton={activeButtonForJudge}
-                    activeEnter={(e: any) => {
-                      activeEnter(e);
-                    }}
+                    setIsInputFocus={setIsInputFocus}
                   />
                 </>
               )}
-
               <S.PlayingBtnBoxPosition>
                 {isLose || location.state.gameRoomData.problems === streak ? (
                   <ResultBtn clickHandler={goResultPage} />
@@ -522,6 +548,7 @@ export const GamePlaying = () => {
                                     onClickHandler={item.onClickHandler}
                                     isBtnDisabled={isPlaying}
                                     key={item.btnName}
+                                    keyEvent={item.keyEvent}
                                   />
                                 ))}
                               </div>

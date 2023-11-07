@@ -66,7 +66,7 @@ const Container = styled.div`
   bottom: 5%;
   left: 5%;
   width: 26rem;
-  height: 22rem;
+  height: 18rem;
   ${HoverImg}:hover {
     background-color: #fff;
     cursor:
@@ -84,7 +84,7 @@ type OwnProps = {
 };
 
 export const GameExplain = () => {
-  const [time, setTime] = useState<number>(3);
+  const [time, setTime] = useState<number>(10);
 
   useEffect(() => {
     const timerInterval = setInterval(() => {
@@ -107,8 +107,6 @@ export const GameExplain = () => {
       </HoverImg>
       <ExplainBox className="explainBox" time={time}>
         {time < 0 ? '' : <p>{time}초 뒤에 사라집니다</p>}
-        <h1>게임 규칙 Tip</h1>
-        <p>모든 정답은 한글로 제출해야 인정됩니다</p>
         <h1>키보드 조작</h1>
         <p>⬅ : 처음 버튼</p>
         <p>⬇ : 중간 버튼</p>
