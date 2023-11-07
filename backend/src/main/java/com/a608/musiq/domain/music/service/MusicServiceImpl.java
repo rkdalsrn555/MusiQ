@@ -7,12 +7,7 @@ import com.a608.musiq.domain.music.domain.Room;
 import com.a608.musiq.domain.music.domain.RoomManager;
 import com.a608.musiq.domain.music.domain.Title;
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
-import com.a608.musiq.domain.music.dto.responseDto.AddIpInLogResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.GameOverResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.ProblemForGuestResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.GradeAnswerResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.SkipRoundResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.*;
 import com.a608.musiq.domain.music.repository.GuestModeLogRepository;
 import com.a608.musiq.domain.music.repository.MusicRepository;
 import com.a608.musiq.domain.music.repository.TitleRepository;
@@ -238,6 +233,23 @@ public class MusicServiceImpl implements MusicService {
 		log.addEndedAt();
 
 		return GameOverResponseDto.of(round);
+	}
+
+	/**
+	 * 게임 포기
+	 *
+	 * @param roomId
+	 * @param round
+	 * @see GiveUpResponseDto
+	 * @return GiveUpResponseDto
+	 */
+	@Override
+	public GiveUpResponseDto giveUp(int roomId, int round) {
+		Music music = roomManager.getRooms().get(roomId).getMusicList().get(round);
+		String title = music.getTitle();
+		String singer = music.getSinger();
+
+		return GiveUpResponseDto.from(title, singer);
 	}
 
 }

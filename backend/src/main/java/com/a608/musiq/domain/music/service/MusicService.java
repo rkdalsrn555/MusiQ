@@ -1,13 +1,7 @@
 package com.a608.musiq.domain.music.service;
 
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
-import com.a608.musiq.domain.music.dto.responseDto.AddIpInLogResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.GameOverResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.ProblemForGuestResponseDto;
-
-import com.a608.musiq.domain.music.dto.responseDto.GradeAnswerResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.SkipRoundResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.*;
 
 public interface MusicService {
 	CreateRoomResponseDto createRoom(String difficulty, String year);
@@ -21,4 +15,6 @@ public interface MusicService {
 	SkipRoundResponseDto skipRound(int roomId, int round);
 
 	GameOverResponseDto gameOver(int roomId, int round);
+
+	GiveUpResponseDto giveUp(int roomId, int round);
 }

@@ -1,11 +1,7 @@
 package com.a608.musiq.domain.music.controller;
 
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
-import com.a608.musiq.domain.music.dto.responseDto.AddIpInLogResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.GameOverResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.ProblemForGuestResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.SkipRoundResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.*;
 import com.a608.musiq.global.common.response.BaseResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.a608.musiq.domain.music.dto.responseDto.GradeAnswerResponseDto;
 import com.a608.musiq.domain.music.service.MusicService;
 
 @RestController
@@ -146,6 +141,26 @@ public class MusicController {
 			.body(BaseResponse.<GameOverResponseDto>builder()
 				.code(HttpStatus.OK.value())
 				.data(musicService.gameOver(roomId, round))
+				.build());
+	}
+
+	/**
+	 * 게임 포기
+	 *
+	 * @param roomId
+	 * @param round
+	 * @see GiveUpResponseDto
+	 * @return ResponseEntity<BaseResponse<GiveUpResponseDto>>
+	 */
+	@GetMapping("/guest/giveup")
+	private ResponseEntity<BaseResponse<GiveUpResponseDto>> giveUp(
+		@RequestParam("room-id") int roomId,
+		@RequestParam("round") int round
+	) {
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(BaseResponse.<GiveUpResponseDto>builder()
+				.code(HttpStatus.OK.value())
+				.data(musicService.giveUp(roomId, round))
 				.build());
 	}
 }
