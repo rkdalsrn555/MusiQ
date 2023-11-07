@@ -1,4 +1,4 @@
 export * from './PlayBtn';
-export * from './NoIdeaBtn';
+export * from './SkipBtn';
 export * from './NextBtn';
 export * from './ResultBtn';

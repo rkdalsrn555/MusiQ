@@ -1,18 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
+import resultBtn from '../../../../assets/img/playgame/resultBtn.png';
+import clickResultBtn from '../../../../assets/img/playgame/clickResultBtn.png';
 
 const ResultButtonStyle = styled.button`
-  width: 15rem;
+  width: 12rem;
   height: 6rem;
-  background-color: rgba(255, 203, 21, 0.9);
-  border-radius: 1rem;
-  border: 2px solid rgba(235, 226, 255, 0.4);
-  font-size: 2rem;
-  font-weight: bold;
-  color: #fff;
+  background-image: url(${resultBtn});
+  background-size: contain;
 
-  &:hover {
-    background-color: rgba(255, 200, 0, 0.9);
+  &:active {
+    background-image: url(${clickResultBtn});
+    background-size: contain;
   }
 `;
 
@@ -23,7 +22,5 @@ type OwnProps = {
 export const ResultBtn = (props: OwnProps) => {
   const { clickHandler } = props;
 
-  return (
-    <ResultButtonStyle onClick={clickHandler}>결과 보기</ResultButtonStyle>
-  );
+  return <ResultButtonStyle onClick={clickHandler} />;
 };

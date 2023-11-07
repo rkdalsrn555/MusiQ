@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, MutableRefObject } from 'react';
 import styled from 'styled-components';
 import answerInput from '../../../../assets/img/playgame/answerInput.png';
 import hoverCursorIcon from '../../../../assets/img/hoverCursorIcon.png';
@@ -6,6 +6,14 @@ import hoverCursorIcon from '../../../../assets/img/hoverCursorIcon.png';
 const Container = styled.div`
   position: relative;
   margin-bottom: 2rem;
+
+  & .explainTryCnt {
+    position: absolute;
+    top: -1.3rem;
+    left: 0;
+    right: 0;
+    font-weight: bold;
+  }
 
   & .explainKey {
     position: absolute;
@@ -23,7 +31,7 @@ const InputStyle = styled.div`
     border: none;
     background-color: rgba(0, 0, 0, 0);
     padding: 1rem;
-    font-size: 2rem;
+    font-size: 1.6rem;
   }
 
   & input:hover,
@@ -35,7 +43,8 @@ const InputStyle = styled.div`
 `;
 
 type OwnProps = {
-  isWin: boolean;
+  tryCntRef: MutableRefObject<number>;
+  isCorrect: boolean;
   isLose: boolean;
   isJudge: boolean;
   inputText: string;
@@ -46,7 +55,8 @@ type OwnProps = {
 
 export const AnswerInput = (props: OwnProps) => {
   const {
-    isWin,
+    tryCntRef,
+    isCorrect,
     isLose,
     isJudge,
     inputText,
@@ -94,15 +104,19 @@ export const AnswerInput = (props: OwnProps) => {
       <InputStyle>
         <input
           type="text"
-          placeholder="text"
+          placeholder={
+            tryCntRef.current <= 0
+              ? ''
+              : `남은 시도 횟수 : ${tryCntRef.current}회`
+          }
           value={inputText}
           onChange={(e) => {
             setInputText(e.target.value);
             inputTextRef.current = e.target.value;
           }}
           ref={focusRef}
-          disabled={isJudge || isWin || isLose}
-          readOnly={isJudge || isWin || isLose}
+          disabled={isJudge || isCorrect || isLose || tryCntRef.current <= 0}
+          readOnly={isJudge || isCorrect || isLose || tryCntRef.current <= 0}
         />
       </InputStyle>
       <p className="explainKey">enter 키로 활성화, enter키로 정답 제출</p>

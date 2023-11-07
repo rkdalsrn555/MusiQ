@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
-import { TempLocationStateGameInfo } from '../../atoms/atoms';
+import { TempLocationStateGameInfo, UserIpAtom } from '../../atoms/atoms';
 import { SelectLevelBtn, SelectYearBtn } from '../../components/features';
 import { ReactComponent as StartIcon } from '../../assets/svgs/startBtn.svg';
 import { Logo, BackBtn, Modal } from '../../components/utils';
@@ -45,8 +45,8 @@ export const GameOption = () => {
     time: number;
   }>({ title: 'easy', select: false, time: EASYTIME });
 
+  // 모바일 기기 접근을 막기 위해 추가한 코드
   useEffect(() => {
-    // 모바일 기기 접근을 막기 위해 추가한 코드
     const isMobile =
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
@@ -123,7 +123,7 @@ export const GameOption = () => {
     }
 
     await axios
-      .get(
+      .post(
         `${
           process.env.REACT_APP_BASE_URL
         }/music/guest/room?difficulty=${levelList.title.toUpperCase()}&year=${checkedList.join(
