@@ -157,9 +157,17 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public ReissueTokenResponseDto reissueToken(ReissueTokenRequestDto reissueTokenRequestDto) {
 
+		// Refresh Token으로 유효성 검사 및 member Id 반환
 		String memberId = jwtValidator.validateRefreshToken(reissueTokenRequestDto.getRefreshToken());
+		
+		// 반환된 memberId로 Access, Refresh Token 생성
+		String accessToken = jwtProvider.createAccessToken(memberId);
+		String refreshToken = jwtProvider.createRefreshToken(memberId);
+		
+		// 재생성된 Refresh Token을 Redis에 저장
+		util.saveRefreshToken(UUID.fromString(memberId), refreshToken);
 
-		return new ReissueTokenResponseDto(jwtProvider.createAccessToken(memberId));
+		return ReissueTokenResponseDto.builder().accessToken(accessToken).refreshToken(refreshToken).build();
 	}
 
 }
