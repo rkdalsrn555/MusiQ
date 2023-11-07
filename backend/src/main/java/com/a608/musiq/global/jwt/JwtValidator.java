@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +29,7 @@ public class JwtValidator {
 	@Value("${jwt.secret-key}")
 	private String SECRET_KEY;
 
-	public void validateToken(String token) {
+	public void validateToken(String type, String token) {
 		try {
 			Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 			Claims claims = Jwts.parserBuilder()
@@ -39,37 +40,34 @@ public class JwtValidator {
 
 			Date now = new Date();
 			if (claims.getExpiration() != null && claims.getExpiration().before(now)) {
-				throw new MemberException(MemberExceptionInfo.INVALID_TOKEN);
+				throw new MemberException(type.equals("access") ? MemberExceptionInfo.INVALID_ACCESS_TOKEN : MemberExceptionInfo.INVALID_REFRESH_TOKEN);
 			}
 		} catch (MalformedJwtException | ExpiredJwtException | SignatureException e) {
-
-			throw new MemberException(MemberExceptionInfo.INVALID_TOKEN);
+			throw new MemberException(type.equals("access") ? MemberExceptionInfo.INVALID_ACCESS_TOKEN : MemberExceptionInfo.INVALID_REFRESH_TOKEN);
 		}
 	}
 
 	public String validateRefreshToken(String refreshToken) {
-		validateToken(refreshToken);
+		validateToken("refresh", refreshToken);
 
 		String memberId = getData(refreshToken);
 
 		String token = util.getRefreshToken(memberId);
 
 		if (!refreshToken.equals(token)) {
-			throw new MemberException(MemberExceptionInfo.INVALID_TOKEN);
+			throw new MemberException(MemberExceptionInfo.INVALID_REFRESH_TOKEN);
 		}
 
 		return memberId;
 	}
 
-	private String getData(String token) {
+	public String getData(String token) {
 		Claims claims = Jwts.parserBuilder()
 			.setSigningKey(SECRET_KEY.getBytes(StandardCharsets.UTF_8))
 			.build()
 			.parseClaimsJws(token)
 			.getBody();
 
-		String data = claims.get("data", String.class);
-
-		return data;
+		return claims.get("data", String.class);
 	}
 }

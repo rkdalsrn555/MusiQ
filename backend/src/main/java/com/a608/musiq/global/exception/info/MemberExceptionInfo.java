@@ -12,7 +12,8 @@ public enum MemberExceptionInfo {
 	DUPLICATED_NICKNAME(HttpStatus.BAD_REQUEST, 1003, "중복된 닉네임 입니다."),
 	LOGIN_FAILED(HttpStatus.BAD_REQUEST, 1004, "아이디 혹은 비밀번호가 틀렸습니다."),
 
-	INVALID_TOKEN(HttpStatus.BAD_REQUEST, 1050, "유효하지 않은 토큰입니다.");
+	INVALID_ACCESS_TOKEN(HttpStatus.BAD_REQUEST, 1050, "유효하지 않은 액세스 토큰입니다."),
+	INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, 1051, "유효하지 않은 리프레시 토큰입니다.");
 
 	private final HttpStatus status;
 	private final Integer code;

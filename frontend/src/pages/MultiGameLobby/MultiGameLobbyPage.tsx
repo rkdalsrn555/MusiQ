@@ -7,6 +7,7 @@ import {
   LobbyChatting,
   LobbyRooms,
   LobbyUsersList,
+  RefreshButton,
 } from '../../components/features';
 import { BackBtn } from '../../components/utils';
 import { LobbyWrapper, MulitBackGround } from './MultiGameLobby.styled';
@@ -35,7 +36,8 @@ export const MultiGameLobbyPage = () => {
     >
       <MulitBackGround>
         <LobbyWrapper>
-          <BackBtn url="/select-mode" />
+          <RefreshButton />
+          <BackBtn url="/multi/channel" />
           <LobbyUsersList />
           <LobbyRooms />
           <LobbyButtons />

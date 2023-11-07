@@ -11,8 +11,9 @@ public class ProblemForGuestResponseDto {
     private Difficulty difficulty;
     private Integer musicId;
     private String musicUrl;
+    private int round;
 
-    public static ProblemForGuestResponseDto create(Difficulty difficulty, Integer musicId, String musicUrl){
-        return new ProblemForGuestResponseDto(difficulty, musicId, musicUrl);
+    public static ProblemForGuestResponseDto create(Difficulty difficulty, Integer musicId, String musicUrl, int round){
+        return new ProblemForGuestResponseDto(difficulty, musicId, musicUrl, round);
     }
 }
