@@ -10,22 +10,22 @@ import lombok.Getter;
 @Builder
 @Getter
 public class Room {
-	private static final int STREAK_START_NUMBER = 0;
+	private static final int ROUND_START_NUMBER = 0;
 
 	private List<Music> musicList;
-	private Integer streak;
+	private Integer round;
 	private Difficulty difficulty;
 
 	public static Room from(List<Music> musicList, Difficulty difficulty) {
 		return Room.builder()
 			.musicList(musicList)
-			.streak(STREAK_START_NUMBER)
+			.round(ROUND_START_NUMBER)
 			.difficulty(difficulty)
 			.build();
 	}
 
-	public void addStreak(Integer streak) {
-		this.streak = streak + 1;
+	public void addRound(Integer round) {
+		this.round = round + 1;
 	}
 
 
