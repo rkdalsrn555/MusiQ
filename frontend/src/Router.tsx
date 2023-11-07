@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Route, Routes, useLocation } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 import { AnimatePresence } from 'framer-motion';
+import { UserIpAtom } from './atoms/atoms';
 import PrivateRoute from './hooks/PrivateRoute';
 import PublicRoute from './hooks/PublicRoute';
 import { LoginRouterBtn } from './components/utils';
@@ -25,7 +27,7 @@ import {
 const PrivatePath = [
   { path: '/single-mode', component: <SingleModePage /> },
   { path: '/multi/:channel/lobby', component: <MultiGameLobbyPage /> },
-  { path: '/multi/channel', component: <MultiChannelPage />},
+  { path: '/multi/channel', component: <MultiChannelPage /> },
 ];
 
 // restricted = false 로그인 여부와 관계없이 접근 가능 페이지
@@ -35,7 +37,7 @@ const PublicPath = [
   { path: '/sign-up', component: <Signup />, restricted: true },
   { path: '/guest/game-play', component: <GamePlaying />, restricted: true },
   { path: '/guest/game-option', component: <GameOption />, restricted: true },
-  { path: '/guest/game-result', component: <ResultPage /> },
+  { path: '/guest/game-result', component: <ResultPage />, restricted: true },
   { path: '/', component: <Landing />, restricted: false },
   { path: '/select-mode', component: <ModeSelectPage />, restricted: false },
   { path: '/ranking', component: <RankingPage />, restricted: false },
@@ -49,10 +51,12 @@ const Router = () => {
     !location.pathname.includes('/game-play') &&
     !location.pathname.includes('/lobby');
   const userAccessToken = window.localStorage.getItem('userAccessToken');
+  const [userIpAtom, setUserIpAtom] = useRecoilState(UserIpAtom);
 
   useEffect(() => {
     axios.get('https://geolocation-db.com/json/').then((res) => {
       const userIp = res.data.IPv4;
+      setUserIpAtom(userIp);
 
       axios
         .post(`${process.env.REACT_APP_BASE_URL}/member/visit`, {

@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { ReactComponent as KeyLogo } from '../../../../assets/svgs/login/loginKey.svg';
 import hoverCursorIcon from '../../../../assets/img/hoverCursorIcon.png';
 
