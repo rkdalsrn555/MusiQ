@@ -23,7 +23,6 @@ import {
 
 const PrivatePath = [
   { path: '/single-mode', component: <SingleModePage /> },
-  { path: '/:mode/game-result', component: <ResultPage /> },
   { path: '/multi/lobby', component: <MultiGameLobbyPage /> },
 ];
 
@@ -34,6 +33,7 @@ const PublicPath = [
   { path: '/sign-up', component: <Signup />, restricted: true },
   { path: '/guest/game-play', component: <GamePlaying />, restricted: true },
   { path: '/guest/game-option', component: <GameOption />, restricted: true },
+  { path: '/guest/game-result', component: <ResultPage /> },
   { path: '/', component: <Landing />, restricted: false },
   { path: '/select-mode', component: <ModeSelectPage />, restricted: false },
   { path: '/ranking', component: <RankingPage />, restricted: false },

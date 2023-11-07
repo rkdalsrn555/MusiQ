@@ -45,10 +45,6 @@ const nickname = localStorage.getItem('nickname');
 const MyRanking = ({ rankNum }: { rankNum: string | number | null }) => {
   const navigate = useNavigate();
 
-  const handleLoginRedirect = () => {
-    navigate('/login');
-  };
-
   return (
     <StyledMyRanking>
       {nickname === null ? (
@@ -57,12 +53,12 @@ const MyRanking = ({ rankNum }: { rankNum: string | number | null }) => {
             style={{
               fontSize: '22px',
               fontWeight: 'bold',
-              marginBottom: '10%',
+              marginBottom: '4%',
             }}
           >
-            로그인하고 내 랭킹 확인하기
+            내 랭킹 확인하기
           </div>
-          <LoginButton onClick={handleLoginRedirect}>
+          <LoginButton>
             <LoginRouterBtn />
           </LoginButton>
         </>
