@@ -38,7 +38,6 @@ const PublicPath = [
   { path: '/select-mode', component: <ModeSelectPage />, restricted: false },
   { path: '/ranking', component: <RankingPage />, restricted: false },
   { path: '/mobile-restriction', component: <MobilePage />, restricted: false },
-  { path: '/:mode/game-option', component: <GameOption /> },
   { path: '/mz-mode', component: <MzModePage />},
 ];
 
