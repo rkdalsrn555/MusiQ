@@ -1,5 +1,6 @@
 package com.a608.musiq.domain.music.domain;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import com.a608.musiq.domain.music.data.Difficulty;
@@ -66,6 +67,15 @@ public class GuestModeLog {
 
 	public void addIp(String ip) {
 		this.ip = ip;
+	}
+
+	public void addEndedAt() {
+		this.endedAt = LocalDateTime.now();
+		calculatePlayTime();
+	}
+
+	private void calculatePlayTime() {
+		this.playTime = (int)Duration.between(startedAt, endedAt).getSeconds();
 	}
 
 }

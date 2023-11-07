@@ -3,6 +3,7 @@ package com.a608.musiq.domain.music.service;
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
 import com.a608.musiq.domain.music.dto.responseDto.AddIpInLogResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.GameOverResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.ProblemForGuestResponseDto;
 
 import com.a608.musiq.domain.music.dto.responseDto.GradeAnswerResponseDto;
@@ -18,4 +19,6 @@ public interface MusicService {
 	GradeAnswerResponseDto gradeAnswer(Integer roomId, Integer round, String answer);
 
 	SkipRoundResponseDto skipRound(int roomId, int round);
+
+	GameOverResponseDto gameOver(int roomId, int round);
 }

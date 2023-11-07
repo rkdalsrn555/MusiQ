@@ -9,6 +9,7 @@ import com.a608.musiq.domain.music.domain.Title;
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
 import com.a608.musiq.domain.music.dto.responseDto.AddIpInLogResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.GameOverResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.ProblemForGuestResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.GradeAnswerResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.SkipRoundResponseDto;
@@ -219,6 +220,24 @@ public class MusicServiceImpl implements MusicService {
 		room.addRound(round);
 
 		return SkipRoundResponseDto.from(room.getRound(), title, singer);
+	}
+
+	/**
+	 * 게임 종료
+	 *
+	 * @param roomId
+	 * @param round
+	 * @see GameOverResponseDto
+	 * @return GameOverResponseDto
+	 */
+	@Override
+	public GameOverResponseDto gameOver(int roomId, int round) {
+		GuestModeLog log = guestModeLogRepository.findById(roomId)
+			.orElseThrow(() -> new GuestModeLogException(GuestModeLogExceptionInfo.NOT_FOUND_LOG));
+
+		log.addEndedAt();
+
+		return GameOverResponseDto.of(round);
 	}
 
 }
