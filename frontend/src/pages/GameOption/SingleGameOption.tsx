@@ -3,7 +3,11 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 import { userApis } from '../../hooks/api/userApis';
-import { TempLocationStateGameInfo, UserIpAtom } from '../../atoms/atoms';
+import {
+  TempLocationStateGameInfo,
+  UserIpAtom,
+  ActiveCarouselNumAtom,
+} from '../../atoms/atoms';
 import { SelectLevelBtn, SelectYearBtn } from '../../components/features';
 import { ReactComponent as StartIcon } from '../../assets/svgs/startBtn.svg';
 import { Logo, BackBtn, Modal } from '../../components/utils';
@@ -22,6 +26,9 @@ const levelLists = [
 ];
 
 export const SingleGameOption = () => {
+  const [activeCarouselNum, setActiveCarouselNum] = useRecoilState(
+    ActiveCarouselNumAtom
+  );
   const [locationState, setLocationState] = useRecoilState(
     TempLocationStateGameInfo
   );
@@ -55,6 +62,8 @@ export const SingleGameOption = () => {
     if (isMobile) {
       navigate('/mobile-restriction');
     }
+
+    setActiveCarouselNum({ activeCarouselNum: 0 });
   }, []);
 
   // 결과창에서 다시하기 버튼 클릭 시 옵션 그대로 가져오기 위해 작성한 코드
