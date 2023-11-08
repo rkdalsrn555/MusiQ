@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { Modal } from '../../Modal';
 import { userApis } from '../../../../hooks/api/userApis';
 import { ReactComponent as LoginKey } from '../../../../assets/svgs/login/loginKey.svg';
@@ -64,11 +65,13 @@ export const LoginRouterBtn = (props: OwnProps) => {
   const clickHandler = () => {
     if (isLogin) {
       userApis
-        .post(`${process.env.REACT_APP_BASE_URL}/member/logout`)
+        .delete(`${process.env.REACT_APP_BASE_URL}/member/logout`)
         .then((res) => {
           window.localStorage.removeItem('userAccessToken');
           window.localStorage.removeItem('userRefreshToken');
+          window.localStorage.removeItem('nickname');
           alert('로그아웃 성공!');
+          navigate('/');
         })
         .catch((err) => {
           alert('로그아웃에 실패하였습니다.');
@@ -79,7 +82,7 @@ export const LoginRouterBtn = (props: OwnProps) => {
   };
 
   return (
-    <Container isLogin onClick={clickHandler}>
+    <Container isLogin={isLogin} onClick={clickHandler}>
       {isLogin ? (
         <LogoutKey className="keyLogo" width={50} />
       ) : (

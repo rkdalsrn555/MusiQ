@@ -40,9 +40,9 @@ export const DancingChickContainer = styled.div`
 
   & img:nth-child(1) {
     position: absolute;
-    top: 10%;
+    top: 20%;
     bottom: 0;
-    left: 12%;
+    left: 20%;
     right: 0;
     z-index: 2;
   }
