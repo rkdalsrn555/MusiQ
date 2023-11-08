@@ -2,10 +2,10 @@ package com.a608.musiq.domain.music.controller;
 
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
 import com.a608.musiq.domain.music.dto.responseDto.*;
+import com.a608.musiq.domain.music.dto.serviceDto.CreateRoomRequestServiceDto;
 import com.a608.musiq.global.common.response.BaseResponse;
 
-import lombok.RequiredArgsConstructor;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +21,14 @@ import com.a608.musiq.domain.music.service.MusicService;
 
 @RestController
 @RequestMapping("/music/guest")
-@RequiredArgsConstructor
 public class GuestModeMusicController {
 
-	@Qualifier("")
 	private final MusicService musicService;
+
+	@Autowired
+	public GuestModeMusicController(@Qualifier("guestModeMusicServiceImpl") MusicService musicService) {
+		this.musicService = musicService;
+	}
 
 	/**
 	 * 게스트 모드 방 생성
@@ -42,7 +45,7 @@ public class GuestModeMusicController {
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<CreateRoomResponseDto>builder()
 				.code(HttpStatus.OK.value())
-				.data(musicService.createRoom(difficulty, year))
+				.data(musicService.createRoom(CreateRoomRequestServiceDto.from(difficulty, year)))
 				.build());
 	}
 

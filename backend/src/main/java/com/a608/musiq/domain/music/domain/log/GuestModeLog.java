@@ -24,7 +24,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GuestModeLog {
-	private static final int ROUND_INITIAL_NUMBER = 0;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +41,6 @@ public class GuestModeLog {
 	@Column
 	private String ip;
 
-	@NotNull
 	@Column
 	private int round;
 
@@ -60,7 +58,6 @@ public class GuestModeLog {
 		return GuestModeLog.builder()
 			.year(year)
 			.difficulty(difficulty)
-			.round(ROUND_INITIAL_NUMBER)
 			.startedAt(LocalDateTime.now())
 			.build();
 	}
@@ -69,9 +66,11 @@ public class GuestModeLog {
 		this.ip = ip;
 	}
 
-	public void addEndedAt() {
+	public void addAdditionalInformation(int round) {
 		this.endedAt = LocalDateTime.now();
 		calculatePlayTime();
+
+		this.round = round;
 	}
 
 	private void calculatePlayTime() {

@@ -6,16 +6,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.a608.musiq.domain.member.domain.MemberInfo;
+import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.music.data.Difficulty;
-import com.a608.musiq.domain.music.domain.log.GuestModeLog;
 import com.a608.musiq.domain.music.domain.Music;
 import com.a608.musiq.domain.music.domain.Room;
-import com.a608.musiq.domain.music.domain.RoomManager;
+import com.a608.musiq.domain.music.domain.SingleModeRoomManager;
 import com.a608.musiq.domain.music.domain.Title;
+import com.a608.musiq.domain.music.domain.log.SingleModeLog;
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
 import com.a608.musiq.domain.music.dto.responseDto.AddIpInLogResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
@@ -24,49 +27,68 @@ import com.a608.musiq.domain.music.dto.responseDto.GiveUpResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.GradeAnswerResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.GetProblemsResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.SkipRoundResponseDto;
+import com.a608.musiq.domain.music.dto.serviceDto.CreateRoomRequestServiceDto;
 import com.a608.musiq.domain.music.repository.MusicRepository;
 import com.a608.musiq.domain.music.repository.SingleModeLogRepository;
 import com.a608.musiq.domain.music.repository.TitleRepository;
-import com.a608.musiq.global.exception.exception.GuestModeLogException;
+import com.a608.musiq.global.exception.exception.MemberInfoException;
 import com.a608.musiq.global.exception.exception.MusicException;
-import com.a608.musiq.global.exception.info.GuestModeLogExceptionInfo;
+import com.a608.musiq.global.exception.exception.SingleModeException;
+import com.a608.musiq.global.exception.info.MemberInfoExceptionInfo;
 import com.a608.musiq.global.exception.info.MusicExceptionInfo;
+import com.a608.musiq.global.exception.info.SingleModeExceptionInfo;
+import com.a608.musiq.global.jwt.JwtValidator;
 
 import lombok.RequiredArgsConstructor;
 
-@Service
+@Service("singleModeMusicServiceImpl")
 @RequiredArgsConstructor
 public class SingleModeMusicServiceImpl implements MusicService {
 	private static final String SPACE = " ";
 	private static final String EMPTY_STRING = "";
 	private static final int EMPTY_LIST_SIZE = 0;
 	private static final int LOOP_START_INDEX = 0;
+	private static final int EASY_MODE_EXP_WEIGHT = 1;
+	private static final int NORMAL_MODE_EXP_WEIGHT = 2;
+	private static final int HARD_MODE_EXP_WEIGHT = 3;
+	private static final int CRAZY_MODE_EXP_WEIGHT = 4;
 
-	private final RoomManager roomManager = new RoomManager();
+	private final SingleModeRoomManager singleModeRoomManager = new SingleModeRoomManager();
 
+	private final MemberInfoRepository memberInfoRepository;
 	private final MusicRepository musicRepository;
 	private final TitleRepository titleRepository;
 	private final SingleModeLogRepository singleModeLogRepository;
+	private final JwtValidator jwtValidator;
 
 	/**
-	 * 게스트 모드 방 생성
+	 * 싱글 모드 방 생성
 	 *
-	 * @param difficulty
-	 * @param year
+	 * @param createRoomRequestServiceDto
+	 * @see CreateRoomRequestServiceDto
+	 * @see CreateRoomResponseDto
 	 * @return CreateRoomResponseDto
 	 */
 	@Override
 	@Transactional
-	public CreateRoomResponseDto createRoom(String difficulty, String year) {
-		StringTokenizer stringTokenizer = new StringTokenizer(year, SPACE);
-		Difficulty difficultyType = Difficulty.valueOf(difficulty.toUpperCase());
+	public CreateRoomResponseDto createRoom(CreateRoomRequestServiceDto createRoomRequestServiceDto) {
+		StringTokenizer stringTokenizer = new StringTokenizer(createRoomRequestServiceDto.getYear(), SPACE);
+		Difficulty difficultyType = Difficulty.valueOf(createRoomRequestServiceDto.getDifficulty().toUpperCase());
 
-		int roomId = singleModeLogRepository.save(GuestModeLog.from(year, difficultyType)).getId();
+		UUID memberId = jwtValidator.getData(createRoomRequestServiceDto.getToken());
+
+		String nickname = memberInfoRepository.findNicknameById(memberId)
+			.orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
+
+		SingleModeLog log = SingleModeLog.from(
+			createRoomRequestServiceDto.getYear(), difficultyType, memberId, nickname);
+
+		int roomId = singleModeLogRepository.save(log).getId();
 
 		List<Music> musicList = insertMusic(stringTokenizer);
 		Collections.shuffle(musicList);
 		Room room = Room.from(musicList, difficultyType);
-		roomManager.addRoom(roomId, room);
+		singleModeRoomManager.addRoom(roomId, room);
 
 		return CreateRoomResponseDto.from(roomId, musicList.size());
 	}
@@ -81,8 +103,8 @@ public class SingleModeMusicServiceImpl implements MusicService {
 	@Override
 	@Transactional
 	public AddIpInLogResponseDto addIpInLog(AddIpInLogRequestDto addIpInLogRequestDto) {
-		GuestModeLog log = singleModeLogRepository.findById(addIpInLogRequestDto.getRoomId())
-			.orElseThrow(() -> new GuestModeLogException(GuestModeLogExceptionInfo.NOT_FOUND_LOG));
+		SingleModeLog log = singleModeLogRepository.findById(addIpInLogRequestDto.getRoomId())
+			.orElseThrow(() -> new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG));
 
 		log.addIp(addIpInLogRequestDto.getUserIp());
 
@@ -95,11 +117,11 @@ public class SingleModeMusicServiceImpl implements MusicService {
 	 * @param roomId
 	 * @param round
 	 * @see GetProblemsResponseDto
-	 * @return ProblemForGuestResponseDto
+	 * @return GetProblemsResponseDto
 	 */
 	@Override
 	public GetProblemsResponseDto getProblem(int roomId, int round) {
-		Room room = roomManager.getRooms().get(roomId);
+		Room room = singleModeRoomManager.getRooms().get(roomId);
 
 		Music music = room.getMusicList().get(round);
 
@@ -173,7 +195,7 @@ public class SingleModeMusicServiceImpl implements MusicService {
 	 */
 	@Override
 	public GradeAnswerResponseDto gradeAnswer(int roomId, int round, String answer) {
-		Room room = roomManager.getRooms().get(roomId);
+		Room room = singleModeRoomManager.getRooms().get(roomId);
 
 		if (room.getRound() != round) {
 			throw new MusicException(MusicExceptionInfo.INVALID_ROUND);
@@ -213,7 +235,7 @@ public class SingleModeMusicServiceImpl implements MusicService {
 	 */
 	@Override
 	public SkipRoundResponseDto skipRound(int roomId, int round) {
-		Room room = roomManager.getRooms().get(roomId);
+		Room room = singleModeRoomManager.getRooms().get(roomId);
 		String title = room.getMusicList().get(round).getTitle();
 		String singer = room.getMusicList().get(round).getSinger();
 
@@ -231,13 +253,43 @@ public class SingleModeMusicServiceImpl implements MusicService {
 	 * @return GameOverResponseDto
 	 */
 	@Override
+	@Transactional
 	public GameOverResponseDto gameOver(int roomId, int round) {
-		GuestModeLog log = singleModeLogRepository.findById(roomId)
-			.orElseThrow(() -> new GuestModeLogException(GuestModeLogExceptionInfo.NOT_FOUND_LOG));
+		SingleModeLog log = singleModeLogRepository.findById(roomId)
+			.orElseThrow(() -> new SingleModeException(SingleModeExceptionInfo.NOT_FOUND_LOG));
 
-		log.addEndedAt();
+		MemberInfo memberInfo = memberInfoRepository.findById(log.getMemberId())
+			.orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
+
+		double exp = calculateExp(log.getDifficulty(), round);
+		memberInfo.gainExp(exp);
+
+		log.addAdditionalInformation(round, exp);
 
 		return GameOverResponseDto.of(round);
+	}
+
+	/**
+	 * 경험치 계산
+	 *
+	 * @param difficulty
+	 * @param round
+	 * @return double
+	 */
+	private double calculateExp(Difficulty difficulty, int round) {
+		if (difficulty.equals(Difficulty.EASY)) {
+			return EASY_MODE_EXP_WEIGHT * round;
+		}
+
+		if (difficulty.equals(Difficulty.CRAZY)) {
+			return CRAZY_MODE_EXP_WEIGHT * round;
+		}
+
+		if (difficulty.equals(Difficulty.HARD)) {
+			return HARD_MODE_EXP_WEIGHT * round;
+		}
+
+		return NORMAL_MODE_EXP_WEIGHT * round;
 	}
 
 	/**
@@ -250,7 +302,7 @@ public class SingleModeMusicServiceImpl implements MusicService {
 	 */
 	@Override
 	public GiveUpResponseDto giveUp(int roomId, int round) {
-		Music music = roomManager.getRooms().get(roomId).getMusicList().get(round);
+		Music music = singleModeRoomManager.getRooms().get(roomId).getMusicList().get(round);
 		String title = music.getTitle();
 		String singer = music.getSinger();
 

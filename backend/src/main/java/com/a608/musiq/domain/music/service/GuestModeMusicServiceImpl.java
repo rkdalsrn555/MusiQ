@@ -4,16 +4,17 @@ import com.a608.musiq.domain.music.data.Difficulty;
 import com.a608.musiq.domain.music.domain.log.GuestModeLog;
 import com.a608.musiq.domain.music.domain.Music;
 import com.a608.musiq.domain.music.domain.Room;
-import com.a608.musiq.domain.music.domain.RoomManager;
+import com.a608.musiq.domain.music.domain.GuestModeRoomManager;
 import com.a608.musiq.domain.music.domain.Title;
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
 import com.a608.musiq.domain.music.dto.responseDto.*;
+import com.a608.musiq.domain.music.dto.serviceDto.CreateRoomRequestServiceDto;
 import com.a608.musiq.domain.music.repository.GuestModeLogRepository;
 import com.a608.musiq.domain.music.repository.MusicRepository;
 import com.a608.musiq.domain.music.repository.TitleRepository;
-import com.a608.musiq.global.exception.exception.GuestModeLogException;
+import com.a608.musiq.global.exception.exception.GuestModeException;
 import com.a608.musiq.global.exception.exception.MusicException;
-import com.a608.musiq.global.exception.info.GuestModeLogExceptionInfo;
+import com.a608.musiq.global.exception.info.GuestModeExceptionInfo;
 import com.a608.musiq.global.exception.info.MusicExceptionInfo;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Service
+@Service("guestModeMusicServiceImpl")
 @RequiredArgsConstructor
 public class GuestModeMusicServiceImpl implements MusicService {
 	private static final String SPACE = " ";
@@ -36,7 +37,7 @@ public class GuestModeMusicServiceImpl implements MusicService {
 	private static final int EMPTY_LIST_SIZE = 0;
 	private static final int LOOP_START_INDEX = 0;
 
-	private final RoomManager roomManager = new RoomManager();
+	private final GuestModeRoomManager guestModeRoomManager = new GuestModeRoomManager();
 
 	private final MusicRepository musicRepository;
 	private final TitleRepository titleRepository;
@@ -45,22 +46,24 @@ public class GuestModeMusicServiceImpl implements MusicService {
 	/**
 	 * 게스트 모드 방 생성
 	 *
-	 * @param difficulty
-	 * @param year
+	 * @param createRoomRequestServiceDto
+	 * @see CreateRoomRequestServiceDto
+	 * @see CreateRoomResponseDto
 	 * @return CreateRoomResponseDto
 	 */
 	@Override
 	@Transactional
-	public CreateRoomResponseDto createRoom(String difficulty, String year) {
-		StringTokenizer stringTokenizer = new StringTokenizer(year, SPACE);
-		Difficulty difficultyType = Difficulty.valueOf(difficulty.toUpperCase());
+	public CreateRoomResponseDto createRoom(CreateRoomRequestServiceDto createRoomRequestServiceDto) {
+		StringTokenizer stringTokenizer = new StringTokenizer(createRoomRequestServiceDto.getYear(), SPACE);
+		Difficulty difficultyType = Difficulty.valueOf(createRoomRequestServiceDto.getDifficulty().toUpperCase());
 
-		int roomId = guestModeLogRepository.save(GuestModeLog.from(year, difficultyType)).getId();
+		int roomId = guestModeLogRepository.save(
+			GuestModeLog.from(createRoomRequestServiceDto.getYear(), difficultyType)).getId();
 
 		List<Music> musicList = insertMusic(stringTokenizer);
 		Collections.shuffle(musicList);
 		Room room = Room.from(musicList, difficultyType);
-		roomManager.addRoom(roomId, room);
+		guestModeRoomManager.addRoom(roomId, room);
 
 		return CreateRoomResponseDto.from(roomId, musicList.size());
 	}
@@ -76,7 +79,7 @@ public class GuestModeMusicServiceImpl implements MusicService {
 	@Transactional
 	public AddIpInLogResponseDto addIpInLog(AddIpInLogRequestDto addIpInLogRequestDto) {
 		GuestModeLog log = guestModeLogRepository.findById(addIpInLogRequestDto.getRoomId())
-			.orElseThrow(() -> new GuestModeLogException(GuestModeLogExceptionInfo.NOT_FOUND_LOG));
+			.orElseThrow(() -> new GuestModeException(GuestModeExceptionInfo.NOT_FOUND_LOG));
 
 		log.addIp(addIpInLogRequestDto.getUserIp());
 
@@ -93,7 +96,7 @@ public class GuestModeMusicServiceImpl implements MusicService {
 	 */
 	@Override
 	public GetProblemsResponseDto getProblem(int roomId, int round) {
-		Room room = roomManager.getRooms().get(roomId);
+		Room room = guestModeRoomManager.getRooms().get(roomId);
 
 		Music music = room.getMusicList().get(round);
 
@@ -167,7 +170,7 @@ public class GuestModeMusicServiceImpl implements MusicService {
 	 */
 	@Override
 	public GradeAnswerResponseDto gradeAnswer(int roomId, int round, String answer) {
-		Room room = roomManager.getRooms().get(roomId);
+		Room room = guestModeRoomManager.getRooms().get(roomId);
 
 		if (room.getRound() != round) {
 			throw new MusicException(MusicExceptionInfo.INVALID_ROUND);
@@ -207,7 +210,7 @@ public class GuestModeMusicServiceImpl implements MusicService {
 	 */
 	@Override
 	public SkipRoundResponseDto skipRound(int roomId, int round) {
-		Room room = roomManager.getRooms().get(roomId);
+		Room room = guestModeRoomManager.getRooms().get(roomId);
 		String title = room.getMusicList().get(round).getTitle();
 		String singer = room.getMusicList().get(round).getSinger();
 
@@ -227,9 +230,9 @@ public class GuestModeMusicServiceImpl implements MusicService {
 	@Override
 	public GameOverResponseDto gameOver(int roomId, int round) {
 		GuestModeLog log = guestModeLogRepository.findById(roomId)
-			.orElseThrow(() -> new GuestModeLogException(GuestModeLogExceptionInfo.NOT_FOUND_LOG));
+			.orElseThrow(() -> new GuestModeException(GuestModeExceptionInfo.NOT_FOUND_LOG));
 
-		log.addEndedAt();
+		log.addAdditionalInformation(round);
 
 		return GameOverResponseDto.of(round);
 	}
@@ -244,7 +247,7 @@ public class GuestModeMusicServiceImpl implements MusicService {
 	 */
 	@Override
 	public GiveUpResponseDto giveUp(int roomId, int round) {
-		Music music = roomManager.getRooms().get(roomId).getMusicList().get(round);
+		Music music = guestModeRoomManager.getRooms().get(roomId).getMusicList().get(round);
 		String title = music.getTitle();
 		String singer = music.getSinger();
 

@@ -2,9 +2,10 @@ package com.a608.musiq.domain.music.service;
 
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
 import com.a608.musiq.domain.music.dto.responseDto.*;
+import com.a608.musiq.domain.music.dto.serviceDto.CreateRoomRequestServiceDto;
 
 public interface MusicService {
-	CreateRoomResponseDto createRoom(String difficulty, String year);
+	CreateRoomResponseDto createRoom(CreateRoomRequestServiceDto createRoomRequestServiceDto);
 
 	AddIpInLogResponseDto addIpInLog(AddIpInLogRequestDto addIpInLogRequestDto);
 
