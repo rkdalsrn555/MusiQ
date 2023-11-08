@@ -2,15 +2,16 @@ package com.a608.musiq.domain.music.service;
 
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
 import com.a608.musiq.domain.music.dto.responseDto.*;
+import com.a608.musiq.domain.music.dto.serviceDto.CreateRoomRequestServiceDto;
 
 public interface MusicService {
-	CreateRoomResponseDto createRoom(String difficulty, String year);
+	CreateRoomResponseDto createRoom(CreateRoomRequestServiceDto createRoomRequestServiceDto);
 
 	AddIpInLogResponseDto addIpInLog(AddIpInLogRequestDto addIpInLogRequestDto);
 
-	ProblemForGuestResponseDto getProblemForGuest(int roomId, int round);
+	GetProblemsResponseDto getProblem(int roomId, int round);
 
-	GradeAnswerResponseDto gradeAnswer(Integer roomId, Integer round, String answer);
+	GradeAnswerResponseDto gradeAnswer(int roomId, int round, String answer);
 
 	SkipRoundResponseDto skipRound(int roomId, int round);
 

@@ -1,11 +1,14 @@
 package com.a608.musiq.domain.member.controller;
 
+import com.a608.musiq.domain.member.dto.responseDto.LogoutResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -66,11 +69,27 @@ public class MemberController {
 	}
 
 	/**
+	 * 로그아웃
+	 *
+	 * @param token
+	 * @return
+	 */
+	@DeleteMapping("/logout")
+	private ResponseEntity<BaseResponse<LogoutResponseDto>> logout(@RequestHeader("aceessToken") String token) {
+
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(BaseResponse.<LogoutResponseDto>builder()
+						.code(HttpStatus.OK.value())
+						.data(memberService.logout(token))
+						.build());
+	}
+
+	/**
 	 * 로그인
 	 *
 	 * @param loginRequestDto
 	 * @see LoginResponseDto
-	 * @return ResponseEntity<BaseResponse < LoginResponseDto>>
+	 * @return ResponseEntity<BaseResponse<LoginResponseDto>>
 	 */
 	@PostMapping("/login")
 	private ResponseEntity<BaseResponse<LoginResponseDto>> login(@RequestBody LoginRequestDto loginRequestDto) {

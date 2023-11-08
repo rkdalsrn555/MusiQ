@@ -15,7 +15,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(interceptor)
-                .addPathPatterns("/single/**", "/multi/**");
+                .addPathPatterns("/music/single/**", "/music/multi/**", "/member/logout");
     }
 
 }

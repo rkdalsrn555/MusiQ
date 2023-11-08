@@ -1,46 +1,59 @@
 package com.a608.musiq.domain.music.controller;
 
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
-import com.a608.musiq.domain.music.dto.responseDto.*;
+import com.a608.musiq.domain.music.dto.responseDto.AddIpInLogResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.GameOverResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.GetProblemsResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.GiveUpResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.SkipRoundResponseDto;
+import com.a608.musiq.domain.music.dto.serviceDto.CreateRoomRequestServiceDto;
 import com.a608.musiq.global.common.response.BaseResponse;
 
-import lombok.RequiredArgsConstructor;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.a608.musiq.domain.music.dto.responseDto.GradeAnswerResponseDto;
 import com.a608.musiq.domain.music.service.MusicService;
 
 @RestController
-@RequestMapping("/music")
-@RequiredArgsConstructor
-public class MusicController {
+@RequestMapping("/music/single")
+public class SingleModeMusicController {
 
 	private final MusicService musicService;
 
+	@Autowired
+	public SingleModeMusicController(@Qualifier("singleModeMusicServiceImpl") MusicService musicService) {
+		this.musicService = musicService;
+	}
+
 	/**
-	 * 게스트 모드 방 생성
+	 * 싱글 모드 방 생성
 	 *
 	 * @param difficulty
 	 * @param year
 	 * @return
 	 */
-	@PostMapping("/guest/room")
+	@PostMapping("/room")
 	private ResponseEntity<BaseResponse<CreateRoomResponseDto>> createRoom(
 		@RequestParam("difficulty") String difficulty,
-		@RequestParam("year") String year
+		@RequestParam("year") String year,
+		@RequestHeader("Authorization") String token
 	) {
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<CreateRoomResponseDto>builder()
 				.code(HttpStatus.OK.value())
-				.data(musicService.createRoom(difficulty, year))
+				.data(musicService.createRoom(CreateRoomRequestServiceDto.from(difficulty, year, token)))
 				.build());
 	}
 
@@ -51,7 +64,7 @@ public class MusicController {
 	 * @see AddIpInLogResponseDto
 	 * @return ResponseEntity<BaseResponse < AddIpInLogResponseDto>>
 	 */
-	@PatchMapping("/guest/log")
+	@PatchMapping("/log")
 	private ResponseEntity<BaseResponse<AddIpInLogResponseDto>> addIpInLog(
 		@RequestBody AddIpInLogRequestDto addIpInLogRequestDto
 	) {
@@ -63,27 +76,27 @@ public class MusicController {
 	}
 
 	/**
-	 * 게스트 모드 문제 출제
+	 * 싱글 모드 문제 출제
 	 *
 	 * @param roomId
 	 * @param round
-	 * @see ProblemForGuestResponseDto
+	 * @see GetProblemsResponseDto
 	 * @return ResponseEntity<BaseResponse < ProblemForGuestResponseDto>>
 	 */
-	@GetMapping("/guest/quiz")
-	private ResponseEntity<BaseResponse<ProblemForGuestResponseDto>> getProblemForGuest(
+	@GetMapping("/quiz")
+	private ResponseEntity<BaseResponse<GetProblemsResponseDto>> getProblemForGuest(
 		@RequestParam("room-id") int roomId,
 		@RequestParam("round") int round
 	) {
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(BaseResponse.<ProblemForGuestResponseDto>builder()
+			.body(BaseResponse.<GetProblemsResponseDto>builder()
 				.code(HttpStatus.OK.value())
-				.data(musicService.getProblemForGuest(roomId, round))
+				.data(musicService.getProblem(roomId, round))
 				.build());
 	}
 
 	/**
-	 * 게스트 모드 정답 채점
+	 * 싱글 모드 정답 채점
 	 *
 	 * @param roomId
 	 * @param round
@@ -91,7 +104,7 @@ public class MusicController {
 	 * @see GradeAnswerResponseDto
 	 * @return ResponseEntity<BaseResponse < GradeAnswerResponseDto>>
 	 */
-	@GetMapping("/guest/result")
+	@GetMapping("/result")
 	private ResponseEntity<BaseResponse<GradeAnswerResponseDto>> gradeAnswer(
 		@RequestParam("room-id") Integer roomId,
 		@RequestParam("round") Integer round,
@@ -110,9 +123,9 @@ public class MusicController {
 	 * @param roomId
 	 * @param round
 	 * @see SkipRoundResponseDto
-	 * @return ResponseEntity<BaseResponse<SkipRoundResponseDto>>
+	 * @return ResponseEntity<BaseResponse < SkipRoundResponseDto>>
 	 */
-	@PatchMapping("/guest/skip")
+	@PatchMapping("/skip")
 	private ResponseEntity<BaseResponse<SkipRoundResponseDto>> skipRound(
 		@RequestParam("room-id") int roomId,
 		@RequestParam("round") int round
@@ -130,9 +143,9 @@ public class MusicController {
 	 * @param roomId
 	 * @param round
 	 * @see GameOverResponseDto
-	 * @return ResponseEntity<BaseResponse<GameOverResponseDto>>
+	 * @return ResponseEntity<BaseResponse < GameOverResponseDto>>
 	 */
-	@PatchMapping("/guest/over")
+	@PatchMapping("/over")
 	private ResponseEntity<BaseResponse<GameOverResponseDto>> gameOver(
 		@RequestParam("room-id") int roomId,
 		@RequestParam("round") int round
@@ -150,9 +163,9 @@ public class MusicController {
 	 * @param roomId
 	 * @param round
 	 * @see GiveUpResponseDto
-	 * @return ResponseEntity<BaseResponse<GiveUpResponseDto>>
+	 * @return ResponseEntity<BaseResponse < GiveUpResponseDto>>
 	 */
-	@GetMapping("/guest/giveup")
+	@GetMapping("/giveup")
 	private ResponseEntity<BaseResponse<GiveUpResponseDto>> giveUp(
 		@RequestParam("room-id") int roomId,
 		@RequestParam("round") int round
