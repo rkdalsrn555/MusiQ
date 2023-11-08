@@ -25,10 +25,16 @@ public class GameRoom {
     */
     private String roomName;
     private String password;
+    //문제 수
+    private int numberOfProblems;
+    //선택한 연도
+    private String year;
+
 
     private GameRoomType gameRoomType;
     private PlayType playType;
 
+    private int time;
     private int totalUsers;
     private int skipVote;
     private int round;
@@ -36,7 +42,8 @@ public class GameRoom {
 
     private List<MultiModeProblem> multiModeProblems;
     private MessageType messageType;
-    //messageType 추가
+
+
     //answerList 추가 (정답리스트)
     //gameRoomId 추가
 

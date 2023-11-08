@@ -6,13 +6,15 @@ import com.a608.musiq.domain.websocket.data.GameRoomType;
 import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
-import com.a608.musiq.domain.websocket.domain.MultiModeProblem;
 import com.a608.musiq.domain.websocket.dto.AllChannelSizeResponseDto;
 import com.a608.musiq.domain.websocket.dto.ChannelUserResponseDto;
 import com.a608.musiq.domain.websocket.dto.ChannelUserResponseItem;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
-import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
+import com.a608.musiq.domain.websocket.service.subService.AfterAnswerService;
+import com.a608.musiq.domain.websocket.service.subService.BeforeAnswerService;
+import com.a608.musiq.domain.websocket.service.subService.CommonService;
+import com.a608.musiq.domain.websocket.service.subService.RoundStartService;
 import com.a608.musiq.global.exception.exception.MemberInfoException;
 import com.a608.musiq.global.exception.exception.MultiModeException;
 import com.a608.musiq.global.exception.info.MemberInfoExceptionInfo;
@@ -42,6 +44,14 @@ public class GameService {
 
     private final MemberInfoRepository memberInfoRepository;
 
+    private final RoundStartService roundStartService;
+
+    private final BeforeAnswerService beforeAnswerService;
+
+    private final AfterAnswerService afterAnswerService;
+
+    private final CommonService commonService;
+
     private SimpMessagingTemplate messagingTemplate;
 
     private ReentrantReadWriteLock lock;
@@ -63,7 +73,7 @@ public class GameService {
         logger.info("CurrentChannelSize = {}", GameValue.getGameChannelSize(channelNo));
 
         // 정원 초과 확인
-        if(GameValue.getGameChannelSize(channelNo) > GameValue.getGameChannelEachMaxSize()) {
+        if (GameValue.getGameChannelSize(channelNo) > GameValue.getGameChannelEachMaxSize()) {
             throw new MultiModeException(MultiModeExceptionInfo.INVALID_JOIN_REQUEST);
         }
 
@@ -78,14 +88,14 @@ public class GameService {
 
     /**
      * @param accessToken
-     * @see AllChannelSizeResponseDto
      * @return
+     * @see AllChannelSizeResponseDto
      */
     public AllChannelSizeResponseDto getAllChannelSizeList(String accessToken) {
         AllChannelSizeResponseDto allChannelSizeResponseDto = new AllChannelSizeResponseDto();
         List<Integer> list = new ArrayList<>();
 
-        for(int i = 1; i <= GameValue.getGameChannelMaxSize(); i++) {
+        for (int i = 1; i <= GameValue.getGameChannelMaxSize(); i++) {
             list.add(GameValue.getGameChannelSize(i));
         }
 
@@ -97,7 +107,7 @@ public class GameService {
      * @param accessToken
      * @param channelNo
      */
-    public Integer disConnectUser(String accessToken, int channelNo){
+    public Integer disConnectUser(String accessToken, int channelNo) {
         UUID uuid = jwtValidator.getData(accessToken);
 
         /*
@@ -121,62 +131,46 @@ public class GameService {
         //uuid를 가지고 해당 사용자가 속한 채널 가져오기
         ConcurrentHashMap<UUID, Integer> channel = GameValue.getGameChannel(channelNo);
         //방 번호 가져오기 (topic 번호 조회)
-        Integer roomNumber =channel.get(uuid);
+        Integer roomNumber = channel.get(uuid);
         //방 번호로 gameRoom 객체 조회
-        GameRoom gameRoom =GameValue.getGameRooms().get(roomNumber);
-
-
-
+        GameRoom gameRoom = GameValue.getGameRooms().get(roomNumber);
 
         //게임룸 타입 가져오기 - 게임 시작은 http 통신으로 민구가 WAITING에서 GAME으로 바꿔줄거임
         GameRoomType gameRoomType = gameRoom.getGameRoomType();
 
         PlayType playType = gameRoom.getPlayType();
-        
 
-        if(gameRoomType == GameRoomType.WAITING){
+        if (gameRoomType == GameRoomType.WAITING) {
             //게임 시작 전에 방에 대기중인 상태일 때는 그냥 바로 해당 chat pub
             messagingTemplate.convertAndSend(destination, chatMessage);
             return;
         }
-        if(gameRoomType == GameRoomType.GAME){
+        if (gameRoomType == GameRoomType.GAME) {
 
-
-            if(playType == PlayType.ROUNDSTART){
+            if (playType == PlayType.ROUNDSTART) {
                 //게임 시작했고 지금 1라운드인 경우
-                if(gameRoom.getRound() == 1) {
-                   gameRoom.setMultiModeProblems(makeMutiProblems());
+                if (gameRoom.getRound() == 1) {
+                    gameRoom.setMultiModeProblems(
+                        roundStartService.makeMutiProblemList(gameRoom.getNumberOfProblems(),gameRoom.getYear()));
                 }
             }
 
-            if (playType == PlayType.BEFOREANSWER){
+            if (playType == PlayType.BEFOREANSWER) {
 
             }
 
-            if(playType == PlayType.AFTERANSWER){
+            if (playType == PlayType.AFTERANSWER) {
 
             }
         }
 
-
-
         //게임 타입이 뭐냐에 따라 맞는 로직 처리
 
-
-
-
-
-
-
         //백단 로직 처리
-
 
         //스킵처리
 
         //따로 메서드하나 더 만들어서 크론에 돌려서
-
-
-
 
         //pub을 위한 클래스 값 채우기
 
@@ -212,8 +206,8 @@ public class GameService {
     /**
      * @param accessToken
      * @param channelNo
-     * @see ChannelUserResponseDto
      * @return
+     * @see ChannelUserResponseDto
      */
     public ChannelUserResponseDto getUserList(String accessToken, int channelNo) {
         ChannelUserResponseDto channelUserResponseDto = new ChannelUserResponseDto();
@@ -221,15 +215,16 @@ public class GameService {
         ConcurrentHashMap<UUID, Integer> channel = new ConcurrentHashMap<>();
         Iterator<UUID> it = channel.keySet().iterator();
 
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             UUID uuid = it.next();
-            MemberInfo memberInfo = memberInfoRepository.findById(uuid).orElseThrow(() -> new MemberInfoException(
+            MemberInfo memberInfo = memberInfoRepository.findById(uuid)
+                .orElseThrow(() -> new MemberInfoException(
                     MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
 
             items.add(ChannelUserResponseItem.builder()
-                            .nickname(memberInfo.getNickname())
-                            .userLevel((int)(memberInfo.getExp() / 50))
-                            .build());
+                .nickname(memberInfo.getNickname())
+                .userLevel((int) (memberInfo.getExp() / 50))
+                .build());
         }
 
         channelUserResponseDto.setChannelUserResponseItems(items);
@@ -240,23 +235,23 @@ public class GameService {
     /**
      * @param accessToken
      * @param channelNo
-     * @see GameRoomListResponseDto
      * @return
+     * @see GameRoomListResponseDto
      */
     public GameRoomListResponseDto getGameRoomList(String accessToken, int channelNo) {
         GameRoomListResponseDto gameRoomListResponseDto = new GameRoomListResponseDto();
         ConcurrentHashMap<Integer, GameRoom> gameRooms = GameValue.getGameRooms();
         Iterator<Integer> it = gameRooms.keySet().iterator();
 
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             int subscribeNo = it.next();
-            if((subscribeNo / 1000) == channelNo){
+            if ((subscribeNo / 1000) == channelNo) {
                 GameRoom gameRoom = gameRooms.get(subscribeNo);
                 gameRoomListResponseDto.getGameRoomList().add(GameRoom.builder()
-                        .gameRoomType(gameRoom.getGameRoomType())
-                        .roomName(gameRoom.getRoomName())
-                        .totalUsers(gameRoom.getTotalUsers())
-                        .build());
+                    .gameRoomType(gameRoom.getGameRoomType())
+                    .roomName(gameRoom.getRoomName())
+                    .totalUsers(gameRoom.getTotalUsers())
+                    .build());
             }
         }
 

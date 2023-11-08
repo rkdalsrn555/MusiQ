@@ -19,12 +19,12 @@ public class MultiModeProblem {
     //링크
     private String url;
     //정답 List
-    private List<String> answers;
+    private List<String> answerList;
 
     public static MultiModeProblem create(String title, String hint, String singer, String url,
-        List<String> answers) {
+        List<String> answerList) {
 
-        return new MultiModeProblem(title,hint,singer,url,answers);
+        return new MultiModeProblem(title, hint, singer, url, answerList);
     }
 
 
