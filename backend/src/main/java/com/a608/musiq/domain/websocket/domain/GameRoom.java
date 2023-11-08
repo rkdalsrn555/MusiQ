@@ -52,4 +52,24 @@ public class GameRoom {
         this.multiModeProblems = multiModeProblems;
     }
 
+    public void setTime(int time) {
+        this.time = time;
+    }
+
+    public void setPlayType(PlayType playType) {
+        this.playType = playType;
+    }
+
+    public void setSkipVote(int skipVote) {
+        this.skipVote = skipVote;
+    }
+
+    public void setUserInfoItems(
+        Map<UUID, UserInfoItem> userInfoItems) {
+        this.userInfoItems = userInfoItems;
+    }
+
 }
+
+
+

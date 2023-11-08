@@ -6,6 +6,7 @@ import com.a608.musiq.domain.websocket.data.GameRoomType;
 import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
+import com.a608.musiq.domain.websocket.domain.UserInfoItem;
 import com.a608.musiq.domain.websocket.dto.AllChannelSizeResponseDto;
 import com.a608.musiq.domain.websocket.dto.ChannelUserResponseDto;
 import com.a608.musiq.domain.websocket.dto.ChannelUserResponseItem;
@@ -24,6 +25,9 @@ import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -156,6 +160,34 @@ public class GameService {
             }
 
             if (playType == PlayType.BEFOREANSWER) {
+                //현재 라운드
+
+                //현재 정답
+
+                //가수 힌트
+                if(gameRoom.getTime() == 30){
+
+                }
+                //초성 힌트
+                if(gameRoom.getTime() == 20){
+
+                }
+                //10초로 바꾸고 정답 표시, PlayType을 AFTERANSWER 로 변경, skipVote = 0 으로 바꾸기, userInfoItem의 isSkipped 모두 false로 바꾸기
+                if(gameRoom.getTime() == 0){
+                    beforeAnswerService.finishBeforeAnswerWithNoSkipAndNoAnswer(gameRoom);
+                }
+                // 스킵 로직
+                if(chatMessage.getMessage().equals(".")){
+                    //과반수 일때 처리
+
+                }
+                //정답인 경우
+                if()
+
+                //정답이 아닌 경우
+
+
+
 
             }
 
@@ -183,6 +215,16 @@ public class GameService {
 //        if(chatMessage.getMessageType() == MessageType.GAME) {
 //            submitAnswer(chatMessage.getMessage());
 //        }
+    }
+
+    public void pubMessage(){
+        //전체를 다 돌면서
+        //GameRoomType 이 GAME 일때
+        //타임을 --
+        //PlayType 이 BEFOREANSWER 일때
+        //  타임이 30초면 가수힌트
+        //  타임이 20초면 초성힌트
+        //
     }
 
     /**

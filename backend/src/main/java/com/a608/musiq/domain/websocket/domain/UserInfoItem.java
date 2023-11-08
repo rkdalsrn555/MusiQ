@@ -18,4 +18,8 @@ public class UserInfoItem {
     public static UserInfoItem create(String nickname, String score, Boolean isSkipped) {
         return new UserInfoItem(nickname, score, isSkipped);
     }
+
+    public void setSkipped(Boolean skipped) {
+        isSkipped = skipped;
+    }
 }
