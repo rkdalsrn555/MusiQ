@@ -119,19 +119,22 @@ public class GameService {
 
         //uuid를 가지고 해당 사용자가 속한 채널 가져오기
         ConcurrentHashMap<UUID, Integer> channel = GameValue.getGameChannel(channelNo);
+        //방 번호 가져오기 (topic 번호 조회)
         Integer roomNumber =channel.get(uuid);
+        //방 번호로 gameRoom 객체 조회
         GameRoom gameRoom =GameValue.getGameRooms().get(roomNumber);
 
 
 
 
-        //게임룸 타입 가져오기
-        //게임 시작은 http 통신으로 민구가 WAITING에서 GAME으로 바꿔줄거임
+        //게임룸 타입 가져오기 - 게임 시작은 http 통신으로 민구가 WAITING에서 GAME으로 바꿔줄거임
         GameRoomType gameRoomType = gameRoom.getGameRoomType();
 
         PlayType playType = gameRoom.getPlayType();
         if(gameRoomType == GameRoomType.WAITING){
-            
+            //게임 시작 전에 방에 대기중인 상태일 때는 그냥 바로 해당 chat pub
+            messagingTemplate.convertAndSend(destination, chatMessage);
+            return;
         }
         if(gameRoomType == GameRoomType.GAME){
 
@@ -174,7 +177,7 @@ public class GameService {
 
         //pub을 위한 클래스 값 채우기
 
-        messagingTemplate.convertAndSend(destination, chatMessage);
+//        messagingTemplate.convertAndSend(destination, chatMessage);
 
         //if(정답일떄) -> 정답자랑
 
