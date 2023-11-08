@@ -31,6 +31,13 @@ public class GameController {
 
     private final GameService gameService;
 
+    /**
+     * @param accessToken
+     * @see AllChannelSizeResponseDto
+     * @return
+     */
+    @GetMapping("/channel")
+    @ResponseBody
     public ResponseEntity<BaseResponse<AllChannelSizeResponseDto>> getAllChannelSize(
             @RequestHeader("accessToken") String accessToken) {
         return ResponseEntity.status(HttpStatus.OK)
@@ -85,8 +92,6 @@ public class GameController {
                 .data(gameService.getGameRoomList(accessToken, channelNo))
                 .build());
     }
-
-    @PostMapping("/main/")
 
     @MessageMapping("/chat-message/{channelNo}")
     public void sendChatMessage(@DestinationVariable("channelNo") String channelNo, @Payload ChatMessage chatMessage) {
