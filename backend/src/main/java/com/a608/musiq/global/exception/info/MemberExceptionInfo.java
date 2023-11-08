@@ -11,6 +11,7 @@ public enum MemberExceptionInfo {
 	DUPLICATED_LONGIN_ID(HttpStatus.BAD_REQUEST, 1002, "중복된 아이디 입니다."),
 	DUPLICATED_NICKNAME(HttpStatus.BAD_REQUEST, 1003, "중복된 닉네임 입니다."),
 	LOGIN_FAILED(HttpStatus.BAD_REQUEST, 1004, "아이디 혹은 비밀번호가 틀렸습니다."),
+	REDIS_DELETE_FAIL(HttpStatus.INTERNAL_SERVER_ERROR, 	1005, "Redis 삭제 과정 중 문제가 발생했습니다."),
 
 	INVALID_ACCESS_TOKEN(HttpStatus.BAD_REQUEST, 1050, "유효하지 않은 액세스 토큰입니다."),
 	INVALID_REFRESH_TOKEN(HttpStatus.BAD_REQUEST, 1051, "유효하지 않은 리프레시 토큰입니다.");
