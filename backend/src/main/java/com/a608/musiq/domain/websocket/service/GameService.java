@@ -6,6 +6,7 @@ import com.a608.musiq.domain.websocket.data.GameRoomType;
 import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
+import com.a608.musiq.domain.websocket.domain.MultiModeProblem;
 import com.a608.musiq.domain.websocket.dto.AllChannelSizeResponseDto;
 import com.a608.musiq.domain.websocket.dto.ChannelUserResponseDto;
 import com.a608.musiq.domain.websocket.dto.ChannelUserResponseItem;
@@ -131,6 +132,8 @@ public class GameService {
         GameRoomType gameRoomType = gameRoom.getGameRoomType();
 
         PlayType playType = gameRoom.getPlayType();
+        
+
         if(gameRoomType == GameRoomType.WAITING){
             //게임 시작 전에 방에 대기중인 상태일 때는 그냥 바로 해당 chat pub
             messagingTemplate.convertAndSend(destination, chatMessage);
@@ -142,7 +145,7 @@ public class GameService {
             if(playType == PlayType.ROUNDSTART){
                 //게임 시작했고 지금 1라운드인 경우
                 if(gameRoom.getRound() == 1) {
-
+                   gameRoom.setMultiModeProblems(makeMutiProblems());
                 }
             }
 
@@ -259,4 +262,5 @@ public class GameService {
 
         return gameRoomListResponseDto;
     }
+
 }

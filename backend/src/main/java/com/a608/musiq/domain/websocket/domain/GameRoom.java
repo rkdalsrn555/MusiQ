@@ -14,7 +14,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Getter
-@Setter
+
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
@@ -39,4 +39,10 @@ public class GameRoom {
     //messageType 추가
     //answerList 추가 (정답리스트)
     //gameRoomId 추가
+
+    public void setMultiModeProblems(
+        List<MultiModeProblem> multiModeProblems) {
+        this.multiModeProblems = multiModeProblems;
+    }
+
 }

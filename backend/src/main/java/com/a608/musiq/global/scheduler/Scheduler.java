@@ -39,7 +39,12 @@ public class Scheduler {
     //1초마다 모든 멀티방 -1
     @Scheduled(cron = "*/1 * * * * *")
     private void multiModeCountDown(){
-
+//        이중 for(){
+//        gameRoom=현재 게임 상태인 방을 찾기();
+//        gameRomm.time--
+//            pub
+//        }
+//        시간 체크 해주는 메서드();
     }
 
     private void insertRankingToRedis() {
