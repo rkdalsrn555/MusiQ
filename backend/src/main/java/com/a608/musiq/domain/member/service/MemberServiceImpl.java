@@ -1,5 +1,6 @@
 package com.a608.musiq.domain.member.service;
 
+import com.a608.musiq.domain.member.dto.responseDto.LogoutResponseDto;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -102,6 +103,20 @@ public class MemberServiceImpl implements MemberService {
 			.accessToken(accessToken)
 			.refreshToken(refreshToken)
 			.build();
+	}
+
+	@Override
+	public LogoutResponseDto logout(String token) {
+
+		UUID memberId = jwtValidator.getData(token);
+
+		try {
+			// 레디스에서 refreshToken 저장
+			util.deleteKeyInRedis(memberId.toString());
+			return LogoutResponseDto.builder().logoutResult("SUCCESS").build();
+		} catch (Exception e) {
+			throw new MemberException(MemberExceptionInfo.REDIS_DELETE_FAIL);
+		}
 	}
 
 	/**
