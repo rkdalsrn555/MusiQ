@@ -12,8 +12,8 @@ const Container = styled.div`
 
   & img:nth-child(2) {
     position: absolute;
-    top: 0;
-    left: 12%;
+    top: 20%;
+    left: 23%;
     right: 0;
   }
   & img:nth-child(1) {
@@ -27,6 +27,6 @@ const Container = styled.div`
 export const DancingChick = () => (
   <Container>
     <img src={waveBg} alt="파동" width={400} />
-    <img src={dancingChick} alt="춤추는병아리" width={300} height={300} />
+    <img src={dancingChick} alt="춤추는병아리" width={200} height={200} />
   </Container>
 );

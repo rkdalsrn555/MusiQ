@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import axios from 'axios';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
@@ -6,14 +6,14 @@ import { AnimatePresence } from 'framer-motion';
 import { UserIpAtom } from './atoms/atoms';
 import PrivateRoute from './hooks/PrivateRoute';
 import PublicRoute from './hooks/PublicRoute';
-import { LoginRouterBtn } from './components/utils';
 import { BgmBtn } from './components/utils/BgmBtn';
 import {
   Landing,
   ModeSelectPage,
-  SingleModePage,
-  GameOption,
-  GamePlaying,
+  GuestGameOption,
+  GuestGamePlaying,
+  SingleGameOption,
+  SingleGamePlaying,
   ResultPage,
   MobilePage,
   Login,
@@ -25,9 +25,10 @@ import {
 } from './pages';
 
 const PrivatePath = [
-  { path: '/single-mode', component: <SingleModePage /> },
   { path: '/multi/:channel/lobby', component: <MultiGameLobbyPage /> },
   { path: '/multi/channel', component: <MultiChannelPage /> },
+  { path: '/single/game-option', component: <SingleGameOption /> },
+  { path: '/single/game-playing', component: <SingleGamePlaying /> },
 ];
 
 // restricted = false 로그인 여부와 관계없이 접근 가능 페이지
@@ -35,8 +36,16 @@ const PrivatePath = [
 const PublicPath = [
   { path: '/login', component: <Login />, restricted: true },
   { path: '/sign-up', component: <Signup />, restricted: true },
-  { path: '/guest/game-play', component: <GamePlaying />, restricted: true },
-  { path: '/guest/game-option', component: <GameOption />, restricted: true },
+  {
+    path: '/guest/game-play',
+    component: <GuestGamePlaying />,
+    restricted: true,
+  },
+  {
+    path: '/guest/game-option',
+    component: <GuestGameOption />,
+    restricted: true,
+  },
   { path: '/guest/game-result', component: <ResultPage />, restricted: true },
   { path: '/', component: <Landing />, restricted: false },
   { path: '/select-mode', component: <ModeSelectPage />, restricted: false },
