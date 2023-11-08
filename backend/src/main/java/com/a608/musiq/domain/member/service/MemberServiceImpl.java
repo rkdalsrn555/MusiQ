@@ -1,5 +1,6 @@
 package com.a608.musiq.domain.member.service;
 
+import com.a608.musiq.domain.member.dto.responseDto.LogoutResponseDto;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -104,6 +105,20 @@ public class MemberServiceImpl implements MemberService {
 			.build();
 	}
 
+	@Override
+	public LogoutResponseDto logout(String token) {
+
+		UUID memberId = jwtValidator.getData(token);
+
+		try {
+			// 레디스에서 refreshToken 저장
+			util.deleteKeyInRedis(memberId.toString());
+			return LogoutResponseDto.builder().logoutResult("SUCCESS").build();
+		} catch (Exception e) {
+			throw new MemberException(MemberExceptionInfo.REDIS_DELETE_FAIL);
+		}
+	}
+
 	/**
 	 * 방문자 체크
 	 *
@@ -157,9 +172,17 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	public ReissueTokenResponseDto reissueToken(ReissueTokenRequestDto reissueTokenRequestDto) {
 
+		// Refresh Token으로 유효성 검사 및 member Id 반환
 		String memberId = jwtValidator.validateRefreshToken(reissueTokenRequestDto.getRefreshToken());
+		
+		// 반환된 memberId로 Access, Refresh Token 생성
+		String accessToken = jwtProvider.createAccessToken(memberId);
+		String refreshToken = jwtProvider.createRefreshToken(memberId);
+		
+		// 재생성된 Refresh Token을 Redis에 저장
+		util.saveRefreshToken(UUID.fromString(memberId), refreshToken);
 
-		return new ReissueTokenResponseDto(jwtProvider.createAccessToken(memberId));
+		return ReissueTokenResponseDto.builder().accessToken(accessToken).refreshToken(refreshToken).build();
 	}
 
 }

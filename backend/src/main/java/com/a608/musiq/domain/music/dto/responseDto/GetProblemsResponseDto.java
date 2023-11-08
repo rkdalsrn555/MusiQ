@@ -7,12 +7,13 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ProblemForGuestResponseDto {
+public class GetProblemsResponseDto {
     private Difficulty difficulty;
     private Integer musicId;
     private String musicUrl;
+    private int round;
 
-    public static ProblemForGuestResponseDto create(Difficulty difficulty, Integer musicId, String musicUrl){
-        return new ProblemForGuestResponseDto(difficulty, musicId, musicUrl);
+    public static GetProblemsResponseDto create(Difficulty difficulty, Integer musicId, String musicUrl, int round){
+        return new GetProblemsResponseDto(difficulty, musicId, musicUrl, round);
     }
 }

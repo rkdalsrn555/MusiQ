@@ -35,7 +35,7 @@ export const TalkBoxContainer = styled.div`
   & .firstAttempGame2 {
     width: 100%;
     position: absolute;
-    top: 43%;
+    top: 40%;
     left: 60%;
     transform: translate(-50%, -50%);
     font-size: 1.2rem;
@@ -44,7 +44,7 @@ export const TalkBoxContainer = styled.div`
   & .firstAttempGame3 {
     width: 100%;
     position: absolute;
-    top: 60%;
+    top: 55%;
     left: 60%;
     transform: translate(-50%, -50%);
     font-size: 1.2rem;
@@ -124,7 +124,7 @@ export const bottomRightSideContainer = styled.div`
 `;
 
 export const PlayingBtnBoxPosition = styled.div`
-  width: 24rem;
+  width: 28rem;
   height: 9rem;
   display: flex;
   justify-content: center;
@@ -137,7 +137,7 @@ export const PlayingBtnBoxPosition = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
 
     & .loadingMusic {
       font-size: 1rem;

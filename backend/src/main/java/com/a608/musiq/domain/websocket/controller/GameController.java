@@ -1,5 +1,6 @@
 package com.a608.musiq.domain.websocket.controller;
 
+import com.a608.musiq.domain.websocket.dto.AllChannelSizeResponseDto;
 import com.a608.musiq.domain.websocket.dto.ChannelUserResponseDto;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
@@ -29,6 +30,21 @@ public class GameController {
     private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
     private final GameService gameService;
+
+    /**
+     * @param accessToken
+     * @see AllChannelSizeResponseDto
+     * @return
+     */
+    @GetMapping("/channel")
+    @ResponseBody
+    public ResponseEntity<BaseResponse<AllChannelSizeResponseDto>> getAllChannelSize(
+            @RequestHeader("accessToken") String accessToken) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(BaseResponse.<AllChannelSizeResponseDto>builder()
+                .data(gameService.getAllChannelSizeList(accessToken))
+                .build());
+    }
 
     /**
      * @param accessToken

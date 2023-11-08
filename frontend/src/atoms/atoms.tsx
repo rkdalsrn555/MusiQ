@@ -10,7 +10,7 @@ type GameOptionDataType = {
   yearList: string[];
   gameRoomData: {
     roomId: number;
-    streak: number;
+    round: number;
     problems: number;
   };
 };
@@ -26,7 +26,7 @@ export const TempLocationStateGameInfo = atom<GameOptionDataType>({
     yearList: [],
     gameRoomData: {
       roomId: 0,
-      streak: 0,
+      round: 0,
       problems: 0,
     },
   },
@@ -36,5 +36,12 @@ export const UserDataAtom = atom({
   key: 'UserDataAtom',
   default: {
     nickname: '',
+  },
+});
+
+export const UserIpAtom = atom({
+  key: 'UserIpAtom',
+  default: {
+    ip: '',
   },
 });

@@ -29,7 +29,7 @@ public class JwtValidator {
 	@Value("${jwt.secret-key}")
 	private String SECRET_KEY;
 
-	public void validateToken(String token) {
+	public void validateToken(String type, String token) {
 		try {
 			Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 			Claims claims = Jwts.parserBuilder()
@@ -40,23 +40,22 @@ public class JwtValidator {
 
 			Date now = new Date();
 			if (claims.getExpiration() != null && claims.getExpiration().before(now)) {
-				throw new MemberException(MemberExceptionInfo.INVALID_TOKEN);
+				throw new MemberException(type.equals("access") ? MemberExceptionInfo.INVALID_ACCESS_TOKEN : MemberExceptionInfo.INVALID_REFRESH_TOKEN);
 			}
 		} catch (MalformedJwtException | ExpiredJwtException | SignatureException e) {
-
-			throw new MemberException(MemberExceptionInfo.INVALID_TOKEN);
+			throw new MemberException(type.equals("access") ? MemberExceptionInfo.INVALID_ACCESS_TOKEN : MemberExceptionInfo.INVALID_REFRESH_TOKEN);
 		}
 	}
 
 	public String validateRefreshToken(String refreshToken) {
-		validateToken(refreshToken);
+		validateToken("refresh", refreshToken);
 
 		String memberId = getData(refreshToken).toString();
 
 		String token = util.getRefreshToken(memberId);
 
 		if (!refreshToken.equals(token)) {
-			throw new MemberException(MemberExceptionInfo.INVALID_TOKEN);
+			throw new MemberException(MemberExceptionInfo.INVALID_REFRESH_TOKEN);
 		}
 
 		return memberId;
@@ -69,6 +68,7 @@ public class JwtValidator {
 			.parseClaimsJws(token)
 			.getBody();
 
-		return claims.get("data", UUID.class);
+		String data = claims.get("data", String.class);;
+		return UUID.fromString(data);
 	}
 }

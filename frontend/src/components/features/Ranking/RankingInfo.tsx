@@ -41,7 +41,7 @@ type ApiResponse = {
   };
 };
 
-const nickname = localStorage.getItem('nickname');
+const nickname = window.localStorage.getItem('nickName');
 const MyRanking = ({ rankNum }: { rankNum: string | number | null }) => {
   const navigate = useNavigate();
 
