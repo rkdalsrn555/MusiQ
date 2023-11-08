@@ -12,7 +12,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserInfoItem {
-    private String userUUID;
     private String nickname;
     private String score;
+    private Boolean isSkipped;
 }

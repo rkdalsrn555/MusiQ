@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 @Component
+
 public class GameValue {
 
     /**
@@ -64,5 +66,7 @@ public class GameValue {
         ConcurrentHashMap<UUID, Integer> channel = gameChannels.get(channelNo - 1);
         channel.remove(userUUID);
     }
+
+
 
 }

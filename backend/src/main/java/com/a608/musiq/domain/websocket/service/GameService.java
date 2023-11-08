@@ -90,13 +90,37 @@ public class GameService {
      */
     public void sendMessage(int channelNo, ChatMessage chatMessage) {
         String destination = getDestination(channelNo);
+        //프론트가 보낸 메시지에서 uuid 추출
+        UUID uuid = UUID.fromString(chatMessage.getUserUUID());
+
+        //uuid를 가지고 해당 사용자가 속한 채널 가져오기
+        ConcurrentHashMap<UUID, Integer> channel = GameValue.getGameChannel(channelNo);
+        Integer roomNumber =channel.get(uuid);
+        GameRoom gameRoom =GameValue.getGameRooms().get(roomNumber);
+
+
+
+        //백단 로직 처리
+
+
+        //스킵처리
+
+        //따로 메서드하나 더 만들어서 크론에 돌려서
+
+
+
+
+        //pub을 위한 클래스 값 채우기
+
         messagingTemplate.convertAndSend(destination, chatMessage);
 
-        logger.info("Message send success / Destination : {}", destination);
+        //if(정답일떄) -> 정답자랑
 
-        if(chatMessage.getMessageType() == MessageType.GAME) {
-            submitAnswer(chatMessage.getMessage());
-        }
+        logger.info("Message send success / Destination : {}", destination);
+//
+//        if(chatMessage.getMessageType() == MessageType.GAME) {
+//            submitAnswer(chatMessage.getMessage());
+//        }
     }
 
     /**
