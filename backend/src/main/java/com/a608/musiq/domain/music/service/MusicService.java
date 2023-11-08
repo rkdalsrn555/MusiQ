@@ -8,9 +8,9 @@ public interface MusicService {
 
 	AddIpInLogResponseDto addIpInLog(AddIpInLogRequestDto addIpInLogRequestDto);
 
-	ProblemForGuestResponseDto getProblemForGuest(int roomId, int round);
+	GetProblemsResponseDto getProblem(int roomId, int round);
 
-	GradeAnswerResponseDto gradeAnswer(Integer roomId, Integer round, String answer);
+	GradeAnswerResponseDto gradeAnswer(int roomId, int round, String answer);
 
 	SkipRoundResponseDto skipRound(int roomId, int round);
 

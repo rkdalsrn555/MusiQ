@@ -88,16 +88,16 @@ public class GuestModeMusicServiceImpl implements MusicService {
 	 *
 	 * @param roomId
 	 * @param round
-	 * @see ProblemForGuestResponseDto
+	 * @see GetProblemsResponseDto
 	 * @return ProblemForGuestResponseDto
 	 */
 	@Override
-	public ProblemForGuestResponseDto getProblemForGuest(int roomId, int round) {
+	public GetProblemsResponseDto getProblem(int roomId, int round) {
 		Room room = roomManager.getRooms().get(roomId);
 
 		Music music = room.getMusicList().get(round);
 
-		return ProblemForGuestResponseDto.create(room.getDifficulty(), music.getId(),
+		return GetProblemsResponseDto.create(room.getDifficulty(), music.getId(),
 			music.getUrl(), round);
 	}
 
@@ -166,7 +166,7 @@ public class GuestModeMusicServiceImpl implements MusicService {
 	 * @see GradeAnswerResponseDto
 	 */
 	@Override
-	public GradeAnswerResponseDto gradeAnswer(Integer roomId, Integer round, String answer) {
+	public GradeAnswerResponseDto gradeAnswer(int roomId, int round, String answer) {
 		Room room = roomManager.getRooms().get(roomId);
 
 		if (room.getRound() != round) {

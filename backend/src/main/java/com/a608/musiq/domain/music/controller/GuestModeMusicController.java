@@ -69,18 +69,18 @@ public class GuestModeMusicController {
 	 *
 	 * @param roomId
 	 * @param round
-	 * @see ProblemForGuestResponseDto
+	 * @see GetProblemsResponseDto
 	 * @return ResponseEntity<BaseResponse < ProblemForGuestResponseDto>>
 	 */
 	@GetMapping("/quiz")
-	private ResponseEntity<BaseResponse<ProblemForGuestResponseDto>> getProblemForGuest(
+	private ResponseEntity<BaseResponse<GetProblemsResponseDto>> getProblemForGuest(
 		@RequestParam("room-id") int roomId,
 		@RequestParam("round") int round
 	) {
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(BaseResponse.<ProblemForGuestResponseDto>builder()
+			.body(BaseResponse.<GetProblemsResponseDto>builder()
 				.code(HttpStatus.OK.value())
-				.data(musicService.getProblemForGuest(roomId, round))
+				.data(musicService.getProblem(roomId, round))
 				.build());
 	}
 
@@ -95,8 +95,8 @@ public class GuestModeMusicController {
 	 */
 	@GetMapping("/result")
 	private ResponseEntity<BaseResponse<GradeAnswerResponseDto>> gradeAnswer(
-		@RequestParam("room-id") Integer roomId,
-		@RequestParam("round") Integer round,
+		@RequestParam("room-id") int roomId,
+		@RequestParam("round") int round,
 		@RequestParam("answer") String answer) {
 
 		return ResponseEntity.status(HttpStatus.OK)

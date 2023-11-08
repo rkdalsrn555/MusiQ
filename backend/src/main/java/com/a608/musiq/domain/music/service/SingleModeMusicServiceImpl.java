@@ -22,7 +22,7 @@ import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.GameOverResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.GiveUpResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.GradeAnswerResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.ProblemForGuestResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.GetProblemsResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.SkipRoundResponseDto;
 import com.a608.musiq.domain.music.repository.MusicRepository;
 import com.a608.musiq.domain.music.repository.SingleModeLogRepository;
@@ -94,16 +94,16 @@ public class SingleModeMusicServiceImpl implements MusicService {
 	 *
 	 * @param roomId
 	 * @param round
-	 * @see ProblemForGuestResponseDto
+	 * @see GetProblemsResponseDto
 	 * @return ProblemForGuestResponseDto
 	 */
 	@Override
-	public ProblemForGuestResponseDto getProblemForGuest(int roomId, int round) {
+	public GetProblemsResponseDto getProblem(int roomId, int round) {
 		Room room = roomManager.getRooms().get(roomId);
 
 		Music music = room.getMusicList().get(round);
 
-		return ProblemForGuestResponseDto.create(room.getDifficulty(), music.getId(),
+		return GetProblemsResponseDto.create(room.getDifficulty(), music.getId(),
 			music.getUrl(), round);
 	}
 
@@ -172,7 +172,7 @@ public class SingleModeMusicServiceImpl implements MusicService {
 	 * @see GradeAnswerResponseDto
 	 */
 	@Override
-	public GradeAnswerResponseDto gradeAnswer(Integer roomId, Integer round, String answer) {
+	public GradeAnswerResponseDto gradeAnswer(int roomId, int round, String answer) {
 		Room room = roomManager.getRooms().get(roomId);
 
 		if (room.getRound() != round) {

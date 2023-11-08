@@ -4,7 +4,7 @@ import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
 import com.a608.musiq.domain.music.dto.responseDto.AddIpInLogResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.GameOverResponseDto;
-import com.a608.musiq.domain.music.dto.responseDto.ProblemForGuestResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.GetProblemsResponseDto;
 import com.a608.musiq.domain.music.dto.responseDto.SkipRoundResponseDto;
 import com.a608.musiq.global.common.response.BaseResponse;
 
@@ -74,18 +74,18 @@ public class SingleModeMusicController {
 	 *
 	 * @param roomId
 	 * @param round
-	 * @see ProblemForGuestResponseDto
+	 * @see GetProblemsResponseDto
 	 * @return ResponseEntity<BaseResponse < ProblemForGuestResponseDto>>
 	 */
 	@GetMapping("/quiz")
-	private ResponseEntity<BaseResponse<ProblemForGuestResponseDto>> getProblemForGuest(
+	private ResponseEntity<BaseResponse<GetProblemsResponseDto>> getProblemForGuest(
 		@RequestParam("room-id") int roomId,
 		@RequestParam("round") int round
 	) {
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(BaseResponse.<ProblemForGuestResponseDto>builder()
+			.body(BaseResponse.<GetProblemsResponseDto>builder()
 				.code(HttpStatus.OK.value())
-				.data(musicService.getProblemForGuest(roomId, round))
+				.data(musicService.getProblem(roomId, round))
 				.build());
 	}
 
