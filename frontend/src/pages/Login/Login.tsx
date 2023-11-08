@@ -48,6 +48,7 @@ export const Login = () => {
           'userRefreshToken',
           res.data.data.refreshToken
         );
+        window.localStorage.setItem('userNickname', res.data.data.nickname);
         setUserData({ nickname: res.data.data.nickname });
         navigate('/select-mode');
       })
