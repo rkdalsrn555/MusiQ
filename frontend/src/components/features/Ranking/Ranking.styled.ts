@@ -10,7 +10,7 @@ export const CenteredContainer = styled.div`
 
 export const RankingWrapper = styled.div`
   width: 44rem;
-  height: 43rem;
+  height: 42rem;
   flex-shrink: 0;
   border: solid 5px rgba(235, 226, 255, 0.4);
   border-radius: 30px;
@@ -80,6 +80,7 @@ export const RankingContainer = styled.div`
 `;
 
 export const StyledMyRanking = styled.div`
+  min-width: 20rem;
   width: 20vw;
   height: 32vh;
   display: flex;
@@ -104,13 +105,14 @@ export const PrizeCell = styled.div`
 `;
 
 export const MyRankingText = styled.div`
-  font-size: 40px;
+  font-size: 2rem;
   margin-bottom: 10%;
+  font-family: 'Galmuri11', 'sans-serif';
   font-weight: bold;
 `;
 
 export const MyRankingGrade = styled.div`
-  font-size: 60px;
+  font-size: 3rem;
   font-weight: bold;
   color: #ff5d70;
 `;

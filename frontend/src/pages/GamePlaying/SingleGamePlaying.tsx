@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import { useRecoilState } from 'recoil';
 import { TempLocationStateGameInfo, UserIpAtom } from '../../atoms/atoms';
 import talkBoxImg from '../../assets/img/playgame/horseBaloon.png';
+import { userApis } from '../../hooks/api/userApis';
 import {
   OptionBox,
   DancingChick,
@@ -120,7 +120,7 @@ export const SingleGamePlaying = () => {
       yesBtnClick: () => {
         setIsToggled(false);
         isToggledRef.current = false;
-        navigate('/guest/game-option');
+        navigate('/single/game-option');
       },
       noBtnClick: () => {
         setIsToggled(false);
@@ -187,9 +187,9 @@ export const SingleGamePlaying = () => {
 
   // 모르겠어요 버튼 handler
   const dontKnowBtnHandler = async () => {
-    await axios
+    await userApis
       .get(
-        `${process.env.REACT_APP_BASE_URL}/music/guest/giveup?room-id=${location.state.gameRoomData.roomId}&round=${round}`
+        `${process.env.REACT_APP_BASE_URL}/music/single/giveup?room-id=${location.state.gameRoomData.roomId}&round=${round}`
       )
       .then((res) => {
         setLives(0);
@@ -206,8 +206,8 @@ export const SingleGamePlaying = () => {
   };
 
   const patchGameResult = () => {
-    axios.patch(
-      `${process.env.REACT_APP_BASE_URL}/music/guest/over?room-id=${location.state.gameRoomData.roomId}&round=${roundRef.current}`
+    userApis.patch(
+      `${process.env.REACT_APP_BASE_URL}/music/single/over?room-id=${location.state.gameRoomData.roomId}&round=${roundRef.current}`
     );
   };
 
@@ -219,7 +219,7 @@ export const SingleGamePlaying = () => {
       selectYear: location.state.yearCheckedList,
       correctAnswerCnt: round,
     };
-    navigate('/guest/game-result', { state: resultData });
+    navigate('/single/game-result', { state: resultData });
   };
 
   // 노래 불러오기
@@ -231,9 +231,9 @@ export const SingleGamePlaying = () => {
     tryCntRef.current = 3;
     setIsJudge(false);
 
-    await axios
+    await userApis
       .get(
-        `${process.env.REACT_APP_BASE_URL}/music/guest/quiz?room-id=${location.state.gameRoomData.roomId}&round=${roundRef.current}`
+        `${process.env.REACT_APP_BASE_URL}/music/single/quiz?room-id=${location.state.gameRoomData.roomId}&round=${roundRef.current}`
       )
       .then((res) => {
         setMusicData({
@@ -256,9 +256,9 @@ export const SingleGamePlaying = () => {
   // 모르겠어요 클릭 시, 현재노래 정답 셋팅, 다음 라운드로 셋팅 (다음문제 불러오기 위해서!)
   const skipBtnHandler = async () => {
     setFirstAttemp(false);
-    await axios
+    await userApis
       .patch(
-        `${process.env.REACT_APP_BASE_URL}/music/guest/skip?room-id=${location.state.gameRoomData.roomId}&round=${roundRef.current}`
+        `${process.env.REACT_APP_BASE_URL}/music/single/skip?room-id=${location.state.gameRoomData.roomId}&round=${roundRef.current}`
       )
       .then(async (res) => {
         setRound(res.data.data.round);
@@ -278,6 +278,7 @@ export const SingleGamePlaying = () => {
   const skipNextMusic = async () => {
     await skipBtnHandler();
     setKeyEvent('');
+    setInputText('');
     setIsJudge(false);
     setIsSkip(true);
     setTryCnt(3);
@@ -296,9 +297,9 @@ export const SingleGamePlaying = () => {
     const encodedInputText = encodeURIComponent(answerInputText);
 
     // 채점
-    await axios
+    await userApis
       .get(
-        `${process.env.REACT_APP_BASE_URL}/music/guest/result?room-id=${location.state.gameRoomData.roomId}&round=${round}&answer=${encodedInputText}`
+        `${process.env.REACT_APP_BASE_URL}/music/single/result?room-id=${location.state.gameRoomData.roomId}&round=${round}&answer=${encodedInputText}`
       )
       .then(async (res) => {
         if (res.data.data.isCorrect) {
@@ -342,7 +343,7 @@ export const SingleGamePlaying = () => {
 
   // 게임 로그 찍는 요청
   const patchGameLog = () => {
-    axios.patch(`${process.env.REACT_APP_BASE_URL}/music/guest/log`, {
+    userApis.patch(`${process.env.REACT_APP_BASE_URL}/music/single/log`, {
       roomId: location.state.gameRoomData.roomId,
       userIp,
     });
@@ -498,7 +499,7 @@ export const SingleGamePlaying = () => {
           isToggled={isToggled}
           setIsToggled={setIsToggled}
         />
-        <BackBtn url="/guest/game-option" handleClick={backBtnHandler} />
+        <BackBtn url="/single/game-option" handleClick={backBtnHandler} />
         <GameExplain />
         {!isCorrect && !isSkip && !isLose ? (
           <ReactPlayer
@@ -652,7 +653,7 @@ export const SingleGamePlaying = () => {
                           ))}
                           <SkipBtn
                             clickHandler={skipNextMusic}
-                            isBtnDisabled={lives <= 1}
+                            isBtnDisabled={lives <= 1 || isPlaying}
                             keyEvent={keyEvent}
                           />
                         </div>

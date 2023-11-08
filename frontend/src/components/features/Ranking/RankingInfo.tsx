@@ -41,7 +41,7 @@ type ApiResponse = {
   };
 };
 
-const nickname = window.localStorage.getItem('nickName');
+const nickname = window.localStorage.getItem('nickname');
 const MyRanking = ({ rankNum }: { rankNum: string | number | null }) => {
   const navigate = useNavigate();
 
@@ -85,9 +85,8 @@ export const RankingInfo: React.FC = () => {
         const response = await axios.get<ApiResponse>(
           `${process.env.REACT_APP_BASE_URL}/ranking/fullranking?nickname=${nickname}`
         );
-        console.log(nickname);
         setRankingData(response.data.data.rankList);
-        setMyRank(response.data.data.myRank);
+        setMyRank(response.data.data.myRank ?? '강민구');
         setLoading(false);
       } catch (error) {
         console.error('랭킹 데이터를 가져오는 중 에러가 발생했습니다:', error);
@@ -105,7 +104,7 @@ export const RankingInfo: React.FC = () => {
   return (
     <CenteredContainer>
       <BackBtn url="/select-mode" />
-      <RankingLogoImg src={rankingLogo} alt="Ranking Logo" width={400} />
+      <RankingLogoImg src={rankingLogo} alt="Ranking Logo" width={330} />
       <RankingWrapper>
         <RankingContainer>
           <RankingHeader>
