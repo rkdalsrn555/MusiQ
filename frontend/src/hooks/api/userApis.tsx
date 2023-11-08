@@ -65,7 +65,7 @@ userApis.interceptors.response.use(
   // 에러 응답이 돌아왔을 때, err.response.message에 담긴 메세지가 토큰 관련 메세지였을때 처리해줄 로직
   async (err) => {
     // 토큰 검사 실패 시 리프레쉬토큰을 보내서 액세스토큰을 새롭게 발급받는다.
-    if (err.response.status === 1050) {
+    if (err.response.data.code === 1050) {
       const response = await postRefreshToken(); // 액세스토큰 갱신을 위한 post 요청
 
       // response에 담긴 accessToken, refreshToken을 다시 저장한다
@@ -84,11 +84,13 @@ userApis.interceptors.response.use(
       // 리프레시 토큰도 만료되었다면 login페이지로 이동
       window.localStorage.removeItem('userAccessToken');
       window.localStorage.removeItem('userRefreshToken');
+      window.localStorage.removeItem('nickname');
       window.location.href = '/login';
       // 리프레쉬토큰 유효하지 않을때 로그인으로 라우팅
-    } else if (err.response.status === 1051) {
+    } else if (err.response.data.code === 1051) {
       window.localStorage.removeItem('userAccessToken');
       window.localStorage.removeItem('userRefreshToken');
+      window.localStorage.removeItem('nickname');
       window.location.href = '/login';
     }
 
