@@ -21,7 +21,7 @@ const levelLists = [
   { title: 'crazy', select: false, time: CRAZYTIME },
 ];
 
-export const GameOption = () => {
+export const SingleGameOption = () => {
   const [locationState, setLocationState] = useRecoilState(
     TempLocationStateGameInfo
   );
@@ -141,7 +141,7 @@ export const GameOption = () => {
           yearList: checkedList,
           gameRoomData: res.data.data,
         });
-        navigate('/guest/game-play', { state: selectOptionList });
+        navigate('/single/game-playing', { state: selectOptionList });
       })
       .catch((err) => {
         setIsToggled(true);

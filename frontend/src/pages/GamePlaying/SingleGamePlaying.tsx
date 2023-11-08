@@ -36,7 +36,7 @@ const FirstMusicStartTime = 0;
 const SecondMusicStartTime = 60;
 const ThirdMusicStartTime = 120;
 
-export const GamePlaying = () => {
+export const SingleGamePlaying = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [locationState, setLocationState] = useRecoilState(

@@ -6,7 +6,7 @@ import muteButton from '../../../assets/svgs/bgmController/muteButton.svg';
 import { LoginRouterBtn } from '../Login';
 
 export const BgmBtn = () => {
-  const isLogin = window.localStorage.getItem('userAccessToken');
+  const isLogin = Boolean(window.localStorage.getItem('userAccessToken'));
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [time, setTime] = useState<number>(3);
@@ -45,11 +45,7 @@ export const BgmBtn = () => {
         <source src="/assets/bgm/pixelLand.mp3" type="audio/mp3" />
         <track kind="captions" />
       </audio>
-      {isLoginRoute ? (
-        <div>{isLogin ? <div>로그아웃</div> : <LoginRouterBtn />}</div>
-      ) : (
-        ''
-      )}
+      {isLoginRoute ? <LoginRouterBtn isLogin={isLogin} /> : ''}
       <StyledBgmBtn type="button" onClick={handlePlayPause}>
         <img
           src={isPlaying ? playButton : muteButton}

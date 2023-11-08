@@ -59,7 +59,7 @@ const MyRanking = ({ rankNum }: { rankNum: string | number | null }) => {
             내 랭킹 확인하기
           </div>
           <LoginButton>
-            <LoginRouterBtn />
+            <LoginRouterBtn isLogin={false} />
           </LoginButton>
         </>
       ) : (
