@@ -1,6 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { FC, useState, useEffect } from 'react';
+import { useRecoilState } from 'recoil';
 import { useNavigate } from 'react-router-dom';
+import { ActiveCarouselNumAtom } from '../../../atoms/atoms';
 import {
   Box,
   ButtonContainer,
@@ -27,9 +29,13 @@ export const ModeSelectCarousel: React.FC = () => {
   const navigate = useNavigate();
   const [lastInputTime, setLastInputTime] = useState<number>(0); // 키보드, 마우스 연타 방지용으로 시간 측정
   const INPUT_INTERVAL = 400;
-
+  const [activeCarouselNum, setActiveCarouselNum] = useRecoilState(
+    ActiveCarouselNumAtom
+  );
   const accessToken = window.localStorage.getItem('userAccessToken');
-  const [visible, setVisible] = useState<number>(accessToken ? 0 : 1); // accessToken이 없을 때 visible의 초기값을 1로 설정하여 2번 콘텐츠가 먼저 보이게 함
+  const [visible, setVisible] = useState<number>(
+    activeCarouselNum.activeCarouselNum
+  ); // accessToken이 없을 때 visible의 초기값을 1로 설정하여 2번 콘텐츠가 먼저 보이게 함
   const isLoggedIn = Boolean(accessToken); // 로그인 검증
 
   const [showDescription, setShowDescription] = useState<number | null>(null); // 설명을 보여줄 아이템의 인덱스
