@@ -1,7 +1,8 @@
-package com.a608.musiq.domain.music.domain;
+package com.a608.musiq.domain.music.domain.log;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.a608.musiq.domain.music.data.Difficulty;
 import com.a608.musiq.domain.music.data.DifficultyConverter;
@@ -23,8 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GuestModeLog {
-	private static final int ROUND_INITIAL_NUMBER = 0;
+public class SingleModeLog {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,9 +40,19 @@ public class GuestModeLog {
 	private Difficulty difficulty;
 
 	@Column
+	private double exp;
+
+	@Column
 	private String ip;
 
 	@NotNull
+	@Column
+	private UUID memberId;
+
+	@NotNull
+	@Column
+	private String nickname;
+
 	@Column
 	private int round;
 
@@ -56,11 +66,12 @@ public class GuestModeLog {
 	@Column
 	private int playTime;
 
-	public static GuestModeLog from(String year, Difficulty difficulty) {
-		return GuestModeLog.builder()
+	public static SingleModeLog from(String year, Difficulty difficulty, UUID memberId, String nickname) {
+		return SingleModeLog.builder()
 			.year(year)
 			.difficulty(difficulty)
-			.round(ROUND_INITIAL_NUMBER)
+			.memberId(memberId)
+			.nickname(nickname)
 			.startedAt(LocalDateTime.now())
 			.build();
 	}
@@ -69,13 +80,15 @@ public class GuestModeLog {
 		this.ip = ip;
 	}
 
-	public void addEndedAt() {
+	public void addAdditionalInformation(int round, double exp) {
 		this.endedAt = LocalDateTime.now();
 		calculatePlayTime();
+
+		this.round = round;
+		this.exp = exp;
 	}
 
 	private void calculatePlayTime() {
 		this.playTime = (int)Duration.between(startedAt, endedAt).getSeconds();
 	}
-
 }

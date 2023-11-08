@@ -5,11 +5,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.a608.musiq.global.common.response.BaseResponse;
-import com.a608.musiq.global.exception.exception.GuestModeLogException;
+import com.a608.musiq.global.exception.exception.GuestModeException;
 import com.a608.musiq.global.exception.exception.MemberException;
 import com.a608.musiq.global.exception.exception.MemberInfoException;
 import com.a608.musiq.global.exception.exception.MusicException;
 import com.a608.musiq.global.exception.exception.RankingException;
+import com.a608.musiq.global.exception.exception.SingleModeException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -50,11 +51,21 @@ public class GlobalExceptionHandler {
 				.build());
 	}
 
-	@ExceptionHandler(GuestModeLogException.class)
-	public ResponseEntity<BaseResponse<GuestModeLogException>> guestModeLogExceptionHandler(
-		GuestModeLogException exception) {
+	@ExceptionHandler(GuestModeException.class)
+	public ResponseEntity<BaseResponse<GuestModeException>> guestModeExceptionHandler(
+		GuestModeException exception) {
 		return ResponseEntity.status(exception.getInfo().getStatus())
-			.body(BaseResponse.<GuestModeLogException>builder()
+			.body(BaseResponse.<GuestModeException>builder()
+				.code(exception.getInfo().getCode())
+				.message(exception.getInfo().getMessage())
+				.build());
+	}
+
+	@ExceptionHandler(SingleModeException.class)
+	public ResponseEntity<BaseResponse<SingleModeException>> singleModeExceptionHandler(
+		SingleModeException exception) {
+		return ResponseEntity.status(exception.getInfo().getStatus())
+			.body(BaseResponse.<SingleModeException>builder()
 				.code(exception.getInfo().getCode())
 				.message(exception.getInfo().getMessage())
 				.build());
