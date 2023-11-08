@@ -1,5 +1,7 @@
 package com.a608.musiq.domain.music.service;
 
+import com.a608.musiq.global.Util;
+import com.a608.musiq.global.Util.RedisKey;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -60,6 +62,7 @@ public class SingleModeMusicServiceImpl implements MusicService {
 	private final TitleRepository titleRepository;
 	private final SingleModeLogRepository singleModeLogRepository;
 	private final JwtValidator jwtValidator;
+	private final Util util;
 
 	/**
 	 * 싱글 모드 방 생성
@@ -263,6 +266,10 @@ public class SingleModeMusicServiceImpl implements MusicService {
 
 		double exp = calculateExp(log.getDifficulty(), round);
 		memberInfo.gainExp(exp);
+
+		double totalExp = memberInfo.getExp();
+
+		util.insertDatatoRedisSortedSet(RedisKey.RANKING.getKey(), memberInfo.getNickname(), totalExp);
 
 		log.addAdditionalInformation(round, exp);
 
