@@ -23,7 +23,7 @@ public class JwtInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request,
             HttpServletResponse response,
             Object handler) {
-        String token = request.getHeader("Authorization");
+        String token = request.getHeader("aceessToken");
         jwtValidator.validateToken("access", token);
         return true;
     }
