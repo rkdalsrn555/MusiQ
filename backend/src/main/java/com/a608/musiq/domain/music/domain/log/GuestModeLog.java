@@ -1,4 +1,4 @@
-package com.a608.musiq.domain.music.domain;
+package com.a608.musiq.domain.music.domain.log;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

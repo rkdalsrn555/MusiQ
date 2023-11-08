@@ -6,6 +6,7 @@ import com.a608.musiq.global.common.response.BaseResponse;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,10 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.a608.musiq.domain.music.service.MusicService;
 
 @RestController
-@RequestMapping("/music")
+@RequestMapping("/music/guest")
 @RequiredArgsConstructor
-public class MusicController {
+public class GuestModeMusicController {
 
+	@Qualifier("")
 	private final MusicService musicService;
 
 	/**
@@ -32,7 +34,7 @@ public class MusicController {
 	 * @param year
 	 * @return
 	 */
-	@PostMapping("/guest/room")
+	@PostMapping("/room")
 	private ResponseEntity<BaseResponse<CreateRoomResponseDto>> createRoom(
 		@RequestParam("difficulty") String difficulty,
 		@RequestParam("year") String year
@@ -51,7 +53,7 @@ public class MusicController {
 	 * @see AddIpInLogResponseDto
 	 * @return ResponseEntity<BaseResponse < AddIpInLogResponseDto>>
 	 */
-	@PatchMapping("/guest/log")
+	@PatchMapping("/log")
 	private ResponseEntity<BaseResponse<AddIpInLogResponseDto>> addIpInLog(
 		@RequestBody AddIpInLogRequestDto addIpInLogRequestDto
 	) {
@@ -70,7 +72,7 @@ public class MusicController {
 	 * @see ProblemForGuestResponseDto
 	 * @return ResponseEntity<BaseResponse < ProblemForGuestResponseDto>>
 	 */
-	@GetMapping("/guest/quiz")
+	@GetMapping("/quiz")
 	private ResponseEntity<BaseResponse<ProblemForGuestResponseDto>> getProblemForGuest(
 		@RequestParam("room-id") int roomId,
 		@RequestParam("round") int round
@@ -91,7 +93,7 @@ public class MusicController {
 	 * @see GradeAnswerResponseDto
 	 * @return ResponseEntity<BaseResponse < GradeAnswerResponseDto>>
 	 */
-	@GetMapping("/guest/result")
+	@GetMapping("/result")
 	private ResponseEntity<BaseResponse<GradeAnswerResponseDto>> gradeAnswer(
 		@RequestParam("room-id") Integer roomId,
 		@RequestParam("round") Integer round,
@@ -112,7 +114,7 @@ public class MusicController {
 	 * @see SkipRoundResponseDto
 	 * @return ResponseEntity<BaseResponse<SkipRoundResponseDto>>
 	 */
-	@PatchMapping("/guest/skip")
+	@PatchMapping("/skip")
 	private ResponseEntity<BaseResponse<SkipRoundResponseDto>> skipRound(
 		@RequestParam("room-id") int roomId,
 		@RequestParam("round") int round
@@ -132,7 +134,7 @@ public class MusicController {
 	 * @see GameOverResponseDto
 	 * @return ResponseEntity<BaseResponse<GameOverResponseDto>>
 	 */
-	@PatchMapping("/guest/over")
+	@PatchMapping("/over")
 	private ResponseEntity<BaseResponse<GameOverResponseDto>> gameOver(
 		@RequestParam("room-id") int roomId,
 		@RequestParam("round") int round
@@ -152,7 +154,7 @@ public class MusicController {
 	 * @see GiveUpResponseDto
 	 * @return ResponseEntity<BaseResponse<GiveUpResponseDto>>
 	 */
-	@GetMapping("/guest/giveup")
+	@GetMapping("/giveup")
 	private ResponseEntity<BaseResponse<GiveUpResponseDto>> giveUp(
 		@RequestParam("room-id") int roomId,
 		@RequestParam("round") int round

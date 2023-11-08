@@ -1,37 +1,42 @@
 package com.a608.musiq.domain.music.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.StringTokenizer;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.a608.musiq.domain.music.data.Difficulty;
-import com.a608.musiq.domain.music.domain.GuestModeLog;
+import com.a608.musiq.domain.music.domain.log.GuestModeLog;
 import com.a608.musiq.domain.music.domain.Music;
 import com.a608.musiq.domain.music.domain.Room;
 import com.a608.musiq.domain.music.domain.RoomManager;
 import com.a608.musiq.domain.music.domain.Title;
 import com.a608.musiq.domain.music.dto.requestDto.AddIpInLogRequestDto;
-import com.a608.musiq.domain.music.dto.responseDto.*;
-import com.a608.musiq.domain.music.repository.GuestModeLogRepository;
+import com.a608.musiq.domain.music.dto.responseDto.AddIpInLogResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.CreateRoomResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.GameOverResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.GiveUpResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.GradeAnswerResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.ProblemForGuestResponseDto;
+import com.a608.musiq.domain.music.dto.responseDto.SkipRoundResponseDto;
 import com.a608.musiq.domain.music.repository.MusicRepository;
+import com.a608.musiq.domain.music.repository.SingleModeLogRepository;
 import com.a608.musiq.domain.music.repository.TitleRepository;
 import com.a608.musiq.global.exception.exception.GuestModeLogException;
 import com.a608.musiq.global.exception.exception.MusicException;
 import com.a608.musiq.global.exception.info.GuestModeLogExceptionInfo;
 import com.a608.musiq.global.exception.info.MusicExceptionInfo;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.StringTokenizer;
-
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class MusicServiceImpl implements MusicService {
+public class SingleModeMusicServiceImpl implements MusicService {
 	private static final String SPACE = " ";
 	private static final String EMPTY_STRING = "";
 	private static final int EMPTY_LIST_SIZE = 0;
@@ -41,7 +46,7 @@ public class MusicServiceImpl implements MusicService {
 
 	private final MusicRepository musicRepository;
 	private final TitleRepository titleRepository;
-	private final GuestModeLogRepository guestModeLogRepository;
+	private final SingleModeLogRepository singleModeLogRepository;
 
 	/**
 	 * 게스트 모드 방 생성
@@ -56,7 +61,7 @@ public class MusicServiceImpl implements MusicService {
 		StringTokenizer stringTokenizer = new StringTokenizer(year, SPACE);
 		Difficulty difficultyType = Difficulty.valueOf(difficulty.toUpperCase());
 
-		int roomId = guestModeLogRepository.save(GuestModeLog.from(year, difficultyType)).getId();
+		int roomId = singleModeLogRepository.save(GuestModeLog.from(year, difficultyType)).getId();
 
 		List<Music> musicList = insertMusic(stringTokenizer);
 		Collections.shuffle(musicList);
@@ -76,7 +81,7 @@ public class MusicServiceImpl implements MusicService {
 	@Override
 	@Transactional
 	public AddIpInLogResponseDto addIpInLog(AddIpInLogRequestDto addIpInLogRequestDto) {
-		GuestModeLog log = guestModeLogRepository.findById(addIpInLogRequestDto.getRoomId())
+		GuestModeLog log = singleModeLogRepository.findById(addIpInLogRequestDto.getRoomId())
 			.orElseThrow(() -> new GuestModeLogException(GuestModeLogExceptionInfo.NOT_FOUND_LOG));
 
 		log.addIp(addIpInLogRequestDto.getUserIp());
@@ -227,7 +232,7 @@ public class MusicServiceImpl implements MusicService {
 	 */
 	@Override
 	public GameOverResponseDto gameOver(int roomId, int round) {
-		GuestModeLog log = guestModeLogRepository.findById(roomId)
+		GuestModeLog log = singleModeLogRepository.findById(roomId)
 			.orElseThrow(() -> new GuestModeLogException(GuestModeLogExceptionInfo.NOT_FOUND_LOG));
 
 		log.addEndedAt();
