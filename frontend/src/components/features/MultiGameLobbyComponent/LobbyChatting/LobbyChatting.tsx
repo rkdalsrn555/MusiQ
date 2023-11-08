@@ -8,6 +8,7 @@ import {
   ChattingInputWrapper,
   StyledInput,
 } from './LobbyChatting.styled';
+import messageSubmit from '../../../../assets/svgs/MultiLobby/chatSubmit.svg';
 
 interface ChatMessage {
   content: string;
@@ -70,7 +71,7 @@ export const LobbyChatting: React.FC = () => {
       <ChattingInputWrapper>
         <StyledInput type="text" placeholder="메시지를 입력하세요..." />
         <button type="button" onClick={() => sendMessage('안녕하세요!')}>
-          보내기
+          <img src={messageSubmit} alt="메세지 보내기" />
         </button>
       </ChattingInputWrapper>
     </ChattingWrapper>
