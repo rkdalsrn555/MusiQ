@@ -2,7 +2,9 @@ package com.a608.musiq.domain.websocket.service;
 
 import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
+import com.a608.musiq.domain.websocket.data.GameRoomType;
 import com.a608.musiq.domain.websocket.data.GameValue;
+import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.dto.AllChannelSizeResponseDto;
 import com.a608.musiq.domain.websocket.dto.ChannelUserResponseDto;
@@ -119,6 +121,44 @@ public class GameService {
         ConcurrentHashMap<UUID, Integer> channel = GameValue.getGameChannel(channelNo);
         Integer roomNumber =channel.get(uuid);
         GameRoom gameRoom =GameValue.getGameRooms().get(roomNumber);
+
+
+
+
+        //게임룸 타입 가져오기
+        //게임 시작은 http 통신으로 민구가 WAITING에서 GAME으로 바꿔줄거임
+        GameRoomType gameRoomType = gameRoom.getGameRoomType();
+
+        PlayType playType = gameRoom.getPlayType();
+        if(gameRoomType == GameRoomType.WAITING){
+            
+        }
+        if(gameRoomType == GameRoomType.GAME){
+
+
+            if(playType == PlayType.ROUNDSTART){
+                //게임 시작했고 지금 1라운드인 경우
+                if(gameRoom.getRound() == 1) {
+
+                }
+            }
+
+            if (playType == PlayType.BEFOREANSWER){
+
+            }
+
+            if(playType == PlayType.AFTERANSWER){
+
+            }
+        }
+
+
+
+        //게임 타입이 뭐냐에 따라 맞는 로직 처리
+
+
+
+
 
 
 

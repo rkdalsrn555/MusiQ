@@ -33,8 +33,7 @@ public class GameRoom {
     private int skipVote;
     private int round;
     private Map<UUID, UserInfoItem> userInfoItems;
-    private List<String>
-
+    private List<MultiModeProblem> multiModeProblems;
 
     private MessageType messageType;
     //messageType 추가

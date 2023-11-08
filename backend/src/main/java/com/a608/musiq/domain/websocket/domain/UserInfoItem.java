@@ -7,12 +7,15 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Getter
-@Setter
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserInfoItem {
+
     private String nickname;
     private String score;
     private Boolean isSkipped;
+
+    public static UserInfoItem create(String nickname, String score, Boolean isSkipped) {
+        return new UserInfoItem(nickname, score, isSkipped);
+    }
 }
