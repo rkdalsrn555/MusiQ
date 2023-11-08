@@ -33,7 +33,12 @@ public class GameRoom {
     private int skipVote;
     private int round;
     private Map<UUID, UserInfoItem> userInfoItems;
+<<<<<<< Updated upstream
     private List<MultiModeProblem> multiModeProblems;
+=======
+    private List<MusicInfo> musicInfos;
+
+>>>>>>> Stashed changes
 
     private MessageType messageType;
     //messageType 추가
