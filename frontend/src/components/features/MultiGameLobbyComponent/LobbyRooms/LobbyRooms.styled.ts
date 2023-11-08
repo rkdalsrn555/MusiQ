@@ -18,7 +18,7 @@ export const RoomsWrapper = styled.div`
 `;
 
 export const Room = styled.button`
-  width: 30vw;
+  width: 28vw;
   height: 14vh;
   margin: 5px;
   background-color: rgba(255, 255, 255, 0.5);
