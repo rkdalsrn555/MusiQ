@@ -1,10 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { useRecoilState } from 'recoil';
+import axios from 'axios';
 import { motion } from 'framer-motion';
-import { UserDataAtom } from '../../atoms/atoms';
+import { ActiveCarouselNumAtom, UserDataAtom } from '../../atoms/atoms';
 import {
   Modal,
   LoginBtn,
@@ -17,6 +17,9 @@ import * as S from './Login.styled';
 export const Login = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useRecoilState(UserDataAtom);
+  const [activeCarouselNum, setActiveCarouselNum] = useRecoilState(
+    ActiveCarouselNumAtom
+  );
 
   const [userId, setUserId] = useState<string>('');
   const [pw, setPw] = useState<string>('');
@@ -50,6 +53,7 @@ export const Login = () => {
         );
         window.localStorage.setItem('nickname', res.data.data.nickname);
         setUserData({ nickname: res.data.data.nickname });
+        setActiveCarouselNum({ activeCarouselNum: 0 });
         navigate('/select-mode');
       })
       .catch((err) => {
