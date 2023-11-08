@@ -48,7 +48,7 @@ public class SingleModeMusicController {
 	private ResponseEntity<BaseResponse<CreateRoomResponseDto>> createRoom(
 		@RequestParam("difficulty") String difficulty,
 		@RequestParam("year") String year,
-		@RequestHeader("Authorization") String token
+		@RequestHeader("accessToken") String token
 	) {
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<CreateRoomResponseDto>builder()

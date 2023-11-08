@@ -11,33 +11,7 @@ export const ChannelComponent = () => {
   const navigate = useNavigate();
   const accessToken = window.localStorage.getItem('userAccessToken');
 
-  useEffect(() => {
-    if (!accessToken) {
-      console.error('Access token is not available.');
-      return;
-    }
-
-    const fetchChannelSizes = async () => {
-      try {
-        const response = await userApis.get(
-          `${process.env.REACT_APP_BASE_URL}/game/channel`,
-          {
-            headers: {
-              accessToken,
-            },
-          }
-        );
-        if (response.status === 200) {
-          setChannelSizes(response.data.data.channelSizes);
-        }
-      } catch (error) {
-        console.error('공습경보', error);
-      }
-    };
-
-    fetchChannelSizes();
-  }, []);
-
+  // 이벤트 핸들러를 함수 외부에 정의
   const handleChannelClick = (channelNumber: number) => {
     // WebSocket 연결 및 채널 구독
     const ws = new WebSocket('ws://localhost:8080/api/game-websocket');
@@ -59,12 +33,14 @@ export const ChannelComponent = () => {
     client.onConnect = () => {
       // 연결 후, 채널 구독
       const channelNo = channelNumber;
+      console.log(channelNo, '연결 했음');
       const subscription = client.subscribe(
         `/topic/${channelNo}`,
         (message) => {
           // 메시지를 받았을 때의 처리
           const payload = JSON.parse(message.body);
           console.log('Received message:', payload);
+          console.log('잘 구독됐냐');
         }
       );
 
@@ -72,6 +48,34 @@ export const ChannelComponent = () => {
       navigate(`/multi/${channelNumber}/lobby`);
     };
   };
+
+  useEffect(() => {
+    if (!accessToken) {
+      console.error('Access token is not available.');
+      return;
+    }
+
+    const fetchChannelSizes = async () => {
+      try {
+        const response = await userApis.get(
+          `${process.env.REACT_APP_BASE_URL}/game/channel`,
+          {
+            headers: {
+              accessToken,
+            },
+          }
+        );
+        if (response.status === 200) {
+          setChannelSizes(response.data.data.channelSizes);
+          console.log(response.data.data.channelSizes);
+        }
+      } catch (error) {
+        console.error('공습경보', error);
+      }
+    };
+
+    fetchChannelSizes();
+  }, []);
 
   return (
     <ChannelItemsWrapper>

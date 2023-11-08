@@ -1,5 +1,6 @@
 import { atom } from 'recoil';
-import { recoilPersist } from 'recoil-persist';
+
+const isLogin = Boolean(window.localStorage.getItem('userAccessToken'));
 
 type GameOptionDataType = {
   difficulty: {
@@ -43,5 +44,12 @@ export const UserIpAtom = atom({
   key: 'UserIpAtom',
   default: {
     ip: '',
+  },
+});
+
+export const ActiveCarouselNumAtom = atom({
+  key: 'ActiveCarouselNumAtom',
+  default: {
+    activeCarouselNum: isLogin ? 0 : 1,
   },
 });

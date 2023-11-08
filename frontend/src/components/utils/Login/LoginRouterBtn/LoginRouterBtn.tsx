@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { ActiveCarouselNumAtom } from '../../../../atoms/atoms';
 import { Modal } from '../../Modal';
 import { userApis } from '../../../../hooks/api/userApis';
 import { ReactComponent as LoginKey } from '../../../../assets/svgs/login/loginKey.svg';
@@ -59,6 +61,9 @@ type OwnProps = {
 };
 
 export const LoginRouterBtn = (props: OwnProps) => {
+  const [activeCarouselNum, setActiveCarouselNum] = useRecoilState(
+    ActiveCarouselNumAtom
+  );
   const navigate = useNavigate();
   const { isLogin } = props;
 
@@ -70,6 +75,7 @@ export const LoginRouterBtn = (props: OwnProps) => {
           window.localStorage.removeItem('userAccessToken');
           window.localStorage.removeItem('userRefreshToken');
           window.localStorage.removeItem('nickname');
+          setActiveCarouselNum({ activeCarouselNum: 1 });
           alert('로그아웃 성공!');
           navigate('/');
         })
