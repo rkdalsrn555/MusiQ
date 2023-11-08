@@ -23,7 +23,10 @@ async function postRefreshToken() {
 
     // 서버로부터 받은 데이터에 accessToken이 있다면 return
     if (data.data.accessToken) {
-      return data.data.accessToken;
+      const newAccessToken = data.data.accessToken;
+      const newRefreshToken = data.data.refreshToken;
+
+      return { newAccessToken, newRefreshToken };
     }
     return false;
   } catch (error) {
@@ -62,15 +65,18 @@ userApis.interceptors.response.use(
   // 에러 응답이 돌아왔을 때, err.response.message에 담긴 메세지가 토큰 관련 메세지였을때 처리해줄 로직
   async (err) => {
     // 토큰 검사 실패 시 리프레쉬토큰을 보내서 액세스토큰을 새롭게 발급받는다.
-    if (err.response.status === 401) {
+    if (err.response.status === 1050) {
       const response = await postRefreshToken(); // 액세스토큰 갱신을 위한 post 요청
 
-      // response에 담긴 accessToken을 다시 저장한다
+      // response에 담긴 accessToken, refreshToken을 다시 저장한다
       if (response) {
-        window.localStorage.setItem('userAccessToken', response);
-
+        window.localStorage.setItem('userAccessToken', response.newAccessToken);
+        window.localStorage.setItem(
+          'userRefreshToken',
+          response.newRefreshToken
+        );
         // 원래 api 요청의 headers의 accessToken변경
-        err.config.headers.accessToken = response;
+        err.config.headers.accessToken = response.newAccessToken;
         // 원래 요청을 다시 날려준다!
         const originalResponse = await axios.request(err.config);
         return originalResponse; // 원래 api 요청의 response return
@@ -79,8 +85,8 @@ userApis.interceptors.response.use(
       window.localStorage.removeItem('userAccessToken');
       window.localStorage.removeItem('userRefreshToken');
       window.location.href = '/login';
-      // 액세스토큰을 넣어서 보냈는데 멤버가 없을 때, 로컬스토리지의 토큰 모두 지우고 로그인 창으로 라우팅
-    } else if (err.response.status === 406) {
+      // 리프레쉬토큰 유효하지 않을때 로그인으로 라우팅
+    } else if (err.response.status === 1051) {
       window.localStorage.removeItem('userAccessToken');
       window.localStorage.removeItem('userRefreshToken');
       window.location.href = '/login';
