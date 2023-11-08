@@ -110,7 +110,7 @@ export const MyRankingText = styled.div`
 `;
 
 export const MyRankingGrade = styled.div`
-  font-size: 100px;
+  font-size: 60px;
   font-weight: bold;
   color: #ff5d70;
 `;
