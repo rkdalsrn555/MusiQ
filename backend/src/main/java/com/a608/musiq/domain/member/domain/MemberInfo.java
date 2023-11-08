@@ -45,4 +45,7 @@ public class MemberInfo extends BaseTimeEntity {
 	@Column
 	private Boolean deleted = Boolean.FALSE;
 
+	public void gainExp(double exp) {
+		this.exp += exp;
+	}
 }
