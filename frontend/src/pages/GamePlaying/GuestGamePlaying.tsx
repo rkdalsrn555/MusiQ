@@ -230,6 +230,7 @@ export const GuestGamePlaying = () => {
     setTryCnt(3);
     tryCntRef.current = 3;
     setIsJudge(false);
+    setIsBubbleTime(false);
 
     await axios
       .get(
@@ -278,6 +279,7 @@ export const GuestGamePlaying = () => {
   const skipNextMusic = async () => {
     await skipBtnHandler();
     setKeyEvent('');
+    setInputText('');
     setIsJudge(false);
     setIsSkip(true);
     setTryCnt(3);
@@ -378,6 +380,7 @@ export const GuestGamePlaying = () => {
         setFirstAttemp(false);
         skipNextMusic();
         setKeyEvent('');
+        setInputText('');
       }
       if (
         e.key === 'ArrowLeft' &&
@@ -652,7 +655,7 @@ export const GuestGamePlaying = () => {
                           ))}
                           <SkipBtn
                             clickHandler={skipNextMusic}
-                            isBtnDisabled={lives <= 1}
+                            isBtnDisabled={lives <= 1 || isPlaying}
                             keyEvent={keyEvent}
                           />
                         </div>
