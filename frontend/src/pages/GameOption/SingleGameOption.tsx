@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
+import { userApis } from '../../hooks/api/userApis';
 import { TempLocationStateGameInfo, UserIpAtom } from '../../atoms/atoms';
 import { SelectLevelBtn, SelectYearBtn } from '../../components/features';
 import { ReactComponent as StartIcon } from '../../assets/svgs/startBtn.svg';
@@ -122,11 +122,11 @@ export const SingleGameOption = () => {
       return;
     }
 
-    await axios
+    await userApis
       .post(
         `${
           process.env.REACT_APP_BASE_URL
-        }/music/guest/room?difficulty=${levelList.title.toUpperCase()}&year=${checkedList.join(
+        }/music/single/room?difficulty=${levelList.title.toUpperCase()}&year=${checkedList.join(
           ' '
         )}`
       )
