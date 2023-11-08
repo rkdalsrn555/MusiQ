@@ -75,7 +75,7 @@ public class MemberController {
 	 * @return
 	 */
 	@DeleteMapping("/logout")
-	private ResponseEntity<BaseResponse<LogoutResponseDto>> logout(@RequestHeader("Authorization") String token) {
+	private ResponseEntity<BaseResponse<LogoutResponseDto>> logout(@RequestHeader("aceessToken") String token) {
 
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(BaseResponse.<LogoutResponseDto>builder()
