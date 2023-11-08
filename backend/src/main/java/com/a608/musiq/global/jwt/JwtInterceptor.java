@@ -33,7 +33,7 @@ public class JwtInterceptor implements HandlerInterceptor {
     }
 
     private boolean isPreflightRequest(HttpServletRequest request) {
-        return isOptions(request) && hasHeaders(request) && hasMethod(request);
+        return isOptions(request) && hasHeaders(request) && hasMethod(request) && hasOrigin(request);
     }
 
     private boolean isOptions(HttpServletRequest request) {
@@ -46,5 +46,9 @@ public class JwtInterceptor implements HandlerInterceptor {
 
     private boolean hasMethod(HttpServletRequest request) {
         return Objects.nonNull(request.getHeader("Access-Control-Request-Method"));
+    }
+
+    private boolean hasOrigin(HttpServletRequest request) {
+        return Objects.nonNull(request.getHeader("Origin"));
     }
 }
