@@ -1,13 +1,16 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { ReactComponent as KeyLogo } from '../../../../assets/svgs/login/loginKey.svg';
+import { Modal } from '../../Modal';
+import { userApis } from '../../../../hooks/api/userApis';
+import { ReactComponent as LoginKey } from '../../../../assets/svgs/login/loginKey.svg';
+import { ReactComponent as LogoutKey } from '../../../../assets/svgs/login/logoutKey.svg';
 import hoverCursorIcon from '../../../../assets/img/hoverCursorIcon.png';
 
-const Container = styled.div`
+const Container = styled.div<{ isLogin: boolean }>`
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  padding-top: 0.5rem;
+  padding-top: ${(props) => (props.isLogin ? '1rem' : '0.5rem')};
   padding-right: 8rem;
 
   & p {
@@ -25,7 +28,7 @@ const Container = styled.div`
 
   &:hover {
     & .keyLogo {
-      fill: #ffe500;
+      fill: ${(props) => (props.isLogin ? '#FF2E2E' : '#ffe500')};
       transition: all 0.3s;
 
       :hover,
@@ -37,7 +40,7 @@ const Container = styled.div`
     }
 
     & p {
-      color: #ffe500;
+      color: ${(props) => (props.isLogin ? '#FF2E2E' : '#ffe500')};
       transition: all 0.3s;
 
       :hover,
@@ -49,17 +52,41 @@ const Container = styled.div`
     }
   }
 `;
-export const LoginRouterBtn = () => {
+
+type OwnProps = {
+  isLogin: boolean;
+};
+
+export const LoginRouterBtn = (props: OwnProps) => {
   const navigate = useNavigate();
+  const { isLogin } = props;
+
+  const clickHandler = () => {
+    if (isLogin) {
+      userApis
+        .post(`${process.env.REACT_APP_BASE_URL}/member/logout`)
+        .then((res) => {
+          window.localStorage.removeItem('userAccessToken');
+          window.localStorage.removeItem('userRefreshToken');
+          alert('로그아웃 성공!');
+        })
+        .catch((err) => {
+          alert('로그아웃에 실패하였습니다.');
+        });
+    } else {
+      navigate('/login');
+    }
+  };
 
   return (
-    <Container
-      onClick={() => {
-        navigate('/login');
-      }}
-    >
-      <KeyLogo className="keyLogo" width={50} />
-      <p>Login</p>
+    <Container isLogin onClick={clickHandler}>
+      {isLogin ? (
+        <LogoutKey className="keyLogo" width={50} />
+      ) : (
+        <LoginKey className="keyLogo" width={50} />
+      )}
+
+      <p>{isLogin ? 'Logout' : 'Login'}</p>
     </Container>
   );
 };
