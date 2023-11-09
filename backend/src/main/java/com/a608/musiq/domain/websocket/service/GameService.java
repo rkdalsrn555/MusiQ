@@ -72,7 +72,6 @@ public class GameService {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    private SimpMessagingTemplate messagingTemplate;
     private ReentrantReadWriteLock lock;
 
     private static final int MULTI_SCORE_WEIGHT = 10;
