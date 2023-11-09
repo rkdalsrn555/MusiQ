@@ -4,6 +4,7 @@ import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.global.Util;
 import com.a608.musiq.global.Util.RedisKey;
+import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +34,17 @@ public class Scheduler {
     private void insertRanking(){
 
         insertRankingToRedis();
+    }
+
+    //1초마다 모든 멀티방 -1
+    @Scheduled(cron = "*/1 * * * * *")
+    private void multiModeCountDown(){
+//        이중 for(){
+//        gameRoom=현재 게임 상태인 방을 찾기();
+//        gameRomm.time--
+//            pub
+//        }
+//        시간 체크 해주는 메서드();
     }
 
     private void insertRankingToRedis() {

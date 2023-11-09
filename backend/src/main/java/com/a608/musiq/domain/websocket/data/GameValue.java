@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 @Component
+
 public class GameValue {
 
     /**
@@ -89,5 +91,7 @@ public class GameValue {
 
         channel.addUser(uuid, to);
     }
+
+
 
 }
