@@ -35,37 +35,36 @@ public class RoundStartService {
     public void doRoundStart(Integer roomNum, GameRoom room) {
 
         // 해당 방에 문제가 아직 없는 경우 문제 출제
-        if(room.getMultiModeProblems() == null) {
-            room.setMultiModeProblems(makeMutiProblemList(room.getNumberOfProblems(), room.getYear()));
+        if (room.getMultiModeProblems() == null) {
+            room.setMultiModeProblems(
+                    makeMutiProblemList(room.getNumberOfProblems(), room.getYear()));
         }
 
         // 타임 카운트가 5인 경우 (맨 처음 카운트인 경우) 문제 링크를 보냄
         // 라운드마다 변수 초기화를 위해 ""를 담아 보냄
-        if(room.getTime() == 5) {
+        if (room.getTime() == 5) {
             MusicProblemDto dto = MusicProblemDto.builder()
-                    .musicUrl(room.getMultiModeProblems().get(room.getRound()-1).getUrl())
+                    .musicUrl(room.getMultiModeProblems().get(room.getRound() - 1).getUrl())
                     .build();
-            messagingTemplate.convertAndSend("/topic/"+roomNum, dto);
+            messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
         }
 
         // 5, 4, 3, 2, 1 카운트 다운 전송
-        if(room.getTime() > 0) {
-            
+        if (room.getTime() > 0) {
+
             // 카운트 다운 전송
-            TimeDto timeDto = TimeDto.builder()
-                    .time(room.getTime())
-                    .build();
-            messagingTemplate.convertAndSend("/topic/"+roomNum, timeDto);
+            TimeDto timeDto = TimeDto.builder().time(room.getTime()).build();
+            messagingTemplate.convertAndSend("/topic/" + roomNum, timeDto);
             room.timeDown();
         } else {
-            
+
             // 게임 플레이 타입 변경 및 시간 설정
             room.changePlayType(PlayType.BEFOREANSWER);
             room.setTime(40);
-            
+
             // 음악 플레이 메세지 전송
             MusicPlayDto dto = MusicPlayDto.builder().build();
-            messagingTemplate.convertAndSend("/topic/"+roomNum, dto);
+            messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
         }
     }
 
@@ -83,11 +82,13 @@ public class RoundStartService {
         List<Music> finalMusicList = deleteDuplicatedMusic(musicList);
 
         //numberOfProblems 보다 finalMusicList.size() 가 더 작으면 에러
-        if(finalMusicList.size() < numberOfProblems) throw new IllegalArgumentException();
+        if (finalMusicList.size() < numberOfProblems) {
+            throw new IllegalArgumentException();
+        }
 
         //finalMusicList 에서 필요한 값만 빼서 multiModeProblemList 만들기
         List<MultiModeProblem> multiModeProblemList = makeMultiModeProblemFromFinalMusicList(
-            finalMusicList, numberOfProblems);
+                finalMusicList, numberOfProblems);
 
         return multiModeProblemList;
     }
@@ -101,14 +102,14 @@ public class RoundStartService {
      * @return List<Music>
      */
     private List<MultiModeProblem> makeMultiModeProblemFromFinalMusicList(
-        List<Music> finalMusicList, int numberOfProblems) {
+            List<Music> finalMusicList, int numberOfProblems) {
         List<MultiModeProblem> multiModeProblemList = new ArrayList<>();
 
         // 랜덤한 int를 numberOfProblems만큼 뽑기
         Random random = new Random();
         int[] indexes = random.ints(numberOfProblems, 0, finalMusicList.size()).toArray();
 
-        for(int index : indexes) {
+        for (int index : indexes) {
             Music music = finalMusicList.get(index);
             List<Title> titleList = titleRepository.findAllByMusicId(music.getId());
             List<String> answerList = new ArrayList<>();
@@ -117,8 +118,7 @@ public class RoundStartService {
             }
             multiModeProblemList.add(
                     MultiModeProblem.create(music.getTitle(), music.getHint(), music.getSinger(),
-                            music.getUrl(), answerList)
-            );
+                            music.getUrl(), answerList));
         }
 
         return multiModeProblemList;
@@ -147,7 +147,7 @@ public class RoundStartService {
             int afterSingerSetSize = singerSet.size();
 
             if (beforeTitleSetSize == afterTitleSetSize
-                && beforeSingerSetSize == afterSingerSetSize) {
+                    && beforeSingerSetSize == afterSingerSetSize) {
                 continue;
             }
 
