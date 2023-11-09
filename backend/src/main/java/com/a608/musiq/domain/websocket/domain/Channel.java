@@ -2,12 +2,9 @@ package com.a608.musiq.domain.websocket.domain;
 
 import com.a608.musiq.global.exception.exception.MultiModeException;
 import com.a608.musiq.global.exception.info.MultiModeExceptionInfo;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 public class Channel {
