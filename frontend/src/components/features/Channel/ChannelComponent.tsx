@@ -27,6 +27,10 @@ export const ChannelComponent = () => {
         },
         onConnect: () => {
           console.log(`Connected to channel ${channelNumber}`);
+          client.subscribe(`/topic/${channelNumber}`, (message) => {
+            // 서버로부터 메시지를 받았을 때 처리할 로직
+            console.log('Received message', message.body);
+          });
           setWebsocketClient(client); // Recoil 상태 설정
           navigate(`/multi/${channelNumber}/lobby`); // 채널로 이동
         },
@@ -58,7 +62,6 @@ export const ChannelComponent = () => {
         );
         if (response.status === 200) {
           setChannelSizes(response.data.data.channelSizes);
-          console.log(response.data.data.channelSizes);
         }
       } catch (error) {
         console.error('공습경보', error);
