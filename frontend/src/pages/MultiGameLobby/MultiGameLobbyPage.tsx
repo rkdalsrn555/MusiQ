@@ -5,14 +5,18 @@ import { motion } from 'framer-motion';
 import { websocketClientState } from '../../atoms/atoms';
 import { userApis } from '../../hooks/api/userApis';
 import {
-  LobbyButtons,
+  LobbyCreateRoomButton,
   LobbyChatting,
   LobbyRooms,
   LobbyUsersList,
   RefreshButton,
 } from '../../components/features';
 import { BackBtn } from '../../components/utils';
-import { LobbyWrapper, MulitBackGround } from './MultiGameLobby.styled';
+import {
+  LobbyWrapper,
+  MulitBackGround,
+  ButtonsWrapper,
+} from './MultiGameLobby.styled';
 
 export const MultiGameLobbyPage: React.FC = () => {
   const navigate = useNavigate();
@@ -40,32 +44,42 @@ export const MultiGameLobbyPage: React.FC = () => {
 
     // 페이지를 떠날 때 WebSocket 연결을 종료
     return () => {
-      if (websocketClient) {
-        websocketClient.deactivate();
-        console.log(`Disconnected from channel ${channelNumber}`);
-      }
-      // 서버에 사용자가 채널을 떠남
-      const accessToken = window.localStorage.getItem('userAccessToken');
-      if (accessToken) {
-        userApis
-          .post(
-            `${process.env.REACT_APP_BASE_URL}/game/${channelNumber}`,
-            {},
-            {
-              headers: {
-                accessToken,
-              },
-            }
-          )
-          .then((response) => {
+      // 비동기 함수를 선언합니다.
+      const deactivateClient = async () => {
+        if (websocketClient) {
+          try {
+            // deactivate가 Promise를 반환한다고 가정하고 await 키워드를 사용합니다.
+            await websocketClient.deactivate();
+            console.log(`Disconnected from channel ${channelNumber}`);
+          } catch (error) {
+            console.error('Error deactivating client:', error);
+          }
+        }
+
+        // 서버에 사용자가 채널을 떠남을 알립니다.
+        const accessToken = window.localStorage.getItem('userAccessToken');
+        if (accessToken) {
+          try {
+            const response = await userApis.post(
+              `${process.env.REACT_APP_BASE_URL}/game/${channelNumber}`,
+              {},
+              {
+                headers: {
+                  accessToken,
+                },
+              }
+            );
             console.log('Left channel successfully.', response.data);
-          })
-          .catch((error) => {
-            console.error('Error leaving channel.', error);
-          });
-      }
+          } catch (error) {
+            console.error('Error leaving channel:', error);
+          }
+        }
+      };
+
+      // 비동기 함수를 실행합니다.
+      deactivateClient();
     };
-  }, []);
+  }, [websocketClient, channelNumber]);
 
   return (
     <motion.div
@@ -80,7 +94,9 @@ export const MultiGameLobbyPage: React.FC = () => {
           <BackBtn url="/multi/channel" />
           <LobbyUsersList />
           <LobbyRooms />
-          <LobbyButtons />
+          <ButtonsWrapper>
+            <LobbyCreateRoomButton />
+          </ButtonsWrapper>
           <LobbyChatting />
         </LobbyWrapper>
       </MulitBackGround>

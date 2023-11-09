@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const ButtonsWrapper = styled.div`
   width: 11vw;
-  height: 41vh;
+  height: 11vh;
   flex-shrink: 0;
   border: solid 5px rgba(235, 226, 255, 0.4);
   border-radius: 30px;
@@ -12,6 +12,4 @@ export const ButtonsWrapper = styled.div`
   align-items: center;
   background-color: rgba(255, 255, 255, 0.5);
   position: absolute;
-  right: 4.5%;
-  top: 14%
 `;
