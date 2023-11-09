@@ -1,10 +1,12 @@
 package com.a608.musiq.domain.websocket.service.subService;
 
 import com.a608.musiq.domain.websocket.data.GameRoomType;
-import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.AfterAnswerDto;
+import com.a608.musiq.domain.websocket.domain.UserInfoItem;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.TimeDto;
+import java.util.Map;
+import java.util.UUID;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +18,7 @@ public class AfterAnswerService {
     public void doAfterAnswer(Integer roomNum, GameRoom room) {
 
         // 카운트 다운 전송
-        AfterAnswerDto dto = AfterAnswerDto.builder()
-                .type(MessageDtoType.AFTERANSWER)
+        TimeDto dto = TimeDto.builder()
                 .time(room.getTime())
                 .build();
         messagingTemplate.convertAndSend("/topic/"+roomNum, dto);
@@ -37,6 +38,15 @@ public class AfterAnswerService {
                 room.roundUp();
                 room.setTime(5);
             }
+
+            // 참여 인원의 스킵 여부를 모두 false로 바꿈
+            Map<UUID, UserInfoItem> userInfos = room.getUserInfoItems();
+            for(UserInfoItem user : userInfos.values()) {
+                user.setSkipped(false);
+            }
+
+            // 방의 전체 스킵 수도 0으로 설정
+            room.setSkipVote(0);
         }
     }
 }

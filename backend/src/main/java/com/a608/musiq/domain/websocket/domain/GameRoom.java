@@ -127,4 +127,17 @@ public class GameRoom {
         this.totalUsers--;
         userInfoItems.remove(uuid);
     }
+
+    public void initializeRoom() {
+        this.gameRoomType = GameRoomType.WAITING;
+        this.playType = PlayType.ROUNDSTART;
+        this.multiModeProblems = null;
+        this.time = 5;
+        this.round = 1;
+        this.skipVote = 0;
+
+        for(UserInfoItem userInfo : this.userInfoItems.values()) {
+            userInfo.initializeUserInfo();
+        }
+    }
 }

@@ -70,29 +70,29 @@ public class BeforeAnswerService {
 
     public void doBeforeAnswer(Integer roomNum, GameRoom room) {
 
-//        // 카운트 다운 전송
-//        BeforeAnswerDto dto = AfterAnswerDto.builder()
-//                .type(MessageDtoType.AFTERANSWER)
-//                .time(room.getTime())
-//                .build();
-//        messagingTemplate.convertAndSend("/topic/"+roomNum, dto);
-//
-//        // 남은 시간이 1초 이상이라면 시간 다운
-//        if(room.getTime() > 0) {
-//            room.timeDown();
-//        }
-//        // 0초인 경우
-//        else {
-//            if(room.getRound() >= room.getNumberOfProblems()) {
-//                room.changeGameRoomType(GameRoomType.END);
-//                room.setTime(10);
-//            }
-//            else {
-//                room.changePlayType(PlayType.ROUNDSTART);
-//                room.roundUp();
-//                room.setTime(5);
-//            }
-//        }
+        // 카운트 다운 전송
+        BeforeAnswerDto dto = AfterAnswerDto.builder()
+                .type(MessageDtoType.AFTERANSWER)
+                .time(room.getTime())
+                .build();
+        messagingTemplate.convertAndSend("/topic/"+roomNum, dto);
+
+        // 남은 시간이 1초 이상이라면 시간 다운
+        if(room.getTime() > 0) {
+            room.timeDown();
+        }
+        // 0초인 경우
+        else {
+            if(room.getRound() >= room.getNumberOfProblems()) {
+                room.changeGameRoomType(GameRoomType.END);
+                room.setTime(10);
+            }
+            else {
+                room.changePlayType(PlayType.ROUNDSTART);
+                room.roundUp();
+                room.setTime(5);
+            }
+        }
     }
 
 }

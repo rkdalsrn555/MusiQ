@@ -4,11 +4,12 @@ import com.a608.musiq.domain.music.domain.Music;
 import com.a608.musiq.domain.music.domain.Title;
 import com.a608.musiq.domain.music.repository.MusicRepository;
 import com.a608.musiq.domain.music.repository.TitleRepository;
-import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.domain.MultiModeProblem;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.RoundStartDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.MusicPlayDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.MusicProblemDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.TimeDto;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,19 +39,33 @@ public class RoundStartService {
             room.setMultiModeProblems(makeMutiProblemList(room.getNumberOfProblems(), room.getYear()));
         }
 
-        // 카운트 다운 및 문제 전송
-        RoundStartDto dto = RoundStartDto.builder()
-                .type(MessageDtoType.ROUNDSTART)
-                .time(room.getTime())
-                .musicUrl(room.getMultiModeProblems().get(room.getRound()-1).getUrl())
-                .build();
-        messagingTemplate.convertAndSend("/topic/"+roomNum, dto);
-        
+        // 타임 카운트가 5인 경우 (맨 처음 카운트인 경우) 문제 링크를 보냄
+        // 라운드마다 변수 초기화를 위해 ""를 담아 보냄
+        if(room.getTime() == 5) {
+            MusicProblemDto dto = MusicProblemDto.builder()
+                    .musicUrl(room.getMultiModeProblems().get(room.getRound()-1).getUrl())
+                    .build();
+            messagingTemplate.convertAndSend("/topic/"+roomNum, dto);
+        }
+
+        // 5, 4, 3, 2, 1 카운트 다운 전송
         if(room.getTime() > 0) {
+            
+            // 카운트 다운 전송
+            TimeDto timeDto = TimeDto.builder()
+                    .time(room.getTime())
+                    .build();
+            messagingTemplate.convertAndSend("/topic/"+roomNum, timeDto);
             room.timeDown();
         } else {
+            
+            // 게임 플레이 타입 변경 및 시간 설정
             room.changePlayType(PlayType.BEFOREANSWER);
             room.setTime(40);
+            
+            // 음악 플레이 메세지 전송
+            MusicPlayDto dto = MusicPlayDto.builder().build();
+            messagingTemplate.convertAndSend("/topic/"+roomNum, dto);
         }
     }
 
@@ -73,7 +88,6 @@ public class RoundStartService {
         //finalMusicList 에서 필요한 값만 빼서 multiModeProblemList 만들기
         List<MultiModeProblem> multiModeProblemList = makeMultiModeProblemFromFinalMusicList(
             finalMusicList, numberOfProblems);
-
 
         return multiModeProblemList;
     }
