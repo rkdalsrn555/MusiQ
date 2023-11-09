@@ -129,9 +129,9 @@ export const Signup = () => {
       setSuccessNickname(false);
       return;
     }
-    // 2자 이상 16자 이하, 영어 또는 숫자 또는 한글로 구성
+    // 2자 이상 8자 이하, 영어 또는 숫자 또는 한글로 구성
     // 특이사항 : 한글 초성 및 모음은 허가하지 않는다.
-    const reg = /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,16}$/;
+    const reg = /^(?=.*[a-z0-9가-힣])[a-z0-9가-힣]{2,8}$/;
     if (reg.test(debounceCheckNickname)) {
       axios
         .get(
@@ -370,7 +370,7 @@ export const Signup = () => {
             isSuccess={successNickname}
             successMessage="올바른 닉네임입니다"
             isError={errorNickname}
-            errorMessage="2자 이상 16자 이하, 영어 숫자 한글만 허용됩니다"
+            errorMessage="2자 이상 8자 이하, 영어 숫자 한글만 허용됩니다"
             isDuplicate={duplicatedNickname}
             duplicatedMessage="닉네임이 중복입니다"
             inputValue={nickname}
