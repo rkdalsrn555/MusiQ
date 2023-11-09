@@ -1,7 +1,9 @@
 package com.a608.musiq.domain.websocket.data;
 
+import com.a608.musiq.domain.websocket.domain.Channel;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import jakarta.annotation.PostConstruct;
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -24,19 +26,22 @@ public class GameValue {
      *          ...
      *          10001 ~ 10999 = 10번 채널 게임 방
      */
-    private static List<ConcurrentHashMap<UUID, Integer>> gameChannels = new ArrayList<>();
+    private static List<Channel> gameChannels = new ArrayList<>();
     private static ConcurrentHashMap<Integer, GameRoom> gameRooms = new ConcurrentHashMap<>();
+
+    private static final int ROOM_DIVIDE_NUMBER = 1000;
     private static final int CHANNEL_MAX_SIZE = 10;
     private static final int CHANNEL_EACH_MAX_SIZE = 100;
+    private static final int CHANNEL_SYNC = 1;
 
     @PostConstruct
     public void initValues() {
-        for(int i = 0; i < CHANNEL_MAX_SIZE; i++) gameChannels.add(new ConcurrentHashMap<>());
+        for(int i = 0; i < CHANNEL_MAX_SIZE; i++) gameChannels.add(new Channel());
     }
 
     // channelNo 채널 접속자 수 조회
     public static int getGameChannelSize(int channelNo) {
-        return gameChannels.get(channelNo - 1).size();
+        return gameChannels.get(channelNo - CHANNEL_SYNC).getGameChannel().size();
     }
 
     public static int getGameChannelMaxSize() { return CHANNEL_MAX_SIZE; }
@@ -47,24 +52,42 @@ public class GameValue {
 
     // 채널 ConcurrentHashMap 가져오기
     public static ConcurrentHashMap<UUID, Integer> getGameChannel(int channelNo) {
-        return gameChannels.get(channelNo);
+        return gameChannels.get(channelNo - CHANNEL_SYNC).getGameChannel();
     }
 
-    //
     public static ConcurrentHashMap<Integer, GameRoom> getGameRooms() {
         return gameRooms;
     }
 
+    // 유저 채널 번호 가져오기
+    public static int getChannelNo(UUID uuid, int channelNo) {
+        Channel channel = gameChannels.get(channelNo - CHANNEL_SYNC);
+
+        return channel.getChannelNo(uuid);
+    }
+
     // 채널에 유저 추가
-    public static void addUserToChannel(UUID userUUID, int channelNo) {
-        ConcurrentHashMap<UUID, Integer> channel = gameChannels.get(channelNo - 1);
-        channel.put(userUUID, channelNo);
+    public static void addUserToChannel(UUID uuid, int channelNo) {
+        Channel channel = gameChannels.get(channelNo - CHANNEL_SYNC);
+
+        channel.addUser(uuid, channelNo);
     }
 
     // 채널에서 유저 제거
-    public static void removeUserFromChannel(UUID userUUID, int channelNo) {
-        ConcurrentHashMap<UUID, Integer> channel = gameChannels.get(channelNo - 1);
-        channel.remove(userUUID);
+    public static void removeUserFromChannel(UUID uuid, int channelNo) {
+        Channel channel = gameChannels.get(channelNo - CHANNEL_SYNC);
+
+        channel.removeUser(uuid);
+    }
+
+    // 채널 이동 (로비 <-> 게임룸)
+    public static void moveUserFromChannel(UUID uuid, int from, int to) {
+        if (from > CHANNEL_MAX_SIZE) {
+            from /= ROOM_DIVIDE_NUMBER;
+        }
+        Channel channel = gameChannels.get(from - CHANNEL_SYNC);
+
+        channel.addUser(uuid, to);
     }
 
 }

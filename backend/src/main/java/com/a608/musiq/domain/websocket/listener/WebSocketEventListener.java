@@ -58,6 +58,7 @@ public class WebSocketEventListener {
         String sessionId = headerAccessor.getSessionId();
 
         logger.info("[Disconnected] web-socket session id : {}", sessionId);
+
     }
 
 }
