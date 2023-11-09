@@ -35,7 +35,7 @@ export const ResultInfo = () => {
     <ResultContainer>
       <ChickWrapper>
         <DancingChickContainer>
-          <img src={DanceChick} alt="DanceChick" width={300} />
+          <img src={DanceChick} alt="DanceChick" width={200} />
           <img src={WaveBar} alt="WaveBar" width={400} />
           <img src={SpeechBubble} alt="SpeechBubble" width={400} />
           <SpeechBubbleText correctAnswerCnt={correctAnswerCnt} />

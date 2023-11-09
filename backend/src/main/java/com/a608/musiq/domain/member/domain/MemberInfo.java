@@ -32,13 +32,12 @@ public class MemberInfo extends BaseTimeEntity {
 	private UUID id;
 
 	@Size(max = 30)
-	@NotNull
 	@Column
 	private String nickname;
 
 	@NotNull
 	@Column
-	private Integer exp;
+	private Double exp;
 
 	@NotNull
 	@Builder.Default
@@ -46,4 +45,7 @@ public class MemberInfo extends BaseTimeEntity {
 	@Column
 	private Boolean deleted = Boolean.FALSE;
 
+	public void gainExp(double exp) {
+		this.exp += exp;
+	}
 }

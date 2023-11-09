@@ -4,3 +4,5 @@ export * from './GamePlay';
 export * from './Result';
 export * from './Ranking';
 export * from './Contact';
+export * from './MultiGameLobbyComponent';
+export * from './Channel';

@@ -4,5 +4,4 @@ export * from './AnswerInput';
 export * from './HeartGauge';
 export * from './ChanceGauge';
 export * from './PlayBtn';
-export * from './YouTubePlayer';
 export * from './GameExplain';

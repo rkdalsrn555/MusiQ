@@ -21,8 +21,34 @@ export const TalkBoxPosition = styled.div`
 
 export const TalkBoxContainer = styled.div`
   position: relative;
-  width: 100%;
-  height: 100%;
+  width: 15rem;
+  height: 10rem;
+
+  & .firstAttempGame1 {
+    width: 100%;
+    position: absolute;
+    top: 25%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2rem;
+  }
+  & .firstAttempGame2 {
+    width: 100%;
+    position: absolute;
+    top: 40%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2rem;
+  }
+
+  & .firstAttempGame3 {
+    width: 100%;
+    position: absolute;
+    top: 55%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2rem;
+  }
 
   & .judgeText {
     position: absolute;
@@ -58,7 +84,7 @@ export const MiddleContainer = styled.div`
   }
 
   & .gameStatus {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: bold;
     font-family: 'Galmuri11', sans-serif;
     color: #111;
@@ -98,7 +124,7 @@ export const bottomRightSideContainer = styled.div`
 `;
 
 export const PlayingBtnBoxPosition = styled.div`
-  width: 24rem;
+  width: 28rem;
   height: 9rem;
   display: flex;
   justify-content: center;
@@ -111,7 +137,7 @@ export const PlayingBtnBoxPosition = styled.div`
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
+    gap: 0.5rem;
 
     & .loadingMusic {
       font-size: 1rem;
@@ -127,18 +153,17 @@ export const PlayingBtnBoxPosition = styled.div`
 
 export const AnswerYouTubePlayerPosition = styled.div`
   transition: opacity 0.2s linear;
-  width: 300px;
   height: 420px;
   position: relative;
-  padding-top: 64px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
 
   & p {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    width: 300px;
-    padding: 0.5rem;
+    min-width: 350px;
+    padding: 0.8rem;
     line-height: 30px;
     font-size: 1.5rem;
     font-weight: bold;

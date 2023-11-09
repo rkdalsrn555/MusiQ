@@ -58,6 +58,12 @@ const ExplainBox = styled.div<{ time: number }>`
 
   & p {
     font-size: 1rem;
+
+    & .highlight {
+      font-size: 1.5rem;
+      font-family: 'Galmuri11', 'sans-serif';
+      font-weight: bold;
+    }
   }
 `;
 
@@ -66,7 +72,7 @@ const Container = styled.div`
   bottom: 5%;
   left: 5%;
   width: 26rem;
-  height: 18rem;
+  height: 20rem;
   ${HoverImg}:hover {
     background-color: #fff;
     cursor:
@@ -84,7 +90,7 @@ type OwnProps = {
 };
 
 export const GameExplain = () => {
-  const [time, setTime] = useState<number>(3);
+  const [time, setTime] = useState<number>(10);
 
   useEffect(() => {
     const timerInterval = setInterval(() => {
@@ -111,6 +117,9 @@ export const GameExplain = () => {
         <p>⬅ : 처음 버튼</p>
         <p>⬇ : 중간 버튼</p>
         <p>➡ : 끝 버튼</p>
+        <p>
+          <span className="highlight">.</span> ( 마침표 ) : skip 버튼
+        </p>
         <p>enter : 정답창 활성화 및 정답제출</p>
         <p>spacebar : 정답시 다음 문제로 넘어가기</p>
       </ExplainBox>
