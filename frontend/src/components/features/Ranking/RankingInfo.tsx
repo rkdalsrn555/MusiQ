@@ -95,7 +95,7 @@ export const RankingInfo: React.FC = () => {
     };
 
     fetchRankingData();
-  }, []);
+  }, [nickname]);
 
   if (loading) {
     return <div>Loading...</div>;
