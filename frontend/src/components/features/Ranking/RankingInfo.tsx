@@ -44,10 +44,13 @@ type ApiResponse = {
 const nickname = window.localStorage.getItem('nickname');
 const MyRanking = ({ rankNum }: { rankNum: string | number | null }) => {
   const navigate = useNavigate();
+  const [isNickname, setNickname] = useState<string | null>(
+    window.localStorage.getItem('nickname')
+  );
 
   return (
     <StyledMyRanking>
-      {nickname === null ? (
+      {isNickname === null ? (
         <>
           <div
             style={{
