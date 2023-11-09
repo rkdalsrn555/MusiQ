@@ -23,9 +23,12 @@ public class GameRoom {
     /*
     !!!!!!!!!!!!!!!!!전체적으로 수정해야 함!!!!!!!!!!!!!!!!!
     */
+    private int roomNo;
     private String roomName;
     private String password;
-    
+
+    // 방장
+    private UUID roomManagerUUID;
     //문제 수
     private int numberOfProblems;
 
