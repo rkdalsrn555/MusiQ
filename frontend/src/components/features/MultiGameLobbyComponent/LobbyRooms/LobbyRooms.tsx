@@ -34,7 +34,7 @@ export const LobbyRooms = () => {
           `${process.env.REACT_APP_BASE_URL}/game/main/${channelNumber}`,
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              accessToken,
             },
           }
         );
@@ -79,7 +79,7 @@ export const LobbyRooms = () => {
     <RoomsWrapper>
       {currentRooms.map((room) => (
         <Room key={room.roomManager}>
-          {room.roomTitle} - {room.roomManager} - {getYearsRange(room.years)} - 
+          {room.roomTitle} - {room.roomManager} - {getYearsRange(room.years)} -
           {room.currentMembers} - {room.isPrivate} - {room.roomNumber}
         </Room>
       ))}
