@@ -3,52 +3,43 @@ import axios from 'axios';
 // eslint-disable-next-line import/no-unresolved
 import { Client, Stomp } from '@stomp/stompjs';
 import { useNavigate } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
+import { websocketClientState } from '../../../atoms/atoms';
+
 import { userApis } from '../../../hooks/api/userApis';
 import { ChannelItemsWrapper, ChannelItem } from './ChannelComponent.styled';
 
 export const ChannelComponent = () => {
+  const setWebsocketClient = useSetRecoilState(websocketClientState);
   const [channelSizes, setChannelSizes] = useState([]);
   const navigate = useNavigate();
   const accessToken = window.localStorage.getItem('userAccessToken');
 
-  // 이벤트 핸들러를 함수 외부에 정의
   const handleChannelClick = (channelNumber: number) => {
-    // WebSocket 연결 및 채널 구독
-    const ws = new WebSocket('ws://localhost:8080/api/game-websocket');
-    if (accessToken === null) {
+    if (accessToken) {
+      const ws = new WebSocket('ws://localhost:8080/api/game-websocket');
+
+      const client = new Client({
+        webSocketFactory: () => ws,
+        connectHeaders: {
+          accessToken,
+          channelNo: String(channelNumber),
+        },
+        onConnect: () => {
+          console.log(`Connected to channel ${channelNumber}`);
+          setWebsocketClient(client); // Recoil 상태 설정
+          navigate(`/multi/${channelNumber}/lobby`); // 채널로 이동
+        },
+        onStompError: (frame) => {
+          console.error('STOMP Error:', frame.headers.message);
+        },
+      });
+
+      client.activate(); // 클라이언트 활성화
+    } else {
       console.error('Access token is not available.');
-      return;
     }
-    const client = new Client({
-      webSocketFactory: () => ws,
-      connectHeaders: {
-        accessToken,
-        channelNo: String(channelNumber),
-      },
-    });
-
-    client.activate();
-    console.log(channelNumber);
-
-    client.onConnect = () => {
-      // 연결 후, 채널 구독
-      const channelNo = channelNumber;
-      console.log(channelNo, '연결 했음');
-      const subscription = client.subscribe(
-        `/topic/${channelNo}`,
-        (message) => {
-          // 메시지를 받았을 때의 처리
-          const payload = JSON.parse(message.body);
-          console.log('Received message:', payload);
-          console.log('잘 구독됐냐');
-        }
-      );
-
-      // 채널로 이동
-      navigate(`/multi/${channelNumber}/lobby`);
-    };
   };
-
   useEffect(() => {
     if (!accessToken) {
       console.error('Access token is not available.');

@@ -1,5 +1,6 @@
 package com.a608.musiq.domain.websocket.service;
 
+import com.a608.musiq.domain.member.domain.Member;
 import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.music.domain.Room;
@@ -14,6 +15,7 @@ import com.a608.musiq.domain.websocket.dto.ChannelUserResponseDto;
 import com.a608.musiq.domain.websocket.dto.ChannelUserResponseItem;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
+import com.a608.musiq.domain.websocket.dto.GameRoomListResponseItem;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.AfterAnswerDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.AnswerAndSingerDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.ChatMessagePubDto;
@@ -41,6 +43,7 @@ import com.a608.musiq.global.exception.info.MultiModeExceptionInfo;
 import com.a608.musiq.global.jwt.JwtValidator;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -277,9 +280,9 @@ public class GameService {
 
                 List<GameResultItem> gameResult = new ArrayList<>(userInfoMap.values().stream()
                     .map(item -> GameResultItem.builder()
-                        .nickname(item.getNickname())
-                        .score(item.getScore())
-                        .build()
+                            .nickname(item.getNickname())
+                            .score(item.getScore())
+                            .build()
                     ).collect(Collectors.toList()));
 
                 TotalScoreDto dto = TotalScoreDto.builder()
@@ -299,8 +302,7 @@ public class GameService {
 //                        MemberInfo memberInfo = memberInfoRepository.findById(memberId)
 //                                .orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
 
-                        Optional<MemberInfo> memberInfoOptional = memberInfoRepository.findById(
-                            memberId);
+                        Optional<MemberInfo> memberInfoOptional = memberInfoRepository.findById(memberId);
                         if (!memberInfoOptional.isPresent()) {
                             continue;
                         }
@@ -309,8 +311,8 @@ public class GameService {
                         memberInfo.gainExp(
                             userInfoMap.get(memberId).getScore() * MULTI_SCORE_WEIGHT);
 
-                        util.insertDatatoRedisSortedSet(RedisKey.RANKING.getKey(),
-                            memberInfo.getNickname(), memberInfo.getExp());
+                        util.insertDatatoRedisSortedSet(RedisKey.RANKING.getKey(), memberInfo.getNickname(),
+                                memberInfo.getExp());
                     }
 
                     // 다음 판을 위한 세팅
@@ -357,19 +359,19 @@ public class GameService {
     public ChannelUserResponseDto getUserList(String accessToken, int channelNo) {
         ChannelUserResponseDto channelUserResponseDto = new ChannelUserResponseDto();
         List<ChannelUserResponseItem> items = new ArrayList<>();
-        ConcurrentHashMap<UUID, Integer> channel = new ConcurrentHashMap<>();
+        ConcurrentHashMap<UUID, Integer> channel = GameValue.getGameChannel(channelNo);
         Iterator<UUID> it = channel.keySet().iterator();
 
         while (it.hasNext()) {
             UUID uuid = it.next();
             MemberInfo memberInfo = memberInfoRepository.findById(uuid)
-                .orElseThrow(() -> new MemberInfoException(
-                    MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
+                    .orElseThrow(() -> new MemberInfoException(
+                            MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
 
             items.add(ChannelUserResponseItem.builder()
-                .nickname(memberInfo.getNickname())
-                .userLevel((int) (memberInfo.getExp() / 50))
-                .build());
+                    .nickname(memberInfo.getNickname())
+                    .userLevel((int) (memberInfo.getExp() / 50) + 1)
+                    .build());
         }
 
         channelUserResponseDto.setChannelUserResponseItems(items);
@@ -384,49 +386,73 @@ public class GameService {
      * @see GameRoomListResponseDto
      */
     public GameRoomListResponseDto getGameRoomList(String accessToken, int channelNo) {
-        GameRoomListResponseDto gameRoomListResponseDto = new GameRoomListResponseDto();
         ConcurrentHashMap<Integer, GameRoom> gameRooms = GameValue.getGameRooms();
         Iterator<Integer> it = gameRooms.keySet().iterator();
+        List<GameRoomListResponseItem> gameRoomListResponseItems = new ArrayList<>();
 
         while (it.hasNext()) {
             int subscribeNo = it.next();
             if ((subscribeNo / 1000) == channelNo) {
                 GameRoom gameRoom = gameRooms.get(subscribeNo);
-//                gameRoomListResponseDto.getRooms().add(GameRoom.builder()
-//                        .gameRoomType(gameRoom.getGameRoomType())
-//                        .roomName(gameRoom.getRoomName())
-//                        .totalUsers(gameRoom.getTotalUsers())
-//                        .build());
+                MemberInfo roomManager = memberInfoRepository.findById(gameRoom.getRoomManagerUUID())
+                        .orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
+
+                gameRoomListResponseItems.add(GameRoomListResponseItem.builder()
+                        .roomTitle(gameRoom.getRoomName())
+                        .roomManager(roomManager.getNickname())
+                        .currentMembers(gameRoom.getTotalUsers())
+                        .roomNumber(gameRoom.getRoomNo())
+                        .isPrivate(!gameRoom.getPassword().equals(""))
+                        .years(gameRoom.getYear())
+                        .build());
             }
         }
 
-        return gameRoomListResponseDto;
+        return GameRoomListResponseDto.builder()
+                .rooms(gameRoomListResponseItems)
+                .build();
     }
 
     public CreateGameRoomResponseDto makeGameRoom(String accessToken,
-        CreateGameRoomRequestDto createGameRoomRequestDto) {
-        CreateGameRoomResponseDto createGameRoomResponseDto = new CreateGameRoomResponseDto();
+                                                  CreateGameRoomRequestDto createGameRoomRequestDto) {
+        UUID uuid = jwtValidator.getData(accessToken);
+        String nickname = memberInfoRepository.findById(uuid).orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO)).getNickname();
         GameRoom gameRoom = new GameRoom();
         ConcurrentHashMap<Integer, GameRoom> gameRooms = GameValue.getGameRooms();
 
         Iterator<Integer> it = gameRooms.keySet().iterator();
-        int curRoomIdx = createGameRoomRequestDto.getChannelNo() * 1000;
-        while (it.hasNext()) {
-            int subscribeNo = it.next();
-            if ((subscribeNo / 1000) == createGameRoomRequestDto.getChannelNo()) {
-                curRoomIdx++;
-            }
-        }
-        createGameRoomResponseDto.setGameRoomNo(curRoomIdx + 1);
-        createGameRoomResponseDto.setRoomName(createGameRoomRequestDto.getRoomName());
-        createGameRoomResponseDto.setPassword(createGameRoomRequestDto.getPassword());
-        createGameRoomResponseDto.setMusicYearItems(createGameRoomRequestDto.getMusicYearItems());
-        createGameRoomResponseDto.setQuizAmount(createGameRoomRequestDto.getQuizAmount());
+        int curRoomIndex = GameValue.getChannel(createGameRoomRequestDto.getChannelNo()).getMinimumEmptyRoomNo();
+
         /*
         GameRoom 생성 후 Map에 추가
          */
+        Map<UUID, UserInfoItem> userInfoItems = new HashMap<>();
+        userInfoItems.put(uuid, UserInfoItem.builder()
+                .nickname(nickname)
+                .score(0.0)
+                .isSkipped(false)
+                .build());
 
-        return createGameRoomResponseDto;
+        GameValue.getGameRooms().put(curRoomIndex, GameRoom.builder()
+                        .roomNo(curRoomIndex)
+                        .roomName(createGameRoomRequestDto.getRoomName())
+                        .password(createGameRoomRequestDto.getPassword())
+                        .roomManagerUUID(uuid)
+                        .numberOfProblems(createGameRoomRequestDto.getQuizAmount())
+                        .year(createGameRoomRequestDto.getMusicYear())
+                        .totalUsers(1)
+                        .userInfoItems(userInfoItems)
+                        .build());
+
+        logger.info("Create GameRoom Successful");
+
+        return CreateGameRoomResponseDto.builder()
+                .gameRoomNo(curRoomIndex)
+                .roomName(createGameRoomRequestDto.getRoomName())
+                .password(createGameRoomRequestDto.getPassword())
+                .musicYear(createGameRoomRequestDto.getMusicYear())
+                .quizAmount(createGameRoomRequestDto.getQuizAmount())
+                .build();
     }
 
     public JoinGameRoomResponseDto moveGameRoom(String accessToken, int channelNo) {
