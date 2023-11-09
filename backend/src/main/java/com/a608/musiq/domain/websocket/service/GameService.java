@@ -69,6 +69,7 @@ public class GameService {
     private final BeforeAnswerService beforeAnswerService;
     private final AfterAnswerService afterAnswerService;
     private final CommonService commonService;
+
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
@@ -146,7 +147,7 @@ public class GameService {
      * @param channelNo
      * @param chatMessage
      */
-    public void sendMessage(int channelNo, ChatMessage chatMessage) {
+    public void sendMessage(int channelNo, ChatMessage chatMessage, String token) {
 
         String destination = getDestination(channelNo);
 
@@ -192,7 +193,7 @@ public class GameService {
                 }
                 //10초로 바꾸고 정답 표시, PlayType을 AFTERANSWER 로 변경, skipVote = 0 으로 바꾸기, userInfoItem의 isSkipped 모두 false로 바꾸기
                 if(gameRoom.getTime() == 0){
-                    beforeAnswerService.finishBeforeAnswerWithNoSkipAndNoAnswer(gameRoom);
+//                    beforeAnswerService.finishBeforeAnswerWithNoSkipAndNoAnswer(gameRoom);
                 }
                 // 스킵 로직
                 if(chatMessage.getMessage().equals(".")){

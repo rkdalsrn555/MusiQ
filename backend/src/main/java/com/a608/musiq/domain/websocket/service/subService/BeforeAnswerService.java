@@ -1,8 +1,11 @@
 package com.a608.musiq.domain.websocket.service.subService;
 
+import com.a608.musiq.domain.websocket.data.GameRoomType;
+import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.domain.UserInfoItem;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.AfterAnswerDto;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -12,29 +15,31 @@ import org.springframework.stereotype.Service;
 @Service
 public class BeforeAnswerService {
 
+    public void doBeforeAnswer(Integer roomNum, GameRoom room) {
 
-    public void finishBeforeAnswerWithNoSkipAndNoAnswer(GameRoom gameRoom){
-        gameRoom.setTime(10);
-        gameRoom.setPlayType(PlayType.AFTERANSWER);
-        gameRoom.setSkipVote(0);
-        //userInfoItem의 isSkipped 모두 false로 바꾸기
-        makeAllIsSkippedOfUserInfoItemsFalse(gameRoom);
-
-    }
-
-    /**
-     * userInfoItem의 isSkipped 모두 false로 바꾸기
-     * @param gameRoom
-     * */
-    private void makeAllIsSkippedOfUserInfoItemsFalse(GameRoom gameRoom) {
-        // 1. gameRoom에서 UserInfoItems 가져오기
-        Map<UUID, UserInfoItem> userInfoItems = gameRoom.getUserInfoItems();
-        // 2. Iterator를 사용하여 UserInfoItem의 isSkipped 속성을 변경
-        for (UserInfoItem userInfoItem : userInfoItems.values()) {
-            userInfoItem.setSkipped(false);
-        }
-        // 3. 변경된 userInfoItems를 gameRoom에 설정
-        gameRoom.setUserInfoItems(userInfoItems);
+//        // 카운트 다운 전송
+//        BeforeAnswerDto dto = AfterAnswerDto.builder()
+//                .type(MessageDtoType.AFTERANSWER)
+//                .time(room.getTime())
+//                .build();
+//        messagingTemplate.convertAndSend("/topic/"+roomNum, dto);
+//
+//        // 남은 시간이 1초 이상이라면 시간 다운
+//        if(room.getTime() > 0) {
+//            room.timeDown();
+//        }
+//        // 0초인 경우
+//        else {
+//            if(room.getRound() >= room.getNumberOfProblems()) {
+//                room.changeGameRoomType(GameRoomType.END);
+//                room.setTime(10);
+//            }
+//            else {
+//                room.changePlayType(PlayType.ROUNDSTART);
+//                room.roundUp();
+//                room.setTime(5);
+//            }
+//        }
     }
 
 }

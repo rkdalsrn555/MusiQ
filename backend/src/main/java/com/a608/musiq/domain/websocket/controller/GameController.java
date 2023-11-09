@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -154,14 +155,14 @@ public class GameController {
     }
 
     @MessageMapping("/chat-message/{channelNo}")
-    public void sendChatMessage(@DestinationVariable("channelNo") String channelNo, @Payload ChatMessage chatMessage) {
+    public void sendChatMessage(@DestinationVariable("channelNo") String channelNo, @Payload ChatMessage chatMessage, @Header("accessToken") String token) {
         logger.info("Request Chat Message. channelNo : {}, chatMessage : {}", channelNo, chatMessage);
 
         if(chatMessage == null) {
            throw new IllegalArgumentException();
         }
 
-        gameService.sendMessage(Integer.parseInt(channelNo), chatMessage);
+        gameService.sendMessage(Integer.parseInt(channelNo), chatMessage, token);
     }
 
 }
