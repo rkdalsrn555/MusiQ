@@ -9,7 +9,12 @@ import com.a608.musiq.domain.websocket.dto.ChannelUserResponseDto;
 import com.a608.musiq.domain.websocket.dto.ChannelUserResponseItem;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
 import com.a608.musiq.domain.websocket.data.MessageType;
+import com.a608.musiq.domain.websocket.dto.CreateGameRoomRequestDto;
+import com.a608.musiq.domain.websocket.dto.CreateGameRoomResponseDto;
+import com.a608.musiq.domain.websocket.dto.DisconnectSocketResponseDto;
+import com.a608.musiq.domain.websocket.dto.ExitGameRoomResponse;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
+import com.a608.musiq.domain.websocket.dto.JoinGameRoomResponseDto;
 import com.a608.musiq.global.exception.exception.MemberInfoException;
 import com.a608.musiq.global.exception.exception.MultiModeException;
 import com.a608.musiq.global.exception.info.MemberInfoExceptionInfo;
@@ -25,6 +30,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -39,6 +45,7 @@ public class GameService {
 
     private final MemberInfoRepository memberInfoRepository;
 
+    @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
     private ReentrantReadWriteLock lock;
@@ -94,16 +101,19 @@ public class GameService {
      * @param accessToken
      * @param channelNo
      */
-    public Integer disConnectUser(String accessToken, int channelNo){
+    public DisconnectSocketResponseDto disconnectUser(String accessToken, int channelNo){
         UUID uuid = jwtValidator.getData(accessToken);
 
         /*
         로비에서 정상적인 루트로 나가는 사람이 아닌 게임 룸에서 강제로 퇴장 하는 유저 고려해야 함
+        - 채널에서 지우고 게임룸에서 지우고 Pub 해줘야함
          */
 
         GameValue.removeUserFromChannel(uuid, channelNo);
 
-        return 1;
+        return DisconnectSocketResponseDto.builder()
+                .channelNo(channelNo)
+                .build();
     }
 
     /**
@@ -182,14 +192,57 @@ public class GameService {
             int subscribeNo = it.next();
             if((subscribeNo / 1000) == channelNo){
                 GameRoom gameRoom = gameRooms.get(subscribeNo);
-                gameRoomListResponseDto.getGameRoomList().add(GameRoom.builder()
-                        .gameRoomType(gameRoom.getGameRoomType())
-                        .roomName(gameRoom.getRoomName())
-                        .totalUsers(gameRoom.getTotalUsers())
-                        .build());
+//                gameRoomListResponseDto.getRooms().add(GameRoom.builder()
+//                        .gameRoomType(gameRoom.getGameRoomType())
+//                        .roomName(gameRoom.getRoomName())
+//                        .totalUsers(gameRoom.getTotalUsers())
+//                        .build());
             }
         }
 
         return gameRoomListResponseDto;
     }
+
+    public CreateGameRoomResponseDto makeGameRoom(String accessToken, CreateGameRoomRequestDto createGameRoomRequestDto) {
+        CreateGameRoomResponseDto createGameRoomResponseDto = new CreateGameRoomResponseDto();
+        GameRoom gameRoom = new GameRoom();
+        ConcurrentHashMap<Integer, GameRoom> gameRooms = GameValue.getGameRooms();
+
+        Iterator<Integer> it = gameRooms.keySet().iterator();
+        int curRoomIdx = createGameRoomRequestDto.getChannelNo() * 1000;
+        while(it.hasNext()) {
+            int subscribeNo = it.next();
+            if((subscribeNo / 1000) == createGameRoomRequestDto.getChannelNo()) curRoomIdx++;
+        }
+        createGameRoomResponseDto.setGameRoomNo(curRoomIdx + 1);
+        createGameRoomResponseDto.setRoomName(createGameRoomRequestDto.getRoomName());
+        createGameRoomResponseDto.setPassword(createGameRoomRequestDto.getPassword());
+        createGameRoomResponseDto.setMusicYearItems(createGameRoomRequestDto.getMusicYearItems());
+        createGameRoomResponseDto.setQuizAmount(createGameRoomRequestDto.getQuizAmount());
+        /*
+        GameRoom 생성 후 Map에 추가
+         */
+
+        return createGameRoomResponseDto;
+    }
+
+    public JoinGameRoomResponseDto moveGameRoom(String accessToken, int channelNo) {
+        UUID uuid = jwtValidator.getData(accessToken);
+
+
+
+        return null;
+    }
+
+    public ExitGameRoomResponse moveLobby(String accessToken, int channelNo) {
+        UUID uuid = jwtValidator.getData(accessToken);
+        int lobbyNo = GameValue.getChannelNo(uuid, channelNo);
+        GameValue.removeUserFromChannel(uuid, channelNo);
+        GameValue.addUserToChannel(uuid, lobbyNo);
+
+        return ExitGameRoomResponse.builder()
+                .destinationNo(lobbyNo)
+                .build();
+    }
+
 }
