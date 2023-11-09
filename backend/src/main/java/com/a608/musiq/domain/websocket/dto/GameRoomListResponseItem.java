@@ -12,5 +12,5 @@ public class GameRoomListResponseItem {
     private int currentMembers;
     private int roomNumber;
     private boolean isPrivate;
-    private List<MusicYearItem> years;
+    private String years;
 }
