@@ -6,14 +6,67 @@ import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.domain.UserInfoItem;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.AfterAnswerDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.AnswerAndSingerDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.SkipVoteDto;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
 public class BeforeAnswerService {
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
+    private static final int MAKING_HALF_NUMBER = 2;
+    private static final int MAKING_CEIL_NUMBER = 1;
+
+    /**
+     * beforeAnswer 일때 스킵 로직 구현
+     * @param gameRoom
+     * @param uuid
+     * @param destination
+     * */
+    public void skip(GameRoom gameRoom, UUID uuid, String destination) {
+        int skipVote = gameRoom.getSkipVote();
+        //게임 룸 skipVote ++
+        gameRoom.setSkipVote(++skipVote);
+        //해당 유저 isSkipped = true
+        gameRoom.getUserInfoItems().get(uuid).setSkipped(true);
+
+        //과반수인 경우
+        if (gameRoom.getSkipVote() >= (gameRoom.getTotalUsers() / MAKING_HALF_NUMBER
+            + MAKING_CEIL_NUMBER)) {
+
+            // 메시지 타입 SKIP, isSkipped true, skipVote == 0 으로 pub
+            SkipVoteDto skipVoteDto = SkipVoteDto.create(MessageDtoType.SKIP, true, 0);
+            messagingTemplate.convertAndSend(destination, skipVoteDto);
+            //gameRoom의 playType를 AFTERANSWER 로 바꿔줌
+            gameRoom.setPlayType(PlayType.AFTERANSWER);
+
+            //정답 pub
+            int round = gameRoom.getRound() - 1;
+            String title = gameRoom.getMultiModeProblems().get(round).getTitle();
+            String singer = gameRoom.getMultiModeProblems().get(round).getSinger();
+
+            AnswerAndSingerDto answerAndSingerDto = AnswerAndSingerDto.create(title,
+                singer);
+            messagingTemplate.convertAndSend(destination, answerAndSingerDto);
+
+        } else {
+            //과반수가 아닌 경우
+            SkipVoteDto skipVoteDto = SkipVoteDto.create(MessageDtoType.SKIP, false,
+                gameRoom.getSkipVote());
+            // skipVote++ 하고 pub
+            messagingTemplate.convertAndSend(destination, skipVoteDto);
+        }
+
+    }
+
 
     public void doBeforeAnswer(Integer roomNum, GameRoom room) {
 

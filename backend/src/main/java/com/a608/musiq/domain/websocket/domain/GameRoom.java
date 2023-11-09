@@ -24,7 +24,9 @@ public class GameRoom {
     !!!!!!!!!!!!!!!!!전체적으로 수정해야 함!!!!!!!!!!!!!!!!!
     */
     private String roomName;
+
     private String password;
+    private boolean isPrivate;
     
     //문제 수
     private int numberOfProblems;
@@ -32,15 +34,25 @@ public class GameRoom {
     //선택한 연도
     private String year;
 
+    private String roomManager;
+
 
     private GameRoomType gameRoomType;
+    //------------------------------------------------
+    private Map<UUID, UserInfoItem> userInfoItems;
+    //currentMembers
+    private int totalUsers;
+    //------------------------------------------------
     private PlayType playType;
 
     private int time;
-    private int totalUsers;
+
+
     private int skipVote;
     private int round;
-    private Map<UUID, UserInfoItem> userInfoItems;
+
+
+
     private List<MultiModeProblem> multiModeProblems;
     private MessageType messageType;
 
