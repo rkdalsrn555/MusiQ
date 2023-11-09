@@ -2,8 +2,10 @@ package com.a608.musiq.domain.websocket.service;
 
 import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
+import com.a608.musiq.domain.music.domain.Room;
 import com.a608.musiq.domain.websocket.data.GameRoomType;
 import com.a608.musiq.domain.websocket.data.GameValue;
+import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.domain.UserInfoItem;
@@ -12,10 +14,16 @@ import com.a608.musiq.domain.websocket.dto.ChannelUserResponseDto;
 import com.a608.musiq.domain.websocket.dto.ChannelUserResponseItem;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.AfterAnswerDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameResult;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameResultItem;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.TotalScoreDto;
 import com.a608.musiq.domain.websocket.service.subService.AfterAnswerService;
 import com.a608.musiq.domain.websocket.service.subService.BeforeAnswerService;
 import com.a608.musiq.domain.websocket.service.subService.CommonService;
 import com.a608.musiq.domain.websocket.service.subService.RoundStartService;
+import com.a608.musiq.global.Util;
+import com.a608.musiq.global.Util.RedisKey;
 import com.a608.musiq.global.exception.exception.MemberInfoException;
 import com.a608.musiq.global.exception.exception.MultiModeException;
 import com.a608.musiq.global.exception.info.MemberInfoExceptionInfo;
@@ -27,10 +35,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,20 +55,18 @@ public class GameService {
     private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
     private final JwtValidator jwtValidator;
-
+    private final Util util;
     private final MemberInfoRepository memberInfoRepository;
 
     private final RoundStartService roundStartService;
-
     private final BeforeAnswerService beforeAnswerService;
-
     private final AfterAnswerService afterAnswerService;
-
     private final CommonService commonService;
 
     private SimpMessagingTemplate messagingTemplate;
-
     private ReentrantReadWriteLock lock;
+
+    private static final int MULTI_SCORE_WEIGHT = 10;
 
     @PostConstruct
     public void init() {
@@ -128,14 +136,18 @@ public class GameService {
      * @param chatMessage
      */
     public void sendMessage(int channelNo, ChatMessage chatMessage) {
+
         String destination = getDestination(channelNo);
+
         //프론트가 보낸 메시지에서 uuid 추출
         UUID uuid = UUID.fromString(chatMessage.getUserUUID());
 
         //uuid를 가지고 해당 사용자가 속한 채널 가져오기
         ConcurrentHashMap<UUID, Integer> channel = GameValue.getGameChannel(channelNo);
+
         //방 번호 가져오기 (topic 번호 조회)
         Integer roomNumber = channel.get(uuid);
+
         //방 번호로 gameRoom 객체 조회
         GameRoom gameRoom = GameValue.getGameRooms().get(roomNumber);
 
@@ -150,6 +162,10 @@ public class GameService {
             return;
         }
         if (gameRoomType == GameRoomType.GAME) {
+            // 스킵 확인
+            if(chatMessage.getMessage().equals(".")) {
+                // 스킵 로직
+            }
 
             if (playType == PlayType.ROUNDSTART) {
                 //게임 시작했고 지금 1라운드인 경우
@@ -182,7 +198,7 @@ public class GameService {
 
                 }
                 //정답인 경우
-                if()
+//                if()
 
                 //정답이 아닌 경우
 
@@ -218,6 +234,80 @@ public class GameService {
     }
 
     public void pubMessage(){
+        Map<Integer, GameRoom> rooms = GameValue.getGameRooms();
+        Set<Integer> roomNums = rooms.keySet();
+
+        for(Integer roomNum : roomNums) {
+
+            if(roomNum <= 10) continue;
+
+            GameRoom room = rooms.get(roomNum);
+
+            // GameRoom Type 대기 상태인 경우는 처리하지 않음
+            if(room.getGameRoomType() == GameRoomType.WAITING) continue;
+
+            // 게임 중인 경우
+            else if(room.getGameRoomType() == GameRoomType.GAME) {
+                switch (room.getPlayType()) {
+
+                    case ROUNDSTART:
+                        roundStartService.doRoundStart(roomNum, room);
+                        break;
+                    case BEFOREANSWER:
+                        System.out.println("before answer");
+                        break;
+                    case AFTERANSWER:
+                        afterAnswerService.doAfterAnswer(roomNum, room);
+                        break;
+                }
+            }
+
+            // 게임이 종료되었다면
+            else {
+                Map<UUID, UserInfoItem> userInfoMap = room.getUserInfoItems();
+
+                List<GameResultItem> gameResult = new ArrayList<>(userInfoMap.values().stream()
+                        .map(item-> GameResultItem.builder()
+                                .nickname(item.getNickname())
+                                .score(item.getScore())
+                                .build()
+                        ).collect(Collectors.toList()));
+
+                TotalScoreDto dto = TotalScoreDto.builder()
+                        .type(MessageDtoType.GAMEOVER)
+                        .time(room.getTime())
+                        .gameResult(gameResult)
+                        .build();
+
+                messagingTemplate.convertAndSend("/topic/"+roomNum, dto);
+
+                if(room.getTime() > 0) {
+                    room.timeDown();
+                }
+                else {
+                    
+                    // 경험치 정산
+                    for(UUID memberId : userInfoMap.keySet()) {
+//                        MemberInfo memberInfo = memberInfoRepository.findById(memberId)
+//                                .orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
+
+                        Optional<MemberInfo> memberInfoOptional = memberInfoRepository.findById(memberId);
+                        if(!memberInfoOptional.isPresent()) continue;
+
+                        MemberInfo memberInfo = memberInfoOptional.get();
+                        memberInfo.gainExp(userInfoMap.get(memberId).getScore() * MULTI_SCORE_WEIGHT);
+
+                        util.insertDatatoRedisSortedSet(RedisKey.RANKING.getKey(), memberInfo.getNickname(), memberInfo.getExp());
+                    }
+
+                    // 다음 판을 위한 세팅
+                    room.changeGameRoomType(GameRoomType.WAITING);
+                    room.changePlayType(PlayType.ROUNDSTART);
+                    room.setTime(5);
+                }
+            }
+
+        }
         //전체를 다 돌면서
         //GameRoomType 이 GAME 일때
         //타임을 --

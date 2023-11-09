@@ -4,13 +4,19 @@ import com.a608.musiq.domain.music.domain.Music;
 import com.a608.musiq.domain.music.domain.Title;
 import com.a608.musiq.domain.music.repository.MusicRepository;
 import com.a608.musiq.domain.music.repository.TitleRepository;
+import com.a608.musiq.domain.websocket.data.MessageDtoType;
+import com.a608.musiq.domain.websocket.data.PlayType;
+import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.domain.MultiModeProblem;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.RoundStartDto;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.StringTokenizer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +28,31 @@ public class RoundStartService {
 
     private static final String SPACE = " ";
     private static final int LOOP_START_INDEX = 0;
+
+    private SimpMessagingTemplate messagingTemplate;
+
+    public void doRoundStart(Integer roomNum, GameRoom room) {
+
+        // 해당 방에 문제가 아직 없는 경우 문제 출제
+        if(room.getMultiModeProblems() == null) {
+            room.setMultiModeProblems(makeMutiProblemList(room.getNumberOfProblems(), room.getYear()));
+        }
+
+        // 카운트 다운 및 문제 전송
+        RoundStartDto dto = RoundStartDto.builder()
+                .type(MessageDtoType.ROUNDSTART)
+                .time(room.getTime())
+                .musicUrl(room.getMultiModeProblems().get(room.getRound()-1).getUrl())
+                .build();
+        messagingTemplate.convertAndSend("/topic/"+roomNum, dto);
+        
+        if(room.getTime() > 0) {
+            room.timeDown();
+        } else {
+            room.changePlayType(PlayType.BEFOREANSWER);
+            room.setTime(40);
+        }
+    }
 
     public List<MultiModeProblem> makeMutiProblemList(int numberOfProblems, String year) {
         StringTokenizer st = new StringTokenizer(year, SPACE);
@@ -58,18 +89,24 @@ public class RoundStartService {
     private List<MultiModeProblem> makeMultiModeProblemFromFinalMusicList(
         List<Music> finalMusicList, int numberOfProblems) {
         List<MultiModeProblem> multiModeProblemList = new ArrayList<>();
-        for (int i=LOOP_START_INDEX; i<numberOfProblems; i++) {
-            Music music = finalMusicList.get(i);
+
+        // 랜덤한 int를 numberOfProblems만큼 뽑기
+        Random random = new Random();
+        int[] indexes = random.ints(numberOfProblems, 0, finalMusicList.size()).toArray();
+
+        for(int index : indexes) {
+            Music music = finalMusicList.get(index);
             List<Title> titleList = titleRepository.findAllByMusicId(music.getId());
             List<String> answerList = new ArrayList<>();
             for (Title title : titleList) {
                 answerList.add(title.getAnswer());
             }
             multiModeProblemList.add(
-                MultiModeProblem.create(music.getTitle(), music.getHint(), music.getSinger(),
-                    music.getUrl(), answerList)
+                    MultiModeProblem.create(music.getTitle(), music.getHint(), music.getSinger(),
+                            music.getUrl(), answerList)
             );
         }
+
         return multiModeProblemList;
     }
 

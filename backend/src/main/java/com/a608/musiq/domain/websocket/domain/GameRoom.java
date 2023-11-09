@@ -25,8 +25,10 @@ public class GameRoom {
     */
     private String roomName;
     private String password;
+    
     //문제 수
     private int numberOfProblems;
+
     //선택한 연도
     private String year;
 
@@ -69,7 +71,19 @@ public class GameRoom {
         this.userInfoItems = userInfoItems;
     }
 
+    public void changeGameRoomType(GameRoomType type) {
+        this.gameRoomType = type;
+    }
+
+    public void changePlayType(PlayType type) {
+        this.playType = type;
+    }
+
+    public void timeDown() {
+        this.time--;
+    }
+
+    public void roundUp() {
+        this.round++;
+    }
 }
-
-
-
