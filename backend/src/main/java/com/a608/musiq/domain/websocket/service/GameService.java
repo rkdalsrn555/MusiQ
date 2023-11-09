@@ -147,7 +147,9 @@ public class GameService {
      * @param channelNo
      * @param chatMessage
      */
-    public void sendMessage(int channelNo, ChatMessage chatMessage, String token) {
+    public void sendMessage(int channelNo, ChatMessage chatMessage, String accessToken) {
+        
+        UUID uuid = jwtValidator.getData(accessToken);
 
         String destination = getDestination(channelNo);
 
