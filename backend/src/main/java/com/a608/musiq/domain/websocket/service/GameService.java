@@ -150,17 +150,8 @@ public class GameService {
 
         String destination = getDestination(channelNo);
 
-        //프론트가 보낸 메시지에서 uuid 추출
-        UUID uuid = UUID.fromString(chatMessage.getUserUUID());
-
-        //uuid를 가지고 해당 사용자가 속한 채널 가져오기
-        ConcurrentHashMap<UUID, Integer> channel = GameValue.getGameChannel(channelNo);
-
-        //방 번호 가져오기 (topic 번호 조회)
-        Integer roomNumber = channel.get(uuid);
-
         //방 번호로 gameRoom 객체 조회
-        GameRoom gameRoom = GameValue.getGameRooms().get(roomNumber);
+        GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
 
         //게임룸 타입 가져오기 - 게임 시작은 http 통신으로 민구가 WAITING에서 GAME으로 바꿔줄거임
         GameRoomType gameRoomType = gameRoom.getGameRoomType();
