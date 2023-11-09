@@ -10,8 +10,8 @@ import {
 } from './LobbyUsersList.styled';
 
 type UserType = {
-  nickName: string;
-  level: number;
+  nickname: string;
+  userLevel: number;
 };
 
 export const LobbyUsersList = () => {
@@ -35,15 +35,15 @@ export const LobbyUsersList = () => {
         if (response.data.code === 200) {
           console.log('통신 성공');
           console.log(response.data.data.channelUserResponseItems)
+          console.log()
           const sortedUsers = response.data.data.channelUserResponseItems.sort(
-            (a: UserType, b: UserType) => b.level - a.level
+            (a: UserType, b: UserType) => b.userLevel - a.userLevel
           );
 
           setUsers(sortedUsers);
         }
       } catch (error) {
         console.error('Fetching users failed: ', error);
-        // 여기에 에러 핸들링 로직을 추가할 수 있습니다.
       }
     };
 
@@ -55,8 +55,8 @@ export const LobbyUsersList = () => {
       <ConnectedUserText>접속중인 유저</ConnectedUserText>
       <UserCellWrapper>
         {users.map((user) => (
-          <UserCell key={user.nickName}>
-            {user.nickName} - {user.level}Lv
+          <UserCell key={user.nickname}>
+            {user.nickname} - {user.userLevel}Lv
           </UserCell>
         ))}
       </UserCellWrapper>

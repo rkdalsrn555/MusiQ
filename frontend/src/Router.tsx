@@ -26,7 +26,8 @@ import {
 
 const PrivatePath = [
   { path: '/multi/:channel/lobby', component: <MultiGameLobbyPage /> },
-  { path: '/multi/channel', component: <MultiChannelPage /> },
+  // { path: '/multi/channel', component: <MultiChannelPage /> },
+  { path: '/multi/channel', component: <MzModePage /> },
   { path: '/single/game-option', component: <SingleGameOption /> },
   { path: '/single/game-playing', component: <SingleGamePlaying /> },
   { path: '/single/game-result', component: <ResultPage /> },
