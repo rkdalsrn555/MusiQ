@@ -1,25 +1,25 @@
 package com.a608.musiq.domain.websocket.domain;
 
 import com.a608.musiq.domain.websocket.data.GameRoomType;
+import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 
 @Getter
-
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class GameRoom {
+    private static final int LEAST_MEMBER_SIZE = 1;
+    private static final int ROOM_DIVIDE_NUMBER = 1000;
     /*
     !!!!!!!!!!!!!!!!!전체적으로 수정해야 함!!!!!!!!!!!!!!!!!
     */
@@ -100,5 +100,31 @@ public class GameRoom {
 
     public void roundUp() {
         this.round++;
+    }
+
+    public void leaveUser(UUID uuid, int roomNumber) {
+        int lobbyChannelNumber = roomNumber / ROOM_DIVIDE_NUMBER;
+        int gameChannelNumber = roomNumber % ROOM_DIVIDE_NUMBER;
+
+        // 방에 아무도 안 남을 경우
+        if (totalUsers == LEAST_MEMBER_SIZE) {
+            Channel channel = GameValue.getChannel(lobbyChannelNumber);
+
+            channel.clearGameRoom(gameChannelNumber);
+            return;
+        }
+
+        // 방장 위임
+        if (uuid.equals(roomManagerUUID)) {
+            for(UUID userUUID : userInfoItems.keySet()) {
+                if (!userUUID.equals(roomManagerUUID)) {
+                    roomManagerUUID = userUUID;
+                    break;
+                }
+            }
+        }
+
+        this.totalUsers--;
+        userInfoItems.remove(uuid);
     }
 }

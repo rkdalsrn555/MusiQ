@@ -38,4 +38,8 @@ public class Channel {
         gameChannel.remove(uuid);
     }
 
+    public void clearGameRoom(int channelNo) {
+        isUsed[channelNo] = Boolean.FALSE;
+    }
+
 }

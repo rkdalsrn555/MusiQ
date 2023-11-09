@@ -22,6 +22,7 @@ import com.a608.musiq.domain.websocket.dto.gameMessageDto.ChatMessagePubDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameResult;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameResultItem;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.SkipVoteDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.LeaveGameRoomDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.TotalScoreDto;
 import com.a608.musiq.domain.websocket.service.subService.AfterAnswerService;
 import com.a608.musiq.domain.websocket.service.subService.BeforeAnswerService;
@@ -175,6 +176,13 @@ public class GameService {
         GameRoomType gameRoomType = gameRoom.getGameRoomType();
 
         PlayType playType = gameRoom.getPlayType();
+
+
+        if (chatMessage.getMessage().equals("나가기")) {
+            commonService.leaveGameRoom(uuid, gameRoom, channelNo);
+
+            messagingTemplate.convertAndSend(destination, LeaveGameRoomDto.of(chatMessage.getNickName()));
+        }
 
         if (gameRoomType == GameRoomType.WAITING) {
             //게임 시작 전에 방에 대기중인 상태일 때는 그냥 바로 해당 chat pub
@@ -471,5 +479,6 @@ public class GameService {
             .destinationNo(lobbyNo)
             .build();
     }
+
 
 }
