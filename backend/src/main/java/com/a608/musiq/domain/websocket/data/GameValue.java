@@ -11,8 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
+@Getter
 @Component
-
 public class GameValue {
 
     /**
@@ -57,6 +57,11 @@ public class GameValue {
         return gameChannels.get(channelNo - CHANNEL_SYNC).getGameChannel();
     }
 
+    // 채널 가져오기 (1~10채널)
+    public static Channel getChannel(int channelNo) {
+        return gameChannels.get(channelNo - CHANNEL_SYNC);
+    }
+
     public static ConcurrentHashMap<Integer, GameRoom> getGameRooms() {
         return gameRooms;
     }
@@ -90,6 +95,13 @@ public class GameValue {
         Channel channel = gameChannels.get(from - CHANNEL_SYNC);
 
         channel.addUser(uuid, to);
+    }
+
+    // 게임룸 -> 로비
+    public static void leaveGameRoom(UUID uuid, int gameRoomChannelNo) {
+        int lobbyChannelNo = gameRoomChannelNo / ROOM_DIVIDE_NUMBER;
+
+        moveUserFromChannel(uuid, gameRoomChannelNo, lobbyChannelNo);
     }
 
 
