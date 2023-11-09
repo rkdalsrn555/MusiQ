@@ -28,3 +28,15 @@ export const Room = styled.button`
   justify-content: center;
   align-items: center;
 `;
+
+export const PreviousButton = styled.button`
+  display: flex;
+  position: absolute;
+  left: -5%;
+`;
+
+export const NextButton = styled.button`
+  display: flex;
+  position: absolute;
+  right: -5%;
+`;

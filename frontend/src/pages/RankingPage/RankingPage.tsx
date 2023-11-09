@@ -1,11 +1,16 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useRecoilState } from 'recoil';
 import { StyledRankingImg, StyledRankingDiv } from './RankingPage.styled';
 import { RankingInfo } from '../../components/features/Ranking/RankingInfo';
+import { ActiveCarouselNumAtom } from '../../atoms/atoms';
 
 export const RankingPage = () => {
   const navigate = useNavigate();
+  const [activeCarouselNum, setActiveCarouselNum] = useRecoilState(
+    ActiveCarouselNumAtom
+  );
 
   useEffect(() => {
     // 모바일 기기 접근을 막기 위해 추가한 코드
@@ -17,6 +22,8 @@ export const RankingPage = () => {
     if (isMobile) {
       navigate('/mobile-restriction');
     }
+
+    setActiveCarouselNum({ activeCarouselNum: 4 });
   }, []);
 
   return (

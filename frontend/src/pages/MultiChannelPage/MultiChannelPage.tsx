@@ -1,12 +1,17 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useRecoilState } from 'recoil';
+import { ActiveCarouselNumAtom } from '../../atoms/atoms';
 import { ChannelComponent } from '../../components/features';
 import { BackBtn } from '../../components/utils';
 import { ChannelWrapper, CenteredContainer } from './MultiChannelPage.styled';
 import channelIcon from '../../assets/svgs/channelSelectionLogo.svg';
 
 export const MultiChannelPage = () => {
+  const [activeCarouselNum, setActiveCarouselNum] = useRecoilState(
+    ActiveCarouselNumAtom
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,6 +24,7 @@ export const MultiChannelPage = () => {
     if (isMobile) {
       navigate('/mobile-restriction');
     }
+    setActiveCarouselNum({ activeCarouselNum: 2 });
   }, []);
 
   return (
