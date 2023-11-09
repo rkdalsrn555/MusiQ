@@ -1,1 +1,2 @@
-export * from './GamePlaying';
+export * from './GuestGamePlaying';
+export * from './SingleGamePlaying';

@@ -1,8 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { ActiveCarouselNumAtom, UserDataAtom } from '../../atoms/atoms';
 import {
   Modal,
   LoginBtn,
@@ -14,6 +16,10 @@ import * as S from './Login.styled';
 
 export const Login = () => {
   const navigate = useNavigate();
+  const [userData, setUserData] = useRecoilState(UserDataAtom);
+  const [activeCarouselNum, setActiveCarouselNum] = useRecoilState(
+    ActiveCarouselNumAtom
+  );
 
   const [userId, setUserId] = useState<string>('');
   const [pw, setPw] = useState<string>('');
@@ -32,13 +38,22 @@ export const Login = () => {
 
   const getLogin = () => {
     axios
-      .post(`${process.env.REACT_APP_BASE_URL}/user/login`, {
-        userId,
-        pw,
+      .post(`${process.env.REACT_APP_BASE_URL}/member/login`, {
+        loginId: userIdRef.current,
+        password: pwRef.current,
       })
       .then((res) => {
-        window.localStorage.setItem('userAccessToken', res.data.accessToken);
-        window.localStorage.setItem('userRefreshToken', res.data.refreshToken);
+        window.localStorage.setItem(
+          'userAccessToken',
+          res.data.data.accessToken
+        );
+        window.localStorage.setItem(
+          'userRefreshToken',
+          res.data.data.refreshToken
+        );
+        window.localStorage.setItem('nickname', res.data.data.nickname);
+        setUserData({ nickname: res.data.data.nickname });
+        setActiveCarouselNum({ activeCarouselNum: 0 });
         navigate('/select-mode');
       })
       .catch((err) => {
@@ -87,8 +102,8 @@ export const Login = () => {
     }
   };
 
+  // 모바일 기기 접근을 막기 위해 추가한 코드
   useEffect(() => {
-    // 모바일 기기 접근을 막기 위해 추가한 코드
     const isMobile =
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
@@ -169,7 +184,7 @@ export const Login = () => {
           />
 
           <LoginBtn
-            content="로그인"
+            content="login"
             isDisabled={false}
             handleClick={checkLogin}
           />

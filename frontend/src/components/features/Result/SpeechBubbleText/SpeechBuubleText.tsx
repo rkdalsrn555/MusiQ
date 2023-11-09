@@ -19,20 +19,20 @@ export const SpeechBubbleText: FC<SpeechBubbleTextProps> = ({
     ];
   } else if (correctAnswerCnt >= 1 && correctAnswerCnt <= 7) {
     messages = [
-      `${correctAnswerCnt}개 밖에 못 맞혔어...`,
+      `겨우 ${correctAnswerCnt}라운드?`,
       '조금 더 분발해봐!',
-      '더 많은 문제를 맞혀보자!',
+      '더 다양한 노래를 맞혀보자!',
     ];
   } else if (correctAnswerCnt >= 8 && correctAnswerCnt <= 15) {
     messages = [
-      `${correctAnswerCnt}개 맞혔어!`,
-      '잘했어! 계속 노력하자!',
-      '더 많은 문제를 맞힐 수 있을 거야!',
+      `와우! ${correctAnswerCnt}라운드 라니`,
+      '잘했어, 계속 노력하자!',
+      '더 높은 라운드까지 가보자고!',
     ];
   } else if (correctAnswerCnt >= 16) {
     messages = [
-      `${correctAnswerCnt}개나 맞혔구나!!`,
-      '이만큼이나 맞히다니 대단해!!',
+      `${correctAnswerCnt}라운드라니!!`,
+      '여기까지 오다니 정말 대단해!!',
       '친구들에게 결과를 자랑해보자!',
     ];
   }

@@ -34,7 +34,7 @@ export const ResultInfoText: FC<ResultInfoTextProps> = ({
       <StyledResultText>{displayYear} 랜덤 문제</StyledResultText>
       <StyledResultText>{mode} 모드로</StyledResultText>
       <StyledResultText>
-        연속 {correctAnswerCnt}문제를 맞혔습니다!
+        {correctAnswerCnt}라운드까지 도달했습니다!
       </StyledResultText>
     </div>
   );

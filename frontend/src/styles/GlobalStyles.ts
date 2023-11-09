@@ -19,7 +19,7 @@ const GlobalStyles = createGlobalStyle`
     *{        
         font-family: "Galmuri14", sans-serif;
         box-sizing: border-box;
-        cursor: url(${cursorIcon}) 2 2, auto;
+        cursor: url(${cursorIcon}) 2 2, auto !important;
     }
     button:hover, a:hover {
         cursor: url(${hoverCursorIcon}) 2 2, auto !important; 
@@ -35,6 +35,7 @@ const GlobalStyles = createGlobalStyle`
         font-size: 14px;
         vertical-align: baseline;
         font-family: "Galmuri14", sans-serif;
+        cursor: url(${cursorIcon}) 2 2, auto;
     }
     body{
         width: 100vw;

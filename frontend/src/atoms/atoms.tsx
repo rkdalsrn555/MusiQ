@@ -1,5 +1,8 @@
 import { atom } from 'recoil';
-import { recoilPersist } from 'recoil-persist';
+// eslint-disable-next-line import/no-unresolved
+import { Client } from '@stomp/stompjs';
+
+const isLogin = Boolean(window.localStorage.getItem('userAccessToken'));
 
 type GameOptionDataType = {
   difficulty: {
@@ -10,7 +13,7 @@ type GameOptionDataType = {
   yearList: string[];
   gameRoomData: {
     roomId: number;
-    streak: number;
+    round: number;
     problems: number;
   };
 };
@@ -26,8 +29,34 @@ export const TempLocationStateGameInfo = atom<GameOptionDataType>({
     yearList: [],
     gameRoomData: {
       roomId: 0,
-      streak: 0,
+      round: 0,
       problems: 0,
     },
   },
+});
+
+export const UserDataAtom = atom({
+  key: 'UserDataAtom',
+  default: {
+    nickname: '',
+  },
+});
+
+export const UserIpAtom = atom({
+  key: 'UserIpAtom',
+  default: {
+    ip: '',
+  },
+});
+
+export const ActiveCarouselNumAtom = atom({
+  key: 'ActiveCarouselNumAtom',
+  default: {
+    activeCarouselNum: isLogin ? 0 : 1,
+  },
+});
+
+export const websocketClientState = atom<Client | null>({
+  key: 'websocketClientState',
+  default: null,
 });
