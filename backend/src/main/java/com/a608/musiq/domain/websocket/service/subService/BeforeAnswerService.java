@@ -1,21 +1,16 @@
 package com.a608.musiq.domain.websocket.service.subService;
 
-import com.a608.musiq.domain.websocket.data.GameRoomType;
 import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.domain.UserInfoItem;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.AfterAnswerDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.AnswerAndSingerDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.SkipVoteDto;
-import java.util.Map;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-@RequiredArgsConstructor
 @Service
 public class BeforeAnswerService {
 
@@ -42,11 +37,16 @@ public class BeforeAnswerService {
         if (gameRoom.getSkipVote() >= (gameRoom.getTotalUsers() / MAKING_HALF_NUMBER
             + MAKING_CEIL_NUMBER)) {
 
-            // 메시지 타입 SKIP, isSkipped true, skipVote == 0 으로 pub
-            SkipVoteDto skipVoteDto = SkipVoteDto.create(MessageDtoType.SKIP, true, 0);
-            messagingTemplate.convertAndSend(destination, skipVoteDto);
             //gameRoom의 playType를 AFTERANSWER 로 바꿔줌
             gameRoom.setPlayType(PlayType.AFTERANSWER);
+
+            //gameRoom의 UserInfoItems의 isSkiped 모두 false로 업데이트
+             for(UUID userUuid :gameRoom.getUserInfoItems().keySet()){
+                UserInfoItem userInfoItem = gameRoom.getUserInfoItems().get(userUuid);
+                userInfoItem.setSkipped(false);
+             }
+
+             gameRoom.setSkipVote(0);
 
             //정답 pub
             int round = gameRoom.getRound() - 1;
@@ -57,9 +57,14 @@ public class BeforeAnswerService {
                 singer);
             messagingTemplate.convertAndSend(destination, answerAndSingerDto);
 
+            // 메시지 타입 SKIP, isSkipped true, skipVote = 0 으로 pub
+            SkipVoteDto skipVoteDto = SkipVoteDto.create(MessageDtoType.BEFORESKIP, true, gameRoom.getSkipVote());
+            messagingTemplate.convertAndSend(destination, skipVoteDto);
+
+
         } else {
             //과반수가 아닌 경우
-            SkipVoteDto skipVoteDto = SkipVoteDto.create(MessageDtoType.SKIP, false,
+            SkipVoteDto skipVoteDto = SkipVoteDto.create(MessageDtoType.BEFORESKIP, false,
                 gameRoom.getSkipVote());
             // skipVote++ 하고 pub
             messagingTemplate.convertAndSend(destination, skipVoteDto);

@@ -1,9 +1,6 @@
 package com.a608.musiq.domain.websocket.service;
-
-import com.a608.musiq.domain.member.domain.Member;
 import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
-import com.a608.musiq.domain.music.domain.Room;
 import com.a608.musiq.domain.websocket.data.GameRoomType;
 import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.data.MessageDtoType;
@@ -16,12 +13,9 @@ import com.a608.musiq.domain.websocket.dto.ChannelUserResponseItem;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseItem;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.AfterAnswerDto;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.AnswerAndSingerDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.BeforeAnswerCorrectDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.ChatMessagePubDto;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameResult;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameResultItem;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.SkipVoteDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.LeaveGameRoomDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.TotalScoreDto;
 import com.a608.musiq.domain.websocket.service.subService.AfterAnswerService;
@@ -30,12 +24,10 @@ import com.a608.musiq.domain.websocket.service.subService.CommonService;
 import com.a608.musiq.domain.websocket.service.subService.RoundStartService;
 import com.a608.musiq.global.Util;
 import com.a608.musiq.global.Util.RedisKey;
-import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.dto.CreateGameRoomRequestDto;
 import com.a608.musiq.domain.websocket.dto.CreateGameRoomResponseDto;
 import com.a608.musiq.domain.websocket.dto.DisconnectSocketResponseDto;
 import com.a608.musiq.domain.websocket.dto.ExitGameRoomResponse;
-import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
 import com.a608.musiq.domain.websocket.dto.JoinGameRoomResponseDto;
 import com.a608.musiq.global.exception.exception.MemberInfoException;
 import com.a608.musiq.global.exception.exception.MultiModeException;
@@ -83,8 +75,7 @@ public class GameService {
     private ReentrantReadWriteLock lock;
 
     private static final int MULTI_SCORE_WEIGHT = 10;
-    private static final int MAKING_HALF_NUMBER = 2;
-    private static final int MAKING_CEIL_NUMBER = 1;
+
 
     @PostConstruct
     public void init() {
@@ -185,7 +176,7 @@ public class GameService {
         }
 
         if (gameRoomType == GameRoomType.WAITING) {
-            //게임 시작 전에 방에 대기중인 상태일 때는 그냥 바로 해당 chat pub
+            //일반 채팅
             ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(MessageDtoType.CHAT,
                 chatMessage.getNickName(), chatMessage.getMessage());
             messagingTemplate.convertAndSend(destination, chatMessagePubDto);
@@ -194,11 +185,13 @@ public class GameService {
         if (gameRoomType == GameRoomType.GAME) {
 
             if (playType == PlayType.ROUNDSTART) {
-                //일반 채팅 해야함
-
+                //일반 채팅
+                ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(MessageDtoType.CHAT,
+                    chatMessage.getNickName(), chatMessage.getMessage());
+                messagingTemplate.convertAndSend(destination, chatMessagePubDto);
+                return;
 
             }
-
             if (playType == PlayType.BEFOREANSWER) {
                 // 스킵 확인
                 if (chatMessage.getMessage().equals(".")) {
@@ -208,39 +201,68 @@ public class GameService {
                     }
                     //beforeAnswer 일때 스킵 로직 구현
                     beforeAnswerService.skip(gameRoom, uuid, destination);
+                    return;
 
                 }
                 // 스킵이 아닌 경우
                 else {
+                    //먼저 일반채팅으로 pub 부터 함
+                    ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(MessageDtoType.CHAT,
+                        chatMessage.getNickName(), chatMessage.getMessage());
+                    messagingTemplate.convertAndSend(destination, chatMessagePubDto);
+                    //그 다음 정답 채점 로직 구현
+                    int round = gameRoom.getRound() - 1;
+                    String submitedAnswer = chatMessage.getMessage().replaceAll(" ", "").toLowerCase();
+                    for(String answer:gameRoom.getMultiModeProblems().get(round).getAnswerList()){
+                        //정답 맞은 경우
+                        answer = answer.replaceAll(" ", "").toLowerCase();
+                        if(submitedAnswer.equals(answer.toLowerCase())){
+
+                            String title = gameRoom.getMultiModeProblems().get(round).getTitle();
+                            String singer = gameRoom.getMultiModeProblems().get(round).getSinger();
+
+                            // 정답자 닉네임, 정답 제목, 가수 pub
+                            BeforeAnswerCorrectDto beforeAnswerCorrectDto =
+                                BeforeAnswerCorrectDto.create(MessageDtoType.BEFOREANSWERCORRECT,
+                                    chatMessage.getNickName(), title, singer,0);
+                            messagingTemplate.convertAndSend(destination,beforeAnswerCorrectDto);
+
+                            gameRoom.setPlayType(PlayType.AFTERANSWER);
+
+                            //스킵 투표 초기화
+                            gameRoom.setSkipVote(0);
+                            //gameRoom의 UserInfoItems의 isSkiped 모두 false로 업데이트
+                            for(UUID userUuid :gameRoom.getUserInfoItems().keySet()){
+                                UserInfoItem userInfoItem = gameRoom.getUserInfoItems().get(userUuid);
+                                userInfoItem.setSkipped(false);
+                            }
+                            return;
+                        }
+                    }
+
 
                 }
-                //현재 정답
-
-                //정답인 경우
-//                if()
-
-                //정답이 아닌 경우
 
             }
 
             if (playType == PlayType.AFTERANSWER) {
-
+                if (chatMessage.getMessage().equals(".")) {
+                    // 이미 스킵 했으면 그냥 return
+                    if (gameRoom.getUserInfoItems().get(uuid).getIsSkipped()) {
+                        return;
+                    }
+                    afterAnswerService.skip(gameRoom, uuid, destination);
+                    return;
+                }
+                else{
+                    //일반 채팅
+                    ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(MessageDtoType.CHAT,
+                        chatMessage.getNickName(), chatMessage.getMessage());
+                    messagingTemplate.convertAndSend(destination, chatMessagePubDto);
+                }
             }
         }
 
-        //게임 타입이 뭐냐에 따라 맞는 로직 처리
-
-        //백단 로직 처리
-
-        //스킵처리
-
-        //따로 메서드하나 더 만들어서 크론에 돌려서
-
-        //pub을 위한 클래스 값 채우기
-
-//        messagingTemplate.convertAndSend(destination, chatMessage);
-
-        //if(정답일떄) -> 정답자랑
 
         logger.info("Message send success / Destination : {}", destination);
 
