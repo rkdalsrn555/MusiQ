@@ -4,10 +4,14 @@ import com.a608.musiq.domain.websocket.data.GameRoomType;
 import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
+import com.a608.musiq.domain.websocket.domain.MultiModeProblem;
 import com.a608.musiq.domain.websocket.domain.UserInfoItem;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.AfterAnswerDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.AnswerAndSingerDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.AnswerInfoDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.InitialHintDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.SingerHintDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.SkipVoteDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.TimeDto;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -70,28 +74,56 @@ public class BeforeAnswerService {
 
     public void doBeforeAnswer(Integer roomNum, GameRoom room) {
 
-        // 카운트 다운 전송
-        BeforeAnswerDto dto = AfterAnswerDto.builder()
-                .type(MessageDtoType.AFTERANSWER)
-                .time(room.getTime())
-                .build();
-        messagingTemplate.convertAndSend("/topic/"+roomNum, dto);
+        // 현재 문제를 뽑아오기
+        MultiModeProblem currentProblem = room.getMultiModeProblems().get(room.getRound()-1);
 
-        // 남은 시간이 1초 이상이라면 시간 다운
+        // 남은 시간이 30초라면 가수 힌트
+        if(room.getTime() == 30) {
+            SingerHintDto dto = SingerHintDto.builder()
+                    .singerHint(currentProblem.getSinger())
+                    .build();
+            messagingTemplate.convertAndSend("/topic/"+roomNum, dto);
+        }
+        // 20초 남았다면 초성 힌트
+        else if (room.getTime() == 20) {
+            InitialHintDto dto = InitialHintDto.builder()
+                    .initialHint(currentProblem.getHint())
+                    .build();
+            messagingTemplate.convertAndSend("/topic/"+roomNum, dto);
+        }
+
+        // 남은 시간이 1초 이상이라면 시간 전송 및 다운
         if(room.getTime() > 0) {
+
+            // 카운트 다운 전송
+            TimeDto timeDto = TimeDto.builder()
+                    .time(room.getTime())
+                    .build();
+            messagingTemplate.convertAndSend("/topic/"+roomNum, timeDto);
+
+            // 시간 다운
             room.timeDown();
         }
         // 0초인 경우
         else {
-            if(room.getRound() >= room.getNumberOfProblems()) {
-                room.changeGameRoomType(GameRoomType.END);
-                room.setTime(10);
+            room.changePlayType(PlayType.AFTERANSWER);
+            room.setTime(10);
+
+            AnswerInfoDto dto = AnswerInfoDto.builder()
+                    .answer(currentProblem.getTitle())
+                    .singer(currentProblem.getSinger())
+                    .winner("")
+                    .build();
+            messagingTemplate.convertAndSend("/topic/"+roomNum, dto);
+
+            // 참여 인원의 스킵 여부를 모두 false로 바꿈
+            Map<UUID, UserInfoItem> userInfos = room.getUserInfoItems();
+            for(UserInfoItem user : userInfos.values()) {
+                user.setSkipped(false);
             }
-            else {
-                room.changePlayType(PlayType.ROUNDSTART);
-                room.roundUp();
-                room.setTime(5);
-            }
+
+            // 방의 전체 스킵 수도 0으로 설정
+            room.setSkipVote(0);
         }
     }
 
