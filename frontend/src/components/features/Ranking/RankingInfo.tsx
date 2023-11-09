@@ -89,7 +89,7 @@ export const RankingInfo: React.FC = () => {
           `${process.env.REACT_APP_BASE_URL}/ranking/fullranking?nickname=${nickname}`
         );
         setRankingData(response.data.data.rankList);
-        setMyRank(response.data.data.myRank ?? '강민구');
+        setMyRank(response.data.data.myRank ?? '순위권 외');
         setLoading(false);
       } catch (error) {
         console.error('랭킹 데이터를 가져오는 중 에러가 발생했습니다:', error);

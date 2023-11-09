@@ -1,4 +1,6 @@
 import { atom } from 'recoil';
+// eslint-disable-next-line import/no-unresolved
+import { Client } from '@stomp/stompjs';
 
 const isLogin = Boolean(window.localStorage.getItem('userAccessToken'));
 
@@ -52,4 +54,9 @@ export const ActiveCarouselNumAtom = atom({
   default: {
     activeCarouselNum: isLogin ? 0 : 1,
   },
+});
+
+export const websocketClientState = atom<Client | null>({
+  key: 'websocketClientState',
+  default: null,
 });
