@@ -5,7 +5,6 @@ import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.AfterAnswerDto;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.RoundStartDto;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +34,7 @@ public class AfterAnswerService {
             }
             else {
                 room.changePlayType(PlayType.ROUNDSTART);
+                room.roundUp();
                 room.setTime(5);
             }
         }
