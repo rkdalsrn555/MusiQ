@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SingerHintDto {
 
-    private MessageDtoType type;
+    private MessageDtoType messageType;
     private String singerHint;
 
     @Builder
     public SingerHintDto(String singerHint) {
-        this.type = MessageDtoType.SINGERHINT;
+        this.messageType = MessageDtoType.SINGERHINT;
         this.singerHint = singerHint;
     }
 }

@@ -56,7 +56,7 @@ export const LobbyUsersList = () => {
       <UserCellWrapper>
         {users.map((user) => (
           <UserCell key={user.nickname}>
-            {user.nickname} - {user.userLevel}Lv
+            {user.nickname} {user.userLevel}Lv
           </UserCell>
         ))}
       </UserCellWrapper>

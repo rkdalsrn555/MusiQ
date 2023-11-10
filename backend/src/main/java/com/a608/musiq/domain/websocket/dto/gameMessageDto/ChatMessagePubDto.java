@@ -7,12 +7,12 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class ChatMessagePubDto {
-    MessageDtoType type;
+    MessageDtoType messageType;
     private String nickname;
     private String message;
 
-    public static ChatMessagePubDto create(MessageDtoType type, String nickName, String message){
+    public static ChatMessagePubDto create(MessageDtoType messageType, String nickName, String message){
 
-        return new ChatMessagePubDto(type, nickName, message);
+        return new ChatMessagePubDto(messageType, nickName, message);
     }
 }

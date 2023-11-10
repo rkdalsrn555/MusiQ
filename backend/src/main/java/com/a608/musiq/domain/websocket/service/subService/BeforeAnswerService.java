@@ -13,18 +13,19 @@ import com.a608.musiq.domain.websocket.dto.gameMessageDto.TimeDto;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BeforeAnswerService {
 
     @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    private SimpMessageSendingOperations messagingTemplate;
 
     private static final int MAKING_HALF_NUMBER = 2;
     private static final int MAKING_CEIL_NUMBER = 1;
-
+    private static final int SKIP_VOTE_INITIAL_NUMBER = 0;
+    private static final int ROUND_SYNC_NUMBER = 1;
     /**
      * beforeAnswer 일때 스킵 로직 구현
      *
@@ -43,16 +44,16 @@ public class BeforeAnswerService {
         if (gameRoom.getSkipVote() >= (gameRoom.getTotalUsers() / MAKING_HALF_NUMBER
             + MAKING_CEIL_NUMBER)) {
             //정답 pub
-            int round = gameRoom.getRound() - 1;
+            int round = gameRoom.getRound() - ROUND_SYNC_NUMBER;
             String title = gameRoom.getMultiModeProblems().get(round).getTitle();
             String singer = gameRoom.getMultiModeProblems().get(round).getSinger();
 
             BeforeAnswerCorrectDto beforeAnswerCorrectDto = BeforeAnswerCorrectDto.create(
-                MessageDtoType.BEFOREANSWERCORRECT,"", title, singer,0);
+                MessageDtoType.BEFOREANSWERCORRECT,"", title, singer,SKIP_VOTE_INITIAL_NUMBER);
             messagingTemplate.convertAndSend(destination, beforeAnswerCorrectDto);
 
             //스킵 투표 pub
-            gameRoom.setSkipVote(0);
+            gameRoom.setSkipVote(SKIP_VOTE_INITIAL_NUMBER);
             // 메시지 타입 SKIP, isSkipped true, skipVote = 0 으로 pub
             SkipVoteDto skipVoteDto = SkipVoteDto.create(MessageDtoType.BEFORESKIP, true,
                 gameRoom.getSkipVote());
@@ -91,7 +92,7 @@ public class BeforeAnswerService {
         }
         // 20초 남았다면 초성 힌트
         else if (room.getTime() == 20) {
-            InitialHintDto dto = InitialHintDto.builder().initialHint(currentProblem.getHint())
+            InitialHintDto dto = InitialHintDto.builder().initialHint(currentProblem.getInitialHint())
                 .build();
             messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
         }

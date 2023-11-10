@@ -7,12 +7,12 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class SkipVoteDto {
-    private MessageDtoType messageDtoType;
+    private MessageDtoType messageType;
     private Boolean isSkipped;
     private Integer skipVote;
 
-    public static SkipVoteDto create(MessageDtoType messageDtoType, Boolean isSkipped, Integer skipVote){
-        return new SkipVoteDto(messageDtoType, isSkipped, skipVote);
+    public static SkipVoteDto create(MessageDtoType messageType, Boolean isSkipped, Integer skipVote){
+        return new SkipVoteDto(messageType, isSkipped, skipVote);
     }
 
 }

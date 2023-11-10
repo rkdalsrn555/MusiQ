@@ -13,6 +13,6 @@ public class GameRoomMemberInfo {
     @Builder
     public GameRoomMemberInfo(String nickName, Integer level) {
         this.nickname = nickName;
-        this.level = level;
+        this.level = level + 1;
     }
 }

@@ -13,7 +13,7 @@ public class MultiModeProblem {
     //곡명
     private String title;
     //힌트
-    private String hint;
+    private String initialHint;
     //가수
     private String singer;
     //링크
@@ -21,10 +21,10 @@ public class MultiModeProblem {
     //정답 List
     private List<String> answerList;
 
-    public static MultiModeProblem create(String title, String hint, String singer, String url,
+    public static MultiModeProblem create(String title, String initialHint, String singer, String url,
         List<String> answerList) {
 
-        return new MultiModeProblem(title, hint, singer, url, answerList);
+        return new MultiModeProblem(title, initialHint, singer, url, answerList);
     }
 
 
