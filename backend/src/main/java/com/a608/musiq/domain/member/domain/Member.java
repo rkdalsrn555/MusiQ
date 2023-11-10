@@ -1,6 +1,5 @@
 package com.a608.musiq.domain.member.domain;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 import org.hibernate.annotations.ColumnDefault;
@@ -8,8 +7,12 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import com.a608.musiq.domain.BaseTimeEntity;
+import com.a608.musiq.domain.member.data.LoginType;
+import com.a608.musiq.domain.member.data.LoginTypeConverter;
+import com.a608.musiq.domain.music.data.DifficultyConverter;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
@@ -43,6 +46,7 @@ public class Member extends BaseTimeEntity {
 
 	@NotNull
 	@Column
+	@Convert(converter = LoginTypeConverter.class)
 	private LoginType loginType;
 
 	@NotNull
