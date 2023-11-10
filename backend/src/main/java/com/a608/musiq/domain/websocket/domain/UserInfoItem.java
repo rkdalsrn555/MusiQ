@@ -24,4 +24,9 @@ public class UserInfoItem {
     public void setSkipped(Boolean skipped) {
         isSkipped = skipped;
     }
+
+    public void initializeUserInfo() {
+        this.score = 0.0;
+        this.isSkipped = false;
+    }
 }

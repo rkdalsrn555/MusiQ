@@ -1,13 +1,12 @@
 package com.a608.musiq.domain.websocket.service;
 
-import com.a608.musiq.domain.member.domain.Member;
 import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
-import com.a608.musiq.domain.music.domain.Room;
 import com.a608.musiq.domain.websocket.data.GameRoomType;
 import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import com.a608.musiq.domain.websocket.data.PlayType;
+import com.a608.musiq.domain.websocket.domain.Channel;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.domain.UserInfoItem;
 import com.a608.musiq.domain.websocket.dto.AllChannelSizeResponseDto;
@@ -16,22 +15,24 @@ import com.a608.musiq.domain.websocket.dto.ChannelUserResponseItem;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseItem;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.AfterAnswerDto;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameResult;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.BeforeAnswerCorrectDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameRoomMemberDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameRoomMemberInfo;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.ChatMessagePubDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameResultDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameResultItem;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.TotalScoreDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.TimeDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.LeaveGameRoomDto;
 import com.a608.musiq.domain.websocket.service.subService.AfterAnswerService;
 import com.a608.musiq.domain.websocket.service.subService.BeforeAnswerService;
 import com.a608.musiq.domain.websocket.service.subService.CommonService;
 import com.a608.musiq.domain.websocket.service.subService.RoundStartService;
 import com.a608.musiq.global.Util;
 import com.a608.musiq.global.Util.RedisKey;
-import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.dto.CreateGameRoomRequestDto;
 import com.a608.musiq.domain.websocket.dto.CreateGameRoomResponseDto;
 import com.a608.musiq.domain.websocket.dto.DisconnectSocketResponseDto;
 import com.a608.musiq.domain.websocket.dto.ExitGameRoomResponse;
-import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
 import com.a608.musiq.domain.websocket.dto.JoinGameRoomResponseDto;
 import com.a608.musiq.global.exception.exception.MemberInfoException;
 import com.a608.musiq.global.exception.exception.MultiModeException;
@@ -72,12 +73,15 @@ public class GameService {
     private final BeforeAnswerService beforeAnswerService;
     private final AfterAnswerService afterAnswerService;
     private final CommonService commonService;
+
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
     private ReentrantReadWriteLock lock;
 
     private static final int MULTI_SCORE_WEIGHT = 10;
+    private static final int LEVEL_SIZE = 50;
+
 
     @PostConstruct
     public void init() {
@@ -140,27 +144,25 @@ public class GameService {
 
         GameValue.removeUserFromChannel(uuid, channelNo);
 
-        return DisconnectSocketResponseDto.builder()
-                .channelNo(channelNo)
-                .build();
+        return DisconnectSocketResponseDto.builder().channelNo(channelNo).build();
     }
 
     /**
      * @param channelNo
      * @param chatMessage
      */
-    public void sendMessage(int channelNo, ChatMessage chatMessage) {
+    public void sendMessage(int channelNo, ChatMessage chatMessage, String accessToken) {
+
+        UUID uuid = jwtValidator.getData(accessToken);
 
         String destination = getDestination(channelNo);
 
-        //프론트가 보낸 메시지에서 uuid 추출
-        UUID uuid = UUID.fromString(chatMessage.getUserUUID());
-
-        //uuid를 가지고 해당 사용자가 속한 채널 가져오기
-        ConcurrentHashMap<UUID, Integer> channel = GameValue.getGameChannel(channelNo);
-
-        //방 번호 가져오기 (topic 번호 조회)
-        Integer roomNumber = channel.get(uuid);
+        if (channelNo <= 10) {
+            ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(MessageDtoType.CHAT,
+                    chatMessage.getNickName(), chatMessage.getMessage());
+            messagingTemplate.convertAndSend(destination, chatMessagePubDto);
+            return;
+        }
 
         //방 번호로 gameRoom 객체 조회
         GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
@@ -168,77 +170,109 @@ public class GameService {
         //게임룸 타입 가져오기 - 게임 시작은 http 통신으로 민구가 WAITING에서 GAME으로 바꿔줄거임
         GameRoomType gameRoomType = gameRoom.getGameRoomType();
 
-        PlayType playType = gameRoom.getPlayType();
 
-        if (gameRoomType == GameRoomType.WAITING) {
-            //게임 시작 전에 방에 대기중인 상태일 때는 그냥 바로 해당 chat pub
-            messagingTemplate.convertAndSend(destination, chatMessage);
+        if (chatMessage.getMessage().equals("나가기")) {
+            String currentRoomManagerNickname = commonService.leaveGameRoom(uuid, gameRoom, channelNo);
+
+            messagingTemplate.convertAndSend(destination,
+                    LeaveGameRoomDto.from(chatMessage.getNickName(), currentRoomManagerNickname));
+        }
+
+        if (gameRoomType == GameRoomType.WAITING || gameRoomType == GameRoomType.END) {
+            //일반 채팅
+            ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(MessageDtoType.CHAT,
+                    chatMessage.getNickName(), chatMessage.getMessage());
+            messagingTemplate.convertAndSend(destination, chatMessagePubDto);
             return;
         }
         if (gameRoomType == GameRoomType.GAME) {
-            // 스킵 확인
-            if (chatMessage.getMessage().equals(".")) {
-                // 스킵 로직
-            }
-
+            PlayType playType = gameRoom.getPlayType();
             if (playType == PlayType.ROUNDSTART) {
-                //게임 시작했고 지금 1라운드인 경우
-                if (gameRoom.getRound() == 1) {
-                    gameRoom.setMultiModeProblems(
-                            roundStartService.makeMutiProblemList(gameRoom.getNumberOfProblems(), gameRoom.getYear()));
-                }
+                //일반 채팅
+                ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(MessageDtoType.CHAT,
+                        chatMessage.getNickName(), chatMessage.getMessage());
+                messagingTemplate.convertAndSend(destination, chatMessagePubDto);
+                return;
+
             }
-
             if (playType == PlayType.BEFOREANSWER) {
-                //현재 라운드
-
-                //현재 정답
-
-                //가수 힌트
-                if (gameRoom.getTime() == 30) {
-
-                }
-                //초성 힌트
-                if (gameRoom.getTime() == 20) {
-
-                }
-                //10초로 바꾸고 정답 표시, PlayType을 AFTERANSWER 로 변경, skipVote = 0 으로 바꾸기, userInfoItem의 isSkipped 모두 false로 바꾸기
-                if (gameRoom.getTime() == 0) {
-                    beforeAnswerService.finishBeforeAnswerWithNoSkipAndNoAnswer(gameRoom);
-                }
-                // 스킵 로직
+                // 스킵 확인
                 if (chatMessage.getMessage().equals(".")) {
-                    //과반수 일때 처리
+                    // 이미 스킵 했으면 그냥 return
+                    if (gameRoom.getUserInfoItems().get(uuid).getIsSkipped()) {
+                        return;
+                    }
+                    //beforeAnswer 일때 스킵 로직 구현
+                    beforeAnswerService.skip(gameRoom, uuid, destination);
+                    return;
 
                 }
-                //정답인 경우
-//                if()
+                // 스킵이 아닌 경우
+                else {
+                    //먼저 일반채팅으로 pub 부터 함
+                    ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(
+                            MessageDtoType.CHAT, chatMessage.getNickName(),
+                            chatMessage.getMessage());
+                    messagingTemplate.convertAndSend(destination, chatMessagePubDto);
 
-                //정답이 아닌 경우
+                    //그 다음 정답 채점 로직 구현
+                    int round = gameRoom.getRound() - 1;
+                    String submitedAnswer = chatMessage.getMessage().replaceAll(" ", "")
+                            .toLowerCase();
+                    for (String answer : gameRoom.getMultiModeProblems().get(round)
+                            .getAnswerList()) {
+                        //정답 맞은 경우
+                        answer = answer.replaceAll(" ", "").toLowerCase();
+                        if (submitedAnswer.equals(answer.toLowerCase())) {
+
+                            String title = gameRoom.getMultiModeProblems().get(round).getTitle();
+                            String singer = gameRoom.getMultiModeProblems().get(round).getSinger();
+
+                            // 정답자 닉네임, 정답 제목, 가수, skipVote 0 pub
+                            BeforeAnswerCorrectDto beforeAnswerCorrectDto = BeforeAnswerCorrectDto.create(
+                                    MessageDtoType.BEFOREANSWERCORRECT, chatMessage.getNickName(),
+                                    title, singer, 0);
+                            messagingTemplate.convertAndSend(destination, beforeAnswerCorrectDto);
+
+                            gameRoom.setPlayType(PlayType.AFTERANSWER);
+
+                            //스킵 투표 초기화
+                            gameRoom.setSkipVote(0);
+                            //gameRoom의 UserInfoItems의 isSkiped 모두 false로 업데이트
+                            for (UUID userUuid : gameRoom.getUserInfoItems().keySet()) {
+                                UserInfoItem userInfoItem = gameRoom.getUserInfoItems()
+                                        .get(userUuid);
+                                userInfoItem.setSkipped(false);
+                            }
+                            return;
+                        }
+                    }
+
+
+                }
 
             }
 
             if (playType == PlayType.AFTERANSWER) {
-
+                if (chatMessage.getMessage().equals(".")) {
+                    // 이미 스킵 했으면 그냥 return
+                    if (gameRoom.getUserInfoItems().get(uuid).getIsSkipped()) {
+                        return;
+                    }
+                    afterAnswerService.skip(gameRoom, uuid, destination);
+                    return;
+                } else {
+                    //일반 채팅
+                    ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(
+                            MessageDtoType.CHAT, chatMessage.getNickName(),
+                            chatMessage.getMessage());
+                    messagingTemplate.convertAndSend(destination, chatMessagePubDto);
+                }
             }
         }
 
-        //게임 타입이 뭐냐에 따라 맞는 로직 처리
-
-        //백단 로직 처리
-
-        //스킵처리
-
-        //따로 메서드하나 더 만들어서 크론에 돌려서
-
-        //pub을 위한 클래스 값 채우기
-
-//        messagingTemplate.convertAndSend(destination, chatMessage);
-
-        //if(정답일떄) -> 정답자랑
-
         logger.info("Message send success / Destination : {}", destination);
-//
+
 //        if(chatMessage.getMessageType() == MessageType.GAME) {
 //            submitAnswer(chatMessage.getMessage());
 //        }
@@ -281,57 +315,64 @@ public class GameService {
             else {
                 Map<UUID, UserInfoItem> userInfoMap = room.getUserInfoItems();
 
-                List<GameResultItem> gameResult = new ArrayList<>(userInfoMap.values().stream()
-                        .map(item -> GameResultItem.builder()
-                                .nickname(item.getNickname())
-                                .score(item.getScore())
-                                .build()
-                        ).collect(Collectors.toList()));
+                if (room.getTime() == 10) {
+                    // 참여 인원의 점수들을 리스트로 통합
+                    List<GameResultItem> gameResults = new ArrayList<>(userInfoMap.values().stream()
+                            .map(item -> GameResultItem.builder().nickname(item.getNickname())
+                                    .score(item.getScore()).build()).collect(Collectors.toList()));
 
-                TotalScoreDto dto = TotalScoreDto.builder()
-                        .type(MessageDtoType.GAMEOVER)
-                        .time(room.getTime())
-                        .gameResult(gameResult)
-                        .build();
+                    // 점수 리스트를 담아 전송
+                    GameResultDto dto = GameResultDto.builder().userResults(gameResults).build();
 
-                messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
+                    messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
+                }
 
+                // 시간 초 카운트
                 if (room.getTime() > 0) {
+
+                    // 타임을 객체에 담아서
+                    TimeDto dto = TimeDto.builder().time(room.getTime()).build();
+                    messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
+
                     room.timeDown();
-                } else {
+                }
+                // 남은 시간이 0이라면
+                else {
+                    List<GameRoomMemberInfo> memberInfos = new ArrayList<>();
 
                     // 경험치 정산
                     for (UUID memberId : userInfoMap.keySet()) {
 //                        MemberInfo memberInfo = memberInfoRepository.findById(memberId)
 //                                .orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
 
-                        Optional<MemberInfo> memberInfoOptional = memberInfoRepository.findById(memberId);
+                        Optional<MemberInfo> memberInfoOptional = memberInfoRepository.findById(
+                                memberId);
                         if (!memberInfoOptional.isPresent()) {
                             continue;
                         }
 
                         MemberInfo memberInfo = memberInfoOptional.get();
-                        memberInfo.gainExp(userInfoMap.get(memberId).getScore() * MULTI_SCORE_WEIGHT);
+                        memberInfo.gainExp(
+                                userInfoMap.get(memberId).getScore() * MULTI_SCORE_WEIGHT);
 
-                        util.insertDatatoRedisSortedSet(RedisKey.RANKING.getKey(), memberInfo.getNickname(),
-                                memberInfo.getExp());
+                        util.insertDatatoRedisSortedSet(RedisKey.RANKING.getKey(),
+                                memberInfo.getNickname(), memberInfo.getExp());
+
+                        memberInfos.add(
+                                GameRoomMemberInfo.builder().nickName(memberInfo.getNickname())
+                                        .level((int) (memberInfo.getExp() / LEVEL_SIZE)).build());
                     }
 
                     // 다음 판을 위한 세팅
-                    room.changeGameRoomType(GameRoomType.WAITING);
-                    room.changePlayType(PlayType.ROUNDSTART);
-                    room.setTime(5);
+                    room.initializeRoom();
+
+                    // 클라이언트에게 대기방 관련 정보 전달 해줘야 함
+                    GameRoomMemberDto dto = GameRoomMemberDto.builder().memberInfos(memberInfos)
+                            .build();
+                    messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
                 }
             }
-
         }
-        //전체를 다 돌면서
-        //GameRoomType 이 GAME 일때
-        //타임을 --
-        //PlayType 이 BEFOREANSWER 일때
-        //  타임이 30초면 가수힌트
-        //  타임이 20초면 초성힌트
-        //
     }
 
     /**
@@ -366,14 +407,11 @@ public class GameService {
 
         while (it.hasNext()) {
             UUID uuid = it.next();
-            MemberInfo memberInfo = memberInfoRepository.findById(uuid)
-                    .orElseThrow(() -> new MemberInfoException(
-                            MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
+            MemberInfo memberInfo = memberInfoRepository.findById(uuid).orElseThrow(
+                    () -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
 
-            items.add(ChannelUserResponseItem.builder()
-                    .nickname(memberInfo.getNickname())
-                    .userLevel((int) (memberInfo.getExp() / 50) + 1)
-                    .build());
+            items.add(ChannelUserResponseItem.builder().nickname(memberInfo.getNickname())
+                    .userLevel((int) (memberInfo.getExp() / 50) + 1).build());
         }
 
         channelUserResponseDto.setChannelUserResponseItems(items);
@@ -396,69 +434,63 @@ public class GameService {
             int subscribeNo = it.next();
             if ((subscribeNo / 1000) == channelNo) {
                 GameRoom gameRoom = gameRooms.get(subscribeNo);
-                MemberInfo roomManager = memberInfoRepository.findById(gameRoom.getRoomManagerUUID())
-                        .orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
+                MemberInfo roomManager = memberInfoRepository.findById(
+                        gameRoom.getRoomManagerUUID()).orElseThrow(() -> new MemberInfoException(
+                        MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
 
-                gameRoomListResponseItems.add(GameRoomListResponseItem.builder()
-                        .roomTitle(gameRoom.getRoomName())
-                        .roomManager(roomManager.getNickname())
-                        .currentMembers(gameRoom.getTotalUsers())
-                        .roomNumber(gameRoom.getRoomNo())
-                        .isPrivate(!gameRoom.getPassword().equals(""))
-                        .years(gameRoom.getYear())
-                        .build());
+                gameRoomListResponseItems.add(
+                        GameRoomListResponseItem.builder().roomTitle(gameRoom.getRoomName())
+                                .roomManager(roomManager.getNickname())
+                                .currentMembers(gameRoom.getTotalUsers())
+                                .roomNumber(gameRoom.getRoomNo())
+                                .isPrivate(!gameRoom.getPassword().equals(""))
+                                .years(gameRoom.getYear()).build());
             }
         }
 
-        return GameRoomListResponseDto.builder()
-                .rooms(gameRoomListResponseItems)
-                .build();
+        return GameRoomListResponseDto.builder().rooms(gameRoomListResponseItems).build();
     }
 
     public CreateGameRoomResponseDto makeGameRoom(String accessToken,
-                                                  CreateGameRoomRequestDto createGameRoomRequestDto) {
+            CreateGameRoomRequestDto createGameRoomRequestDto) {
         UUID uuid = jwtValidator.getData(accessToken);
-        String nickname = memberInfoRepository.findById(uuid).orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO)).getNickname();
+        String nickname = memberInfoRepository.findById(uuid).orElseThrow(
+                        () -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO))
+                .getNickname();
         GameRoom gameRoom = new GameRoom();
         ConcurrentHashMap<Integer, GameRoom> gameRooms = GameValue.getGameRooms();
+        Channel channel = GameValue.getChannel(createGameRoomRequestDto.getChannelNo());
+        int curRoomIndex = channel.getMinimumEmptyRoomNo();
 
-        Iterator<Integer> it = gameRooms.keySet().iterator();
-        int curRoomIndex = GameValue.getChannel(createGameRoomRequestDto.getChannelNo()).getMinimumEmptyRoomNo();
-
-        /*
-        GameRoom 생성 후 Map에 추가
-         */
         Map<UUID, UserInfoItem> userInfoItems = new HashMap<>();
-        userInfoItems.put(uuid, UserInfoItem.builder()
-                .nickname(nickname)
-                .score(0.0)
-                .isSkipped(false)
-                .build());
+        userInfoItems.put(uuid,
+                UserInfoItem.builder().nickname(nickname).score(0.0).isSkipped(false).build());
 
-        GameValue.getGameRooms().put(curRoomIndex, GameRoom.builder()
-                        .roomNo(curRoomIndex)
-                        .roomName(createGameRoomRequestDto.getRoomName())
-                        .password(createGameRoomRequestDto.getPassword())
-                        .roomManagerUUID(uuid)
-                        .numberOfProblems(createGameRoomRequestDto.getQuizAmount())
-                        .year(createGameRoomRequestDto.getMusicYear())
-                        .totalUsers(1)
-                        .userInfoItems(userInfoItems)
-                        .build());
+        GameValue.getGameRooms().put(curRoomIndex, GameRoom.builder().roomNo(curRoomIndex)
+                .roomName(createGameRoomRequestDto.getRoomName())
+                .password(createGameRoomRequestDto.getPassword()).roomManagerUUID(uuid)
+                .numberOfProblems(createGameRoomRequestDto.getQuizAmount())
+                .year(createGameRoomRequestDto.getMusicYear()).totalUsers(1)
+                .userInfoItems(userInfoItems).build());
 
         logger.info("Create GameRoom Successful");
 
+        channel.removeUser(uuid);
+        channel.addUser(uuid, createGameRoomRequestDto.getChannelNo() * 1000 + curRoomIndex);
+
+        channel.updateIsUsed(curRoomIndex);
+
+        // 메세지 펍 해주기
+
         return CreateGameRoomResponseDto.builder()
-                .gameRoomNo(curRoomIndex)
-                .roomName(createGameRoomRequestDto.getRoomName())
-                .password(createGameRoomRequestDto.getPassword())
-                .musicYear(createGameRoomRequestDto.getMusicYear())
-                .quizAmount(createGameRoomRequestDto.getQuizAmount())
+                .gameRoomNo(createGameRoomRequestDto.getChannelNo() * 1000 + curRoomIndex)
                 .build();
     }
 
     public JoinGameRoomResponseDto moveGameRoom(String accessToken, int channelNo) {
         UUID uuid = jwtValidator.getData(accessToken);
+
+
 
         return null;
     }
@@ -469,9 +501,8 @@ public class GameService {
         GameValue.removeUserFromChannel(uuid, channelNo);
         GameValue.addUserToChannel(uuid, lobbyNo);
 
-        return ExitGameRoomResponse.builder()
-                .destinationNo(lobbyNo)
-                .build();
+        return ExitGameRoomResponse.builder().destinationNo(lobbyNo).build();
     }
+
 
 }

@@ -16,8 +16,4 @@ import lombok.ToString;
 @Builder
 public class CreateGameRoomResponseDto {
     private int gameRoomNo;
-    private String roomName;
-    private String password;
-    private String musicYear;
-    private int quizAmount;
 }
