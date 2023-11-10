@@ -1,6 +1,5 @@
 package com.a608.musiq.domain.member.data;
 
-import com.a608.musiq.domain.music.data.Difficulty;
 
 import jakarta.persistence.AttributeConverter;
 
