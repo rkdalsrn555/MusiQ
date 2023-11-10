@@ -54,7 +54,7 @@ export const Login = () => {
         window.localStorage.setItem('nickname', res.data.data.nickname);
         setUserData({ nickname: res.data.data.nickname });
         setActiveCarouselNum({ activeCarouselNum: 0 });
-        navigate('/select-mode');
+        navigate('/');
       })
       .catch((err) => {
         setIsToggled(true);
