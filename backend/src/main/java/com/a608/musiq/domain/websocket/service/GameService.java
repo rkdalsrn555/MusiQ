@@ -476,7 +476,6 @@ public class GameService {
                 .numberOfProblems(createGameRoomRequestDto.getQuizAmount())
                 .year(createGameRoomRequestDto.getMusicYear()).totalUsers(1)
                 .userInfoItems(userInfoItems).build();
-        GameValue.getGameRooms().put(curRoomIndex, gameRoom);
 
         channel.removeUser(uuid);
         channel.addUser(uuid, createGameRoomRequestDto.getChannelNo() * 1000 + curRoomIndex);
