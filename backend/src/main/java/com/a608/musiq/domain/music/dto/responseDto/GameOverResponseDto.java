@@ -9,6 +9,12 @@ public class GameOverResponseDto {
 	private int round;
 	private double exp;
 
+	public static GameOverResponseDto of(int round) {
+		return GameOverResponseDto.builder()
+			.round(round)
+			.build();
+	}
+
 	public static GameOverResponseDto from(int round, double exp) {
 		return GameOverResponseDto.builder()
 			.round(round)
