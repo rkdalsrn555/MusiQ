@@ -16,37 +16,7 @@ export const ChannelComponent = () => {
   const accessToken = window.localStorage.getItem('userAccessToken');
 
   const handleChannelClick = async (channelNumber: number) => {
-    if (accessToken) {
-      const ws = await new WebSocket('ws://localhost:8080/api/game-websocket');
-
-      const client = new Client({
-        webSocketFactory: () => ws,
-        connectHeaders: {
-          accessToken,
-          channelNo: String(channelNumber),
-        },
-        onConnect: () => {
-          console.log(`Connected to channel ${channelNumber}`);
-          client.subscribe(`/topic/${channelNumber}`, (message) => {
-            // 서버로부터 메시지를 받았을 때 처리할 로직
-            console.log('Received message', message.body);
-          });
-
-          client.subscribe(`/chat-message/${channelNumber}`, (message) => {
-            console.log('채팅메시지', message);
-          });
-          setWebsocketClient(client); // Recoil 상태 설정
-          navigate(`/multi/${channelNumber}/lobby`);
-        },
-        onStompError: (frame) => {
-          console.error('STOMP Error:', frame.headers.message);
-        },
-      });
-
-      client.activate(); // 클라이언트 활성화
-    } else {
-      console.error('Access token is not available.');
-    }
+    navigate(`/multi/${channelNumber}/lobby`);
   };
 
   useEffect(() => {
