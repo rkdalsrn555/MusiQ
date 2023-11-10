@@ -5,7 +5,6 @@ import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.domain.MultiModeProblem;
 import com.a608.musiq.domain.websocket.domain.UserInfoItem;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.AnswerAndSingerDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.BeforeAnswerCorrectDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.InitialHintDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.SingerHintDto;
@@ -42,14 +41,15 @@ public class BeforeAnswerService {
 
         //과반수인 경우
         if (gameRoom.getSkipVote() >= (gameRoom.getTotalUsers() / MAKING_HALF_NUMBER
-                + MAKING_CEIL_NUMBER)) {
+            + MAKING_CEIL_NUMBER)) {
             //정답 pub
             int round = gameRoom.getRound() - 1;
             String title = gameRoom.getMultiModeProblems().get(round).getTitle();
             String singer = gameRoom.getMultiModeProblems().get(round).getSinger();
 
-            AnswerAndSingerDto answerAndSingerDto = AnswerAndSingerDto.create(title, singer);
-            messagingTemplate.convertAndSend(destination, answerAndSingerDto);
+            BeforeAnswerCorrectDto beforeAnswerCorrectDto = BeforeAnswerCorrectDto.create(
+                MessageDtoType.BEFOREANSWERCORRECT,"", title, singer,0);
+            messagingTemplate.convertAndSend(destination, beforeAnswerCorrectDto);
 
             //스킵 투표 pub
             gameRoom.setSkipVote(0);
@@ -57,7 +57,6 @@ public class BeforeAnswerService {
             SkipVoteDto skipVoteDto = SkipVoteDto.create(MessageDtoType.BEFORESKIP, true,
                 gameRoom.getSkipVote());
             messagingTemplate.convertAndSend(destination, skipVoteDto);
-
 
             //gameRoom의 playType를 AFTERANSWER 로 바꿔줌
             gameRoom.setPlayType(PlayType.AFTERANSWER);
@@ -71,7 +70,7 @@ public class BeforeAnswerService {
         } else {
             //과반수가 아닌 경우
             SkipVoteDto skipVoteDto = SkipVoteDto.create(MessageDtoType.BEFORESKIP, false,
-                    gameRoom.getSkipVote());
+                gameRoom.getSkipVote());
             // skipVote++ 하고 pub
             messagingTemplate.convertAndSend(destination, skipVoteDto);
         }
@@ -87,13 +86,13 @@ public class BeforeAnswerService {
         // 남은 시간이 30초라면 가수 힌트
         if (room.getTime() == 30) {
             SingerHintDto dto = SingerHintDto.builder().singerHint(currentProblem.getSinger())
-                    .build();
+                .build();
             messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
         }
         // 20초 남았다면 초성 힌트
         else if (room.getTime() == 20) {
             InitialHintDto dto = InitialHintDto.builder().initialHint(currentProblem.getHint())
-                    .build();
+                .build();
             messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
         }
 
@@ -113,8 +112,8 @@ public class BeforeAnswerService {
             room.setTime(10);
 
             BeforeAnswerCorrectDto dto = BeforeAnswerCorrectDto.create(
-                    MessageDtoType.BEFOREANSWERCORRECT, "", currentProblem.getTitle(),
-                    currentProblem.getSinger(), 0);
+                MessageDtoType.BEFOREANSWERCORRECT, "", currentProblem.getTitle(),
+                currentProblem.getSinger(), 0);
             messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
 
             // 참여 인원의 스킵 여부를 모두 false로 바꿈
