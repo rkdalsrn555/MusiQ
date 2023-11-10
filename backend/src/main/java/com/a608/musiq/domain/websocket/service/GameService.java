@@ -459,19 +459,13 @@ public class GameService {
 
         Map<UUID, UserInfoItem> userInfoItems = new HashMap<>();
         userInfoItems.put(uuid,
-            UserInfoItem.builder().nickname(memberInfo.getNickname()).score(0.0).isSkipped(false).build());
-
-        int roomNumber = createGameRoomRequestDto.getChannelNo() * 1000 + curRoomIndex;
-
-        GameRoom gameRoom = GameRoom.builder().roomNo(roomNumber)
-            .roomName(createGameRoomRequestDto.getRoomName())
-            .password(createGameRoomRequestDto.getPassword()).roomManagerUUID(uuid)
-            .numberOfProblems(createGameRoomRequestDto.getQuizAmount())
-            .gameRoomType(GameRoomType.WAITING)
-            .year(createGameRoomRequestDto.getMusicYear()).totalUsers(1)
-            .userInfoItems(userInfoItems).build();
-
-        GameValue.getGameRooms().put(curRoomIndex, gameRoom);
+                UserInfoItem.builder().nickname(nickname).score(0.0).isSkipped(false).build());
+        GameRoom gameRoom = GameRoom.builder().roomNo(curRoomIndex)
+                .roomName(createGameRoomRequestDto.getRoomName())
+                .password(createGameRoomRequestDto.getPassword()).roomManagerUUID(uuid)
+                .numberOfProblems(createGameRoomRequestDto.getQuizAmount())
+                .year(createGameRoomRequestDto.getMusicYear()).totalUsers(1)
+                .userInfoItems(userInfoItems).build();
 
         channel.removeUser(uuid);
         channel.addUser(uuid, roomNumber);
