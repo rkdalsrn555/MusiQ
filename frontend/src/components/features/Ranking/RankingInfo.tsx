@@ -30,6 +30,7 @@ type RankingData = {
   rankNum: number;
   nickName: string;
   exp: number;
+  level: number;
 };
 
 type ApiResponse = {
@@ -110,7 +111,7 @@ export const RankingInfo: React.FC = () => {
           <RankingHeader>
             <HeaderCell>순위</HeaderCell>
             <HeaderCell>닉네임</HeaderCell>
-            <HeaderCell>경험치</HeaderCell>
+            <HeaderCell>레벨</HeaderCell>
           </RankingHeader>
           <RankingItemsWrapper>
             {rankingData.map((item) => (
@@ -128,7 +129,7 @@ export const RankingInfo: React.FC = () => {
                 </PrizeCell>
                 <Cell>{item.rankNum}</Cell>
                 <Cell>{item.nickName}</Cell>
-                <Cell>{item.exp}</Cell>
+                <Cell>{item.level}</Cell>
               </RankingItem>
             ))}
           </RankingItemsWrapper>
