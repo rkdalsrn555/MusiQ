@@ -7,11 +7,12 @@ import lombok.Getter;
 @Getter
 @Builder
 public class GameRoomListResponseItem {
+    private int gameRoomNo;
     private String roomTitle;
     private String roomManager;
     private int currentMembers;
     private int roomNumber;
     private boolean isPrivate;
     // List로 수정
-    private String years;
+    private List<String> years;
 }
