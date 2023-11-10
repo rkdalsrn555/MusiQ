@@ -234,7 +234,7 @@ public class GuestModeMusicServiceImpl implements MusicService {
 
 		log.addAdditionalInformation(round);
 
-		return GameOverResponseDto.of(round);
+		return GameOverResponseDto.from(round);
 	}
 
 	/**

@@ -7,10 +7,12 @@ import lombok.Getter;
 @Builder
 public class GameOverResponseDto {
 	private int round;
+	private double exp;
 
-	public static GameOverResponseDto of(int round) {
+	public static GameOverResponseDto from(int round, double exp) {
 		return GameOverResponseDto.builder()
 			.round(round)
+			.exp(exp)
 			.build();
 	}
 }
