@@ -463,13 +463,14 @@ public class GameService {
         UUID uuid = jwtValidator.getData(accessToken);
         MemberInfo memberInfo = memberInfoRepository.findById(uuid).orElseThrow(
                 () -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
+
         Channel channel = GameValue.getChannel(createGameRoomRequestDto.getChannelNo());
-        int curRoomIndex = channel.getMinimumEmptyRoomNo();
+        int roomNumber = channel.getMinimumEmptyRoomNo();
 
         Map<UUID, UserInfoItem> userInfoItems = new HashMap<>();
         userInfoItems.put(uuid,
-                UserInfoItem.builder().nickname(nickname).score(0.0).isSkipped(false).build());
-        GameRoom gameRoom = GameRoom.builder().roomNo(curRoomIndex)
+                UserInfoItem.builder().nickname(memberInfo.getNickname()).score(0.0).isSkipped(false).build());
+        GameRoom gameRoom = GameRoom.builder().roomNo(roomNumber)
                 .roomName(createGameRoomRequestDto.getRoomName())
                 .password(createGameRoomRequestDto.getPassword()).roomManagerUUID(uuid)
                 .numberOfProblems(createGameRoomRequestDto.getQuizAmount())
@@ -481,7 +482,7 @@ public class GameService {
         GameValue.addGameChannel(roomNumber,
             gameRoom);
         logger.info("Create GameRoom Successful");
-        channel.updateIsUsed(curRoomIndex);
+        channel.updateIsUsed(roomNumber);
 
         GameRoomMemberInfo gameRoomMemberInfo = GameRoomMemberInfo.builder()
             .nickName(memberInfo.getNickname())
@@ -511,7 +512,7 @@ public class GameService {
             messagingTemplate.convertAndSend(destination, gameRoomPubDto);
 
         return CreateGameRoomResponseDto.builder()
-            .gameRoomNo(createGameRoomRequestDto.getChannelNo() * 1000 + curRoomIndex)
+            .gameRoomNo(createGameRoomRequestDto.getChannelNo() * 1000 + roomNumber)
             .build();
     }
 
