@@ -11,11 +11,18 @@ import com.a608.musiq.domain.websocket.domain.GameRoom;
 public class CommonService {
 
 	public String leaveGameRoom(UUID uuid, GameRoom gameRoom, int roomNumber) {
-		// 채널 현재 게임룸에서 로비로 이동
+		// Channel 현재 게임룸에서 로비로 이동
 		GameValue.leaveGameRoom(uuid, roomNumber);
 
 		// 게임 룸에서 totalUser--, userInfoItems에서 내 uuid로 지우기
 		return gameRoom.leaveUser(uuid, roomNumber);
+	}
+
+	public String EnterGameRoom(UUID uuid, GameRoom gameRoom, int roomNumber) {
+		GameValue.enterGameRoom(uuid, roomNumber);
+
+		//
+		return null;
 	}
 
 }
