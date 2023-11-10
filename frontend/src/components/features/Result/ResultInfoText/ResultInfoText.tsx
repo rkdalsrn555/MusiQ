@@ -6,12 +6,15 @@ interface ResultInfoTextProps {
   mode: string;
   selectYear: string[]; // 선택한 연도들이 문자 배열로 들어옴
   correctAnswerCnt: number;
+  // eslint-disable-next-line react/require-default-props
+  exp?: number;
 }
 
 export const ResultInfoText: FC<ResultInfoTextProps> = ({
   mode,
   selectYear,
   correctAnswerCnt,
+  exp,
 }) => {
   // selectYear가 정의되어 있고 배열이면 실행
   let displayYear = '';
@@ -36,6 +39,11 @@ export const ResultInfoText: FC<ResultInfoTextProps> = ({
       <StyledResultText>
         {correctAnswerCnt}라운드까지 도달했습니다!
       </StyledResultText>
+      {exp || exp === 0 ? (
+        <StyledResultText>경험치 +{exp} 획득!</StyledResultText>
+      ) : (
+        ''
+      )}
     </div>
   );
 };
