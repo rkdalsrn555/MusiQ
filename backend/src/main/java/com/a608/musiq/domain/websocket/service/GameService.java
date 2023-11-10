@@ -1,6 +1,5 @@
 package com.a608.musiq.domain.websocket.service;
 
-import com.a608.musiq.domain.member.domain.Member;
 import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.websocket.data.GameRoomType;
@@ -159,7 +158,7 @@ public class GameService {
 
         if (channelNo <= 10) {
             ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(MessageDtoType.CHAT,
-                    chatMessage.getNickName(), chatMessage.getMessage());
+                    chatMessage.getNickname(), chatMessage.getMessage());
             messagingTemplate.convertAndSend(destination, chatMessagePubDto);
             return;
         }
@@ -176,13 +175,13 @@ public class GameService {
             commonService.leaveGameRoom(uuid, gameRoom, channelNo);
 
             messagingTemplate.convertAndSend(destination,
-                    LeaveGameRoomDto.of(chatMessage.getNickName()));
+                    LeaveGameRoomDto.of(chatMessage.getNickname()));
         }
 
         if (gameRoomType == GameRoomType.WAITING) {
             //일반 채팅
             ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(MessageDtoType.CHAT,
-                    chatMessage.getNickName(), chatMessage.getMessage());
+                    chatMessage.getNickname(), chatMessage.getMessage());
             messagingTemplate.convertAndSend(destination, chatMessagePubDto);
             return;
         }
@@ -191,7 +190,7 @@ public class GameService {
             if (playType == PlayType.ROUNDSTART) {
                 //일반 채팅
                 ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(MessageDtoType.CHAT,
-                        chatMessage.getNickName(), chatMessage.getMessage());
+                        chatMessage.getNickname(), chatMessage.getMessage());
                 messagingTemplate.convertAndSend(destination, chatMessagePubDto);
                 return;
 
@@ -212,7 +211,7 @@ public class GameService {
                 else {
                     //먼저 일반채팅으로 pub 부터 함
                     ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(
-                            MessageDtoType.CHAT, chatMessage.getNickName(),
+                            MessageDtoType.CHAT, chatMessage.getNickname(),
                             chatMessage.getMessage());
                     messagingTemplate.convertAndSend(destination, chatMessagePubDto);
                     //그 다음 정답 채점 로직 구현
@@ -230,7 +229,7 @@ public class GameService {
 
                             // 정답자 닉네임, 정답 제목, 가수 pub
                             BeforeAnswerCorrectDto beforeAnswerCorrectDto = BeforeAnswerCorrectDto.create(
-                                    MessageDtoType.BEFOREANSWERCORRECT, chatMessage.getNickName(),
+                                    MessageDtoType.BEFOREANSWERCORRECT, chatMessage.getNickname(),
                                     title, singer, 0);
                             messagingTemplate.convertAndSend(destination, beforeAnswerCorrectDto);
 
@@ -264,7 +263,7 @@ public class GameService {
                 } else {
                     //일반 채팅
                     ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(
-                            MessageDtoType.CHAT, chatMessage.getNickName(),
+                            MessageDtoType.CHAT, chatMessage.getNickname(),
                             chatMessage.getMessage());
                     messagingTemplate.convertAndSend(destination, chatMessagePubDto);
                 }

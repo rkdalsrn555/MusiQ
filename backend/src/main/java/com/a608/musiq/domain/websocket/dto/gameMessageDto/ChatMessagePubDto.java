@@ -7,7 +7,7 @@ import lombok.AllArgsConstructor;
 
 public class ChatMessagePubDto {
     MessageDtoType type;
-    private String nickName;
+    private String nickname;
     private String message;
 
     public static ChatMessagePubDto create(MessageDtoType type, String nickName, String message){
