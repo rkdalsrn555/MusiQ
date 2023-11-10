@@ -15,9 +15,9 @@ export const ChannelComponent = () => {
   const navigate = useNavigate();
   const accessToken = window.localStorage.getItem('userAccessToken');
 
-  const handleChannelClick = (channelNumber: number) => {
+  const handleChannelClick = async (channelNumber: number) => {
     if (accessToken) {
-      const ws = new WebSocket('ws://localhost:8080/api/game-websocket');
+      const ws = await new WebSocket('ws://localhost:8080/api/game-websocket');
 
       const client = new Client({
         webSocketFactory: () => ws,
@@ -31,8 +31,12 @@ export const ChannelComponent = () => {
             // 서버로부터 메시지를 받았을 때 처리할 로직
             console.log('Received message', message.body);
           });
+
+          client.subscribe(`/chat-message/${channelNumber}`, (message) => {
+            console.log('채팅메시지', message);
+          });
           setWebsocketClient(client); // Recoil 상태 설정
-          navigate(`/multi/${channelNumber}/lobby`); // 채널로 이동
+          navigate(`/multi/${channelNumber}/lobby`);
         },
         onStompError: (frame) => {
           console.error('STOMP Error:', frame.headers.message);
@@ -44,6 +48,7 @@ export const ChannelComponent = () => {
       console.error('Access token is not available.');
     }
   };
+
   useEffect(() => {
     if (!accessToken) {
       console.error('Access token is not available.');
@@ -78,7 +83,10 @@ export const ChannelComponent = () => {
         return (
           <ChannelItem
             key={`channel-${channelNumber}`}
-            onClick={() => handleChannelClick(channelNumber)}
+            onClick={async () => {
+              // 웹소켓 객체 생성
+              await handleChannelClick(channelNumber);
+            }}
           >
             <p
               style={{ fontSize: '28px', color: '#E08080', marginRight: '5%' }}

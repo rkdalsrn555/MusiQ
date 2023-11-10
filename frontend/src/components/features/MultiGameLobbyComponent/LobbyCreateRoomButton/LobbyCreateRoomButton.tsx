@@ -70,16 +70,16 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
   return (
     <div className="modal">
       <input
-        type="text"
         placeholder="방 제목"
         value={roomName}
         onChange={(e) => setRoomName(e.target.value)}
+        autoComplete="off"
       />
       <input
-        type="password"
-        placeholder="비밀번호"
+        placeholder="방 비밀번호"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        autoComplete="off"
       />
       <div>
         {yearsOptions.map((year) => (
@@ -155,6 +155,7 @@ export const LobbyCreateRoomButton = () => {
       })
       .then((response) => {
         if (response.data.code === 200) {
+          console.log(channelNo);
           navigate(`/multi/${channelNo}/room/${response.data.data.gameRoomNo}`);
         } else {
           console.error('Failed to create room:', response.data.message);
@@ -169,14 +170,12 @@ export const LobbyCreateRoomButton = () => {
 
   return (
     <div>
-      <ButtonsWrapper onClick={handleOpenModal}>
-        방 만들기
-      </ButtonsWrapper>
-        <LobbyCreateRoomModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          onCreate={handleCreateRoom}
-        />
+      <ButtonsWrapper onClick={handleOpenModal}>방 만들기</ButtonsWrapper>
+      <LobbyCreateRoomModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onCreate={handleCreateRoom}
+      />
     </div>
   );
 };
