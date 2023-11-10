@@ -13,9 +13,9 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatMessage {
-    private String userUUID;
+    private String nickName;
     private String message;
-//    private MessageType messageType;
+    //private MessageType messageType;
     //백단에서 다 messageType 처리할 거면 MessageType 필요 없음
 
 }
