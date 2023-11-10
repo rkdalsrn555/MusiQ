@@ -145,9 +145,14 @@ export const LobbyCreateRoomButton = () => {
       musicYear,
       quizAmount,
     };
-
+    const accessToken = window.localStorage.getItem('userAccessToken');
     axios
-      .post(`${process.env.REACT_APP_BASE_URL}/game/main/create`, requestBody)
+
+      .post(`${process.env.REACT_APP_BASE_URL}/game/main/create`, requestBody, {
+        headers: {
+          accessToken,
+        },
+      })
       .then((response) => {
         if (response.data.code === 200) {
           navigate(`/multi/${channelNo}/room/${response.data.data.gameRoomNo}`);
@@ -164,14 +169,14 @@ export const LobbyCreateRoomButton = () => {
 
   return (
     <div>
-      <button type="button" onClick={handleOpenModal}>
+      <ButtonsWrapper onClick={handleOpenModal}>
         방 만들기
-      </button>
-      <LobbyCreateRoomModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onCreate={handleCreateRoom}
-      />
+      </ButtonsWrapper>
+        <LobbyCreateRoomModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onCreate={handleCreateRoom}
+        />
     </div>
   );
 };
