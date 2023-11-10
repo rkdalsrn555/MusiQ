@@ -104,6 +104,9 @@ public class GameValue {
         moveUserFromChannel(uuid, gameRoomChannelNo, lobbyChannelNo);
     }
 
-
+    // 로비 -> 게임룸 이동 시 GameChannel에 key, value Add
+    public static void addGameChannel(int gameRoomNo, GameRoom gameRoom) {
+        gameRooms.put(gameRoomNo, gameRoom);
+    }
 
 }

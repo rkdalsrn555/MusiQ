@@ -427,11 +427,13 @@ public class GameService {
      */
     public GameRoomListResponseDto getGameRoomList(String accessToken, int channelNo) {
         ConcurrentHashMap<Integer, GameRoom> gameRooms = GameValue.getGameRooms();
+
         Iterator<Integer> it = gameRooms.keySet().iterator();
         List<GameRoomListResponseItem> gameRoomListResponseItems = new ArrayList<>();
 
         while (it.hasNext()) {
             int subscribeNo = it.next();
+            logger.info("subscribeNo = {}", subscribeNo);
             if ((subscribeNo / 1000) == channelNo) {
                 GameRoom gameRoom = gameRooms.get(subscribeNo);
                 MemberInfo roomManager = memberInfoRepository.findById(
@@ -452,32 +454,29 @@ public class GameService {
     }
 
     public CreateGameRoomResponseDto makeGameRoom(String accessToken,
-            CreateGameRoomRequestDto createGameRoomRequestDto) {
+                                                  CreateGameRoomRequestDto createGameRoomRequestDto) {
         UUID uuid = jwtValidator.getData(accessToken);
         String nickname = memberInfoRepository.findById(uuid).orElseThrow(
                         () -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO))
                 .getNickname();
-        GameRoom gameRoom = new GameRoom();
-        ConcurrentHashMap<Integer, GameRoom> gameRooms = GameValue.getGameRooms();
         Channel channel = GameValue.getChannel(createGameRoomRequestDto.getChannelNo());
         int curRoomIndex = channel.getMinimumEmptyRoomNo();
 
         Map<UUID, UserInfoItem> userInfoItems = new HashMap<>();
         userInfoItems.put(uuid,
                 UserInfoItem.builder().nickname(nickname).score(0.0).isSkipped(false).build());
-
-        GameValue.getGameRooms().put(curRoomIndex, GameRoom.builder().roomNo(curRoomIndex)
+        GameRoom gameRoom = GameRoom.builder().roomNo(curRoomIndex)
                 .roomName(createGameRoomRequestDto.getRoomName())
                 .password(createGameRoomRequestDto.getPassword()).roomManagerUUID(uuid)
                 .numberOfProblems(createGameRoomRequestDto.getQuizAmount())
                 .year(createGameRoomRequestDto.getMusicYear()).totalUsers(1)
-                .userInfoItems(userInfoItems).build());
-
-        logger.info("Create GameRoom Successful");
+                .userInfoItems(userInfoItems).build();
+        GameValue.getGameRooms().put(curRoomIndex, gameRoom);
 
         channel.removeUser(uuid);
         channel.addUser(uuid, createGameRoomRequestDto.getChannelNo() * 1000 + curRoomIndex);
-
+        GameValue.addGameChannel(createGameRoomRequestDto.getChannelNo() * 1000 + curRoomIndex, gameRoom);
+        logger.info("Create GameRoom Successful");
         channel.updateIsUsed(curRoomIndex);
 
         // 메세지 펍 해주기
