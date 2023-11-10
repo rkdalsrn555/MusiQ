@@ -7,12 +7,12 @@ import lombok.Getter;
 @Builder
 public class LeaveGameRoomDto {
 	private String nickname;
-	private String CurrentRoomManagerNickname;
+	private String currentRoomManagerNickname;
 
-	public static LeaveGameRoomDto from(String nickname, String CurrentRoomManagerNickname) {
+	public static LeaveGameRoomDto from(String nickname, String currentRoomManagerNickname) {
 		return LeaveGameRoomDto.builder()
 			.nickname(nickname)
-			.CurrentRoomManagerNickname(CurrentRoomManagerNickname)
+			.currentRoomManagerNickname(currentRoomManagerNickname)
 			.build();
 	}
 }

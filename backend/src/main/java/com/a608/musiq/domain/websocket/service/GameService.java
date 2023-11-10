@@ -509,7 +509,7 @@ public class GameService {
             .isPrivate(!gameRoom.getPassword().equals(""))
             .numberOfProblems(createGameRoomRequestDto.getQuizAmount())
             .year(createGameRoomRequestDto.getMusicYear())
-            .roomManager(memberInfo.getNickname())
+            .roomManagerNickname(memberInfo.getNickname())
             .build();
 
 

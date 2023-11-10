@@ -91,7 +91,7 @@ public class BeforeAnswerService {
         }
         // 20초 남았다면 초성 힌트
         else if (room.getTime() == 20) {
-            InitialHintDto dto = InitialHintDto.builder().initialHint(currentProblem.getHint())
+            InitialHintDto dto = InitialHintDto.builder().initialHint(currentProblem.getInitialHint())
                 .build();
             messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
         }

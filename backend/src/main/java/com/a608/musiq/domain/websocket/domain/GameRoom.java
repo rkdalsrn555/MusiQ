@@ -38,7 +38,7 @@ public class GameRoom {
     //선택한 연도
     private String year;
 
-    private String roomManager;
+    private String roomManagerNickname;
 
 
     private GameRoomType gameRoomType;
