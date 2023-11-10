@@ -13,10 +13,10 @@ public class FullRankItem {
 
     private Integer rankNum;
     private String nickName;
-    private Double exp;
+    private Integer level;
 
     public FullRankItem(TypedTuple<String> setElem) {
         this.nickName = setElem.getValue();
-        this.exp = setElem.getScore();
+        this.level = (int)(setElem.getScore() / 50);
     }
 }
