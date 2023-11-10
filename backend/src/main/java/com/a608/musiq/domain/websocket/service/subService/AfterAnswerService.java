@@ -22,6 +22,7 @@ public class AfterAnswerService {
     private SimpMessageSendingOperations messagingTemplate;
     private static final int MAKING_HALF_NUMBER = 2;
     private static final int MAKING_CEIL_NUMBER = 1;
+    private static final int SKIP_VOTE_INITIAL_NUMBER = 0;
 
     public void doAfterAnswer(Integer roomNum, GameRoom room) {
 
@@ -64,7 +65,7 @@ public class AfterAnswerService {
         //과반수인 경우
         if (gameRoom.getSkipVote() >= (gameRoom.getTotalUsers() / MAKING_HALF_NUMBER
                 + MAKING_CEIL_NUMBER)) {
-            gameRoom.setTime(0);
+            gameRoom.setTime(SKIP_VOTE_INITIAL_NUMBER);
         } else {
             //과반수가 아닌 경우
             SkipVoteDto skipVoteDto = SkipVoteDto.create(MessageDtoType.AFTERSKIP, false,

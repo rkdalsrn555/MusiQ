@@ -2,7 +2,6 @@ package com.a608.musiq.domain.websocket.dto.gameMessageDto;
 
 import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import java.util.List;
-import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,23 +10,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GameRoomPubDto {
 
-    private MessageDtoType type;
+    private MessageDtoType messageType;
     private List<GameRoomMemberInfo> memberInfos;
-    private int roomNo;
+    private Integer roomNo;
     private String roomName;
 
     private String password;
-    private boolean isPrivate;
+    private Boolean isPrivate;
 //    private UUID roomManagerUUID;
-    private int numberOfProblems;
+    private Integer numberOfProblems;
     private String year;
-    private String roomManager;
+    private String roomManagerNickname;
 
     @Builder
-    public GameRoomPubDto(List<GameRoomMemberInfo> memberInfos, int roomNo, String roomName,
-        String password, boolean isPrivate, int numberOfProblems, String year,
-        String roomManager) {
-        this.type = MessageDtoType.GOWAITING;
+    public GameRoomPubDto(List<GameRoomMemberInfo> memberInfos, Integer roomNo, String roomName,
+        String password, Boolean isPrivate, Integer numberOfProblems, String year,
+        String roomManagerNickname) {
+        this.messageType = MessageDtoType.GOWAITING;
         this.memberInfos = memberInfos;
         this.roomNo = roomNo;
         this.roomName = roomName;
@@ -35,7 +34,7 @@ public class GameRoomPubDto {
         this.isPrivate = isPrivate;
         this.numberOfProblems = numberOfProblems;
         this.year = year;
-        this.roomManager = roomManager;
+        this.roomManagerNickname = roomManagerNickname;
 
     }
 
