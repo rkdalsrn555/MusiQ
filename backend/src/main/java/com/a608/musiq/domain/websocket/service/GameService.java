@@ -175,7 +175,7 @@ public class GameService {
             String currentRoomManagerNickname = commonService.leaveGameRoom(uuid, gameRoom, channelNo);
 
             messagingTemplate.convertAndSend(destination,
-                    LeaveGameRoomDto.from(chatMessage.getNickName(), currentRoomManagerNickname));
+                    LeaveGameRoomDto.from(chatMessage.getNickname(), currentRoomManagerNickname));
         }
 
         if (gameRoomType == GameRoomType.WAITING || gameRoomType == GameRoomType.END) {
