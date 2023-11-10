@@ -34,13 +34,15 @@ export const LobbyRooms = () => {
           `${process.env.REACT_APP_BASE_URL}/game/main/${channelNumber}`,
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              accessToken,
             },
           }
         );
 
         if (response.data.code === 200) {
-          setRooms(response.data.rooms);
+          setRooms(
+            Array.isArray(response.data.rooms) ? response.data.rooms : []
+          );
         }
       } catch (error) {
         console.error('Fetching rooms failed: ', error);
@@ -75,15 +77,23 @@ export const LobbyRooms = () => {
     );
   };
 
+  if (rooms.length === 0) {
+    return <RoomsWrapper>현재 개설된 방이 없습니다.</RoomsWrapper>;
+  }
+
   return (
     <RoomsWrapper>
       {currentRooms.map((room) => (
         <Room key={room.roomManager}>
-          {room.roomTitle} - {room.roomManager} - {getYearsRange(room.years)} - 
+          {room.roomTitle} - {room.roomManager} - {getYearsRange(room.years)} -
           {room.currentMembers} - {room.isPrivate} - {room.roomNumber}
         </Room>
       ))}
-      <PreviousButton type="button" onClick={handlePrevious}>
+      <PreviousButton
+        type="button"
+        onClick={handlePrevious}
+        disabled={currentPage === 1 || rooms.length === 0}
+      >
         <img
           src={previousButton}
           alt="이전 버튼"

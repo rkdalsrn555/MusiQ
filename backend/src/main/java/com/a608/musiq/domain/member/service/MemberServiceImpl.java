@@ -3,6 +3,10 @@ package com.a608.musiq.domain.member.service;
 import com.a608.musiq.domain.member.dto.responseDto.LogoutResponseDto;
 import java.util.UUID;
 
+import org.hibernate.query.sql.internal.ParameterRecognizerImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +28,7 @@ import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.member.repository.MemberRepository;
 import com.a608.musiq.domain.member.repository.VisitorRepository;
 import com.a608.musiq.global.Util;
+import com.a608.musiq.global.config.SecurityConfig;
 import com.a608.musiq.global.jwt.JwtProvider;
 import com.a608.musiq.global.exception.exception.MemberException;
 import com.a608.musiq.global.exception.exception.MemberInfoException;
@@ -44,6 +49,7 @@ public class MemberServiceImpl implements MemberService {
 	private final Util util;
 	private final JwtProvider jwtProvider;
 	private final JwtValidator jwtValidator;
+	private final PasswordEncoder passwordEncoder;
 
 	/**
 	 * 회원가입
@@ -65,7 +71,7 @@ public class MemberServiceImpl implements MemberService {
 		memberRepository.save(Member.builder()
 			.id(memberUUID)
 			.loginId(joinRequestDto.getLoginId())
-			.password(joinRequestDto.getPassword())
+			.password(passwordEncoder.encode(joinRequestDto.getPassword()))
 			.loginType(LoginType.SIMPLE)
 			.build());
 
@@ -85,10 +91,12 @@ public class MemberServiceImpl implements MemberService {
 	@Override
 	@Transactional
 	public LoginResponseDto login(LoginRequestDto loginRequestDto) {
-
-		Member member = memberRepository.findByLoginIdAndPassword(loginRequestDto.getLoginId(),
-				loginRequestDto.getPassword())
+		Member member = memberRepository.findByLoginId(loginRequestDto.getLoginId())
 			.orElseThrow(() -> new MemberException(MemberExceptionInfo.LOGIN_FAILED));
+
+		if(!passwordEncoder.matches(loginRequestDto.getPassword(), member.getPassword())) {
+			throw new MemberException(MemberExceptionInfo.LOGIN_FAILED);
+		}
 
 		String memberNickname = memberInfoRepository.findNicknameById(member.getId())
 			.orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));

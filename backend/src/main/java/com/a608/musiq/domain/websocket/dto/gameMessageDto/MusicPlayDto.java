@@ -6,14 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
-public class AfterAnswerDto {
-    MessageDtoType type;
-    int time;
+public class MusicPlayDto {
+
+    private MessageDtoType type;
 
     @Builder
-    public AfterAnswerDto(MessageDtoType type, int time) {
-        this.type = type;
-        this.time = time;
+    public MusicPlayDto() {
+        this.type = MessageDtoType.MUSICPLAY;
     }
 }

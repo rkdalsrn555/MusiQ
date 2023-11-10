@@ -367,7 +367,8 @@ export const GuestGamePlaying = () => {
         e.target.nodeName === 'INPUT' ||
         isLoseRef.current ||
         isPlayingRef.current ||
-        isToggledRef.current
+        isToggledRef.current ||
+        location.state.gameRoomData.problems === roundRef.current
       ) {
         return;
       }
@@ -429,7 +430,8 @@ export const GuestGamePlaying = () => {
         e.target.nodeName === 'INPUT' ||
         isLoseRef.current ||
         isPlayingRef.current ||
-        isToggledRef.current
+        isToggledRef.current ||
+        location.state.gameRoomData.problems === roundRef.current
       ) {
         return;
       }

@@ -7,15 +7,14 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class RoundStartDto {
-    MessageDtoType type;
-    int time;
-    String musicUrl;
+public class TimeDto {
+
+    private MessageDtoType type;
+    private Integer time;
 
     @Builder
-    public RoundStartDto(MessageDtoType type, int time, String musicUrl) {
-        this.type = type;
+    public TimeDto(Integer time) {
+        this.type = MessageDtoType.TIME;
         this.time = time;
-        this.musicUrl = musicUrl;
     }
 }
