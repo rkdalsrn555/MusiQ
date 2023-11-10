@@ -10,3 +10,4 @@ export * from './Signup';
 export * from './MultiGameLobby';
 export * from './MzModePage';
 export * from './MultiChannelPage';
+export * from './MultiGamePlaying';
