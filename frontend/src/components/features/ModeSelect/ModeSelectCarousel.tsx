@@ -32,9 +32,16 @@ export const ModeSelectCarousel: React.FC = () => {
   const [activeCarouselNum, setActiveCarouselNum] = useRecoilState(
     ActiveCarouselNumAtom
   );
-  const accessToken = window.localStorage.getItem('userAccessToken');
-  const isLoggedIn = Boolean(accessToken); // 로그인 검증
-  const [visible, setVisible] = useState<number>(isLoggedIn ? 1 : 0); // accessToken이 없을 때 visible의 초기값을 1로 설정하여 2번 콘텐츠가 먼저 보이게 함
+
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
+    Boolean(window.localStorage.getItem('userAccessToken'))
+  ); // 로그인 검증
+  const [visible, setVisible] = useState<number>(
+    activeCarouselNum.activeCarouselNum
+  ); // accessToken이 없을 때 visible의 초기값을 1로 설정하여 2번 콘텐츠가 먼저 보이게 함
+  useEffect(() => {
+    setIsLoggedIn(Boolean(window.localStorage.getItem('userAccessToken')));
+  }, [activeCarouselNum.activeCarouselNum]);
 
   const [showDescription, setShowDescription] = useState<number | null>(null); // 설명을 보여줄 아이템의 인덱스
 

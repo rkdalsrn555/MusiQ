@@ -205,19 +205,25 @@ export const SingleGamePlaying = () => {
       .catch((err) => console.log(err));
   };
 
-  const patchGameResult = () => {
-    userApis.patch(
-      `${process.env.REACT_APP_BASE_URL}/music/single/over?room-id=${location.state.gameRoomData.roomId}&round=${roundRef.current}`
-    );
+  const patchGameResult = async () => {
+    const exp = await userApis
+      .patch(
+        `${process.env.REACT_APP_BASE_URL}/music/single/over?room-id=${location.state.gameRoomData.roomId}&round=${roundRef.current}`
+      )
+      .then((res) => res.data.data.exp)
+      .catch((err) => console.log(err));
+
+    return { exp };
   };
 
   // 결과창으로 라우팅
-  const goResultPage = () => {
-    patchGameResult();
+  const goResultPage = async () => {
+    const userExp = await patchGameResult();
     const resultData = {
       mode: location.state.checkDifficulty.title,
       selectYear: location.state.yearCheckedList,
       correctAnswerCnt: round,
+      exp: userExp.exp,
     };
     navigate('/single/game-result', { state: resultData });
   };
@@ -627,7 +633,11 @@ export const SingleGamePlaying = () => {
           )}
           <S.PlayingBtnBoxPosition>
             {isLose || location.state.gameRoomData.problems === round ? (
-              <ResultBtn clickHandler={goResultPage} />
+              <ResultBtn
+                clickHandler={async () => {
+                  await goResultPage();
+                }}
+              />
             ) : (
               <div>
                 {isCorrect || isSkip ? (
