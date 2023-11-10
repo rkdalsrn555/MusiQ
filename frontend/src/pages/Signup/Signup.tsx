@@ -370,7 +370,7 @@ export const Signup = () => {
             isSuccess={successNickname}
             successMessage="올바른 닉네임입니다"
             isError={errorNickname}
-            errorMessage="2자 이상 8자 이하, 영어 숫자 한글만 허용됩니다"
+            errorMessage="2자 이상 8자 이하, 영어 숫자 한글만 허용"
             isDuplicate={duplicatedNickname}
             duplicatedMessage="닉네임이 중복입니다"
             inputValue={nickname}

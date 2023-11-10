@@ -47,7 +47,7 @@ public class Scheduler {
 //        시간 체크 해주는 메서드();
     }
 
-    private void insertRankingToRedis() {
+    public void insertRankingToRedis() {
         int num = 100;
         Pageable pageRequest = PageRequest.of(0, num, Sort.by(Sort.Order.desc("exp")));
         List<MemberInfo> rankingList = memberInfoRepository.findByDeleted(false, pageRequest);

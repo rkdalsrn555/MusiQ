@@ -24,7 +24,7 @@ export const MultiChannelPage = () => {
     if (isMobile) {
       navigate('/mobile-restriction');
     }
-    setActiveCarouselNum({ activeCarouselNum: 2 });
+    setActiveCarouselNum({ activeCarouselNum: 3 });
   }, []);
 
   return (

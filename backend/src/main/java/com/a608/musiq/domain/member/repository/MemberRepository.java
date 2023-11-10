@@ -20,6 +20,6 @@ public interface MemberRepository extends JpaRepository<Member , UUID> {
 
 	@Query("select m "
 		+ "from Member m "
-		+ "where m.loginId = :loginId and m.password = :password")
-	Optional<Member> findByLoginIdAndPassword(@Param("loginId") String loginId, @Param("password") String password);
+		+ "where m.loginId = :loginId")
+	Optional<Member> findByLoginId(@Param("loginId") String loginId);
 }

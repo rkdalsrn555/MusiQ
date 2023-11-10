@@ -273,7 +273,7 @@ public class SingleModeMusicServiceImpl implements MusicService {
 
 		log.addAdditionalInformation(round, exp);
 
-		return GameOverResponseDto.of(round);
+		return GameOverResponseDto.from(round, exp);
 	}
 
 	/**
