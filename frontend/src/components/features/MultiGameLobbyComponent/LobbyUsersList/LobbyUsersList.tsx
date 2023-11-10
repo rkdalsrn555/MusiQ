@@ -21,6 +21,7 @@ export const LobbyUsersList = () => {
   const channelNumber = location.pathname.split('/').slice(-2)[0];
 
   useEffect(() => {
+    console.log('Updated users:', users);
     const fetchUsers = async () => {
       try {
         const response = await userApis.get(
@@ -33,22 +34,23 @@ export const LobbyUsersList = () => {
         );
 
         if (response.data.code === 200) {
-          console.log('통신 성공');
-          console.log(response.data.data.channelUserResponseItems)
-          console.log()
+          console.log(users);
           const sortedUsers = response.data.data.channelUserResponseItems.sort(
             (a: UserType, b: UserType) => b.userLevel - a.userLevel
           );
-
+          console.log('Fetched users:', sortedUsers);
           setUsers(sortedUsers);
+          console.log(users);
         }
       } catch (error) {
         console.error('Fetching users failed: ', error);
       }
     };
 
-    fetchUsers();
-  }, [channelNumber, accessToken]);
+    if (users.length === 0) {
+      fetchUsers();
+    }
+  }, [users]);
 
   return (
     <UsersListWrapper>
