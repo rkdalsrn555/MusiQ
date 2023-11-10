@@ -11,7 +11,7 @@ import java.util.UUID;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.SkipVoteDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 public class AfterAnswerService {
 
     @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    private SimpMessageSendingOperations messagingTemplate;
     private static final int MAKING_HALF_NUMBER = 2;
     private static final int MAKING_CEIL_NUMBER = 1;
 
