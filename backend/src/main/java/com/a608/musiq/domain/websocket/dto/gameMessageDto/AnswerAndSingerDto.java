@@ -1,7 +1,9 @@
 package com.a608.musiq.domain.websocket.dto.gameMessageDto;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
 @AllArgsConstructor
 public class AnswerAndSingerDto {
     private String answer;
