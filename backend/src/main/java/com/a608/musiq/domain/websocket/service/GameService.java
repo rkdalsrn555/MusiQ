@@ -158,6 +158,7 @@ public class GameService {
 
         String destination = getDestination(channelNo);
 
+        logger.info("nickname : {} , message : {}", chatMessage.getNickname(), chatMessage.getMessage());
         if (channelNo <= 10) {
             ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(MessageDtoType.CHAT,
                 chatMessage.getNickname(), chatMessage.getMessage());
@@ -384,15 +385,6 @@ public class GameService {
         return "/topic/" + channelNo;
     }
 
-    /**
-     * @param answer
-     */
-    @Async("asyncThreadPool")
-    public void submitAnswer(String answer) {
-        /*
-        게임 정답 채점 로직
-         */
-    }
 
     /**
      * @param accessToken
@@ -509,7 +501,7 @@ public class GameService {
             .isPrivate(!gameRoom.getPassword().equals(""))
             .numberOfProblems(createGameRoomRequestDto.getQuizAmount())
             .year(createGameRoomRequestDto.getMusicYear())
-            .roomManager(memberInfo.getNickname())
+            .roomManagerNickname(memberInfo.getNickname())
             .build();
 
 

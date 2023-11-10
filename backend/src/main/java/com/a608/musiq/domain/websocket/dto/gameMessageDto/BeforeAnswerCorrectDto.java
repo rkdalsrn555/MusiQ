@@ -8,19 +8,19 @@ import lombok.Getter;
 @Getter
 public class BeforeAnswerCorrectDto {
 
-    private MessageDtoType messageDtoType;
-    private String nickname;
+    private MessageDtoType messageType;
+    private String winner;
     private String title;
     private String singer;
     private String singerHint;
     private String initialHint;
-    private int skipVote;
+    private Integer skipVote;
 
-    public static BeforeAnswerCorrectDto create(MessageDtoType messageDtoType, String nickname,
-        String title, String singer, int skipVote) {
+    public static BeforeAnswerCorrectDto create(MessageDtoType messageType, String winner,
+        String title, String singer, Integer skipVote) {
         String singerHint = "";
         String initialHint = "";
-        return new BeforeAnswerCorrectDto(messageDtoType, nickname, title, singer, singerHint,
+        return new BeforeAnswerCorrectDto(messageType, winner, title, singer, singerHint,
             initialHint, skipVote);
     }
 

@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GameResultDto {
 
-    private MessageDtoType type;
+    private MessageDtoType messageType;
     private List<GameResultItem> userResults;
 
     @Builder
     public GameResultDto(List<GameResultItem> userResults) {
 
-        this.type = MessageDtoType.GAMERESULT;
+        this.messageType = MessageDtoType.GAMERESULT;
         this.userResults = userResults;
     }
 }

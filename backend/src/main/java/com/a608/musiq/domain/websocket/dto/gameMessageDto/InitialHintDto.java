@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class InitialHintDto {
 
-    private MessageDtoType type;
+    private MessageDtoType messageType;
     private String initialHint;
 
     @Builder
     public InitialHintDto(String initialHint) {
-        this.type = MessageDtoType.INITIALHINT;
+        this.messageType = MessageDtoType.INITIALHINT;
         this.initialHint = initialHint;
     }
 }

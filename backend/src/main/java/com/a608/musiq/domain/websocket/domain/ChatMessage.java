@@ -1,5 +1,6 @@
 package com.a608.musiq.domain.websocket.domain;
 
+import com.a608.musiq.domain.websocket.data.MessageType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +15,7 @@ import lombok.ToString;
 public class ChatMessage {
     private String nickname;
     private String message;
-    //private MessageType messageType;
+    private MessageType messageType;
     //백단에서 다 messageType 처리할 거면 MessageType 필요 없음
 
 }

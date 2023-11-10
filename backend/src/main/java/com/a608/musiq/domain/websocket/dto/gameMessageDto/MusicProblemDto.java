@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class MusicProblemDto {
-    private MessageDtoType type;
-    private String answer;
+    private MessageDtoType messageType;
+    private String title;
     private String singer;
     private String winner;
     private String singerHint;
@@ -18,8 +18,8 @@ public class MusicProblemDto {
 
     @Builder
     public MusicProblemDto(String musicUrl) {
-        this.type = MessageDtoType.MUSICPROBLEM;
-        this.answer = "";
+        this.messageType = MessageDtoType.MUSICPROBLEM;
+        this.title = "";
         this.singer = "";
         this.winner = "";
         this.singerHint = "";
