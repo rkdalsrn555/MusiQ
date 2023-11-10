@@ -1,8 +1,15 @@
 import React from 'react';
+import {
+  MultiGameStatus,
+  MultiGameChatting,
+  MultiGameHint,
+  MultiGameProgress,
+  MultiGameSkip,
+} from '../../components/features';
 import * as S from './MultiGamePlaying.styled';
 
 export const MultiGamePlaying = () => (
   <S.Container>
-    <div>멀티게임플레이 페이지이다!!!</div>
+    <MultiGameStatus />
   </S.Container>
 );
