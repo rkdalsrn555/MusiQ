@@ -19,8 +19,8 @@ const Container = styled.div`
 `;
 
 const CharactorColor = styled.div<{ color: string }>`
-  width: 2rem;
-  height: 2rem;
+  width: 1.2rem;
+  height: 1.2rem;
   background-color: ${(props) => props.color};
   border-radius: 4px;
 `;

@@ -32,16 +32,12 @@ const PrivatePath = [
   { path: '/single/game-option', component: <SingleGameOption /> },
   { path: '/single/game-playing', component: <SingleGamePlaying /> },
   { path: '/single/game-result', component: <ResultPage /> },
+  { path: 'multi/game-play', component: <MultiGamePlaying /> },
 ];
 
 // restricted = false 로그인 여부와 관계없이 접근 가능 페이지
 // restricted = true 로그인한 상태에선 접근 불가능: 로그인, 회원가입
 const PublicPath = [
-  {
-    path: 'multi/game-play',
-    component: <MultiGamePlaying />,
-    restricted: false,
-  },
   { path: '/login', component: <Login />, restricted: true },
   { path: '/sign-up', component: <Signup />, restricted: true },
   {

@@ -12,8 +12,11 @@ const mockUserData = [
 ];
 
 const Container = styled.div`
-  width: 18rem;
-  height: 20rem;
+  position: absolute;
+  top: 5%;
+  left: 5%;
+  width: 16rem;
+  height: 15rem;
   border-radius: 16px;
   border: 5px solid rgba(235, 226, 255, 0.6);
   background-color: rgba(235, 226, 255, 0.6);
@@ -31,7 +34,7 @@ const Container = styled.div`
   }
 
   & div {
-    margin-left: 5%;
+    margin-left: 3%;
   }
 `;
 
