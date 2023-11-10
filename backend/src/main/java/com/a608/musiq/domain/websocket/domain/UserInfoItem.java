@@ -17,6 +17,7 @@ public class UserInfoItem {
     private Double score;
     private Boolean isSkipped;
 
+
     public static UserInfoItem create(String nickname, Double score, Boolean isSkipped) {
         return new UserInfoItem(nickname, score, isSkipped);
     }
@@ -24,6 +25,7 @@ public class UserInfoItem {
     public void setSkipped(Boolean skipped) {
         isSkipped = skipped;
     }
+
 
     public void initializeUserInfo() {
         this.score = 0.0;
