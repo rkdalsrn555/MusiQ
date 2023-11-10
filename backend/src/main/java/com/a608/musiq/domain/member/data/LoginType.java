@@ -1,4 +1,4 @@
-package com.a608.musiq.domain.member.domain;
+package com.a608.musiq.domain.member.data;
 
 import java.util.Arrays;
 
