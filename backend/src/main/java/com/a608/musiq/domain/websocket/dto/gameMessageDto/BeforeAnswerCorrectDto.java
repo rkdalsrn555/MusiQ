@@ -12,11 +12,16 @@ public class BeforeAnswerCorrectDto {
     private String nickname;
     private String title;
     private String singer;
+    private String singerHint;
+    private String initialHint;
     private int skipVote;
 
     public static BeforeAnswerCorrectDto create(MessageDtoType messageDtoType, String nickname,
         String title, String singer, int skipVote) {
-        return new BeforeAnswerCorrectDto(messageDtoType, nickname, title, singer, skipVote);
+        String singerHint = "";
+        String initialHint = "";
+        return new BeforeAnswerCorrectDto(messageDtoType, nickname, title, singer, singerHint,
+            initialHint, skipVote);
     }
 
 }

@@ -42,7 +42,7 @@ public class RoundStartService {
 
         // 타임 카운트가 5인 경우 (맨 처음 카운트인 경우) 문제 링크를 보냄
         // 라운드마다 변수 초기화를 위해 ""를 담아 보냄
-        if (room.getTime() == 5) {
+        if (room.getTime() >= 3) {
             MusicProblemDto dto = MusicProblemDto.builder()
                     .musicUrl(room.getMultiModeProblems().get(room.getRound() - 1).getUrl())
                     .build();

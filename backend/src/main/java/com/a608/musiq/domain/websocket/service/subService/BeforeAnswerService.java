@@ -43,6 +43,21 @@ public class BeforeAnswerService {
         //과반수인 경우
         if (gameRoom.getSkipVote() >= (gameRoom.getTotalUsers() / MAKING_HALF_NUMBER
                 + MAKING_CEIL_NUMBER)) {
+            //정답 pub
+            int round = gameRoom.getRound() - 1;
+            String title = gameRoom.getMultiModeProblems().get(round).getTitle();
+            String singer = gameRoom.getMultiModeProblems().get(round).getSinger();
+
+            AnswerAndSingerDto answerAndSingerDto = AnswerAndSingerDto.create(title, singer);
+            messagingTemplate.convertAndSend(destination, answerAndSingerDto);
+
+            //스킵 투표 pub
+            gameRoom.setSkipVote(0);
+            // 메시지 타입 SKIP, isSkipped true, skipVote = 0 으로 pub
+            SkipVoteDto skipVoteDto = SkipVoteDto.create(MessageDtoType.BEFORESKIP, true,
+                gameRoom.getSkipVote());
+            messagingTemplate.convertAndSend(destination, skipVoteDto);
+
 
             //gameRoom의 playType를 AFTERANSWER 로 바꿔줌
             gameRoom.setPlayType(PlayType.AFTERANSWER);
@@ -52,22 +67,6 @@ public class BeforeAnswerService {
                 UserInfoItem userInfoItem = gameRoom.getUserInfoItems().get(userUuid);
                 userInfoItem.setSkipped(false);
             }
-
-            gameRoom.setSkipVote(0);
-
-            //정답 pub
-            int round = gameRoom.getRound() - 1;
-            String title = gameRoom.getMultiModeProblems().get(round).getTitle();
-            String singer = gameRoom.getMultiModeProblems().get(round).getSinger();
-
-            AnswerAndSingerDto answerAndSingerDto = AnswerAndSingerDto.create(title, singer);
-            messagingTemplate.convertAndSend(destination, answerAndSingerDto);
-
-            // 메시지 타입 SKIP, isSkipped true, skipVote = 0 으로 pub
-            SkipVoteDto skipVoteDto = SkipVoteDto.create(MessageDtoType.BEFORESKIP, true,
-                    gameRoom.getSkipVote());
-            messagingTemplate.convertAndSend(destination, skipVoteDto);
-
 
         } else {
             //과반수가 아닌 경우

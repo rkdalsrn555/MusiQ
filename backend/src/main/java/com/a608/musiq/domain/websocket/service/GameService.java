@@ -169,7 +169,6 @@ public class GameService {
         //게임룸 타입 가져오기 - 게임 시작은 http 통신으로 민구가 WAITING에서 GAME으로 바꿔줄거임
         GameRoomType gameRoomType = gameRoom.getGameRoomType();
 
-        PlayType playType = gameRoom.getPlayType();
 
         if (chatMessage.getMessage().equals("나가기")) {
             String currentRoomManagerNickname = commonService.leaveGameRoom(uuid, gameRoom, channelNo);
@@ -178,7 +177,7 @@ public class GameService {
                     LeaveGameRoomDto.from(chatMessage.getNickName(), currentRoomManagerNickname));
         }
 
-        if (gameRoomType == GameRoomType.WAITING) {
+        if (gameRoomType == GameRoomType.WAITING || gameRoomType == GameRoomType.END) {
             //일반 채팅
             ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(MessageDtoType.CHAT,
                     chatMessage.getNickName(), chatMessage.getMessage());
@@ -186,7 +185,7 @@ public class GameService {
             return;
         }
         if (gameRoomType == GameRoomType.GAME) {
-
+            PlayType playType = gameRoom.getPlayType();
             if (playType == PlayType.ROUNDSTART) {
                 //일반 채팅
                 ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(MessageDtoType.CHAT,
@@ -214,6 +213,7 @@ public class GameService {
                             MessageDtoType.CHAT, chatMessage.getNickName(),
                             chatMessage.getMessage());
                     messagingTemplate.convertAndSend(destination, chatMessagePubDto);
+
                     //그 다음 정답 채점 로직 구현
                     int round = gameRoom.getRound() - 1;
                     String submitedAnswer = chatMessage.getMessage().replaceAll(" ", "")
@@ -227,7 +227,7 @@ public class GameService {
                             String title = gameRoom.getMultiModeProblems().get(round).getTitle();
                             String singer = gameRoom.getMultiModeProblems().get(round).getSinger();
 
-                            // 정답자 닉네임, 정답 제목, 가수 pub
+                            // 정답자 닉네임, 정답 제목, 가수, skipVote 0 pub
                             BeforeAnswerCorrectDto beforeAnswerCorrectDto = BeforeAnswerCorrectDto.create(
                                     MessageDtoType.BEFOREANSWERCORRECT, chatMessage.getNickName(),
                                     title, singer, 0);
