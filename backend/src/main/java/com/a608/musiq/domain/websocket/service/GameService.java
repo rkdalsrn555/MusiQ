@@ -1,6 +1,5 @@
 package com.a608.musiq.domain.websocket.service;
 
-import com.a608.musiq.domain.member.domain.Member;
 import com.a608.musiq.domain.member.domain.MemberInfo;
 import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.websocket.data.GameRoomType;
@@ -173,10 +172,10 @@ public class GameService {
         PlayType playType = gameRoom.getPlayType();
 
         if (chatMessage.getMessage().equals("나가기")) {
-            commonService.leaveGameRoom(uuid, gameRoom, channelNo);
+            String currentRoomManagerNickname = commonService.leaveGameRoom(uuid, gameRoom, channelNo);
 
             messagingTemplate.convertAndSend(destination,
-                    LeaveGameRoomDto.of(chatMessage.getNickName()));
+                    LeaveGameRoomDto.from(chatMessage.getNickName(), currentRoomManagerNickname));
         }
 
         if (gameRoomType == GameRoomType.WAITING) {

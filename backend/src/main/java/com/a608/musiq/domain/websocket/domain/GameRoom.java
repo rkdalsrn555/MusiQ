@@ -102,7 +102,7 @@ public class GameRoom {
         this.round++;
     }
 
-    public void leaveUser(UUID uuid, int roomNumber) {
+    public String leaveUser(UUID uuid, int roomNumber) {
         int lobbyChannelNumber = roomNumber / ROOM_DIVIDE_NUMBER;
         int gameChannelNumber = roomNumber % ROOM_DIVIDE_NUMBER;
 
@@ -111,7 +111,7 @@ public class GameRoom {
             Channel channel = GameValue.getChannel(lobbyChannelNumber);
 
             channel.clearGameRoom(gameChannelNumber);
-            return;
+            return null;
         }
 
         // 방장 위임
@@ -126,6 +126,8 @@ public class GameRoom {
 
         this.totalUsers--;
         userInfoItems.remove(uuid);
+
+        return userInfoItems.get(roomManagerUUID).getNickname();
     }
 
     public void initializeRoom() {
