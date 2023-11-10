@@ -42,7 +42,7 @@ export const LobbyChatting: React.FC = () => {
       const headers: { [key: string]: string } = {};
       if (accessToken) {
         headers.accessToken = accessToken;
-        console.log(headers, message)
+        // console.log(headers, message);
       }
 
       websocketClient.publish({
@@ -50,10 +50,10 @@ export const LobbyChatting: React.FC = () => {
         headers,
         body: JSON.stringify(message),
       });
-
       setInputMessage(''); // 메시지를 보낸 후 입력 필드를 비웁니다.
     }
   };
+
   return (
     <ChattingWrapper>
       <ChattingContentsWrapper>
@@ -78,7 +78,7 @@ export const LobbyChatting: React.FC = () => {
           }}
         />
         <button type="button" onClick={sendMessage}>
-          <img src={messageSubmit} alt="메세지 보내기" width={25} />
+          <img src={messageSubmit} alt="메세지 보내기" width={22} />
         </button>
       </ChattingInputWrapper>
     </ChattingWrapper>
