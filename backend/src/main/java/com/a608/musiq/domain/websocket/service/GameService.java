@@ -378,8 +378,16 @@ public class GameService {
                     room.initializeRoom();
 
                     // 클라이언트에게 대기방 관련 정보 전달 해줘야 함
-                    GameRoomPubDto dto = GameRoomPubDto.builder().memberInfos(memberInfos)
-                        .build();
+                    GameRoomPubDto dto = GameRoomPubDto.builder()
+                            .memberInfos(memberInfos)
+                            .roomNo(room.getRoomNo())
+                            .roomName(room.getRoomName())
+                            .password(room.getPassword())
+                            .isPrivate(room.isPrivate())
+                            .numberOfProblems(room.getNumberOfProblems())
+                            .year(room.getYear())
+                            .roomManagerNickname(room.getRoomManagerNickname())
+                            .build();
                     messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
                 }
             }
