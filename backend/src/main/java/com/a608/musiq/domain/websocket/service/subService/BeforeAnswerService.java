@@ -13,14 +13,14 @@ import com.a608.musiq.domain.websocket.dto.gameMessageDto.TimeDto;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BeforeAnswerService {
 
     @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    private SimpMessageSendingOperations messagingTemplate;
 
     private static final int MAKING_HALF_NUMBER = 2;
     private static final int MAKING_CEIL_NUMBER = 1;
