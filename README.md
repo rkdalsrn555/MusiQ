@@ -76,15 +76,32 @@
 원하는 난이도와, 연도를 선택 후 게임을 시작하세요. <br/>
 노래는 총 3번 듣기 가능하고, 한 노래에 대한 정답 제출은 총 4번 가능합니다. <br/>
 노래 빨리 맞추기 게임은 마라톤 형식으로 누가 안틀리고 가장 많이 맞추는지 대결하는 게임입니다. <br/><br/>
-<img src="./img/V1/tutorial1.png" />
-<img src="./img/V1/tutorial2.png" />
-<img src="./img/V1/tutorial3.png" />
-<img src="./img/V1/tutorial4.png" />
-<img src="./img/V1/tutorial5.png" />
+| <img src="./img/V1/tutorial1.png"/> | <img src="./img/V1/tutorial2.png"/> |
+| -------------------------------------- | -------------------------------------- |
+| <img src="./img/V1/tutorial3.png"/> | <img src="./img/V1/tutorial4.png"/> |
+| <img src="./img/V1/tutorial5.png"/> |
 
 ### v1.5 single mode
 
-- 2023/11/1 까지 구현 목표
+로그인, 회원가입 후 즐길 수 있습니다. <br/>
+원하는 난이도와, 연도를 선택 후 게임을 시작하세요. <br/>
+세 번의 하트를 모두 소진하면 게임이 종료됩니다. <br/>
+최대 몇 라운드까지 진행할 수 있는지 플레이 해보세요!<br/>
+
+#### 추가된 기능
+
+- 로그인, 회원가입
+- 랭킹 시스템
+- 싱글모드 플레이 페이지
+- 게임 방식 변경
+  - 하트 3회 소진 시 게임 종료
+  - 모르는 노래 스킵 버튼
+  - 게임 종료를 위한 모르겠어요 버튼
+
+| <img src="./img/V1.5/tutorial1.png" /> | <img src="./img/V1.5/tutorial2.png" /> |
+| -------------------------------------- | -------------------------------------- |
+| <img src="./img/V1.5/tutorial3.png"/>  | <img src="./img/V1.5/tutorial4.png"/>  |
+| <img src="./img/V1.5/tutorial5.png"/>  |
 
 ### v2 multi mode
 
