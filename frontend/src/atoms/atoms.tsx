@@ -2,8 +2,6 @@ import { atom } from 'recoil';
 // eslint-disable-next-line import/no-unresolved
 import { Client } from '@stomp/stompjs';
 
-const isLogin = Boolean(window.localStorage.getItem('userAccessToken'));
-
 type GameOptionDataType = {
   difficulty: {
     title: string;
@@ -49,6 +47,7 @@ export const UserIpAtom = atom({
   },
 });
 
+const isLogin = Boolean(window.localStorage.getItem('userAccessToken'));
 export const ActiveCarouselNumAtom = atom({
   key: 'ActiveCarouselNumAtom',
   default: {

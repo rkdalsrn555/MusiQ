@@ -29,7 +29,7 @@ export const ResultInfo = () => {
   });
 
   // location.state가 null이거나 undefined이면 빈 객체를 사용
-  const { mode, selectYear, correctAnswerCnt } = location.state || {};
+  const { mode, selectYear, correctAnswerCnt, exp } = location.state || {};
 
   return (
     <ResultContainer>
@@ -49,6 +49,7 @@ export const ResultInfo = () => {
           mode={mode}
           selectYear={selectYear}
           correctAnswerCnt={correctAnswerCnt}
+          exp={exp}
         />
         <div style={{ marginTop: '1rem' }}>
           <RetryButton mode={mode} selectYear={selectYear} />
