@@ -303,7 +303,7 @@ public class GameService {
                         roundStartService.doRoundStart(roomNum, room);
                         break;
                     case BEFOREANSWER:
-                        System.out.println("before answer");
+                        beforeAnswerService.doBeforeAnswer(roomNum, room);
                         break;
                     case AFTERANSWER:
                         afterAnswerService.doAfterAnswer(roomNum, room);
