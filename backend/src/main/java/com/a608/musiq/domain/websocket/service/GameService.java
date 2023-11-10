@@ -6,6 +6,7 @@ import com.a608.musiq.domain.websocket.data.GameRoomType;
 import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import com.a608.musiq.domain.websocket.data.PlayType;
+import com.a608.musiq.domain.websocket.domain.Channel;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.domain.UserInfoItem;
 import com.a608.musiq.domain.websocket.dto.AllChannelSizeResponseDto;
@@ -458,14 +459,9 @@ public class GameService {
                 .getNickname();
         GameRoom gameRoom = new GameRoom();
         ConcurrentHashMap<Integer, GameRoom> gameRooms = GameValue.getGameRooms();
+        Channel channel = GameValue.getChannel(createGameRoomRequestDto.getChannelNo());
+        int curRoomIndex = channel.getMinimumEmptyRoomNo();
 
-        Iterator<Integer> it = gameRooms.keySet().iterator();
-        int curRoomIndex = GameValue.getChannel(createGameRoomRequestDto.getChannelNo())
-                .getMinimumEmptyRoomNo();
-
-        /*
-        GameRoom 생성 후 Map에 추가
-         */
         Map<UUID, UserInfoItem> userInfoItems = new HashMap<>();
         userInfoItems.put(uuid,
                 UserInfoItem.builder().nickname(nickname).score(0.0).isSkipped(false).build());
@@ -479,15 +475,22 @@ public class GameService {
 
         logger.info("Create GameRoom Successful");
 
-        return CreateGameRoomResponseDto.builder().gameRoomNo(curRoomIndex)
-                .roomName(createGameRoomRequestDto.getRoomName())
-                .password(createGameRoomRequestDto.getPassword())
-                .musicYear(createGameRoomRequestDto.getMusicYear())
-                .quizAmount(createGameRoomRequestDto.getQuizAmount()).build();
+        channel.removeUser(uuid);
+        channel.addUser(uuid, createGameRoomRequestDto.getChannelNo() * 1000 + curRoomIndex);
+
+        channel.updateIsUsed(curRoomIndex);
+
+        // 메세지 펍 해주기
+
+        return CreateGameRoomResponseDto.builder()
+                .gameRoomNo(createGameRoomRequestDto.getChannelNo() * 1000 + curRoomIndex)
+                .build();
     }
 
     public JoinGameRoomResponseDto moveGameRoom(String accessToken, int channelNo) {
         UUID uuid = jwtValidator.getData(accessToken);
+
+
 
         return null;
     }

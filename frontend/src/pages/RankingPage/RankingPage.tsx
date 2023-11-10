@@ -23,7 +23,7 @@ export const RankingPage = () => {
       navigate('/mobile-restriction');
     }
 
-    setActiveCarouselNum({ activeCarouselNum: 4 });
+    setActiveCarouselNum({ activeCarouselNum: 2 });
   }, []);
 
   return (

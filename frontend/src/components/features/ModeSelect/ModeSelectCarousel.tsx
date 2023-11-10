@@ -33,10 +33,8 @@ export const ModeSelectCarousel: React.FC = () => {
     ActiveCarouselNumAtom
   );
   const accessToken = window.localStorage.getItem('userAccessToken');
-  const [visible, setVisible] = useState<number>(
-    activeCarouselNum.activeCarouselNum
-  ); // accessToken이 없을 때 visible의 초기값을 1로 설정하여 2번 콘텐츠가 먼저 보이게 함
   const isLoggedIn = Boolean(accessToken); // 로그인 검증
+  const [visible, setVisible] = useState<number>(isLoggedIn ? 1 : 0); // accessToken이 없을 때 visible의 초기값을 1로 설정하여 2번 콘텐츠가 먼저 보이게 함
 
   const [showDescription, setShowDescription] = useState<number | null>(null); // 설명을 보여줄 아이템의 인덱스
 
@@ -44,46 +42,46 @@ export const ModeSelectCarousel: React.FC = () => {
     // 토큰 존재 여부에 따라 다른 화면 보여주기
     {
       id: 1,
-      text: '혼자 게임을 즐길 수 있는 모드입니다. 많이 맞혀서 랭킹 상위권에 도전해보세요.',
-      image: isLoggedIn ? singleModeChar : singleLock,
-      link: '/single/game-option',
-    },
-    {
-      id: 2,
       text: '로그인 없이 가볍게 즐길 수 있는 모드입니다. 퀴즈를 맞히고 친구들에게 기록을 공유해보세요.',
       image: isLoggedIn ? guestLock : guestModeChar,
       link: '/guest/game-option',
     },
     {
+      id: 2,
+      text: '혼자 게임을 즐길 수 있는 모드입니다. 많이 맞혀서 랭킹 상위권에 도전해보세요.',
+      image: isLoggedIn ? singleModeChar : singleLock,
+      link: '/single/game-option',
+    },
+    {
       id: 3,
+      text: '유저들의 순위와 경험치를 확인할 수 있습니다.',
+      image: ranking,
+      link: '/ranking',
+    },
+    {
+      id: 4,
       text: '최대 6인과 함께 게임을 즐길 수 있는 모드입니다. 친구를 초대하거나, 빠른 입장을 통해 다른 사람들과 경쟁해보세요.',
       image: isLoggedIn ? multiModeChar : multiLock,
       link: '/multi/channel',
     },
     {
-      id: 4,
+      id: 5,
       text: '온 가족이 즐길 수 있는 모드입니다. 손을 들고 정답을 외쳐보세요!',
       image: isLoggedIn ? mzModeChar : mzLock,
       link: '/mz-mode',
-    },
-    {
-      id: 5,
-      text: '유저들의 순위와 경험치를 확인할 수 있습니다.',
-      image: ranking,
-      link: '/ranking',
     },
   ]);
   const navigateToLink = () => {
     const content = contents[visible];
 
-    if (content.id === 2 && window.localStorage.getItem('userAccessToken')) {
+    if (content.id === 1 && window.localStorage.getItem('userAccessToken')) {
       alert('비회원만 이용할 수 있는 서비스입니다.');
       return; // navigation을 수행하지 않고 함수를 종료
     }
 
     if (
       !window.localStorage.getItem('userAccessToken') &&
-      (content.id === 1 || content.id === 3 || content.id === 4)
+      (content.id === 2 || content.id === 4 || content.id === 5)
     ) {
       alert('로그인이 필요한 서비스입니다.');
       return; // navigation을 수행하지 않고 함수를 종료

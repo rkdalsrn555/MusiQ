@@ -63,16 +63,16 @@ export const HeaderCell = styled.div`
 export const RankingItem = styled.div`
   font-size: 28px;
   font-weight: bold;
-  margin-bottom: 1rem;
-  margin-top: 1rem;
   display: flex;
-  padding: 10px;
+  align-items: center;
+  padding: 1.2rem 1rem;
   border-bottom: 1px solid #eee;
 `;
 
 export const Cell = styled.div`
   flex-basis: 33.33%;
   text-align: center;
+  line-height: 1.2rem;
 `;
 
 export const RankingContainer = styled.div`
@@ -94,14 +94,16 @@ export const StyledMyRanking = styled.div`
   left: 5%;
 `;
 
-export const PrizeImage = styled.img`
-  position: absolute;
-  top: -80%;
-`;
+export const PrizeImage = styled.img``;
 
 export const PrizeCell = styled.div`
   position: relative;
-  left: 3%;
+  width: 0.1rem;
+  height: 2rem;
+
+  img {
+    margin-left: 1rem;
+  }
 `;
 
 export const MyRankingText = styled.div`
