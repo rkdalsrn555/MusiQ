@@ -5,6 +5,7 @@ import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.websocket.data.GameRoomType;
 import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.data.MessageDtoType;
+import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.Channel;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
@@ -172,13 +173,21 @@ public class GameService {
         //게임룸 타입 가져오기 - 게임 시작은 http 통신으로 민구가 WAITING에서 GAME으로 바꿔줄거임
         GameRoomType gameRoomType = gameRoom.getGameRoomType();
 
-        if (chatMessage.getMessage().equals("나가기")) {
+        // 게임방 퇴장 (게임방 -> 로비)
+        if (chatMessage.getMessageType().equals(MessageType.EXITUSER)) {
             String currentRoomManagerNickname = commonService.leaveGameRoom(uuid, gameRoom,
                 channelNo);
 
             messagingTemplate.convertAndSend(destination,
                 LeaveGameRoomDto.from(chatMessage.getNickname(), currentRoomManagerNickname));
         }
+
+        // 게임방 입장 (로비 -> 게임방)
+        if (chatMessage.getMessageType().equals(MessageType.ENTERUSER)) {
+            // http가 나을지 STOMP가 나을지 생각해봐야해
+        }
+
+
 
         if (gameRoomType == GameRoomType.WAITING || gameRoomType == GameRoomType.END) {
             //일반 채팅
@@ -454,13 +463,15 @@ public class GameService {
         UUID uuid = jwtValidator.getData(accessToken);
         MemberInfo memberInfo = memberInfoRepository.findById(uuid).orElseThrow(
                 () -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
+
         Channel channel = GameValue.getChannel(createGameRoomRequestDto.getChannelNo());
         int curRoomIndex = channel.getMinimumEmptyRoomNo();
+        int roomNumber = createGameRoomRequestDto.getChannelNo() * 1000 + curRoomIndex;
 
         Map<UUID, UserInfoItem> userInfoItems = new HashMap<>();
         userInfoItems.put(uuid,
-                UserInfoItem.builder().nickname(nickname).score(0.0).isSkipped(false).build());
-        GameRoom gameRoom = GameRoom.builder().roomNo(curRoomIndex)
+                UserInfoItem.builder().nickname(memberInfo.getNickname()).score(0.0).isSkipped(false).build());
+        GameRoom gameRoom = GameRoom.builder().roomNo(roomNumber)
                 .roomName(createGameRoomRequestDto.getRoomName())
                 .password(createGameRoomRequestDto.getPassword()).roomManagerUUID(uuid)
                 .numberOfProblems(createGameRoomRequestDto.getQuizAmount())
@@ -502,7 +513,7 @@ public class GameService {
             messagingTemplate.convertAndSend(destination, gameRoomPubDto);
 
         return CreateGameRoomResponseDto.builder()
-            .gameRoomNo(createGameRoomRequestDto.getChannelNo() * 1000 + curRoomIndex)
+            .gameRoomNo(roomNumber)
             .build();
     }
 
