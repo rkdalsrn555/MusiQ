@@ -40,7 +40,9 @@ export const LobbyRooms = () => {
         );
 
         if (response.data.code === 200) {
-          setRooms(response.data.rooms);
+          setRooms(
+            Array.isArray(response.data.rooms) ? response.data.rooms : []
+          );
         }
       } catch (error) {
         console.error('Fetching rooms failed: ', error);
@@ -75,6 +77,10 @@ export const LobbyRooms = () => {
     );
   };
 
+  if (rooms.length === 0) {
+    return <RoomsWrapper>현재 개설된 방이 없습니다.</RoomsWrapper>;
+  }
+
   return (
     <RoomsWrapper>
       {currentRooms.map((room) => (
@@ -83,7 +89,11 @@ export const LobbyRooms = () => {
           {room.currentMembers} - {room.isPrivate} - {room.roomNumber}
         </Room>
       ))}
-      <PreviousButton type="button" onClick={handlePrevious}>
+      <PreviousButton
+        type="button"
+        onClick={handlePrevious}
+        disabled={currentPage === 1 || rooms.length === 0}
+      >
         <img
           src={previousButton}
           alt="이전 버튼"
