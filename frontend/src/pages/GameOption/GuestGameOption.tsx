@@ -64,7 +64,7 @@ export const GuestGameOption = () => {
       navigate('/mobile-restriction');
     }
 
-    setActiveCarouselNum({ activeCarouselNum: 1 });
+    setActiveCarouselNum({ activeCarouselNum: 0 });
   }, []);
 
   // 결과창에서 다시하기 버튼 클릭 시 옵션 그대로 가져오기 위해 작성한 코드
