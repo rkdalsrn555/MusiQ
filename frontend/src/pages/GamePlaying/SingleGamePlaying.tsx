@@ -230,6 +230,7 @@ export const SingleGamePlaying = () => {
     setTryCnt(3);
     tryCntRef.current = 3;
     setIsJudge(false);
+    setIsBubbleTime(false);
 
     await userApis
       .get(
@@ -366,7 +367,8 @@ export const SingleGamePlaying = () => {
         e.target.nodeName === 'INPUT' ||
         isLoseRef.current ||
         isPlayingRef.current ||
-        isToggledRef.current
+        isToggledRef.current ||
+        location.state.gameRoomData.problems === roundRef.current
       ) {
         return;
       }
@@ -427,7 +429,8 @@ export const SingleGamePlaying = () => {
         e.target.nodeName === 'INPUT' ||
         isLoseRef.current ||
         isPlayingRef.current ||
-        isToggledRef.current
+        isToggledRef.current ||
+        location.state.gameRoomData.problems === roundRef.current
       ) {
         return;
       }

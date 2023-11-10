@@ -52,7 +52,7 @@ export const UserIpAtom = atom({
 export const ActiveCarouselNumAtom = atom({
   key: 'ActiveCarouselNumAtom',
   default: {
-    activeCarouselNum: isLogin ? 0 : 1,
+    activeCarouselNum: isLogin ? 1 : 0,
   },
 });
 
