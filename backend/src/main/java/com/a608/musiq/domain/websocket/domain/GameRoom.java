@@ -20,9 +20,7 @@ import lombok.NoArgsConstructor;
 public class GameRoom {
     private static final int LEAST_MEMBER_SIZE = 1;
     private static final int ROOM_DIVIDE_NUMBER = 1000;
-    /*
-    !!!!!!!!!!!!!!!!!전체적으로 수정해야 함!!!!!!!!!!!!!!!!!
-    */
+
     private int roomNo;
     private String roomName;
 
@@ -128,6 +126,11 @@ public class GameRoom {
         userInfoItems.remove(uuid);
 
         return userInfoItems.get(roomManagerUUID).getNickname();
+    }
+
+    public void enterUser(UUID uuid) {
+        // 방 인원 체크
+        // 최대 인원 넘으면 에러?
     }
 
     public void initializeRoom() {
