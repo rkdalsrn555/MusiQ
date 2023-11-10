@@ -17,7 +17,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.StringTokenizer;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,7 +31,8 @@ public class RoundStartService {
     private static final String SPACE = " ";
     private static final int LOOP_START_INDEX = 0;
 
-    private SimpMessagingTemplate messagingTemplate;
+    @Autowired
+    private SimpMessageSendingOperations messagingTemplate;
 
     public void doRoundStart(Integer roomNum, GameRoom room) {
 
