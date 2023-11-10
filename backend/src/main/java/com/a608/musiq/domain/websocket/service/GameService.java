@@ -465,7 +465,8 @@ public class GameService {
                 () -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
 
         Channel channel = GameValue.getChannel(createGameRoomRequestDto.getChannelNo());
-        int roomNumber = channel.getMinimumEmptyRoomNo();
+        int curRoomIndex = channel.getMinimumEmptyRoomNo();
+        int roomNumber = createGameRoomRequestDto.getChannelNo() * 1000 + curRoomIndex;
 
         Map<UUID, UserInfoItem> userInfoItems = new HashMap<>();
         userInfoItems.put(uuid,
@@ -482,7 +483,7 @@ public class GameService {
         GameValue.addGameChannel(roomNumber,
             gameRoom);
         logger.info("Create GameRoom Successful");
-        channel.updateIsUsed(roomNumber);
+        channel.updateIsUsed(curRoomIndex);
 
         GameRoomMemberInfo gameRoomMemberInfo = GameRoomMemberInfo.builder()
             .nickName(memberInfo.getNickname())
@@ -512,7 +513,7 @@ public class GameService {
             messagingTemplate.convertAndSend(destination, gameRoomPubDto);
 
         return CreateGameRoomResponseDto.builder()
-            .gameRoomNo(createGameRoomRequestDto.getChannelNo() * 1000 + roomNumber)
+            .gameRoomNo(roomNumber)
             .build();
     }
 
