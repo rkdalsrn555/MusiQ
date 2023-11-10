@@ -82,12 +82,15 @@ export const RankingInfo: React.FC = () => {
   const [rankingData, setRankingData] = useState<RankingData[]>([]);
   const [myRank, setMyRank] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
+  const [isNickname, setNickname] = useState<string | null>(
+    window.localStorage.getItem('nickname')
+  );
 
   useEffect(() => {
     const fetchRankingData = async () => {
       try {
         const response = await axios.get<ApiResponse>(
-          `${process.env.REACT_APP_BASE_URL}/ranking/fullranking?nickname=${nickname}`
+          `${process.env.REACT_APP_BASE_URL}/ranking/fullranking?nickname=${isNickname}`
         );
         setRankingData(response.data.data.rankList);
         setMyRank(response.data.data.myRank ?? '순위권 외');
