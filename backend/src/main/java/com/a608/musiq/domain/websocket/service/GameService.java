@@ -15,6 +15,7 @@ import com.a608.musiq.domain.websocket.dto.ChannelUserResponseItem;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseItem;
+import com.a608.musiq.domain.websocket.dto.MusicYearItem;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.BeforeAnswerCorrectDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameRoomMemberDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameRoomMemberInfo;
@@ -41,6 +42,7 @@ import com.a608.musiq.global.exception.info.MultiModeExceptionInfo;
 import com.a608.musiq.global.jwt.JwtValidator;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -439,14 +441,17 @@ public class GameService {
                 MemberInfo roomManager = memberInfoRepository.findById(
                         gameRoom.getRoomManagerUUID()).orElseThrow(() -> new MemberInfoException(
                         MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
-
+                List<String> years = Arrays.stream(gameRoom.getYear().split(" ")).toList();
                 gameRoomListResponseItems.add(
-                        GameRoomListResponseItem.builder().roomTitle(gameRoom.getRoomName())
+                        GameRoomListResponseItem.builder()
+                                .gameRoomNo(subscribeNo)
+                                .roomTitle(gameRoom.getRoomName())
                                 .roomManager(roomManager.getNickname())
                                 .currentMembers(gameRoom.getTotalUsers())
                                 .roomNumber(gameRoom.getRoomNo())
                                 .isPrivate(!gameRoom.getPassword().equals(""))
-                                .years(gameRoom.getYear()).build());
+                                .years(years)
+                                .build());
             }
         }
 
