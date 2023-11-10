@@ -22,6 +22,7 @@ import {
   MultiGameLobbyPage,
   MzModePage,
   MultiChannelPage,
+  MultiGamePlaying,
 } from './pages';
 
 const PrivatePath = [
@@ -31,6 +32,7 @@ const PrivatePath = [
   { path: '/single/game-option', component: <SingleGameOption /> },
   { path: '/single/game-playing', component: <SingleGamePlaying /> },
   { path: '/single/game-result', component: <ResultPage /> },
+  { path: 'multi/game-play', component: <MultiGamePlaying /> },
 ];
 
 // restricted = false 로그인 여부와 관계없이 접근 가능 페이지
