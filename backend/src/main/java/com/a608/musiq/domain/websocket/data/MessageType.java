@@ -1,7 +1,7 @@
 package com.a608.musiq.domain.websocket.data;
 
 public enum MessageType {
-    CHAT, ANSWER, DISCONNECTED, ENTERUSER, QUITUSER, GAMESTART
+    CHAT, ANSWER, DISCONNECTED, ENTERUSER, EXITUSER, GAMESTART
     /**
      * CHAT : 유저가 채팅
      * ANSWER
