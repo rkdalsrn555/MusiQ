@@ -3,8 +3,9 @@ package com.a608.musiq.domain.ranking.controller;
 import com.a608.musiq.domain.ranking.dto.responseDto.FullRankResponseDto;
 import com.a608.musiq.domain.ranking.dto.responseDto.MyRankResponseDto;
 import com.a608.musiq.domain.ranking.service.RankingService;
+import com.a608.musiq.global.Util;
 import com.a608.musiq.global.common.response.BaseResponse;
-import com.a608.musiq.global.exception.exception.RankingException;
+import com.a608.musiq.global.scheduler.Scheduler;
 import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class RankingController {
 
     private final RankingService rankingService;
+    private final Scheduler scheduler;
+    private final Util util;
 
     @GetMapping("/myranking")
     private ResponseEntity<BaseResponse<MyRankResponseDto>> getMyRanking(@PathParam("nickname") String nickname) {
@@ -58,6 +61,16 @@ public class RankingController {
         } catch (Exception e) {
             return BaseResponse.builder().code(HttpStatus.INTERNAL_SERVER_ERROR.value()).build();
         }
+    }
+
+    @PostMapping("/into-redis")
+    private void insertRanking(){
+        scheduler.insertRankingToRedis();
+    }
+
+    @DeleteMapping("/init-redis")
+    private void deleteRanking(){
+        util.deleteKeyInRedis("ranking");
     }
 
 }
