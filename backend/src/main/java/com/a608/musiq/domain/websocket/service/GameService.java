@@ -227,6 +227,8 @@ public class GameService {
                         answer = answer.replaceAll(" ", "").toLowerCase();
                         if (submitedAnswer.equals(answer.toLowerCase())) {
 
+                            gameRoom.setPlayType(PlayType.AFTERANSWER);
+
                             String title = gameRoom.getMultiModeProblems().get(round).getTitle();
                             String singer = gameRoom.getMultiModeProblems().get(round).getSinger();
 
@@ -235,8 +237,6 @@ public class GameService {
                                 MessageDtoType.BEFOREANSWERCORRECT, chatMessage.getNickname(),
                                 title, singer, 0);
                             messagingTemplate.convertAndSend(destination, beforeAnswerCorrectDto);
-
-                            gameRoom.setPlayType(PlayType.AFTERANSWER);
 
                             //스킵 투표 초기화
                             gameRoom.setSkipVote(0);
@@ -249,10 +249,7 @@ public class GameService {
                             return;
                         }
                     }
-
-
                 }
-
             }
 
             if (playType == PlayType.AFTERANSWER) {
@@ -275,9 +272,6 @@ public class GameService {
 
         logger.info("Message send success / Destination : {}", destination);
 
-//        if(chatMessage.getMessageType() == MessageType.GAME) {
-//            submitAnswer(chatMessage.getMessage());
-//        }
     }
 
     public void pubMessage() {
