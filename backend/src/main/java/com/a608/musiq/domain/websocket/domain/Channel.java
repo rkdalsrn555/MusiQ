@@ -9,7 +9,7 @@ import lombok.Getter;
 @Getter
 public class Channel {
     private static final int MAX_ROOM_NUMBER = 100;
-    private static final int LOOP_START_NUMBER = 0;
+    private static final int LOOP_START_NUMBER = 1;
 
     private ConcurrentHashMap<UUID, Integer> gameChannel = new ConcurrentHashMap<>();
     private boolean[] isUsed = new boolean[100];
@@ -28,6 +28,10 @@ public class Channel {
         }
 
         throw new MultiModeException(MultiModeExceptionInfo.OUT_OF_ROOM_NUMBER);
+    }
+
+    public void updateIsUsed(int index) {
+        isUsed[index] = true;
     }
 
     public void addUser(UUID uuid, int channelNo) {

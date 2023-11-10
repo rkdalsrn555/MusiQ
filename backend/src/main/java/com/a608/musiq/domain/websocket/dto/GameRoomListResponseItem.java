@@ -12,5 +12,6 @@ public class GameRoomListResponseItem {
     private int currentMembers;
     private int roomNumber;
     private boolean isPrivate;
+    // List로 수정
     private String years;
 }
