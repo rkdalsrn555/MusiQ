@@ -12,6 +12,8 @@ public class MusicProblemDto {
     private String answer;
     private String singer;
     private String winner;
+    private String singerHint;
+    private String initialHint;
     private String musicUrl;
 
     @Builder
@@ -20,6 +22,8 @@ public class MusicProblemDto {
         this.answer = "";
         this.singer = "";
         this.winner = "";
+        this.singerHint = "";
+        this.initialHint = "";
         this.musicUrl = musicUrl;
     }
 }
