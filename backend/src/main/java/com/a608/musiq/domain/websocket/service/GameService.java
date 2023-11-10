@@ -15,6 +15,7 @@ import com.a608.musiq.domain.websocket.dto.ChannelUserResponseItem;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
 import com.a608.musiq.domain.websocket.dto.GameRoomListResponseItem;
+import com.a608.musiq.domain.websocket.dto.MusicYearItem;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.BeforeAnswerCorrectDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameRoomMemberDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameRoomMemberInfo;
@@ -41,6 +42,7 @@ import com.a608.musiq.global.exception.info.MultiModeExceptionInfo;
 import com.a608.musiq.global.jwt.JwtValidator;
 import jakarta.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -55,7 +57,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -75,7 +77,7 @@ public class GameService {
     private final CommonService commonService;
 
     @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    private SimpMessageSendingOperations messagingTemplate;
 
     private ReentrantReadWriteLock lock;
 
@@ -159,7 +161,7 @@ public class GameService {
 
         if (channelNo <= 10) {
             ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(MessageDtoType.CHAT,
-                    chatMessage.getNickName(), chatMessage.getMessage());
+                    chatMessage.getNickname(), chatMessage.getMessage());
             messagingTemplate.convertAndSend(destination, chatMessagePubDto);
             return;
         }
@@ -175,13 +177,13 @@ public class GameService {
             String currentRoomManagerNickname = commonService.leaveGameRoom(uuid, gameRoom, channelNo);
 
             messagingTemplate.convertAndSend(destination,
-                    LeaveGameRoomDto.from(chatMessage.getNickName(), currentRoomManagerNickname));
+                    LeaveGameRoomDto.from(chatMessage.getNickname(), currentRoomManagerNickname));
         }
 
         if (gameRoomType == GameRoomType.WAITING || gameRoomType == GameRoomType.END) {
             //일반 채팅
             ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(MessageDtoType.CHAT,
-                    chatMessage.getNickName(), chatMessage.getMessage());
+                    chatMessage.getNickname(), chatMessage.getMessage());
             messagingTemplate.convertAndSend(destination, chatMessagePubDto);
             return;
         }
@@ -190,7 +192,7 @@ public class GameService {
             if (playType == PlayType.ROUNDSTART) {
                 //일반 채팅
                 ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(MessageDtoType.CHAT,
-                        chatMessage.getNickName(), chatMessage.getMessage());
+                        chatMessage.getNickname(), chatMessage.getMessage());
                 messagingTemplate.convertAndSend(destination, chatMessagePubDto);
                 return;
 
@@ -211,7 +213,7 @@ public class GameService {
                 else {
                     //먼저 일반채팅으로 pub 부터 함
                     ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(
-                            MessageDtoType.CHAT, chatMessage.getNickName(),
+                            MessageDtoType.CHAT, chatMessage.getNickname(),
                             chatMessage.getMessage());
                     messagingTemplate.convertAndSend(destination, chatMessagePubDto);
 
@@ -230,7 +232,7 @@ public class GameService {
 
                             // 정답자 닉네임, 정답 제목, 가수, skipVote 0 pub
                             BeforeAnswerCorrectDto beforeAnswerCorrectDto = BeforeAnswerCorrectDto.create(
-                                    MessageDtoType.BEFOREANSWERCORRECT, chatMessage.getNickName(),
+                                    MessageDtoType.BEFOREANSWERCORRECT, chatMessage.getNickname(),
                                     title, singer, 0);
                             messagingTemplate.convertAndSend(destination, beforeAnswerCorrectDto);
 
@@ -264,7 +266,7 @@ public class GameService {
                 } else {
                     //일반 채팅
                     ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(
-                            MessageDtoType.CHAT, chatMessage.getNickName(),
+                            MessageDtoType.CHAT, chatMessage.getNickname(),
                             chatMessage.getMessage());
                     messagingTemplate.convertAndSend(destination, chatMessagePubDto);
                 }
@@ -303,7 +305,7 @@ public class GameService {
                         roundStartService.doRoundStart(roomNum, room);
                         break;
                     case BEFOREANSWER:
-                        System.out.println("before answer");
+                        beforeAnswerService.doBeforeAnswer(roomNum, room);
                         break;
                     case AFTERANSWER:
                         afterAnswerService.doAfterAnswer(roomNum, room);
@@ -439,14 +441,17 @@ public class GameService {
                 MemberInfo roomManager = memberInfoRepository.findById(
                         gameRoom.getRoomManagerUUID()).orElseThrow(() -> new MemberInfoException(
                         MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
-
+                List<String> years = Arrays.stream(gameRoom.getYear().split(" ")).toList();
                 gameRoomListResponseItems.add(
-                        GameRoomListResponseItem.builder().roomTitle(gameRoom.getRoomName())
+                        GameRoomListResponseItem.builder()
+                                .gameRoomNo(subscribeNo)
+                                .roomTitle(gameRoom.getRoomName())
                                 .roomManager(roomManager.getNickname())
                                 .currentMembers(gameRoom.getTotalUsers())
                                 .roomNumber(gameRoom.getRoomNo())
                                 .isPrivate(!gameRoom.getPassword().equals(""))
-                                .years(gameRoom.getYear()).build());
+                                .years(years)
+                                .build());
             }
         }
 

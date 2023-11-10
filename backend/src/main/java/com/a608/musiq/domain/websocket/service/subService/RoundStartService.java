@@ -17,7 +17,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.StringTokenizer;
 import lombok.RequiredArgsConstructor;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,7 +31,8 @@ public class RoundStartService {
     private static final String SPACE = " ";
     private static final int LOOP_START_INDEX = 0;
 
-    private SimpMessagingTemplate messagingTemplate;
+    @Autowired
+    private SimpMessageSendingOperations messagingTemplate;
 
     public void doRoundStart(Integer roomNum, GameRoom room) {
 
@@ -42,15 +44,14 @@ public class RoundStartService {
 
         // 타임 카운트가 5인 경우 (맨 처음 카운트인 경우) 문제 링크를 보냄
         // 라운드마다 변수 초기화를 위해 ""를 담아 보냄
-        if (room.getTime() >= 3) {
+        if (room.getTime() >= 4) {
             MusicProblemDto dto = MusicProblemDto.builder()
                     .musicUrl(room.getMultiModeProblems().get(room.getRound() - 1).getUrl())
                     .build();
             messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
         }
-
-        // 5, 4, 3, 2, 1 카운트 다운 전송
-        if (room.getTime() > 0) {
+        // 3, 2, 1 카운트 다운 전송
+        else if (room.getTime() > 0) {
 
             // 카운트 다운 전송
             TimeDto timeDto = TimeDto.builder().time(room.getTime()).build();

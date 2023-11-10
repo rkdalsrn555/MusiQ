@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class GameRoomMemberInfo {
-    private String nickName;
+    private String nickname;
     private Integer level;
 
     @Builder
     public GameRoomMemberInfo(String nickName, Integer level) {
-        this.nickName = nickName;
+        this.nickname = nickName;
         this.level = level;
     }
 }
