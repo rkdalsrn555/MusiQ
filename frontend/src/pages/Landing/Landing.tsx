@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
 import { motion } from 'framer-motion';
+import { ActiveCarouselNumAtom } from '../../atoms/atoms';
 import * as S from './Landing.styled';
 import { Logo } from '../../components/utils';
 import {
@@ -10,15 +12,13 @@ import {
 } from '../../components/animationEffect';
 
 export const Landing = () => {
+  const [activeCarouselNum, setActiveCarouselNum] = useRecoilState(
+    ActiveCarouselNumAtom
+  );
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
+    Boolean(window.localStorage.getItem('userAccessToken'))
+  ); // 로그인 검증
   const navigate = useNavigate();
-  const [xy, setXY] = useState({ x: 0, y: 0 });
-
-  const xyHandler = (e: any) => {
-    const mouseX = e.clientX;
-    const mouseY = e.clientY;
-
-    setXY({ x: mouseX, y: mouseY });
-  };
 
   useEffect(() => {
     // 모바일 기기 접근을 막기 위해 추가한 코드
@@ -30,6 +30,8 @@ export const Landing = () => {
     if (isMobile) {
       navigate('/mobile-restriction');
     }
+
+    setActiveCarouselNum({ activeCarouselNum: isLoggedIn ? 1 : 0 });
   }, []);
 
   useEffect(() => {
@@ -46,9 +48,8 @@ export const Landing = () => {
   }, []);
 
   return (
-    <S.LandingPageContainer onMouseMove={xyHandler}>
+    <S.LandingPageContainer>
       <S.Version>v{process.env.REACT_APP_VERSION}</S.Version>
-      {/* <Cursor xy={xy} /> */}
       <FadeInFromBottom>
         <h1>실시간 노래 맞추기 게임</h1>
         <motion.div
