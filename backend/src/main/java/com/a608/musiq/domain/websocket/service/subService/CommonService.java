@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
+import com.a608.musiq.domain.websocket.domain.UserInfoItem;
 
 @Service
 public class CommonService {
@@ -18,11 +19,13 @@ public class CommonService {
 		return gameRoom.leaveUser(uuid, roomNumber);
 	}
 
-	public String EnterGameRoom(UUID uuid, GameRoom gameRoom, int roomNumber) {
+	public String EnterGameRoom(UUID uuid, String nickname, GameRoom gameRoom, int roomNumber) {
 		GameValue.enterGameRoom(uuid, roomNumber);
 
-		//
-		return null;
+		UserInfoItem userInfoItem = UserInfoItem.of(nickname);
+
+		// 게임 룸에서 totalUser++, userInfoItems에 내 uuid 추가
+		return gameRoom.enterUser(uuid, userInfoItem);
 	}
 
 }
