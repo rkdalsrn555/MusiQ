@@ -40,7 +40,7 @@ export const SocketPage = () => {
   // 소켓 연결
   const connect = () => {
     client.current = new StompJs.Client({
-      brokerURL: 'ws://localhost:8080/api/game-websocket',
+      brokerURL: `${process.env.REACT_APP_SOCKET_URL}`,
       connectHeaders: {
         accessToken,
         channelNo: location.pathname.split('/')[2],
