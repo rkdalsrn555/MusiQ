@@ -132,6 +132,24 @@ export const LobbyCreateRoomButton = () => {
     setIsModalOpen(false);
   };
 
+  type RequestBody = {
+    channelNo: number;
+    roomName: string;
+    password: number;
+    musicYear: string;
+    quizAmount: number;
+  };
+
+  const joinGameRoom = (gameRoomNo: number, requestBody: RequestBody) => {
+    userApis
+      .patch(`${process.env.REACT_APP_BASE_URL}/game/main/join/${channelNo}`)
+      .then((res) => {
+        navigate(`/multi/${channelNo}/game-play/${gameRoomNo}`, {
+          state: { requestBody, gameRoomNo },
+        });
+      });
+  };
+
   const handleCreateRoom = (
     roomName: string,
     password: number,
@@ -145,18 +163,12 @@ export const LobbyCreateRoomButton = () => {
       musicYear,
       quizAmount,
     };
-    const accessToken = window.localStorage.getItem('userAccessToken');
-    axios
-
-      .post(`${process.env.REACT_APP_BASE_URL}/game/main/create`, requestBody, {
-        headers: {
-          accessToken,
-        },
-      })
+    userApis
+      .post(`${process.env.REACT_APP_BASE_URL}/game/main/create`, requestBody)
       .then((response) => {
         if (response.data.code === 200) {
           console.log(channelNo);
-          navigate(`/multi/${channelNo}/room/${response.data.data.gameRoomNo}`);
+          joinGameRoom(response.data.data.gameRoomNo, requestBody);
         } else {
           console.error('Failed to create room:', response.data.message);
         }
