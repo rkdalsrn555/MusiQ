@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { AnimatePresence } from 'framer-motion';
+import { SocketPage } from './pages/SocketPage/SocketPage';
 import { UserIpAtom } from './atoms/atoms';
 import PrivateRoute from './hooks/PrivateRoute';
 import PublicRoute from './hooks/PublicRoute';
@@ -19,20 +20,17 @@ import {
   Login,
   RankingPage,
   Signup,
-  MultiGameLobbyPage,
   MzModePage,
   MultiChannelPage,
-  MultiGamePlaying,
 } from './pages';
 
 const PrivatePath = [
-  { path: '/multi/:channel/lobby', component: <MultiGameLobbyPage /> },
   { path: '/multi/channel', component: <MultiChannelPage /> },
+  { path: '/multi/:channel/lobby', component: <SocketPage /> },
   // { path: '/multi/channel', component: <MzModePage /> },
   { path: '/single/game-option', component: <SingleGameOption /> },
   { path: '/single/game-playing', component: <SingleGamePlaying /> },
   { path: '/single/game-result', component: <ResultPage /> },
-  { path: 'multi/game-play', component: <MultiGamePlaying /> },
 ];
 
 // restricted = false 로그인 여부와 관계없이 접근 가능 페이지
