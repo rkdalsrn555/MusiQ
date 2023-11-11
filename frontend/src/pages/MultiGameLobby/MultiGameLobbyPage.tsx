@@ -23,10 +23,12 @@ import {
 type OwnProps = {
   socketClient: React.MutableRefObject<any>;
   lobbyChatList: { nickname: string; message: string }[];
+  topicNumber: React.MutableRefObject<number>;
+  setIsRoomExisted: Dispatch<SetStateAction<boolean>>;
 };
 
 export const MultiGameLobbyPage = (props: OwnProps) => {
-  const { socketClient, lobbyChatList } = props;
+  const { socketClient, lobbyChatList, topicNumber, setIsRoomExisted } = props;
   const navigate = useNavigate();
   const location = useLocation();
   const websocketClient = useRecoilValue(websocketClientState);
@@ -125,7 +127,10 @@ export const MultiGameLobbyPage = (props: OwnProps) => {
           <LobbyUsersList />
           <LobbyRooms />
           <ButtonsWrapper>
-            <LobbyCreateRoomButton />
+            <LobbyCreateRoomButton
+              topicNumber={topicNumber}
+              setIsRoomExisted={setIsRoomExisted}
+            />
           </ButtonsWrapper>
           <LobbyChatting
             socketClient={socketClient}
