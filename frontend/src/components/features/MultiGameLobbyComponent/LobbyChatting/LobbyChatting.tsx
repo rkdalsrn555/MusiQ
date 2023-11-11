@@ -37,12 +37,9 @@ export const LobbyChatting: React.FC = () => {
         message: inputMessage,
       };
 
-      // headers 객체를 생성하고, accessToken이 존재하면 포함시킵니다.
-      // 타입 단언을 사용하여 헤더 객체에 accessToken 속성이 있을 수 있음을 명시합니다.
       const headers: { [key: string]: string } = {};
       if (accessToken) {
         headers.accessToken = accessToken;
-        // console.log(headers, message);
       }
 
       websocketClient.publish({
@@ -50,7 +47,7 @@ export const LobbyChatting: React.FC = () => {
         headers,
         body: JSON.stringify(message),
       });
-      setInputMessage(''); // 메시지를 보낸 후 입력 필드를 비웁니다.
+      setInputMessage(''); // 메시지를 보낸 후 입력 필드 비우기
     }
   };
 

@@ -381,14 +381,22 @@ public class GameService {
 					// 다음 판을 위한 세팅
 					room.initializeRoom();
 
-					// 클라이언트에게 대기방 관련 정보 전달 해줘야 함
-					GameRoomPubDto dto = GameRoomPubDto.builder().memberInfos(memberInfos)
-						.build();
-					messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
-				}
-			}
-		}
-	}
+                    // 클라이언트에게 대기방 관련 정보 전달 해줘야 함
+                    GameRoomPubDto dto = GameRoomPubDto.builder()
+                            .memberInfos(memberInfos)
+                            .roomNo(room.getRoomNo())
+                            .roomName(room.getRoomName())
+                            .password(room.getPassword())
+                            .isPrivate(room.isPrivate())
+                            .numberOfProblems(room.getNumberOfProblems())
+                            .year(room.getYear())
+                            .roomManagerNickname(room.getRoomManagerNickname())
+                            .build();
+                    messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
+                }
+            }
+        }
+    }
 
 	/**
 	 * @param channelNo
@@ -467,8 +475,9 @@ public class GameService {
 		MemberInfo memberInfo = memberInfoRepository.findById(uuid).orElseThrow(
 			() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
 
-		Channel channel = GameValue.getChannel(createGameRoomRequestDto.getChannelNo());
-		int roomNumber = channel.getMinimumEmptyRoomNo();
+        Channel channel = GameValue.getChannel(createGameRoomRequestDto.getChannelNo());
+        int curRoomIndex = channel.getMinimumEmptyRoomNo();
+        int roomNumber = createGameRoomRequestDto.getChannelNo() * 1000 + curRoomIndex;
 
 		Map<UUID, UserInfoItem> userInfoItems = new HashMap<>();
 		userInfoItems.put(uuid,
@@ -480,12 +489,12 @@ public class GameService {
 			.year(createGameRoomRequestDto.getMusicYear()).totalUsers(1)
 			.userInfoItems(userInfoItems).build();
 
-		channel.removeUser(uuid);
-		channel.addUser(uuid, roomNumber);
-		GameValue.addGameChannel(roomNumber,
-			gameRoom);
-		logger.info("Create GameRoom Successful");
-		channel.updateIsUsed(roomNumber);
+        channel.removeUser(uuid);
+        channel.addUser(uuid, roomNumber);
+        GameValue.addGameChannel(roomNumber,
+            gameRoom);
+        logger.info("Create GameRoom Successful");
+        channel.updateIsUsed(curRoomIndex);
 
 		GameRoomMemberInfo gameRoomMemberInfo = GameRoomMemberInfo.builder()
 			.nickName(memberInfo.getNickname())
@@ -513,10 +522,10 @@ public class GameService {
 
 		messagingTemplate.convertAndSend(destination, gameRoomPubDto);
 
-		return CreateGameRoomResponseDto.builder()
-			.gameRoomNo(createGameRoomRequestDto.getChannelNo() * 1000 + roomNumber)
-			.build();
-	}
+        return CreateGameRoomResponseDto.builder()
+            .gameRoomNo(roomNumber)
+            .build();
+    }
 
 	public JoinGameRoomResponseDto moveGameRoom(String accessToken, int channelNo) {
 		UUID uuid = jwtValidator.getData(accessToken);

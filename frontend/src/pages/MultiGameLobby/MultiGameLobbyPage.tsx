@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+// eslint-disable-next-line import/no-unresolved
+import { Client, Stomp } from '@stomp/stompjs';
 import { motion } from 'framer-motion';
 import { websocketClientState } from '../../atoms/atoms';
 import { userApis } from '../../hooks/api/userApis';
@@ -23,6 +25,7 @@ export const MultiGameLobbyPage: React.FC = () => {
   const location = useLocation();
   const websocketClient = useRecoilValue(websocketClientState);
   const channelNumber = location.pathname.split('/').slice(-2)[0];
+  const accessToken = window.localStorage.getItem('userAccessToken');
 
   useEffect(() => {
     // 모바일 기기 접근을 막는 로직
@@ -34,12 +37,34 @@ export const MultiGameLobbyPage: React.FC = () => {
       navigate('/mobile-restriction');
     }
 
-    // 이미 활성화된 WebSocket 클라이언트를 확인하고 재사용
-    if (!websocketClient) {
-      console.error(
-        'No active WebSocket client. Redirecting to channel selection.'
-      );
-      navigate('/multi/channel'); // 웹소켓 클라이언트가 없으면 채널 선택으로 리다이렉트
+    if (accessToken) {
+      const ws = new WebSocket('ws://localhost:8080/api/game-websocket');
+
+      const client = new Client({
+        webSocketFactory: () => ws,
+        connectHeaders: {
+          accessToken,
+          channelNo: String(channelNumber),
+        },
+        onConnect: () => {
+          console.log(`Connected to channel ${channelNumber}`);
+          client.subscribe(`/topic/${channelNumber}`, (message) => {
+            console.log('Received message', message.body);
+          });
+
+          client.subscribe(`/chat-message/${channelNumber}`, (message) => {
+            console.log('채팅메시지', message);
+          });
+          navigate(`/multi/${channelNumber}/lobby`);
+        },
+        onStompError: (frame) => {
+          console.error('STOMP Error:', frame.headers.message);
+        },
+      });
+
+      client.activate(); // 클라이언트 활성화
+    } else {
+      console.error('Access token is not available.');
     }
 
     // 페이지를 떠날 때 WebSocket 연결을 종료
@@ -57,7 +82,6 @@ export const MultiGameLobbyPage: React.FC = () => {
         }
 
         // 서버에 사용자가 채널을 떠남을 알립니다.
-        const accessToken = window.localStorage.getItem('userAccessToken');
         if (accessToken) {
           try {
             const response = await userApis.post(
@@ -79,7 +103,7 @@ export const MultiGameLobbyPage: React.FC = () => {
       // 비동기 함수를 실행합니다.
       deactivateClient();
     };
-  }, [websocketClient, channelNumber]);
+  }, []);
 
   return (
     <motion.div
