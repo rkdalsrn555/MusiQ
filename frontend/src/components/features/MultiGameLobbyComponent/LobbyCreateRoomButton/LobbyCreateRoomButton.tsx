@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
@@ -118,7 +118,13 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
   );
 };
 
-export const LobbyCreateRoomButton = () => {
+type OwnProps = {
+  topicNumber: React.MutableRefObject<number>;
+  setIsRoomExisted: Dispatch<SetStateAction<boolean>>;
+};
+
+export const LobbyCreateRoomButton = (props: OwnProps) => {
+  const { topicNumber, setIsRoomExisted } = props;
   const navigate = useNavigate();
   const location = useLocation();
   const channelNo = location.pathname.split('/').slice(-2)[0];
@@ -144,9 +150,8 @@ export const LobbyCreateRoomButton = () => {
     userApis
       .patch(`${process.env.REACT_APP_BASE_URL}/game/main/join/${channelNo}`)
       .then((res) => {
-        navigate(`/multi/${channelNo}/game-play/${gameRoomNo}`, {
-          state: { requestBody, gameRoomNo },
-        });
+        topicNumber.current = gameRoomNo;
+        setIsRoomExisted(true);
       });
   };
 
