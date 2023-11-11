@@ -1,4 +1,10 @@
-import React, { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import React, {
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+  useRef,
+} from 'react';
 import { useLocation } from 'react-router-dom';
 // eslint-disable-next-line import/no-unresolved
 import { Client, IMessage } from '@stomp/stompjs';
@@ -31,10 +37,11 @@ export const LobbyChatting = (props: OwnProps) => {
   const myNickname = window.localStorage.getItem('nickname') || 'Unknown';
   const [lobbyInputMessage, setLobbyInputMessage] = useState<string>('');
   const accessToken = window.localStorage.getItem('userAccessToken');
+  const chatEndRef = useRef<HTMLDivElement>(null);
 
   const sendMessage = () => {
     const headers: { [key: string]: string } = {};
-    if (accessToken) {
+    if (accessToken && lobbyInputMessage.trim() !== '') {
       headers.accessToken = accessToken;
     }
     socketClient.current.publish({
@@ -45,38 +52,23 @@ export const LobbyChatting = (props: OwnProps) => {
         nickname: myNickname,
       }),
     });
+    setLobbyInputMessage(''); // 채팅 보내고 입력창 비우기
   };
 
-  // const sendMessage = () => {
-  //   if (websocketClient && lobbyInputMessage.trim() !== '') {
-  //     const message = {
-  //       nickname: myNickname,
-  //       message: lobbyInputMessage,
-  //     };
-
-  //     const headers: { [key: string]: string } = {};
-  //     if (accessToken) {
-  //       headers.accessToken = accessToken;
-  //     }
-
-  //     websocketClient.publish({
-  //       destination: `/chat-message/${channelNo}`,
-  //       headers,
-  //       body: JSON.stringify(message),
-  //     });
-  //     setLobbyInputMessage(''); // 메시지를 보낸 후 입력 필드 비우기
-  //   }
-  // };
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [lobbyChatList]); // lobbyChatList가 변경될 때마다 스크롤 조정(맨 아래로)
 
   return (
     <ChattingWrapper>
       <ChattingContentsWrapper>
         <ChattingContent>
           {lobbyChatList.map((msg) => (
-            <div key={msg.nickname}>
+            <div key={msg.nickname} style={{ marginTop: '0.5%' }}>
               <strong>{msg.nickname}:</strong> {msg.message}
             </div>
           ))}
+          <div ref={chatEndRef} />
         </ChattingContent>
       </ChattingContentsWrapper>
       <ChattingInputWrapper>
