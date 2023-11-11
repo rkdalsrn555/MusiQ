@@ -22,12 +22,20 @@ export const ChattingContentsWrapper = styled.div`
   border: solid 5px rgba(235, 226, 255, 0.2);
   border-radius: 15px;
   background-color: rgba(255, 255, 255, 0.5);
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 12px;
+    height: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background: whitesmoke;
+  }
 `;
 
 export const ChattingContent = styled.div`
   width: 74vw;
-  height: 5vh;
-  border-bottom: 1px solid #eee;
 `;
 
 export const ChattingInputWrapper = styled.div`
