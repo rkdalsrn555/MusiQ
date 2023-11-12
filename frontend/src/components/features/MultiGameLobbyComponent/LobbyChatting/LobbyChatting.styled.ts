@@ -17,7 +17,7 @@ export const ChattingWrapper = styled.div`
 `;
 
 export const ChattingContentsWrapper = styled.div`
-  width: 74vw;
+  width: 73vw;
   height: 28vh;
   border: solid 5px rgba(235, 226, 255, 0.2);
   border-radius: 15px;
@@ -35,11 +35,11 @@ export const ChattingContentsWrapper = styled.div`
 `;
 
 export const ChattingContent = styled.div`
-  width: 74vw;
+  width: 72vw;
 `;
 
 export const ChattingInputWrapper = styled.div`
-  width: 74vw;
+  width: 73vw;
   height: 3vh;
 `;
 

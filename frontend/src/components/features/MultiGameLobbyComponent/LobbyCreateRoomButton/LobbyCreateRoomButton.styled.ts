@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const ButtonsWrapper = styled.div`
-  width: 11vw;
+  width: 10vw;
   height: 11vh;
   flex-shrink: 0;
   border: solid 5px rgba(235, 226, 255, 0.4);
