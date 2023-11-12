@@ -35,25 +35,6 @@ export const SocketPage = () => {
         }
       }
     );
-    if (topicNumber.current !== 1) {
-      client.current.subscribe(
-        `/topic/${topicNumber.current}`,
-        (message: any) => {
-          // 채널넘버일때 - 병철
-          console.log('구독했음!');
-          if (topicNumber.current >= 1 || topicNumber.current <= 10) {
-            const msg = JSON.parse(message.body);
-            setLobbyChatList((prev) => [
-              ...prev,
-              { nickname: msg.nickname, message: msg.message },
-            ]);
-          } else {
-            // 게임방 관련 상태 - 채련
-            console.log('제발!!!!');
-          }
-        }
-      );
-    }
   };
 
   // 소켓 연결
