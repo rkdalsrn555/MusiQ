@@ -73,8 +73,8 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
 
   // 방 생성 핸들러
   const handleCreateRoom = () => {
+    
     // 입력 검증 로직
-
     if (roomName.trim() === '') {
       alert('방 제목을 입력해주세요.');
       return;
@@ -90,9 +90,10 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
       // eslint-disable-next-line no-useless-return
       return;
     }
+    onCreate(roomName, password, musicYear.join(' '), quizAmount);
   };
 
-  onCreate(roomName, password, musicYear.join(' '), quizAmount);
+  
 
   if (!isOpen) {
     return null;
@@ -202,6 +203,7 @@ export const LobbyCreateRoomButton = (props: OwnProps) => {
       musicYear,
       quizAmount,
     };
+    console.log(requestBody);
     userApis
       .post(`${process.env.REACT_APP_BASE_URL}/game/main/create`, requestBody)
       .then((response) => {
