@@ -19,7 +19,7 @@ public class CommonService {
 		return gameRoom.leaveUser(uuid, roomNumber);
 	}
 
-	public String EnterGameRoom(UUID uuid, String nickname, GameRoom gameRoom, int roomNumber) {
+	public String enterGameRoom(UUID uuid, String nickname, GameRoom gameRoom, int roomNumber) {
 		GameValue.enterGameRoom(uuid, roomNumber);
 
 		UserInfoItem userInfoItem = UserInfoItem.of(nickname);

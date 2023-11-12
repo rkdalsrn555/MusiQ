@@ -188,7 +188,7 @@ public class GameService {
 
 		// 게임방 입장 (로비 -> 게임방)
 		if (chatMessage.getMessageType().equals(MessageType.ENTERUSER)) {
-			String EnteredUserNickname = commonService.EnterGameRoom(uuid, chatMessage.getNickname(), gameRoom,
+			String EnteredUserNickname = commonService.enterGameRoom(uuid, chatMessage.getNickname(), gameRoom,
 				channelNo);
 
 			messagingTemplate.convertAndSend(destination, EnterGameRoomDto.of(EnteredUserNickname));
@@ -540,6 +540,32 @@ public class GameService {
 		GameValue.addUserToChannel(uuid, lobbyNo);
 
 		return ExitGameRoomResponse.builder().destinationNo(lobbyNo).build();
+	}
+
+	public void enterGameRoom(String accessToken, int channelNo) {
+		UUID uuid = jwtValidator.getData(accessToken);
+		String nickname = memberInfoRepository.findNicknameById(uuid)
+			.orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
+
+		String destination = getDestination(channelNo);
+		GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
+
+		String enteredUserNickname = commonService.enterGameRoom(uuid, nickname, gameRoom, channelNo);
+
+		messagingTemplate.convertAndSend(destination, EnterGameRoomDto.of(enteredUserNickname));
+	}
+
+	public void exitGameRoom(String accessToken, int channelNo) {
+		UUID uuid = jwtValidator.getData(accessToken);
+		String nickname = memberInfoRepository.findNicknameById(uuid)
+			.orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
+
+		String destination = getDestination(channelNo);
+		GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
+
+		String currentRoomManagerNickname = commonService.leaveGameRoom(uuid, gameRoom, channelNo);
+
+		messagingTemplate.convertAndSend(destination, LeaveGameRoomDto.from(nickname, currentRoomManagerNickname));
 	}
 
 }
