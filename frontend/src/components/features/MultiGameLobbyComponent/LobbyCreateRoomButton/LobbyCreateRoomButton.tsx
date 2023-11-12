@@ -1,16 +1,31 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import { userApis } from '../../../../hooks/api/userApis';
-import { ButtonsWrapper } from './LobbyCreateRoomButton.styled';
+import {
+  ButtonsWrapper,
+  StyledModal,
+  StyledCreateRoomButton,
+  StyledRoomPasswordInput,
+  StyledRoomTitleInput,
+  SelectQuizAmoutWrapper,
+  SelectYearWrapper,
+  StyledExitButton,
+  StyledCheckbox,
+  StyledRadio,
+  StyledAmountLabel,
+  StyledYearLabel,
+} from './LobbyCreateRoomButton.styled';
+import exitButtonIcon from '../../../../assets/svgs/MultiLobby/exitButtonIcon.svg';
+import musiqLogo from '../../../../assets/svgs/logo.svg';
 
 interface CreateRoomModalProps {
   isOpen: boolean;
   onClose: () => void;
   onCreate: (
     roomName: string,
-    password: number,
+    password: string,
     musicYear: string,
     quizAmount: number
   ) => void;
@@ -58,67 +73,93 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
 
   // 방 생성 핸들러
   const handleCreateRoom = () => {
+    
     // 입력 검증 로직
-    const numericPassword = parseInt(password, 10);
-    onCreate(roomName, numericPassword, musicYear.join(' '), quizAmount);
+    if (roomName.trim() === '') {
+      alert('방 제목을 입력해주세요.');
+      return;
+    }
+
+    if (musicYear.length === 0) {
+      alert('연도를 선택해주세요.');
+      return;
+    }
+
+    if (quizAmount === 0) {
+      alert('문제 개수를 선택해주세요.');
+      // eslint-disable-next-line no-useless-return
+      return;
+    }
+    onCreate(roomName, password, musicYear.join(' '), quizAmount);
   };
+
+  
 
   if (!isOpen) {
     return null;
   }
 
   return (
-    <div className="modal">
-      <input
-        placeholder="방 제목"
+    <StyledModal className="modal">
+      <img src={musiqLogo} alt="logo" width={200} />
+      <StyledExitButton type="button" onClick={onClose}>
+        <img src={exitButtonIcon} alt="창 닫기" width={50} />
+      </StyledExitButton>
+      <StyledRoomTitleInput
+        placeholder="&nbsp;방 제목"
         value={roomName}
         onChange={(e) => setRoomName(e.target.value)}
         autoComplete="off"
       />
-      <input
-        placeholder="방 비밀번호"
+      <StyledRoomPasswordInput
+        placeholder="&nbsp;비밀번호"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         autoComplete="off"
       />
-      <div>
+      <SelectYearWrapper>
+        <div style={{ fontSize: '18px' }}>노래의 연도를 선택 해주세요</div>
         {yearsOptions.map((year) => (
-          <label key={year}>
-            <input
+          <StyledYearLabel key={year} style={{ fontSize: '20px' }}>
+            <StyledCheckbox
               type="checkbox"
               value={year}
               checked={musicYear.includes(year)}
               onChange={() => toggleYearSelection(year)}
             />
-            {year}
-          </label>
+            &nbsp;{year}
+          </StyledYearLabel>
         ))}
-      </div>
-      <div>
+      </SelectYearWrapper>
+      <SelectQuizAmoutWrapper>
+        <div style={{ fontSize: '18px' }}>문제 개수를 선택 해주세요</div>
         {quizAmountOptions.map((amount) => (
-          <label key={amount}>
-            <input
+          <StyledAmountLabel key={amount} style={{ fontSize: '20px' }}>
+            <StyledRadio
               type="radio"
               name="quizAmount"
               value={amount}
               checked={quizAmount === amount}
               onChange={() => handleQuizAmountChange(amount)}
             />
-            {amount}개
-          </label>
+            &nbsp;{amount}
+          </StyledAmountLabel>
         ))}
-      </div>
-      <button type="button" onClick={handleCreateRoom}>
-        확인
-      </button>
-      <button type="button" onClick={onClose}>
-        닫기
-      </button>
-    </div>
+      </SelectQuizAmoutWrapper>
+      <StyledCreateRoomButton type="button" onClick={handleCreateRoom}>
+        방 만들기
+      </StyledCreateRoomButton>
+    </StyledModal>
   );
 };
 
-export const LobbyCreateRoomButton = () => {
+type OwnProps = {
+  topicNumber: React.MutableRefObject<number>;
+  setIsRoomExisted: Dispatch<SetStateAction<boolean>>;
+};
+
+export const LobbyCreateRoomButton = (props: OwnProps) => {
+  const { topicNumber, setIsRoomExisted } = props;
   const navigate = useNavigate();
   const location = useLocation();
   const channelNo = location.pathname.split('/').slice(-2)[0];
@@ -132,9 +173,26 @@ export const LobbyCreateRoomButton = () => {
     setIsModalOpen(false);
   };
 
+  type RequestBody = {
+    channelNo: number;
+    roomName: string;
+    password: string;
+    musicYear: string;
+    quizAmount: number;
+  };
+
+  const joinGameRoom = (gameRoomNo: number, requestBody: RequestBody) => {
+    userApis
+      .patch(`${process.env.REACT_APP_BASE_URL}/game/main/join/${channelNo}`)
+      .then((res) => {
+        topicNumber.current = gameRoomNo;
+        setIsRoomExisted(true);
+      });
+  };
+
   const handleCreateRoom = (
     roomName: string,
-    password: number,
+    password: string,
     musicYear: string,
     quizAmount: number
   ) => {
@@ -145,18 +203,14 @@ export const LobbyCreateRoomButton = () => {
       musicYear,
       quizAmount,
     };
-    const accessToken = window.localStorage.getItem('userAccessToken');
-    axios
-
-      .post(`${process.env.REACT_APP_BASE_URL}/game/main/create`, requestBody, {
-        headers: {
-          accessToken,
-        },
-      })
+    console.log(requestBody);
+    userApis
+      .post(`${process.env.REACT_APP_BASE_URL}/game/main/create`, requestBody)
       .then((response) => {
         if (response.data.code === 200) {
           console.log(channelNo);
-          navigate(`/multi/${channelNo}/room/${response.data.data.gameRoomNo}`);
+          console.log(requestBody);
+          joinGameRoom(response.data.data.gameRoomNo, requestBody);
         } else {
           console.error('Failed to create room:', response.data.message);
         }

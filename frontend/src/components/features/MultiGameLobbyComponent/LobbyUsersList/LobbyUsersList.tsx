@@ -20,37 +20,31 @@ export const LobbyUsersList = () => {
   const accessToken = window.localStorage.getItem('userAccessToken');
   const channelNumber = location.pathname.split('/').slice(-2)[0];
 
-  useEffect(() => {
-    console.log('Updated users:', users);
-    const fetchUsers = async () => {
-      try {
-        const response = await userApis.get(
-          `${process.env.REACT_APP_BASE_URL}/game/${channelNumber}`,
-          {
-            headers: {
-              accessToken,
-            },
-          }
-        );
-
-        if (response.data.code === 200) {
-          console.log(users);
-          const sortedUsers = response.data.data.channelUserResponseItems.sort(
-            (a: UserType, b: UserType) => b.userLevel - a.userLevel
-          );
-          console.log('Fetched users:', sortedUsers);
-          setUsers(sortedUsers);
-          console.log(users);
+  const fetchUsers = async () => {
+    try {
+      const response = await userApis.get(
+        `${process.env.REACT_APP_BASE_URL}/game/${channelNumber}`,
+        {
+          headers: {
+            accessToken,
+          },
         }
-      } catch (error) {
-        console.error('Fetching users failed: ', error);
-      }
-    };
+      );
 
-    if (users.length === 0) {
-      fetchUsers();
+      if (response.data.code === 200) {
+        const sortedUsers = response.data.data.channelUserResponseItems.sort(
+          (a: UserType, b: UserType) => b.userLevel - a.userLevel
+        );
+        setUsers(sortedUsers);
+      }
+    } catch (error) {
+      console.error('Fetching users failed: ', error);
     }
-  }, [users]);
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   return (
     <UsersListWrapper>

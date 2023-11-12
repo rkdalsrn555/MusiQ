@@ -17,21 +17,29 @@ export const ChattingWrapper = styled.div`
 `;
 
 export const ChattingContentsWrapper = styled.div`
-  width: 74vw;
+  width: 73vw;
   height: 28vh;
   border: solid 5px rgba(235, 226, 255, 0.2);
   border-radius: 15px;
   background-color: rgba(255, 255, 255, 0.5);
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 12px;
+    height: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background: whitesmoke;
+  }
 `;
 
 export const ChattingContent = styled.div`
-  width: 74vw;
-  height: 5vh;
-  border-bottom: 1px solid #eee;
+  width: 72vw;
 `;
 
 export const ChattingInputWrapper = styled.div`
-  width: 74vw;
+  width: 73vw;
   height: 3vh;
 `;
 
