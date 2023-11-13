@@ -198,9 +198,12 @@ export const LobbyCreateRoomButton = () => {
       .post(`${process.env.REACT_APP_BASE_URL}/game/main/create`, requestBody)
       .then((response) => {
         if (response.data.code === 200) {
-          console.log(channelNo);
           console.log(requestBody);
           joinGameRoom(response.data.data.gameRoomNo, requestBody);
+          navigate(
+            `/multi/${channelNo}/game/${response.data.data.gameRoomNo}`,
+            { state: { requestBody } }
+          );
         } else {
           console.error('Failed to create room:', response.data.message);
         }
