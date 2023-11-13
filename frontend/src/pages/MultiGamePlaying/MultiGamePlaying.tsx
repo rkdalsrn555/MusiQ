@@ -41,7 +41,6 @@ export const MultiGamePlaying = () => {
   const subscribe = () => {
     client.current.subscribe(`/topic/${gameRoomNumber}`, (message: any) => {
       const msg = JSON.parse(message.body);
-      console.log(msg);
       setGameChatList((prev) => [
         ...prev,
         { nickname: msg.nickname, message: msg.message },
@@ -56,6 +55,8 @@ export const MultiGamePlaying = () => {
       connectHeaders: {
         accessToken,
         channelNo: String(gameRoomNumber),
+        connectType: 'ENTER_GAME_ROOM',
+        password: location.state.requestBody.password,
       },
       onConnect: subscribe,
       onStompError: (frame) => {
@@ -77,21 +78,6 @@ export const MultiGamePlaying = () => {
     };
   }, []);
 
-  const sendMessage = () => {
-    const headers: { [key: string]: string } = {};
-    if (accessToken) {
-      headers.accessToken = accessToken;
-    }
-    client.current.publish({
-      destination: `/chat-message/${gameRoomNumber}`,
-      headers,
-      body: JSON.stringify({
-        message: '바보',
-        nickname: '장충동왕족발보쌈',
-      }),
-    });
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -100,14 +86,15 @@ export const MultiGamePlaying = () => {
       transition={{ duration: 1 }}
     >
       <S.Container>
-        <button type="button" onClick={sendMessage}>
-          버튼
-        </button>
         <MultiGameStatus />
         <MultiDancingChick />
         <MultiGameHint />
         <MultiGameSkip />
-        <MultiGameChatting gameChatList={gameChatList} socketClient={client} />
+        <MultiGameChatting
+          gameChatList={gameChatList}
+          setGameChatList={setGameChatList}
+          socketClient={client}
+        />
       </S.Container>
     </motion.div>
   );
