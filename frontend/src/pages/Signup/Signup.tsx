@@ -346,7 +346,7 @@ export const Signup = () => {
             isSuccess={successUserId}
             successMessage="올바른 아이디입니다"
             isError={errorUserId}
-            errorMessage="6~20자 영문자만 가능합니다"
+            errorMessage="5~20자 영문자만 가능합니다"
             isDuplicate={duplicatedUserId}
             duplicatedMessage="아이디가 중복입니다"
             inputValue={userId}
