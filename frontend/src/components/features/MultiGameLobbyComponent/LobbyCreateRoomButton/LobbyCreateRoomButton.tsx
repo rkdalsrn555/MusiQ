@@ -41,6 +41,9 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
   const [musicYear, setMusicYear] = useState<string[]>([]);
   const [quizAmount, setQuizAmount] = useState<number>(0);
   const quizAmountOptions = [10, 20, 30];
+  const [passwordError, setPasswordError] = useState('');
+  const [roomNameError, setRoomNameError] = useState('');
+  const [isPrivate, setIsPrivate] = useState(false); // 비공개방 체크박스 상태
   const yearsOptions = [
     '1970',
     '1980',
@@ -53,6 +56,14 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
     '2022',
     '2023',
   ];
+
+  // 비공개 여부 체크박스 상태 변경 핸들러
+  const handlePrivateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsPrivate(e.target.checked);
+    if (!e.target.checked) {
+      setPassword(''); // 체크박스가 해제되면 비밀번호를 초기화
+    }
+  };
 
   // 연도 선택 핸들러
   const toggleYearSelection = (year: string) => {
@@ -105,15 +116,42 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
       <StyledRoomTitleInput
         placeholder="&nbsp;방 제목"
         value={roomName}
-        onChange={(e) => setRoomName(e.target.value)}
+        onChange={(e) => {
+          const currentValue = e.target.value;
+          if (currentValue.length <= 18) {
+            setRoomName(currentValue);
+            setRoomNameError(''); // 에러 메시지 초기화
+          } else {
+            setRoomNameError('18자까지 입력 가능합니다.'); // 에러 메시지 설정
+          }
+        }}
         autoComplete="off"
+        maxLength={18} // 방 제목 길이 제한 추가
       />
+
+      {roomNameError && (
+        <div style={{ color: 'yellow' }}>{roomNameError}</div> // 에러 메시지 표시
+      )}
       <StyledRoomPasswordInput
         placeholder="&nbsp;비밀번호"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        onChange={(e) => {
+          const currentValue = e.target.value;
+          const regex = /^[A-Za-z0-9]*$/;
+
+          if (regex.test(currentValue) || currentValue === '') {
+            setPassword(currentValue);
+            setPasswordError('');
+          } else {
+            setPasswordError('영문과 숫자만 입력 가능합니다.');
+          }
+        }}
         autoComplete="off"
+        maxLength={12}
       />
+
+      {passwordError && <div style={{ color: 'yellow' }}>{passwordError}</div>}
+
       <SelectYearWrapper>
         <div style={{ fontSize: '18px' }}>노래의 연도를 선택 해주세요</div>
         {yearsOptions.map((year) => (
