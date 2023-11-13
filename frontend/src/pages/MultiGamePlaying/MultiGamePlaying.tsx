@@ -55,13 +55,14 @@ export const MultiGamePlaying = () => {
 
   // 구독
   const subscribe = () => {
+    console.log('구독됐다');
     client.current.subscribe(`/topic/${gameRoomNumber}`, (message: any) => {
       const msg = JSON.parse(message.body);
 
       switch (msg.messageType) {
         case 'ENTERUSER': // 유저 입장 시 마다 pub
-          setGameUserList(mockUserData1);
-          setManager('장충동왕족발보쌈');
+          setGameUserList(msg.userInfoItems);
+          setManager(msg.gameRoomManagerNickname);
           setGameChatList((prev) => [
             ...prev,
             {
@@ -119,6 +120,21 @@ export const MultiGamePlaying = () => {
     });
   };
 
+  const enterRoom = () => {
+    const headers: { [key: string]: string } = {};
+    if (accessToken) {
+      headers.accessToken = accessToken;
+    }
+    client.current.publish({
+      destination: `/chat-message/${location.pathname.split('/')[4]}`,
+      headers,
+      body: JSON.stringify({
+        messageType: 'ENTERUSER',
+        nickname: window.localStorage.getItem('nickname'),
+      }),
+    });
+  };
+
   // 소켓 연결
   const connect = () => {
     client.current = new StompJs.Client({
@@ -141,12 +157,9 @@ export const MultiGamePlaying = () => {
     client.current.deactivate();
   };
 
-  console.log(location.state);
   // 첫 렌더링 시 소켓연결, 페이지 떠날 시 disconnect
   useEffect(() => {
     connect();
-    setGameUserList(mockUserData1);
-    setManager('장충동왕족발보쌈');
     return () => {
       disconnect();
     };
