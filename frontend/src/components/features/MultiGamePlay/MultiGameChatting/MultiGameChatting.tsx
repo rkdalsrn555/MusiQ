@@ -89,7 +89,8 @@ export const MultiGameChatting = (props: OwnProps) => {
         {gameChatList.map((chat, index) => (
           // eslint-disable-next-line react/no-array-index-key
           <div key={index} className="chatMessage">
-            {chat.nickname} : {chat.message}
+            <div className="nickname">{chat.nickname} : </div>
+            <div className="message">{chat.message}</div>
           </div>
         ))}
         <div ref={chatEndRef} />

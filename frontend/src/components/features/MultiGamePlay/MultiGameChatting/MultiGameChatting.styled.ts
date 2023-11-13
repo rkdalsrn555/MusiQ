@@ -62,5 +62,12 @@ export const ChatListContainer = styled.div`
 
   & .chatMessage {
     color: #fff;
+    display: flex;
+    gap: 0.6rem;
+
+    & .nickname {
+      min-width: 9rem;
+      text-align: center;
+    }
   }
 `;
