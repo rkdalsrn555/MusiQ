@@ -513,7 +513,7 @@ public class GameService {
         //일반 채팅
 
         String destination =
-                "/topic" + roomNumber;
+                "/topic/" + roomNumber;
 
         GameRoomPubDto gameRoomPubDto = GameRoomPubDto.builder()
 			.messageDtoType(MessageDtoType.GOWAITING)
