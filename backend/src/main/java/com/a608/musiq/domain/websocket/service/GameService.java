@@ -491,6 +491,7 @@ public class GameService {
         GameRoom gameRoom = GameRoom.builder().roomNo(roomNumber)
                 .roomName(createGameRoomRequestDto.getRoomName())
                 .password(createGameRoomRequestDto.getPassword()).roomManagerUUID(uuid)
+                .roomManagerNickname(memberInfo.getNickname())
                 .numberOfProblems(createGameRoomRequestDto.getQuizAmount())
                 .year(createGameRoomRequestDto.getMusicYear()).totalUsers(1)
                 .gameRoomType(GameRoomType.WAITING)
