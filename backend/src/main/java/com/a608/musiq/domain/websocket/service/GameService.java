@@ -487,6 +487,7 @@ public class GameService {
 			.password(createGameRoomRequestDto.getPassword()).roomManagerUUID(uuid)
 			.numberOfProblems(createGameRoomRequestDto.getQuizAmount())
 			.year(createGameRoomRequestDto.getMusicYear()).totalUsers(1)
+			.gameRoomType(GameRoomType.WAITING)
 			.userInfoItems(userInfoItems).build();
 
         channel.removeUser(uuid);
