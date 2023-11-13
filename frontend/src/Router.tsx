@@ -65,7 +65,8 @@ const Router = () => {
   const location = useLocation(); // 게임 플레이 페이지를 제외하고 bgm을 재생하기 위한 로직 추가
   const isMusicRoute =
     !location.pathname.includes('/game-play') &&
-    !location.pathname.includes('/lobby');
+    !location.pathname.includes('/lobby') &&
+    !location.pathname.includes('/game');
   const userAccessToken = window.localStorage.getItem('userAccessToken');
   const [userIpAtom, setUserIpAtom] = useRecoilState(UserIpAtom);
 
