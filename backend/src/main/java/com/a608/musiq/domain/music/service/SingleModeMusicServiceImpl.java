@@ -207,7 +207,7 @@ public class SingleModeMusicServiceImpl implements MusicService {
 		Music music = room.getMusicList().get(round);
 		List<Title> titles = titleRepository.findAllByMusicId(music.getId());
 
-		answer = answer.replaceAll(SPACE, EMPTY_STRING);
+		answer = answer.toLowerCase().replaceAll(SPACE, EMPTY_STRING);
 
 		GradeAnswerResponseDto gradeAnswerResponseDto = null;
 		for (Title title : titles) {
