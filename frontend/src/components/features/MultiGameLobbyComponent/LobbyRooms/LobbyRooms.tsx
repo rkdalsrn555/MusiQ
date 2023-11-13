@@ -41,20 +41,20 @@ interface Room {
 
 interface PasswordModalProps {
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (password: string) => void;
 }
 
 // 비밀번호가 있는 비공개방에 접근했을 때 생성되는 비밀번호 입력 modal
 const PasswordModal: React.FC<PasswordModalProps> = ({ onClose, onSubmit }) => {
   const [password, setPassword] = useState('');
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit();
+    onSubmit(password); // 비밀번호를 onSubmit에 전달
   };
 
   return (
@@ -109,8 +109,7 @@ export const LobbyRooms = () => {
               : []
           );
         }
-        console.log('방 불러오기', response.data.data.rooms);
-        console.log(rooms);
+        console.log('방 불러오기 성공', response.data.data.rooms);
       } catch (error) {
         console.error('Fetching rooms failed: ', error);
       }
@@ -149,18 +148,43 @@ export const LobbyRooms = () => {
       setSelectedRoomNumber(room.gameRoomNo);
       setIsModalOpen(true);
     } else {
-      navigate(`/multi/${channelNumber}/game/${room.gameRoomNo}`);
+      const gameState = {
+        channelNo: parseInt(channelNumber, 10),
+        roomName: room.roomTitle,
+        password: '',
+        musicYear: room.years,
+        quizAmount: room.quizAmount,
+      };
+
+      navigate(`/multi/${channelNumber}/game/${room.gameRoomNo}`, {
+        state: gameState,
+      });
+      console.log('공개방 진입했을 때 전달하는 상태', gameState);
     }
   };
 
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
+  // const handleModalClose = () => {
+  //   setIsModalOpen(false);
+  // };
 
-  const handlePasswordSubmit = () => {
-    navigate(`/multi/${channelNumber}/game/${selectedRoomNumber}`);
-    setIsModalOpen(false);
-  };
+  // const handlePasswordSubmit = (password: string) => {
+  //   const room = rooms.find((r) => r.gameRoomNo === selectedRoomNumber);
+  //   if (!room) return;
+
+  //   const gameState = {
+  //     channelNo: parseInt(channelNumber, 10),
+  //     roomName: room.roomTitle,
+  //     password,
+  //     musicYear: room.years,
+  //     quizAmount: room.quizAmount,
+  //   };
+
+  //   navigate(`/multi/${channelNumber}/game/${selectedRoomNumber}`, {
+  //     state: gameState,
+  //   });
+  //   console.log('비공개방에 접근했을 때 전달하는 상태', gameState);
+  //   setIsModalOpen(false);
+  // };
 
   if (rooms.length === 0) {
     return (
@@ -210,8 +234,22 @@ export const LobbyRooms = () => {
       {isModalOpen && (
         <PasswordModal
           onClose={() => setIsModalOpen(false)}
-          onSubmit={() => {
-            navigate(`/multi/${channelNumber}/game/${selectedRoomNumber}`);
+          onSubmit={(password) => {
+            const room = rooms.find((r) => r.gameRoomNo === selectedRoomNumber);
+            if (!room) return;
+
+            const gameState = {
+              channelNo: parseInt(channelNumber, 10),
+              roomName: room.roomTitle,
+              password, // 입력 받은 비밀번호
+              musicYear: room.years,
+              quizAmount: room.quizAmount,
+            };
+
+            navigate(`/multi/${channelNumber}/game/${selectedRoomNumber}`, {
+              state: gameState,
+            });
+            console.log('비공개방에 접근했을 때 전달하는 상태', gameState);
             setIsModalOpen(false);
           }}
         />
