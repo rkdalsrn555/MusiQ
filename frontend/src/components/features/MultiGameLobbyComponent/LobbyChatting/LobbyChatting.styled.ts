@@ -41,6 +41,10 @@ export const ChattingContent = styled.div`
 export const ChattingInputWrapper = styled.div`
   width: 73vw;
   height: 3vh;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  margin-top: 0.8%;
 `;
 
 export const StyledInput = styled.input`
