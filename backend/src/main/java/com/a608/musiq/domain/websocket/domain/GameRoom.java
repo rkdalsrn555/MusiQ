@@ -2,8 +2,11 @@ package com.a608.musiq.domain.websocket.domain;
 
 import com.a608.musiq.domain.websocket.data.GameRoomType;
 import com.a608.musiq.domain.websocket.data.GameValue;
+import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.data.PlayType;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.EnterGameRoomDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.ExitGameRoomDto;
 import com.a608.musiq.global.exception.exception.MultiModeException;
 import com.a608.musiq.global.exception.info.MultiModeExceptionInfo;
 
@@ -104,7 +107,7 @@ public class GameRoom {
         this.round++;
     }
 
-    public String leaveUser(UUID uuid, int roomNumber) {
+    public ExitGameRoomDto exitUser(UUID uuid, int roomNumber) {
         int lobbyChannelNumber = roomNumber / ROOM_DIVIDE_NUMBER;
         int gameChannelNumber = roomNumber % ROOM_DIVIDE_NUMBER;
 
@@ -129,10 +132,15 @@ public class GameRoom {
         this.totalUsers--;
         userInfoItems.remove(uuid);
 
-        return userInfoItems.get(roomManagerUUID).getNickname();
+        return ExitGameRoomDto.builder()
+            .messageDtoType(MessageDtoType.EXITUSER)
+            .userInfoItems(userInfoItems.values().stream().toList())
+            .gameRoomManagerNickname(this.roomManagerNickname)
+            .exitedUserNickname(userInfoItems.get(roomManagerUUID).getNickname())
+            .build();
     }
 
-    public String enterUser(UUID uuid, UserInfoItem userInfoItem, String password) {
+    public EnterGameRoomDto enterUser(UUID uuid, UserInfoItem userInfoItem, String password) {
         if (this.isPrivate) {
             if (!this.password.equals(password)) {
                 throw new MultiModeException(MultiModeExceptionInfo.WRONG_PASSWORD);
@@ -150,7 +158,13 @@ public class GameRoom {
         userInfoItems.put(uuid, userInfoItem);
         totalUsers++;
 
-        return userInfoItem.getNickname();
+        return EnterGameRoomDto.builder()
+            .messageType(MessageDtoType.ENTERUSER)
+            .userInfoItems(userInfoItems.values().stream().toList())
+            .gameRoomManagerNickname(this.roomManagerNickname)
+            .enteredUserNickname(userInfoItems.get(roomManagerUUID).getNickname())
+            .build();
+
     }
 
     public void initializeRoom() {

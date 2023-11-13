@@ -7,12 +7,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class GameRoomMemberInfo {
+    private static final int SCORE_INITIAL_NUMBER = 0;
+
     private String nickname;
-    private Integer level;
+    private Integer score;
 
     @Builder
-    public GameRoomMemberInfo(String nickName, Integer level) {
+    public GameRoomMemberInfo(String nickName) {
         this.nickname = nickName;
-        this.level = level + 1;
+        this.score = SCORE_INITIAL_NUMBER;
     }
 }
