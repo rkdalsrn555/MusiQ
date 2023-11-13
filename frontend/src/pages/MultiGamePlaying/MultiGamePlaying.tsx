@@ -13,31 +13,9 @@ import {
 } from '../../components/features';
 import * as S from './MultiGamePlaying.styled';
 
-type OwnProps = {
-  socketClient: React.MutableRefObject<any>;
-  topicNumber: React.MutableRefObject<number>;
-};
-
-export const MultiGamePlaying = (props: OwnProps) => {
-  const { socketClient, topicNumber } = props;
+export const MultiGamePlaying = () => {
   const location = useLocation();
-  const accessToken = window.localStorage.getItem('userAccessToken');
-
-  const sendMessage = () => {
-    const headers: { [key: string]: string } = {};
-    if (accessToken) {
-      headers.accessToken = accessToken;
-    }
-    socketClient.current.publish({
-      destination: `/chat-message/${topicNumber.current}`,
-      headers,
-      body: JSON.stringify({
-        messageType: 'CHAT',
-        message: '나는메시지당',
-        nickname: '장충동왕족발보쌈',
-      }),
-    });
-  };
+  const accessToken = window.localStorage.getItem('userAccessToken') ?? '';
 
   return (
     <motion.div
@@ -47,9 +25,6 @@ export const MultiGamePlaying = (props: OwnProps) => {
       transition={{ duration: 1 }}
     >
       <S.Container>
-        <button type="button" onClick={sendMessage}>
-          메세지보내기!
-        </button>
         <MultiGameStatus />
         <MultiDancingChick />
         <MultiGameHint />

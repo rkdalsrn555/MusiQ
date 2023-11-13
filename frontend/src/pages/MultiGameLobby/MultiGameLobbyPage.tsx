@@ -1,10 +1,14 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
 // eslint-disable-next-line import/no-unresolved
-import { Client, Stomp } from '@stomp/stompjs';
+import * as StompJs from '@stomp/stompjs';
 import { motion } from 'framer-motion';
-import { websocketClientState } from '../../atoms/atoms';
 import { userApis } from '../../hooks/api/userApis';
 import {
   LobbyCreateRoomButton,
@@ -20,20 +24,15 @@ import {
   ButtonsWrapper,
 } from './MultiGameLobby.styled';
 
-type OwnProps = {
-  socketClient: React.MutableRefObject<any>;
-  lobbyChatList: { nickname: string; message: string }[];
-  topicNumber: React.MutableRefObject<number>;
-  setIsRoomExisted: Dispatch<SetStateAction<boolean>>;
-};
-
-export const MultiGameLobbyPage = (props: OwnProps) => {
-  const { socketClient, lobbyChatList, topicNumber, setIsRoomExisted } = props;
+export const MultiGameLobbyPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const websocketClient = useRecoilValue(websocketClientState);
   const channelNumber = location.pathname.split('/').slice(-2)[0];
-  const accessToken = window.localStorage.getItem('userAccessToken');
+  const accessToken = window.localStorage.getItem('userAccessToken') ?? '';
+  const client = useRef<any>({});
+  const [lobbyChatList, setLobbyChatList] = useState<
+    { nickname: string; message: string }[]
+  >([]);
 
   useEffect(() => {
     // 모바일 기기 접근을 막는 로직
@@ -44,6 +43,60 @@ export const MultiGameLobbyPage = (props: OwnProps) => {
     if (isMobile) {
       navigate('/mobile-restriction');
     }
+  }, []);
+
+  // 구독
+  const subscribe = () => {
+    client.current.subscribe(`/topic/${channelNumber}`, (message: any) => {
+      const msg = JSON.parse(message.body);
+      setLobbyChatList((prev) => [
+        ...prev,
+        { nickname: msg.nickname, message: msg.message },
+      ]);
+    });
+  };
+
+  // 소켓 연결
+  const connect = () => {
+    client.current = new StompJs.Client({
+      brokerURL: `${process.env.REACT_APP_SOCKET_URL}`,
+      connectHeaders: {
+        accessToken,
+        channelNo: location.pathname.split('/')[2],
+      },
+      onConnect: subscribe,
+      onStompError: (frame) => {
+        console.error('STOMP Error:', frame.headers.message);
+      },
+    });
+    client.current.activate();
+  };
+
+  // 소켓 연결 해제
+  const postSocketDisconnect = async () => {
+    try {
+      const response = await userApis.post(
+        `${process.env.REACT_APP_BASE_URL}/game/${Number(
+          location.pathname.split('/')[2]
+        )}`
+      );
+      console.log('Left channel successfully.', response.data);
+    } catch (error) {
+      console.error('Error leaving channel:', error);
+    }
+  };
+
+  const disconnect = () => {
+    client.current.deactivate();
+  };
+
+  // 첫 렌더링 시 소켓연결, 페이지 떠날 시 disconnect
+  useEffect(() => {
+    connect();
+    return () => {
+      disconnect();
+      postSocketDisconnect();
+    };
   }, []);
 
   return (
@@ -60,15 +113,9 @@ export const MultiGameLobbyPage = (props: OwnProps) => {
           <LobbyUsersList />
           <LobbyRooms />
           <ButtonsWrapper>
-            <LobbyCreateRoomButton
-              topicNumber={topicNumber}
-              setIsRoomExisted={setIsRoomExisted}
-            />
+            <LobbyCreateRoomButton />
           </ButtonsWrapper>
-          <LobbyChatting
-            socketClient={socketClient}
-            lobbyChatList={lobbyChatList}
-          />
+          <LobbyChatting socketClient={client} lobbyChatList={lobbyChatList} />
         </LobbyWrapper>
       </MulitBackGround>
     </motion.div>
