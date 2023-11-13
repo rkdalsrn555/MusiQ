@@ -16,6 +16,7 @@ import {
   StyledRadio,
   StyledAmountLabel,
   StyledYearLabel,
+  StyledIsPrivateRoomCheckBoxDiv,
 } from './LobbyCreateRoomButton.styled';
 import exitButtonIcon from '../../../../assets/svgs/MultiLobby/exitButtonIcon.svg';
 import musiqLogo from '../../../../assets/svgs/logo.svg';
@@ -132,25 +133,41 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
       {roomNameError && (
         <div style={{ color: 'yellow' }}>{roomNameError}</div> // 에러 메시지 표시
       )}
-      <StyledRoomPasswordInput
-        placeholder="&nbsp;비밀번호"
-        value={password}
-        onChange={(e) => {
-          const currentValue = e.target.value;
-          const regex = /^[A-Za-z0-9]*$/;
+      <StyledIsPrivateRoomCheckBoxDiv>
+        <label style={{ fontSize: '18px' }}>
+          <input
+            type="checkbox"
+            checked={isPrivate}
+            onChange={handlePrivateChange}
+            style={{ transform: 'scale(1.5)' }}
+          />
+          &nbsp;비공개
+        </label>
+      </StyledIsPrivateRoomCheckBoxDiv>
+      {isPrivate && (
+        <>
+          <StyledRoomPasswordInput
+            placeholder="&nbsp;비밀번호"
+            value={password}
+            onChange={(e) => {
+              const currentValue = e.target.value;
+              const regex = /^[0-9]*$/;
+              if (regex.test(currentValue) || currentValue === '') {
+                setPassword(currentValue);
+                setPasswordError('');
+              } else {
+                setPasswordError('숫자만 최대 4자리 입력 가능합니다.');
+              }
+            }}
+            autoComplete="off"
+            maxLength={4}
+          />
 
-          if (regex.test(currentValue) || currentValue === '') {
-            setPassword(currentValue);
-            setPasswordError('');
-          } else {
-            setPasswordError('영문과 숫자만 입력 가능합니다.');
-          }
-        }}
-        autoComplete="off"
-        maxLength={12}
-      />
-
-      {passwordError && <div style={{ color: 'yellow' }}>{passwordError}</div>}
+          {passwordError && (
+            <div style={{ color: 'yellow' }}>{passwordError}</div>
+          )}
+        </>
+      )}
 
       <SelectYearWrapper>
         <div style={{ fontSize: '18px' }}>노래의 연도를 선택 해주세요</div>
