@@ -73,7 +73,6 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
 
   // 방 생성 핸들러
   const handleCreateRoom = () => {
-    
     // 입력 검증 로직
     if (roomName.trim() === '') {
       alert('방 제목을 입력해주세요.');
@@ -92,8 +91,6 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
     }
     onCreate(roomName, password, musicYear.join(' '), quizAmount);
   };
-
-  
 
   if (!isOpen) {
     return null;
@@ -153,13 +150,7 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
   );
 };
 
-type OwnProps = {
-  topicNumber: React.MutableRefObject<number>;
-  setIsRoomExisted: Dispatch<SetStateAction<boolean>>;
-};
-
-export const LobbyCreateRoomButton = (props: OwnProps) => {
-  const { topicNumber, setIsRoomExisted } = props;
+export const LobbyCreateRoomButton = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const channelNo = location.pathname.split('/').slice(-2)[0];
@@ -185,8 +176,7 @@ export const LobbyCreateRoomButton = (props: OwnProps) => {
     userApis
       .patch(`${process.env.REACT_APP_BASE_URL}/game/main/join/${channelNo}`)
       .then((res) => {
-        topicNumber.current = gameRoomNo;
-        setIsRoomExisted(true);
+        console.log(res);
       });
   };
 
@@ -208,9 +198,12 @@ export const LobbyCreateRoomButton = (props: OwnProps) => {
       .post(`${process.env.REACT_APP_BASE_URL}/game/main/create`, requestBody)
       .then((response) => {
         if (response.data.code === 200) {
-          console.log(channelNo);
           console.log(requestBody);
           joinGameRoom(response.data.data.gameRoomNo, requestBody);
+          navigate(
+            `/multi/${channelNo}/game/${response.data.data.gameRoomNo}`,
+            { state: { requestBody } }
+          );
         } else {
           console.error('Failed to create room:', response.data.message);
         }
