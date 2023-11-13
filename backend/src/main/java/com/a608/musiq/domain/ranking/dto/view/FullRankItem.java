@@ -19,6 +19,6 @@ public class FullRankItem {
     public FullRankItem(TypedTuple<String> setElem) {
         this.nickName = setElem.getValue();
         this.exp = setElem.getScore();
-        this.level = (int)(this.exp / 50);
+        this.level = (int)(this.exp / 50) + 1;
     }
 }

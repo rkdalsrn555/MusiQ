@@ -50,7 +50,7 @@ export const LobbyRooms = () => {
     };
 
     fetchRooms();
-  }, [channelNumber, accessToken]);
+  }, []);
 
   // 페이지네이션을 위한 시작점과 끝점 계산
   const indexOfLastRoom = currentPage * pageSize;

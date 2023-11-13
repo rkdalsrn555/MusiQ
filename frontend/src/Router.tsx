@@ -19,14 +19,19 @@ import {
   Login,
   RankingPage,
   Signup,
-  MultiGameLobbyPage,
   MzModePage,
   MultiChannelPage,
+  MultiGameLobbyPage,
+  MultiGamePlaying,
 } from './pages';
 
 const PrivatePath = [
-  { path: '/multi/:channel/lobby', component: <MultiGameLobbyPage /> },
   { path: '/multi/channel', component: <MultiChannelPage /> },
+  { path: '/multi/:channelId/lobby', component: <MultiGameLobbyPage /> },
+  {
+    path: '/multi/:channelId/game/:gameRoomId',
+    component: <MultiGamePlaying />,
+  },
   // { path: '/multi/channel', component: <MzModePage /> },
   { path: '/single/game-option', component: <SingleGameOption /> },
   { path: '/single/game-playing', component: <SingleGamePlaying /> },

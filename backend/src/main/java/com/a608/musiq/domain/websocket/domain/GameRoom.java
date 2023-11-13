@@ -4,6 +4,9 @@ import com.a608.musiq.domain.websocket.data.GameRoomType;
 import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.data.PlayType;
+import com.a608.musiq.global.exception.exception.MultiModeException;
+import com.a608.musiq.global.exception.info.MultiModeExceptionInfo;
+
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -20,6 +23,7 @@ import lombok.NoArgsConstructor;
 public class GameRoom {
     private static final int LEAST_MEMBER_SIZE = 1;
     private static final int ROOM_DIVIDE_NUMBER = 1000;
+    private static final int MAX_ROOM_USER = 6;
 
     private int roomNo;
     private String roomName;
@@ -128,9 +132,25 @@ public class GameRoom {
         return userInfoItems.get(roomManagerUUID).getNickname();
     }
 
-    public void enterUser(UUID uuid) {
-        // 방 인원 체크
-        // 최대 인원 넘으면 에러?
+    public String enterUser(UUID uuid, UserInfoItem userInfoItem, String password) {
+        if (this.isPrivate) {
+            if (!this.password.equals(password)) {
+                throw new MultiModeException(MultiModeExceptionInfo.WRONG_PASSWORD);
+            }
+        }
+
+        if (!gameRoomType.equals(GameRoomType.WAITING)) {
+            throw new MultiModeException(MultiModeExceptionInfo.ALREADY_STARTED_ROOM);
+        }
+
+        if (totalUsers == MAX_ROOM_USER) {
+            throw new MultiModeException(MultiModeExceptionInfo.FULL_ROOM_USER);
+        }
+
+        userInfoItems.put(uuid, userInfoItem);
+        totalUsers++;
+
+        return userInfoItem.getNickname();
     }
 
     public void initializeRoom() {
