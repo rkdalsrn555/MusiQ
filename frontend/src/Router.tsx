@@ -3,7 +3,6 @@ import axios from 'axios';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { AnimatePresence } from 'framer-motion';
-import { SocketPage } from './pages/SocketPage/SocketPage';
 import { UserIpAtom } from './atoms/atoms';
 import PrivateRoute from './hooks/PrivateRoute';
 import PublicRoute from './hooks/PublicRoute';
@@ -22,11 +21,17 @@ import {
   Signup,
   MzModePage,
   MultiChannelPage,
+  MultiGameLobbyPage,
+  MultiGamePlaying,
 } from './pages';
 
 const PrivatePath = [
   { path: '/multi/channel', component: <MultiChannelPage /> },
-  { path: '/multi/:channel/lobby', component: <SocketPage /> },
+  { path: '/multi/:channelId/lobby', component: <MultiGameLobbyPage /> },
+  {
+    path: '/multi/:channelId/game/:gameRoomId',
+    component: <MultiGamePlaying />,
+  },
   // { path: '/multi/channel', component: <MzModePage /> },
   { path: '/single/game-option', component: <SingleGameOption /> },
   { path: '/single/game-playing', component: <SingleGamePlaying /> },
