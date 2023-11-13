@@ -25,7 +25,7 @@ import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameResultDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameResultItem;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameStartPubDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.TimeDto;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.LeaveGameRoomDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.ExitGameRoomDto;
 import com.a608.musiq.domain.websocket.service.subService.AfterAnswerService;
 import com.a608.musiq.domain.websocket.service.subService.BeforeAnswerService;
 import com.a608.musiq.domain.websocket.service.subService.CommonService;
@@ -378,10 +378,11 @@ public class GameService {
                         util.insertDatatoRedisSortedSet(RedisKey.RANKING.getKey(),
                                 memberInfo.getNickname(), memberInfo.getExp());
 
-                        memberInfos.add(
-                                GameRoomMemberInfo.builder().nickName(memberInfo.getNickname())
-                                        .level((int) (memberInfo.getExp() / LEVEL_SIZE)).build());
-                    }
+						memberInfos.add(
+							GameRoomMemberInfo.builder()
+								.nickName(memberInfo.getNickname())
+								.build());
+					}
 
                     // 다음 판을 위한 세팅
                     room.initializeRoom();
@@ -504,12 +505,11 @@ public class GameService {
         logger.info("Create GameRoom Successful");
         channel.updateIsUsed(curRoomIndex);
 
-        GameRoomMemberInfo gameRoomMemberInfo = GameRoomMemberInfo.builder()
-                .nickName(memberInfo.getNickname())
-                .level((int) (memberInfo.getExp() / 50))
-                .build();
-        List<GameRoomMemberInfo> gameRoomMemberInfos = new ArrayList<>();
-        gameRoomMemberInfos.add(gameRoomMemberInfo);
+		GameRoomMemberInfo gameRoomMemberInfo = GameRoomMemberInfo.builder()
+			.nickName(memberInfo.getNickname())
+			.build();
+		List<GameRoomMemberInfo> gameRoomMemberInfos = new ArrayList<>();
+		gameRoomMemberInfos.add(gameRoomMemberInfo);
 
         // 메세지 펍 해주기
         //일반 채팅
@@ -559,11 +559,10 @@ public class GameService {
         String destination = getDestination(channelNo);
         GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
 
-        String enteredUserNickname = commonService.enterGameRoom(uuid, nickname, gameRoom,
-                channelNo, password);
+		EnterGameRoomDto enterGameRoomDto = commonService.enterGameRoom(uuid, nickname, gameRoom, channelNo, password);
 
-        messagingTemplate.convertAndSend(destination, EnterGameRoomDto.of(enteredUserNickname));
-    }
+		messagingTemplate.convertAndSend(destination, enterGameRoomDto);
+	}
 
     public void exitGameRoom(String accessToken, int channelNo) {
         UUID uuid = jwtValidator.getData(accessToken);
@@ -574,10 +573,9 @@ public class GameService {
         String destination = getDestination(channelNo);
         GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
 
-        String currentRoomManagerNickname = commonService.leaveGameRoom(uuid, gameRoom, channelNo);
+		ExitGameRoomDto exitGameRoomDto = commonService.exitGameRoom(uuid, gameRoom, channelNo);
 
-        messagingTemplate.convertAndSend(destination,
-                LeaveGameRoomDto.from(nickname, currentRoomManagerNickname));
-    }
+		messagingTemplate.convertAndSend(destination, exitGameRoomDto);
+	}
 
 }
