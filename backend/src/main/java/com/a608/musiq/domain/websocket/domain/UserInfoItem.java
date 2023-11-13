@@ -12,6 +12,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @Builder
 public class UserInfoItem {
+    private static final Double INITIAL_SCORE = 0.0;
+    private static final Boolean INITIAL_IS_SKIPPED = Boolean.FALSE;
 
     private String nickname;
     private Double score;
@@ -22,13 +24,21 @@ public class UserInfoItem {
         return new UserInfoItem(nickname, score, isSkipped);
     }
 
+    public static UserInfoItem of(String nickname) {
+        return UserInfoItem.builder()
+            .nickname(nickname)
+            .score(INITIAL_SCORE)
+            .isSkipped(INITIAL_IS_SKIPPED)
+            .build();
+    }
+
     public void setSkipped(Boolean skipped) {
         isSkipped = skipped;
     }
 
 
     public void initializeUserInfo() {
-        this.score = 0.0;
-        this.isSkipped = false;
+        this.score = INITIAL_SCORE;
+        this.isSkipped = INITIAL_IS_SKIPPED;
     }
 }
