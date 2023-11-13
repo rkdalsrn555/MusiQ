@@ -518,15 +518,16 @@ public class GameService {
                 "/topic" + roomNumber;
 
         GameRoomPubDto gameRoomPubDto = GameRoomPubDto.builder()
-                .memberInfos(gameRoomMemberInfos)
-                .roomNo(roomNumber)
-                .roomName(createGameRoomRequestDto.getRoomName())
-                .password(createGameRoomRequestDto.getPassword())
-                .isPrivate(!gameRoom.getPassword().equals(""))
-                .numberOfProblems(createGameRoomRequestDto.getQuizAmount())
-                .year(createGameRoomRequestDto.getMusicYear())
-                .roomManagerNickname(memberInfo.getNickname())
-                .build();
+			.messageDtoType(MessageDtoType.GOWAITING)
+			.memberInfos(gameRoomMemberInfos)
+			.roomNo(roomNumber)
+			.roomName(createGameRoomRequestDto.getRoomName())
+			.password(createGameRoomRequestDto.getPassword())
+			.isPrivate(!gameRoom.getPassword().equals(""))
+			.numberOfProblems(createGameRoomRequestDto.getQuizAmount())
+			.year(createGameRoomRequestDto.getMusicYear())
+			.roomManagerNickname(memberInfo.getNickname())
+			.build();
 
         messagingTemplate.convertAndSend(destination, gameRoomPubDto);
 
