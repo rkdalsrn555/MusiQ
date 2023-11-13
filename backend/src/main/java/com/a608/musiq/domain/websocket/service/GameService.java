@@ -5,7 +5,6 @@ import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.websocket.data.GameRoomType;
 import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.data.MessageDtoType;
-import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.Channel;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
@@ -459,8 +458,9 @@ public class GameService {
 						.roomTitle(gameRoom.getRoomName())
 						.roomManager(roomManager.getNickname())
 						.currentMembers(gameRoom.getTotalUsers())
-						.roomNumber(gameRoom.getRoomNo())
+						.quizAmount(gameRoom.getNumberOfProblems())
 						.isPrivate(!gameRoom.getPassword().equals(""))
+						.isPlay(gameRoom.getGameRoomType().equals(GameRoomType.GAME))
 						.years(years)
 						.build());
 			}

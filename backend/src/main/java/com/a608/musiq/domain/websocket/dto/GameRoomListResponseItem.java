@@ -13,6 +13,7 @@ public class GameRoomListResponseItem {
     private int currentMembers;
     private int quizAmount;
     private Boolean isPrivate;
+    private Boolean isPlay;
     // List로 수정
     private List<String> years;
 }
