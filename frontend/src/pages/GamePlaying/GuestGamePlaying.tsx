@@ -363,7 +363,6 @@ export const GuestGamePlaying = () => {
 
     const handleKeyUp = (e: any) => {
       if (
-        chanceCntRef.current <= 0 ||
         e.target.nodeName === 'INPUT' ||
         isLoseRef.current ||
         isPlayingRef.current ||
@@ -386,7 +385,8 @@ export const GuestGamePlaying = () => {
       if (
         e.key === 'ArrowLeft' &&
         !isCorrectRef.current &&
-        !isSkipRef.current
+        !isSkipRef.current &&
+        chanceCntRef.current > 0
       ) {
         setFirstAttemp(false);
         playMusic(FirstMusicStartTime);
@@ -397,7 +397,8 @@ export const GuestGamePlaying = () => {
       if (
         e.key === 'ArrowDown' &&
         !isCorrectRef.current &&
-        !isSkipRef.current
+        !isSkipRef.current &&
+        chanceCntRef.current > 0
       ) {
         setFirstAttemp(false);
         playMusic(SecondMusicStartTime);
@@ -408,7 +409,8 @@ export const GuestGamePlaying = () => {
       if (
         e.key === 'ArrowRight' &&
         !isCorrectRef.current &&
-        !isSkipRef.current
+        !isSkipRef.current &&
+        chanceCntRef.current > 0
       ) {
         setFirstAttemp(false);
         playMusic(ThirdMusicStartTime);
@@ -426,7 +428,6 @@ export const GuestGamePlaying = () => {
 
     const handleKeyDown = (e: any) => {
       if (
-        chanceCntRef.current <= 0 ||
         e.target.nodeName === 'INPUT' ||
         isLoseRef.current ||
         isPlayingRef.current ||
@@ -446,21 +447,24 @@ export const GuestGamePlaying = () => {
       if (
         e.key === 'ArrowLeft' &&
         !isCorrectRef.current &&
-        !isSkipRef.current
+        !isSkipRef.current &&
+        chanceCntRef.current > 0
       ) {
         setKeyEvent('ArrowLeft');
       }
       if (
         e.key === 'ArrowDown' &&
         !isCorrectRef.current &&
-        !isSkipRef.current
+        !isSkipRef.current &&
+        chanceCntRef.current > 0
       ) {
         setKeyEvent('ArrowDown');
       }
       if (
         e.key === 'ArrowRight' &&
         !isCorrectRef.current &&
-        !isSkipRef.current
+        !isSkipRef.current &&
+        chanceCntRef.current > 0
       ) {
         setKeyEvent('ArrowRight');
       }
