@@ -36,12 +36,6 @@ public class RoundStartService {
 
     public void doRoundStart(Integer roomNum, GameRoom room) {
 
-        // 해당 방에 문제가 아직 없는 경우 문제 출제
-        if (room.getMultiModeProblems() == null) {
-            room.setMultiModeProblems(
-                    makeMutiProblemList(room.getNumberOfProblems(), room.getYear()));
-        }
-
         // 타임 카운트가 5인 경우 (맨 처음 카운트인 경우) 문제 링크를 보냄
         // 라운드마다 변수 초기화를 위해 ""를 담아 보냄
         if (room.getTime() >= 4) {

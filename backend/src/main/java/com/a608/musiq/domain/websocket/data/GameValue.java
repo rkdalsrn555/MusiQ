@@ -3,7 +3,7 @@ package com.a608.musiq.domain.websocket.data;
 import com.a608.musiq.domain.websocket.domain.Channel;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import jakarta.annotation.PostConstruct;
-import jakarta.persistence.criteria.CriteriaBuilder.In;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -98,7 +98,7 @@ public class GameValue {
     }
 
     // 게임룸 -> 로비
-    public static void leaveGameRoom(UUID uuid, int gameRoomChannelNo) {
+    public static void exitGameRoom(UUID uuid, int gameRoomChannelNo) {
         int lobbyChannelNo = gameRoomChannelNo / ROOM_DIVIDE_NUMBER;
 
         moveUserFromChannel(uuid, gameRoomChannelNo, lobbyChannelNo);
