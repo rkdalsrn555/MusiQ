@@ -12,8 +12,13 @@ const Container = styled.div`
   background-color: rgba(235, 226, 255, 0.6);
 `;
 
-export const MultiGameChatting = () => {
-  const [chatList, setChatList] = useState([]);
+type OwnProps = {
+  gameChatList: { nickname: string; message: string }[];
+  socketClient: React.MutableRefObject<any>;
+};
+
+export const MultiGameChatting = (props: OwnProps) => {
+  const { gameChatList, socketClient } = props;
 
   return <Container>채팅!!</Container>;
 };
