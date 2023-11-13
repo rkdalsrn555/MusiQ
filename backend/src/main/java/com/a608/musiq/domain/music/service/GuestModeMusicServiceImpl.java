@@ -228,6 +228,7 @@ public class GuestModeMusicServiceImpl implements MusicService {
 	 * @return GameOverResponseDto
 	 */
 	@Override
+	@Transactional
 	public GameOverResponseDto gameOver(int roomId, int round) {
 		GuestModeLog log = guestModeLogRepository.findById(roomId)
 			.orElseThrow(() -> new GuestModeException(GuestModeExceptionInfo.NOT_FOUND_LOG));
