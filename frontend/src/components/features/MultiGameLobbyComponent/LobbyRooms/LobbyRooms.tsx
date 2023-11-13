@@ -87,13 +87,6 @@ export const LobbyRooms = () => {
   const accessToken = window.localStorage.getItem('userAccessToken');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRoomNumber, setSelectedRoomNumber] = useState(null);
-  const requestBody = {
-    channelNo: parseInt(channelNumber, 10),
-    // roomName,
-    // password,
-    // musicYear,
-    // quizAmount,
-  };
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -148,7 +141,7 @@ export const LobbyRooms = () => {
       setSelectedRoomNumber(room.gameRoomNo);
       setIsModalOpen(true);
     } else {
-      const gameState = {
+      const requestBody = {
         channelNo: parseInt(channelNumber, 10),
         roomName: room.roomTitle,
         password: '',
@@ -157,9 +150,9 @@ export const LobbyRooms = () => {
       };
 
       navigate(`/multi/${channelNumber}/game/${room.gameRoomNo}`, {
-        state: gameState,
+        state: requestBody,
       });
-      console.log('공개방 진입했을 때 전달하는 상태', gameState);
+      console.log('공개방 진입했을 때 전달하는 상태', requestBody);
     }
   };
 
