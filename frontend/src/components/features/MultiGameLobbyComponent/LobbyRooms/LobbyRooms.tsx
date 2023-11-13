@@ -150,7 +150,7 @@ export const LobbyRooms = () => {
       };
 
       navigate(`/multi/${channelNumber}/game/${room.gameRoomNo}`, {
-        state: requestBody,
+        state: { requestBody },
       });
       console.log('공개방 진입했을 때 전달하는 상태', requestBody);
     }
@@ -240,7 +240,7 @@ export const LobbyRooms = () => {
             };
 
             navigate(`/multi/${channelNumber}/game/${selectedRoomNumber}`, {
-              state: gameState,
+              state: { requestBody: gameState },
             });
             console.log('비공개방에 접근했을 때 전달하는 상태', gameState);
             setIsModalOpen(false);
