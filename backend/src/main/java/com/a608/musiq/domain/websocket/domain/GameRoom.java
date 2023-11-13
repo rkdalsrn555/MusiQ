@@ -132,7 +132,13 @@ public class GameRoom {
         return userInfoItems.get(roomManagerUUID).getNickname();
     }
 
-    public String enterUser(UUID uuid, UserInfoItem userInfoItem) {
+    public String enterUser(UUID uuid, UserInfoItem userInfoItem, String password) {
+        if (this.isPrivate) {
+            if (!this.password.equals(password)) {
+                throw new MultiModeException(MultiModeExceptionInfo.WRONG_PASSWORD);
+            }
+        }
+
         if (!gameRoomType.equals(GameRoomType.WAITING)) {
             throw new MultiModeException(MultiModeExceptionInfo.ALREADY_STARTED_ROOM);
         }
