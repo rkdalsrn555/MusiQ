@@ -1,49 +1,116 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { userApis } from '../../../../hooks/api/userApis';
 import {
   RoomsWrapper,
   Room,
   PreviousButton,
   NextButton,
+  RoomManagerDiv,
+  RoomNumberDiv,
+  RoomPeopleDiv,
+  RoomTitleDiv,
+  RoomYearsDiv,
+  IsPrivateimg,
+  RoomQuizAmountDiv,
+  NoRoomImg,
+  PasswordModalWrapper,
+  StyledModalInput,
+  StyledExitButton,
+  StyledSubmitButton,
+  StyledModalForm,
 } from './LobbyRooms.styled';
 import previousButton from '../../../../assets/svgs/modeSelectSvgs/nextButton.svg';
+import roomLockIcon from '../../../../assets/svgs/MultiLobby/roomLock.svg';
+import roomUnlockIcon from '../../../../assets/svgs/MultiLobby/roomUnlock.svg';
+import noRoomIcon from '../../../../assets/svgs/MultiLobby/noRoomIcon.svg';
+import exitIcon from '../../../../assets/svgs/MultiLobby/exitButtonIcon.svg';
+import logoIcon from '../../../../assets/svgs/logo.svg';
 
 interface Room {
   roomTitle: string;
   roomManager: string;
   currentMembers: number;
-  roomNumber: number;
+  gameRoomNo: number;
   isPrivate: boolean;
   years: number[];
+  quizAmount: number;
 }
+
+interface PasswordModalProps {
+  onClose: () => void;
+  onSubmit: () => void;
+}
+
+// 비밀번호가 있는 비공개방에 접근했을 때 생성되는 비밀번호 입력 modal
+const PasswordModal: React.FC<PasswordModalProps> = ({ onClose, onSubmit }) => {
+  const [password, setPassword] = useState('');
+
+  const handleChange = (e: any) => {
+    setPassword(e.target.value);
+  };
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    onSubmit();
+  };
+
+  return (
+    <PasswordModalWrapper>
+      <img src={logoIcon} alt="logo" width={200} />
+      <StyledModalForm onSubmit={handleSubmit}>
+        <StyledModalInput
+          value={password}
+          onChange={handleChange}
+          placeholder="방 비밀번호 입력"
+        />
+        <StyledSubmitButton type="submit" onClick={handleSubmit}>
+          확인
+        </StyledSubmitButton>
+        <StyledExitButton type="button" onClick={onClose}>
+          <img src={exitIcon} alt="나가기" width={50} />
+        </StyledExitButton>
+      </StyledModalForm>
+    </PasswordModalWrapper>
+  );
+};
 
 export const LobbyRooms = () => {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 6; // 한 페이지에 표시할 방의 수
   const location = useLocation();
+  const navigate = useNavigate();
   const channelNumber = location.pathname.split('/').slice(-2)[0];
   const accessToken = window.localStorage.getItem('userAccessToken');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRoomNumber, setSelectedRoomNumber] = useState(null);
+  const requestBody = {
+    channelNo: parseInt(channelNumber, 10),
+    // roomName,
+    // password,
+    // musicYear,
+    // quizAmount,
+  };
 
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/game/main/${channelNumber}`,
-          {
-            headers: {
-              accessToken,
-            },
-          }
+        const response = await userApis.get(
+          `${process.env.REACT_APP_BASE_URL}/game/main/${channelNumber}`
         );
 
         if (response.data.code === 200) {
           setRooms(
-            Array.isArray(response.data.rooms) ? response.data.rooms : []
+            Array.isArray(response.data.data.rooms)
+              ? response.data.data.rooms
+              : []
           );
         }
+        console.log('방 불러오기', response.data.data.rooms);
+        console.log(rooms);
       } catch (error) {
         console.error('Fetching rooms failed: ', error);
       }
@@ -59,10 +126,10 @@ export const LobbyRooms = () => {
 
   // 방의 years 배열에서 최소값과 최대값을 계산하는 함수
   const getYearsRange = (years: number[]) => {
-    if (years.length === 1) return `${years[0]}`;
+    if (years.length === 1) return `${years[0]}년`;
     const minYear = Math.min(...years);
     const maxYear = Math.max(...years);
-    return `${minYear} ~ ${maxYear}`;
+    return `${minYear}년 ~ ${maxYear}년`;
   };
 
   // 이전 버튼 핸들러
@@ -77,16 +144,47 @@ export const LobbyRooms = () => {
     );
   };
 
+  const handleRoomClick = (room: any) => {
+    if (room.isPrivate) {
+      setSelectedRoomNumber(room.gameRoomNo);
+      setIsModalOpen(true);
+    } else {
+      navigate(`/multi/${channelNumber}/game/${room.gameRoomNo}`);
+    }
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handlePasswordSubmit = () => {
+    navigate(`/multi/${channelNumber}/game/${selectedRoomNumber}`);
+    setIsModalOpen(false);
+  };
+
   if (rooms.length === 0) {
-    return <RoomsWrapper>현재 개설된 방이 없습니다.</RoomsWrapper>;
+    return (
+      <RoomsWrapper>
+        <NoRoomImg src={noRoomIcon} alt="방이 없음" width={500} />
+      </RoomsWrapper>
+    );
   }
 
   return (
     <RoomsWrapper>
       {currentRooms.map((room) => (
-        <Room key={room.roomManager}>
-          {room.roomTitle} - {room.roomManager} - {getYearsRange(room.years)} -
-          {room.currentMembers} - {room.isPrivate} - {room.roomNumber}
+        <Room key={room.roomManager} onClick={() => handleRoomClick(room)}>
+          <RoomNumberDiv>{room.gameRoomNo}</RoomNumberDiv>
+          <RoomTitleDiv>&nbsp;{room.roomTitle}</RoomTitleDiv>
+          <RoomManagerDiv>{room.roomManager}님의 방</RoomManagerDiv>
+          <RoomYearsDiv>{getYearsRange(room.years)}</RoomYearsDiv>
+          <RoomPeopleDiv>{room.currentMembers}/6</RoomPeopleDiv>
+          <IsPrivateimg
+            src={room.isPrivate ? roomLockIcon : roomUnlockIcon}
+            alt="Room is private?"
+            width={30}
+          />
+          <RoomQuizAmountDiv>{room.quizAmount}문제</RoomQuizAmountDiv>
         </Room>
       ))}
       <PreviousButton
@@ -109,6 +207,15 @@ export const LobbyRooms = () => {
           width={80}
         />
       </NextButton>
+      {isModalOpen && (
+        <PasswordModal
+          onClose={() => setIsModalOpen(false)}
+          onSubmit={() => {
+            navigate(`/multi/${channelNumber}/game/${selectedRoomNumber}`);
+            setIsModalOpen(false);
+          }}
+        />
+      )}
     </RoomsWrapper>
   );
 };
