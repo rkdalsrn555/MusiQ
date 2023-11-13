@@ -37,6 +37,7 @@ interface Room {
   isPrivate: boolean;
   years: number[];
   quizAmount: number;
+  isPlay: boolean;
 }
 
 interface PasswordModalProps {
@@ -47,14 +48,35 @@ interface PasswordModalProps {
 // 비밀번호가 있는 비공개방에 접근했을 때 생성되는 비밀번호 입력 modal
 const PasswordModal: React.FC<PasswordModalProps> = ({ onClose, onSubmit }) => {
   const [password, setPassword] = useState('');
+  const location = useLocation();
+  const channelNumber = location.pathname.split('/').slice(-2)[0];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // 비밀번호 검증
+  const handleSubmit = async (e: React.FormEvent) => {
+    console.log(channelNumber, password);
     e.preventDefault();
-    onSubmit(password); // 비밀번호를 onSubmit에 전달
+    try {
+      const response = await userApis.post(
+        `${process.env.REACT_APP_BASE_URL}/game/room}`,
+        {
+          channelNo: parseInt(channelNumber, 10),
+          password,
+        }
+      );
+
+      if (response.data.code === 200 && response.data.data.isCorrect) {
+        onSubmit(password);
+      } else {
+        alert('비밀번호가 틀렸습니다.');
+      }
+    } catch (error) {
+      console.error('통신 에러', error);
+      alert('비밀번호 검증 중 오류가 발생함');
+    }
   };
 
   return (
@@ -65,6 +87,8 @@ const PasswordModal: React.FC<PasswordModalProps> = ({ onClose, onSubmit }) => {
           value={password}
           onChange={handleChange}
           placeholder="방 비밀번호 입력"
+          autoComplete="off"
+          maxLength={4}
         />
         <StyledSubmitButton type="submit" onClick={handleSubmit}>
           확인
@@ -156,29 +180,6 @@ export const LobbyRooms = () => {
     }
   };
 
-  // const handleModalClose = () => {
-  //   setIsModalOpen(false);
-  // };
-
-  // const handlePasswordSubmit = (password: string) => {
-  //   const room = rooms.find((r) => r.gameRoomNo === selectedRoomNumber);
-  //   if (!room) return;
-
-  //   const gameState = {
-  //     channelNo: parseInt(channelNumber, 10),
-  //     roomName: room.roomTitle,
-  //     password,
-  //     musicYear: room.years,
-  //     quizAmount: room.quizAmount,
-  //   };
-
-  //   navigate(`/multi/${channelNumber}/game/${selectedRoomNumber}`, {
-  //     state: gameState,
-  //   });
-  //   console.log('비공개방에 접근했을 때 전달하는 상태', gameState);
-  //   setIsModalOpen(false);
-  // };
-
   if (rooms.length === 0) {
     return (
       <RoomsWrapper>
@@ -190,12 +191,27 @@ export const LobbyRooms = () => {
   return (
     <RoomsWrapper>
       {currentRooms.map((room) => (
-        <Room key={room.roomManager} onClick={() => handleRoomClick(room)}>
+        <Room
+          key={room.roomManager}
+          onClick={() => !room.isPlay && handleRoomClick(room)}
+          style={{
+            backgroundColor: room.isPlay
+              ? 'rgba(0, 0, 0, 0.5)'
+              : 'rgba(255, 255, 255, 0.5)',
+            pointerEvents: room.isPlay ? 'none' : 'auto',
+          }}
+        >
           <RoomNumberDiv>{room.gameRoomNo}</RoomNumberDiv>
           <RoomTitleDiv>&nbsp;{room.roomTitle}</RoomTitleDiv>
           <RoomManagerDiv>{room.roomManager}님의 방</RoomManagerDiv>
           <RoomYearsDiv>{getYearsRange(room.years)}</RoomYearsDiv>
-          <RoomPeopleDiv>{room.currentMembers}/6</RoomPeopleDiv>
+          <RoomPeopleDiv
+            style={{
+              color: room.currentMembers === 6 ? 'red' : 'inherit',
+            }}
+          >
+            {room.currentMembers}/6
+          </RoomPeopleDiv>
           <IsPrivateimg
             src={room.isPrivate ? roomLockIcon : roomUnlockIcon}
             alt="Room is private?"
@@ -212,7 +228,7 @@ export const LobbyRooms = () => {
         <img
           src={previousButton}
           alt="이전 버튼"
-          style={{ rotate: '180deg', opacity: 0.6 }}
+          style={{ rotate: '180deg', opacity: 0.8 }}
           width={80}
         />
       </PreviousButton>
@@ -220,7 +236,7 @@ export const LobbyRooms = () => {
         <img
           src={previousButton}
           alt="다음 버튼"
-          style={{ opacity: 0.6 }}
+          style={{ opacity: 0.8 }}
           width={80}
         />
       </NextButton>

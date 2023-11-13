@@ -84,7 +84,7 @@ export const LobbyChatting = (props: OwnProps) => {
           }}
         />
         <button type="button" onClick={sendMessage}>
-          <img src={messageSubmit} alt="메세지 보내기" width={22} />
+          <img src={messageSubmit} alt="메세지 보내기" width={27}/>
         </button>
       </ChattingInputWrapper>
     </ChattingWrapper>
