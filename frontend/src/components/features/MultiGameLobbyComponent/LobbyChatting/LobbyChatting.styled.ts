@@ -35,7 +35,7 @@ export const ChattingContentsWrapper = styled.div`
 `;
 
 export const ChattingContent = styled.div`
-  width: 72vw;
+  width: 71vw;
 `;
 
 export const ChattingInputWrapper = styled.div`
