@@ -63,6 +63,7 @@ export const MultiGameLobbyPage = () => {
       connectHeaders: {
         accessToken,
         channelNo: location.pathname.split('/')[2],
+        connectType: 'ENTER_LOBBY'
       },
       onConnect: subscribe,
       onStompError: (frame) => {

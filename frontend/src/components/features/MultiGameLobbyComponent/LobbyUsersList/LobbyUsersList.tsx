@@ -24,11 +24,6 @@ export const LobbyUsersList = () => {
     try {
       const response = await userApis.get(
         `${process.env.REACT_APP_BASE_URL}/game/${channelNumber}`,
-        {
-          headers: {
-            accessToken,
-          },
-        }
       );
 
       if (response.data.code === 200) {
@@ -36,6 +31,7 @@ export const LobbyUsersList = () => {
           (a: UserType, b: UserType) => b.userLevel - a.userLevel
         );
         setUsers(sortedUsers);
+        console.log('유저목록', sortedUsers)
       }
     } catch (error) {
       console.error('Fetching users failed: ', error);

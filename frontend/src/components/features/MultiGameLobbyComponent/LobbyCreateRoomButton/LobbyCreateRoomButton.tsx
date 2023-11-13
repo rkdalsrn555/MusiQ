@@ -193,7 +193,6 @@ export const LobbyCreateRoomButton = () => {
       musicYear,
       quizAmount,
     };
-    console.log(requestBody);
     userApis
       .post(`${process.env.REACT_APP_BASE_URL}/game/main/create`, requestBody)
       .then((response) => {
