@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 // eslint-disable-next-line import/no-unresolved
 import * as StompJs from '@stomp/stompjs';
 import { useLocation, useNavigate } from 'react-router-dom';
+import bubbleBg from '../../assets/img/playgame/horseBaloon.png';
 import {
   MultiGameStatus,
   MultiGameChatting,
@@ -38,11 +39,11 @@ export const MultiGamePlaying = () => {
   const [gameUserList, setGameUserList] = useState<GameUserList[]>([]); // 유저리스트
 
   const [manager, setManager] = useState<string>(''); // 내가 게임방의 매니저인지 아닌지
-
   const [playTime, setPlayTime] = useState<number>(0); // 플레이타임
+  const [isGameStart, setIsGameStart] = useState<boolean>(false);
 
+  // 모바일 기기 접근을 막는 로직
   useEffect(() => {
-    // 모바일 기기 접근을 막는 로직
     const isMobile =
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
@@ -140,6 +141,7 @@ export const MultiGamePlaying = () => {
     client.current.deactivate();
   };
 
+  console.log(location.state);
   // 첫 렌더링 시 소켓연결, 페이지 떠날 시 disconnect
   useEffect(() => {
     connect();
@@ -159,8 +161,13 @@ export const MultiGamePlaying = () => {
     >
       <S.Container>
         <MultiGameStatus gameUserList={gameUserList} manager={manager} />
-        <MultiDancingChick />
-        <div>게임 대기중입니다</div>
+        <S.MCPosition>
+          <S.BubblePosition>
+            <img src={bubbleBg} alt="말풍선" width={300} />
+            <p>게임 대기중입니다</p>
+          </S.BubblePosition>
+          <MultiDancingChick />
+        </S.MCPosition>
         <MultiGameHint />
         <MultiGameSkip />
         <MultiGameChatting
