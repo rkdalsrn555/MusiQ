@@ -5,7 +5,6 @@ import com.a608.musiq.domain.member.repository.MemberInfoRepository;
 import com.a608.musiq.domain.websocket.data.GameRoomType;
 import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.data.MessageDtoType;
-import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.Channel;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
@@ -24,7 +23,7 @@ import com.a608.musiq.domain.websocket.dto.gameMessageDto.ChatMessagePubDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameResultDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameResultItem;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.TimeDto;
-import com.a608.musiq.domain.websocket.dto.gameMessageDto.LeaveGameRoomDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.ExitGameRoomDto;
 import com.a608.musiq.domain.websocket.service.subService.AfterAnswerService;
 import com.a608.musiq.domain.websocket.service.subService.BeforeAnswerService;
 import com.a608.musiq.domain.websocket.service.subService.CommonService;
@@ -374,8 +373,9 @@ public class GameService {
 							memberInfo.getNickname(), memberInfo.getExp());
 
 						memberInfos.add(
-							GameRoomMemberInfo.builder().nickName(memberInfo.getNickname())
-								.level((int)(memberInfo.getExp() / LEVEL_SIZE)).build());
+							GameRoomMemberInfo.builder()
+								.nickName(memberInfo.getNickname())
+								.build());
 					}
 
 					// 다음 판을 위한 세팅
@@ -498,7 +498,6 @@ public class GameService {
 
 		GameRoomMemberInfo gameRoomMemberInfo = GameRoomMemberInfo.builder()
 			.nickName(memberInfo.getNickname())
-			.level((int)(memberInfo.getExp() / 50))
 			.build();
 		List<GameRoomMemberInfo> gameRoomMemberInfos = new ArrayList<>();
 		gameRoomMemberInfos.add(gameRoomMemberInfo);
@@ -550,9 +549,9 @@ public class GameService {
 		String destination = getDestination(channelNo);
 		GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
 
-		String enteredUserNickname = commonService.enterGameRoom(uuid, nickname, gameRoom, channelNo, password);
+		EnterGameRoomDto enterGameRoomDto = commonService.enterGameRoom(uuid, nickname, gameRoom, channelNo, password);
 
-		messagingTemplate.convertAndSend(destination, EnterGameRoomDto.of(enteredUserNickname));
+		messagingTemplate.convertAndSend(destination, enterGameRoomDto);
 	}
 
 	public void exitGameRoom(String accessToken, int channelNo) {
@@ -563,9 +562,9 @@ public class GameService {
 		String destination = getDestination(channelNo);
 		GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
 
-		String currentRoomManagerNickname = commonService.leaveGameRoom(uuid, gameRoom, channelNo);
+		ExitGameRoomDto exitGameRoomDto = commonService.exitGameRoom(uuid, gameRoom, channelNo);
 
-		messagingTemplate.convertAndSend(destination, LeaveGameRoomDto.from(nickname, currentRoomManagerNickname));
+		messagingTemplate.convertAndSend(destination, exitGameRoomDto);
 	}
 
 }
