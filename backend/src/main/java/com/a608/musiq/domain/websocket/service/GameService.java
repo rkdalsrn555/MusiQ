@@ -15,7 +15,6 @@ import com.a608.musiq.domain.websocket.dto.responseDto.AllChannelSizeResponseDto
 import com.a608.musiq.domain.websocket.dto.responseDto.ChannelUserResponseDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.ChannelUserResponseItem;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
-import com.a608.musiq.domain.websocket.dto.requestDto.EnterGameRoomRequestDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.EnterGameRoomResponseDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.GameRoomListResponseDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.GameRoomListResponseItem;
@@ -181,13 +180,10 @@ public class GameService {
         GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
 
         // 게임이 시작될 때의 로직
-        if (chatMessage.getMessageType().equals(MessageType.GAMESTART.toString())) {
+        if (chatMessage.getMessageType().equals(MessageType.GAMESTART)) {
 
-            // 게임 방 타입을 Game으로 설정
-            gameRoom.changeGameRoomType(GameRoomType.GAME);
-
-            // 플레이 타입을 RoundStart로 설정
-            gameRoom.setPlayType(PlayType.ROUNDSTART);
+            // 게임 데이터 초기화
+            gameRoom.initializeRoom();
 
             // 문제 출제
             gameRoom.setMultiModeProblems(
@@ -386,7 +382,7 @@ public class GameService {
 					}
 
                     // 다음 판을 위한 세팅
-                    room.initializeRoom();
+                    room.changeGameRoomType(GameRoomType.WAITING);
 
                     // 클라이언트에게 대기방 관련 정보 전달 해줘야 함
                     GameRoomPubDto dto = GameRoomPubDto.builder()
@@ -554,7 +550,7 @@ public class GameService {
      * @return
      */
     public CheckPasswordResponseDto checkPassword(CheckPasswordRequestDto checkPasswordRequestDto) {
-        GameRoom gameRoom = GameValue.getGameRooms().get(checkPasswordRequestDto.getChannelNo());
+        GameRoom gameRoom = GameValue.getGameRooms().get(checkPasswordRequestDto.getGameRoomNo());
 
         return commonService.checkPassword(gameRoom, checkPasswordRequestDto.getPassword());
     }
@@ -563,18 +559,18 @@ public class GameService {
      * 게임방 입장
      *
      * @param accessToken
-     * @param enterGameRoomRequestDto
+     * @param gameRoomNo
      * @return
      */
-    public EnterGameRoomResponseDto enterGameRoom(String accessToken, EnterGameRoomRequestDto enterGameRoomRequestDto) {
+    public EnterGameRoomResponseDto enterGameRoom(String accessToken, int gameRoomNo) {
         UUID uuid = jwtValidator.getData(accessToken);
         String nickname = memberInfoRepository.findNicknameById(uuid)
                 .orElseThrow(() -> new MemberInfoException(
                         MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
 
-        GameRoom gameRoom = GameValue.getGameRooms().get(enterGameRoomRequestDto.getChannelNo());
+        GameRoom gameRoom = GameValue.getGameRooms().get(gameRoomNo);
 
-		return commonService.enterGameRoom(uuid, nickname, gameRoom, enterGameRoomRequestDto.getChannelNo());
+		return commonService.enterGameRoom(uuid, nickname, gameRoom, gameRoomNo);
 	}
 
     /**
@@ -582,11 +578,12 @@ public class GameService {
      *
      * @param channelNo
      */
-    public void enterGameRoomForPublish(int channelNo) {
+    public void enterGameRoomForPublish(String accessToken, int channelNo) {
+        UUID uuid = jwtValidator.getData(accessToken);
         String destination = getDestination(channelNo);
         GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
 
-        EnterGameRoomDto enterGameRoomDto = commonService.enterGameRoomForPublish(gameRoom);
+        EnterGameRoomDto enterGameRoomDto = commonService.enterGameRoomForPublish(uuid, gameRoom);
 
         messagingTemplate.convertAndSend(destination, enterGameRoomDto);
     }

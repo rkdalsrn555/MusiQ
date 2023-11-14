@@ -138,7 +138,7 @@ public class GameRoom {
             .messageDtoType(MessageDtoType.EXITUSER)
             .userInfoItems(userInfoItems.values().stream().toList())
             .gameRoomManagerNickname(this.roomManagerNickname)
-            .exitedUserNickname(userInfoItems.get(roomManagerUUID).getNickname())
+            .exitedUserNickname(userInfoItems.get(uuid).getNickname())
             .build();
     }
 
@@ -169,23 +169,22 @@ public class GameRoom {
         return EnterGameRoomResponseDto.builder()
             .userInfoItems(userInfoItems.values().stream().toList())
             .gameRoomManagerNickname(this.roomManagerNickname)
-            .enteredUserNickname(userInfoItems.get(roomManagerUUID).getNickname())
+            .enteredUserNickname(userInfoItems.get(uuid).getNickname())
             .build();
     }
 
-    public EnterGameRoomDto getGameRoomInformation() {
+    public EnterGameRoomDto getGameRoomInformation(UUID uuid) {
         return EnterGameRoomDto.builder()
             .messageType(MessageDtoType.ENTERUSER)
             .userInfoItems(userInfoItems.values().stream().toList())
             .gameRoomManagerNickname(this.roomManagerNickname)
-            .enteredUserNickname(userInfoItems.get(roomManagerUUID).getNickname())
+            .enteredUserNickname(userInfoItems.get(uuid).getNickname())
             .build();
     }
 
     public void initializeRoom() {
-        this.gameRoomType = GameRoomType.WAITING;
+        this.gameRoomType = GameRoomType.GAME;
         this.playType = PlayType.ROUNDSTART;
-        this.multiModeProblems = null;
         this.time = 5;
         this.round = 1;
         this.skipVote = 0;
@@ -193,5 +192,9 @@ public class GameRoom {
         for(UserInfoItem userInfo : this.userInfoItems.values()) {
             userInfo.initializeUserInfo();
         }
+    }
+
+    public void setRound(int round) {
+        this.round = round;
     }
 }
