@@ -72,6 +72,7 @@ export const RoomYearsDiv = styled.div`
 
 export const RoomPeopleDiv = styled.div`
   position: absolute;
+  font-weight: bold;
   margin-top: 6.8%;
   margin-left: 44%;
 `;
