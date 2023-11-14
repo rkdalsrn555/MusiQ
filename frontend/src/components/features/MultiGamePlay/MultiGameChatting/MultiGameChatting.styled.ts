@@ -67,3 +67,9 @@ export const ChatListContainer = styled.div`
     }
   }
 `;
+
+export const NicknameColor = styled.div<{ nickname: string }>`
+  & .nickname {
+    color: ${(props) => (props.nickname === '삐약이' ? 'yellow' : '#fff')};
+  }
+`;

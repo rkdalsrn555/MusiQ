@@ -34,6 +34,7 @@ export const middlePosition = styled.div`
 export const bottomPosition = styled.div`
   margin: 0 auto;
   margin-bottom: 1%;
+  position: relative;
 `;
 
 export const ExplainBox = styled.div`
