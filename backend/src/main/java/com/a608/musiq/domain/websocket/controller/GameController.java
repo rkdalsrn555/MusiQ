@@ -132,7 +132,7 @@ public class GameController {
 	 * @return
 	 */
 	@PostMapping("/main/password")
-	private ResponseEntity<BaseResponse<CheckPasswordResponseDto>> passwordCheck(
+	private ResponseEntity<BaseResponse<CheckPasswordResponseDto>> checkPassword(
 		@RequestBody CheckPasswordRequestDto checkPasswordRequestDto
 	) {
 		return ResponseEntity.status(HttpStatus.OK)
