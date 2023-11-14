@@ -38,10 +38,10 @@ export const MultiGamePlaying = () => {
   const [gameChatList, setGameChatList] = useState<GameChatType[]>([]); // 채팅리스트
   const [gameUserList, setGameUserList] = useState<GameUserList[]>([]); // 유저리스트
 
-  const [manager, setManager] = useState<string>('장충동왕족발보쌈'); // 내가 게임방의 매니저인지 아닌지
+  const [manager, setManager] = useState<string>(''); // 내가 게임방의 매니저인지 아닌지
   const [playTime, setPlayTime] = useState<number>(0); // 플레이타임
-  const [isMusicStart, setIsMusicStart] = useState<boolean>(false);
-  const [isGameStart, setIsGameStart] = useState<boolean>(true); // 게임 시작되었는지 아닌지
+  const [isMusicStart, setIsMusicStart] = useState<boolean>(false); // 음악이 시작되었는지 아닌지
+  const [isGameStart, setIsGameStart] = useState<boolean>(false); // 게임 시작되었는지 아닌지
 
   const [initialHint, setInitialHint] = useState<string>(''); // 초성힌트
   const [singerHint, setSingerHint] = useState<string>(''); // 가수힌트
@@ -149,6 +149,7 @@ export const MultiGamePlaying = () => {
     });
   };
 
+  console.log(location.state);
   // 소켓 연결
   const connect = async () => {
     client.current = await new StompJs.Client({
@@ -187,9 +188,6 @@ export const MultiGamePlaying = () => {
       disconnect();
     };
   }, []);
-
-  // 음악 플레이 시작
-  const playMusic = () => {};
 
   return (
     <motion.div
