@@ -36,8 +36,9 @@ public class CommonService {
 		return gameRoom.enterUser(uuid, userInfoItem);
 	}
 
-	public EnterGameRoomDto enterGameRoomForPublish(GameRoom gameRoom) {
-		return gameRoom.getGameRoomInformation();
+	public EnterGameRoomDto enterGameRoomForPublish(UUID uuid, GameRoom gameRoom) {
+
+		return gameRoom.getGameRoomInformation(uuid);
 	}
 
 }
