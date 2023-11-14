@@ -41,8 +41,13 @@ public class RoundStartService {
         if (room.getTime() == 5) {
             MusicProblemDto dto = MusicProblemDto.builder()
                     .musicUrl(room.getMultiModeProblems().get(room.getRound() - 1).getUrl())
+                    .round(room.getRound())
                     .build();
             messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
+            room.timeDown();
+        }
+        else if(room.getTime() == 4) {
+            room.timeDown();
         }
         // 3, 2, 1 카운트 다운 전송
         else if (room.getTime() > 0) {
@@ -50,6 +55,7 @@ public class RoundStartService {
             // 카운트 다운 전송
             TimeDto timeDto = TimeDto.builder().time(room.getTime()).build();
             messagingTemplate.convertAndSend("/topic/" + roomNum, timeDto);
+
             room.timeDown();
         } else {
 
