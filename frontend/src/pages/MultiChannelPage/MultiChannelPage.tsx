@@ -55,7 +55,7 @@ export const MultiChannelPage = () => {
     }
   };
 
-  // 이 페이지가 렌더링 될때 채널 접속자 수 서버에서 계속 받아와서 보여주기
+  // 페이지 렌더링 될때 채널 접속자 수 서버에서 계속 받아와서 보여주기
   useEffect(() => {
     setLoading(true);
     fetchChannelSizes();
