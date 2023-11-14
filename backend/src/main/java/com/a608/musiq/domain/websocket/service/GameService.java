@@ -547,12 +547,25 @@ public class GameService {
         return ExitGameRoomResponse.builder().destinationNo(lobbyNo).build();
     }
 
+    /**
+     * 비밀번호 체크
+     *
+     * @param checkPasswordRequestDto
+     * @return
+     */
     public CheckPasswordResponseDto checkPassword(CheckPasswordRequestDto checkPasswordRequestDto) {
         GameRoom gameRoom = GameValue.getGameRooms().get(checkPasswordRequestDto.getChannelNo());
 
         return commonService.checkPassword(gameRoom, checkPasswordRequestDto.getPassword());
     }
 
+    /**
+     * 게임방 입장
+     *
+     * @param accessToken
+     * @param enterGameRoomRequestDto
+     * @return
+     */
     public EnterGameRoomResponseDto enterGameRoom(String accessToken, EnterGameRoomRequestDto enterGameRoomRequestDto) {
         UUID uuid = jwtValidator.getData(accessToken);
         String nickname = memberInfoRepository.findNicknameById(uuid)
@@ -564,6 +577,11 @@ public class GameService {
 		return commonService.enterGameRoom(uuid, nickname, gameRoom, enterGameRoomRequestDto.getChannelNo());
 	}
 
+    /**
+     * 게임방 입장 발행
+     *
+     * @param channelNo
+     */
     public void enterGameRoomForPublish(int channelNo) {
         String destination = getDestination(channelNo);
         GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
