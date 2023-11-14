@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CheckPasswordResponseDto {
-	private boolean isCorrectPassword;
+	private Boolean isCorrectPassword;
 }
