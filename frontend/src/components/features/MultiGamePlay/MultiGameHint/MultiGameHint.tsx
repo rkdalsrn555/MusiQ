@@ -43,9 +43,16 @@ const Container = styled.div`
     font-family: 'Galmuri11', 'sans-serif';
     font-weight: bold;
   }
+
+  & .answer {
+    font-size: 1.5rem;
+    font-family: 'Galmuri11', 'sans-serif';
+    font-weight: bold;
+  }
 `;
 
 type OwnProps = {
+  isMusicStart: boolean;
   answerData: { title: string; singer: string };
   remainMusic: number;
   totalMusic: number;
@@ -55,8 +62,15 @@ type OwnProps = {
 };
 
 export const MultiGameHint = (props: OwnProps) => {
-  const { initialHint, singerHint, time, remainMusic, totalMusic, answerData } =
-    props;
+  const {
+    isMusicStart,
+    initialHint,
+    singerHint,
+    time,
+    remainMusic,
+    totalMusic,
+    answerData,
+  } = props;
 
   return (
     <Container>
@@ -64,8 +78,15 @@ export const MultiGameHint = (props: OwnProps) => {
         <span className="bold">남은곡</span> [ {remainMusic} / {totalMusic} ]
       </p>
       <p className="explain bold">
-        <span className="explain bold explainColor1">음악</span>을 듣고{' '}
-        <span className="explain bold explainColor2">답</span>을 입력하세요.
+        {isMusicStart && time !== 0 ? (
+          <>
+            {' '}
+            <span className="explain bold explainColor1">음악</span>을 듣고{' '}
+            <span className="explain bold explainColor2">답</span>을 입력하세요.
+          </>
+        ) : (
+          `${time} 초 뒤에 노래가 나와요!`
+        )}
       </p>
       <p className="time">- {time} 초 -</p>
       {answerData.title === '' ? (
@@ -84,8 +105,8 @@ export const MultiGameHint = (props: OwnProps) => {
           </p>
         </>
       ) : (
-        <p className="hintTitle">
-          정답! {answerData.title} - {answerData.singer}
+        <p className="answer">
+          정답! {answerData.singer} - {answerData.title}
         </p>
       )}
     </Container>

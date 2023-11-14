@@ -40,7 +40,7 @@ export const MultiGamePlaying = () => {
   const [gameUserList, setGameUserList] = useState<GameUserList[]>([]); // 유저리스트
 
   const [manager, setManager] = useState<string>(''); // 내가 게임방의 매니저인지 아닌지
-  const [playTime, setPlayTime] = useState<number>(0); // 플레이타임
+  const [playTime, setPlayTime] = useState<number>(3); // 플레이타임
   const [isMusicStart, setIsMusicStart] = useState<boolean>(false); // 음악이 시작되었는지 아닌지
   const [isGameStart, setIsGameStart] = useState<boolean>(false); // 게임 시작되었는지 아닌지
 
@@ -56,6 +56,7 @@ export const MultiGamePlaying = () => {
   }); // 정답 제목, 가수
   const [musicUrl, setMusicUrl] = useState<string>('');
   const videoRef = useRef<ReactPlayer>(null);
+  const [isResult, setIsResult] = useState<boolean>(false); // 결과페이지인지 아닌지
 
   // 모바일 기기 접근을 막는 로직
   useEffect(() => {
@@ -111,6 +112,9 @@ export const MultiGamePlaying = () => {
           break;
         case 'TIME': // 시간초세기
           setPlayTime(msg.time);
+          if (isResult && msg.time === 0) {
+            setIsResult(false);
+          }
           break;
         case 'MUSICPROBLEM': // 음악 문제 세팅
           setAnswerData({ title: msg.title, singer: msg.singer });
@@ -134,8 +138,6 @@ export const MultiGamePlaying = () => {
             { nickname: '삐약이', message: '초성힌트가 나왔어요 삐약' },
           ]);
           break;
-        case 'GAMERESULT': // 게임 끝났을 때 유저리스트 반환
-          break;
         case 'BEFORESKIP': // 누군가 문제 맞추기 전 스킵요청
           break;
         case 'AFTERSKIP': // 문제 맞춘 후 스킵요청
@@ -153,14 +155,22 @@ export const MultiGamePlaying = () => {
                 message: `${msg.winner}님이 정답을 맞추셨습니다 삐약!`,
               },
             ]);
+            setGameUserList(msg.memberInfos);
           }
 
           break;
         case 'MUSICPLAY': // 노래 시작 타이밍
           setIsMusicStart(msg.musicPlay);
           break;
+        case 'MUSICEND': // 노래 끝
+          setIsMusicStart(msg.musicPlay);
+          break;
+        case 'GAMERESULT':
+          setIsResult(true);
+          break;
         case 'GOWAITING': // 게임 끝났을 때 대기상태로 다시 변환
           setIsGameStart(false);
+          setGameUserList(msg.memberInfos);
           break;
         default:
           break;
@@ -228,32 +238,39 @@ export const MultiGamePlaying = () => {
         <MultiGameStatus gameUserList={gameUserList} manager={manager} />
         <S.topPosition>
           <S.ExplainBox>
-            {isGameStart ? (
-              <MultiGameHint
-                answerData={answerData}
-                remainMusic={remainMusicNum}
-                totalMusic={location.state.requestBody.quizAmount}
-                time={playTime}
-                singerHint={singerHint}
-                initialHint={initialHint}
-              />
+            {isResult ? (
+              <div>결과</div>
             ) : (
-              <div className="waitingBox">
-                <p className="waiting">...게임 대기중입니다</p>
-                {manager === window.localStorage.getItem('nickname') ? (
-                  <MultiGameStart socketClient={client} />
+              <div>
+                {isGameStart ? (
+                  <MultiGameHint
+                    isMusicStart={isMusicStart}
+                    answerData={answerData}
+                    remainMusic={remainMusicNum}
+                    totalMusic={location.state.requestBody.quizAmount}
+                    time={playTime}
+                    singerHint={singerHint}
+                    initialHint={initialHint}
+                  />
                 ) : (
-                  <p>방장이 게임을 시작할때까지 기다려주세요</p>
+                  <div className="waitingBox">
+                    <p className="waiting">...게임 대기중입니다</p>
+                    {manager === window.localStorage.getItem('nickname') ? (
+                      <MultiGameStart socketClient={client} />
+                    ) : (
+                      <p>방장이 게임을 시작할때까지 기다려주세요</p>
+                    )}
+                  </div>
                 )}
               </div>
             )}
           </S.ExplainBox>
-          <MultiDancingChick />
         </S.topPosition>
         <S.middlePosition>
           <MultiGameSkip gameStatus={isGameStart} />
         </S.middlePosition>
         <S.bottomPosition>
+          <MultiDancingChick />
           <MultiGameChatting
             gameChatList={gameChatList}
             setGameChatList={setGameChatList}

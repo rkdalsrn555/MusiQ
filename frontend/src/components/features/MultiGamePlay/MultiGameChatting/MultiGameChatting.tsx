@@ -87,11 +87,15 @@ export const MultiGameChatting = (props: OwnProps) => {
     >
       <S.ChatListContainer>
         {gameChatList.map((chat, index) => (
-          // eslint-disable-next-line react/no-array-index-key
-          <div key={index} className="chatMessage">
+          <S.NicknameColor
+            // eslint-disable-next-line react/no-array-index-key
+            key={index}
+            className="chatMessage"
+            nickname={chat.nickname}
+          >
             <div className="nickname">{chat.nickname} : </div>
             <div className="message">{chat.message}</div>
-          </div>
+          </S.NicknameColor>
         ))}
         <div ref={chatEndRef} />
       </S.ChatListContainer>
