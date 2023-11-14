@@ -44,9 +44,17 @@ export const ExplainBox = styled.div`
   border-radius: 8px;
   border: 3px solid rgba(255, 255, 255, 0.6);
 
-  & .waiting {
-    font-size: 2rem;
-    font-family: 'Galmuri11', 'sans-serif';
-    line-height: 17rem;
+  & .waitingBox {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2rem;
+
+    & .waiting {
+      margin-top: 2rem;
+      font-size: 2rem;
+      font-family: 'Galmuri11', 'sans-serif';
+    }
   }
 `;
