@@ -115,6 +115,6 @@ export const StyledAmountLabel = styled.label`
 
 export const StyledIsPrivateRoomCheckBoxDiv = styled.div`
   position: absolute;
-  top: 31%;
-  right: 13%;
+  top: 24%;
+  right: 10%;
 `;
