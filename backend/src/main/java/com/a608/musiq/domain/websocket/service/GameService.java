@@ -148,7 +148,7 @@ public class GameService {
 
         /*
         로비에서 정상적인 루트로 나가는 사람이 아닌 게임 룸에서 강제로 퇴장 하는 유저 고려해야 함
-        - 채널에서 지우고 게임룸에서 지우고 Pub 해줘야함
+        채널에서 지우고 게임룸에서 지우고 Pub 해줘야함
          */
 
         GameValue.removeUserFromChannel(uuid, channelNo);
