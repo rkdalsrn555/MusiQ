@@ -47,8 +47,6 @@ public class WebSocketEventListener {
             gameService.joinGameChannel(accessToken, channelNo);
         } else if (connectType.equals(ConnectType.ENTER_GAME_ROOM.toString())) {
             gameService.enterGameRoomForPublish(accessToken, channelNo);
-        } else if (connectType.equals(ConnectType.EXIT_GAME_ROOM.toString())) {
-            gameService.exitGameRoom(accessToken, channelNo);
         }
     }
 

@@ -1,6 +1,7 @@
 package com.a608.musiq.domain.websocket.controller;
 
 import com.a608.musiq.domain.websocket.dto.requestDto.CheckPasswordRequestDto;
+import com.a608.musiq.domain.websocket.dto.requestDto.ExitGameRoomRequestDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.DisconnectSocketResponseDto;
 import com.a608.musiq.domain.websocket.dto.requestDto.EnterGameRoomRequestDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.ExitGameRoomResponse;
@@ -165,18 +166,18 @@ public class GameController {
 	 * 게임방 퇴장
 	 *
 	 * @param accessToken
-	 * @param channelNo
+	 * @param exitGameRoomRequestDto
 	 * @see ExitGameRoomResponse
 	 * @return
 	 */
-	@PatchMapping("/main/lobby/{channelNo}")
+	@PatchMapping("/main/exit")
 	@ResponseBody
 	private ResponseEntity<BaseResponse<ExitGameRoomResponse>> exitGameRoom(
-		@RequestHeader("accessToken") String accessToken, @PathVariable int channelNo) {
+		@RequestHeader("accessToken") String accessToken, @RequestBody ExitGameRoomRequestDto exitGameRoomRequestDto) {
 
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<ExitGameRoomResponse>builder()
-				.data(gameService.moveLobby(accessToken, channelNo))
+				.data(gameService.exitGameRoom(accessToken, exitGameRoomRequestDto))
 				.build());
 	}
 

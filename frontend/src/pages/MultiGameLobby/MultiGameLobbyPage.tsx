@@ -17,6 +17,7 @@ import {
   LobbyUsersList,
   RefreshButton,
   QuickMatchButton,
+  SearchRoomButton,
 } from '../../components/features';
 import { BackBtn } from '../../components/utils';
 import {
@@ -122,6 +123,7 @@ export const MultiGameLobbyPage = () => {
           <ButtonsWrapper>
             <LobbyCreateRoomButton />
             <QuickMatchButton channelNumber={channelNumber} />
+            <SearchRoomButton channelNumber={channelNumber} />
           </ButtonsWrapper>
           <LobbyChatting socketClient={client} lobbyChatList={lobbyChatList} />
         </LobbyWrapper>
