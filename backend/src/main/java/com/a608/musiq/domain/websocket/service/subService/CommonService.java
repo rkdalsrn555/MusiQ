@@ -21,13 +21,13 @@ public class CommonService {
 		return gameRoom.exitUser(uuid, roomNumber);
 	}
 
-	public EnterGameRoomDto enterGameRoom(UUID uuid, String nickname, GameRoom gameRoom, int roomNumber, String password) {
+	public EnterGameRoomDto enterGameRoom(UUID uuid, String nickname, GameRoom gameRoom, int roomNumber) {
 		GameValue.enterGameRoom(uuid, roomNumber);
 
 		UserInfoItem userInfoItem = UserInfoItem.of(nickname);
 
 		// 게임 룸에서 totalUser++, userInfoItems에 내 uuid 추가
-		return gameRoom.enterUser(uuid, userInfoItem, password);
+		return gameRoom.enterUser(uuid, userInfoItem);
 	}
 
 }

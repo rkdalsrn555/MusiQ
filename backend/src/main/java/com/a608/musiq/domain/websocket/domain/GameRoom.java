@@ -140,13 +140,7 @@ public class GameRoom {
             .build();
     }
 
-    public EnterGameRoomDto enterUser(UUID uuid, UserInfoItem userInfoItem, String password) {
-        if (this.isPrivate) {
-            if (!this.password.equals(password)) {
-                throw new MultiModeException(MultiModeExceptionInfo.WRONG_PASSWORD);
-            }
-        }
-
+    public EnterGameRoomDto enterUser(UUID uuid, UserInfoItem userInfoItem) {
         if (!gameRoomType.equals(GameRoomType.WAITING)) {
             throw new MultiModeException(MultiModeExceptionInfo.ALREADY_STARTED_ROOM);
         }

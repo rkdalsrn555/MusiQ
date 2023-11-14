@@ -551,7 +551,7 @@ public class GameService {
         return ExitGameRoomResponse.builder().destinationNo(lobbyNo).build();
     }
 
-    public void enterGameRoom(String accessToken, int channelNo, String password) {
+    public void enterGameRoom(String accessToken, int channelNo) {
         UUID uuid = jwtValidator.getData(accessToken);
         String nickname = memberInfoRepository.findNicknameById(uuid)
                 .orElseThrow(() -> new MemberInfoException(
@@ -560,16 +560,13 @@ public class GameService {
         String destination = getDestination(channelNo);
         GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
 
-		EnterGameRoomDto enterGameRoomDto = commonService.enterGameRoom(uuid, nickname, gameRoom, channelNo, password);
+		EnterGameRoomDto enterGameRoomDto = commonService.enterGameRoom(uuid, nickname, gameRoom, channelNo);
 
 		messagingTemplate.convertAndSend(destination, enterGameRoomDto);
 	}
 
     public void exitGameRoom(String accessToken, int channelNo) {
         UUID uuid = jwtValidator.getData(accessToken);
-        String nickname = memberInfoRepository.findNicknameById(uuid)
-                .orElseThrow(() -> new MemberInfoException(
-                        MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
 
         String destination = getDestination(channelNo);
         GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);

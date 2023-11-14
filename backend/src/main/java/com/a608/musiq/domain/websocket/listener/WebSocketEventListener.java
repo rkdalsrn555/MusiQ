@@ -46,8 +46,7 @@ public class WebSocketEventListener {
         if (connectType.equals(ConnectType.ENTER_LOBBY.toString())) {
             gameService.joinGameChannel(accessToken, channelNo);
         } else if (connectType.equals(ConnectType.ENTER_GAME_ROOM.toString())) {
-            String password = ((List<String>) nativeHeaders.get("password")).get(0);
-            gameService.enterGameRoom(accessToken, channelNo, password);
+            gameService.enterGameRoom(accessToken, channelNo);
         } else if (connectType.equals(ConnectType.EXIT_GAME_ROOM.toString())) {
             gameService.exitGameRoom(accessToken, channelNo);
         }
@@ -57,7 +56,6 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketSubscribeListener(SessionSubscribeEvent event) {
         logger.info("Received a new web-socket subscribe");
-
 
     }
 
