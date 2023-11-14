@@ -605,11 +605,14 @@ public class GameService {
         int destinationChannelNo = previousChannelNo / MAKING_LOBBY_CHANNEL_NO;
         UUID uuid = jwtValidator.getData(accessToken);
 
+        String nickname = memberInfoRepository.findNicknameById(uuid)
+            .orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
+
         //pubDestination == previousChannelNo : pub 해줄 destination
         String pubDestination = getDestination(previousChannelNo);
         GameRoom gameRoom = GameValue.getGameRooms().get(previousChannelNo);
 
-		ExitGameRoomDto exitGameRoomDto = commonService.exitGameRoom(uuid, gameRoom, previousChannelNo);
+		ExitGameRoomDto exitGameRoomDto = commonService.exitGameRoom(uuid, nickname, gameRoom, previousChannelNo);
 
 		messagingTemplate.convertAndSend(pubDestination, exitGameRoomDto);
 

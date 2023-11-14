@@ -104,10 +104,9 @@ public class GameRoom {
         this.round++;
     }
 
-    public ExitGameRoomDto exitUser(UUID uuid, int roomNumber) {
+    public ExitGameRoomDto exitUser(UUID uuid, String nickname, int roomNumber) {
         int lobbyChannelNumber = roomNumber / ROOM_DIVIDE_NUMBER;
         int gameChannelNumber = roomNumber % ROOM_DIVIDE_NUMBER;
-        String nickname = userInfoItems.get(uuid).getNickname();
 
         // 방에 아무도 안 남을 경우
         if (totalUsers == LEAST_MEMBER_SIZE) {
