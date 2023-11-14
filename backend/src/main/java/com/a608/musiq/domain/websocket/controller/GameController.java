@@ -146,18 +146,18 @@ public class GameController {
 	 * 게임방 입장
 	 *
 	 * @param accessToken
-	 * @param enterGameRoomRequestDto
-	 * @return
+	 * @param gameRoomNo
+	 * @return ResponseEntity<BaseResponse<EnterGameRoomResponseDto>>
 	 */
-	@PostMapping("/main/enter/{channelNo}")
+	@GetMapping("/main/enter/{gameRoomNo}")
 	@ResponseBody
 	private ResponseEntity<BaseResponse<EnterGameRoomResponseDto>> enterGameRoom(
 		@RequestHeader("accessToken") String accessToken,
-		@RequestBody EnterGameRoomRequestDto enterGameRoomRequestDto) {
+		@PathVariable("gameRoomNo") int gameRoomNo) {
 
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<EnterGameRoomResponseDto>builder()
-				.data(gameService.enterGameRoom(accessToken, enterGameRoomRequestDto))
+				.data(gameService.enterGameRoom(accessToken, gameRoomNo))
 				.build());
 	}
 

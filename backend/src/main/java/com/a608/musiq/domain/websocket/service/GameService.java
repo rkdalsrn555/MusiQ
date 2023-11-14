@@ -15,7 +15,6 @@ import com.a608.musiq.domain.websocket.dto.responseDto.AllChannelSizeResponseDto
 import com.a608.musiq.domain.websocket.dto.responseDto.ChannelUserResponseDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.ChannelUserResponseItem;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
-import com.a608.musiq.domain.websocket.dto.requestDto.EnterGameRoomRequestDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.EnterGameRoomResponseDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.GameRoomListResponseDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.GameRoomListResponseItem;
@@ -554,7 +553,7 @@ public class GameService {
      * @return
      */
     public CheckPasswordResponseDto checkPassword(CheckPasswordRequestDto checkPasswordRequestDto) {
-        GameRoom gameRoom = GameValue.getGameRooms().get(checkPasswordRequestDto.getChannelNo());
+        GameRoom gameRoom = GameValue.getGameRooms().get(checkPasswordRequestDto.getGameRoomNo());
 
         return commonService.checkPassword(gameRoom, checkPasswordRequestDto.getPassword());
     }
@@ -563,18 +562,18 @@ public class GameService {
      * 게임방 입장
      *
      * @param accessToken
-     * @param enterGameRoomRequestDto
+     * @param gameRoomNo
      * @return
      */
-    public EnterGameRoomResponseDto enterGameRoom(String accessToken, EnterGameRoomRequestDto enterGameRoomRequestDto) {
+    public EnterGameRoomResponseDto enterGameRoom(String accessToken, int gameRoomNo) {
         UUID uuid = jwtValidator.getData(accessToken);
         String nickname = memberInfoRepository.findNicknameById(uuid)
                 .orElseThrow(() -> new MemberInfoException(
                         MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
 
-        GameRoom gameRoom = GameValue.getGameRooms().get(enterGameRoomRequestDto.getChannelNo());
+        GameRoom gameRoom = GameValue.getGameRooms().get(gameRoomNo);
 
-		return commonService.enterGameRoom(uuid, nickname, gameRoom, enterGameRoomRequestDto.getChannelNo());
+		return commonService.enterGameRoom(uuid, nickname, gameRoom, gameRoomNo);
 	}
 
     /**
