@@ -227,14 +227,6 @@ export const LobbyCreateRoomButton = () => {
     quizAmount: number;
   };
 
-  const joinGameRoom = (gameRoomNo: number, requestBody: RequestBody) => {
-    userApis
-      .patch(`${process.env.REACT_APP_BASE_URL}/game/main/join/${channelNo}`)
-      .then((res) => {
-        console.log(res);
-      });
-  };
-
   const handleCreateRoom = (
     roomName: string,
     password: string,
@@ -253,7 +245,6 @@ export const LobbyCreateRoomButton = () => {
       .then((response) => {
         if (response.data.code === 200) {
           console.log(requestBody);
-          joinGameRoom(response.data.data.gameRoomNo, requestBody);
           navigate(
             `/multi/${channelNo}/game/${response.data.data.gameRoomNo}`,
             { state: { requestBody } }
