@@ -111,11 +111,6 @@ export const MultiGamePlaying = () => {
           break;
         case 'TIME': // 시간초세기
           setPlayTime(msg.time);
-          if (msg.time === 40) {
-            setIsMusicStart(true);
-          } else if (msg.time === 0) {
-            setIsMusicStart(false);
-          }
           break;
         case 'MUSICPROBLEM': // 음악 문제 세팅
           setAnswerData({ title: msg.title, singer: msg.singer });
@@ -150,16 +145,19 @@ export const MultiGamePlaying = () => {
           setSingerHint(msg.singerHint);
           setInitialHint(msg.initialHint);
           setWinner(msg.winner);
-          setGameChatList((prev) => [
-            ...prev,
-            {
-              nickname: '삐약이',
-              message: `${msg.winner}님이 정답을 맞추셨습니다삐약!`,
-            },
-          ]);
+          if (msg.winner !== '') {
+            setGameChatList((prev) => [
+              ...prev,
+              {
+                nickname: '삐약이',
+                message: `${msg.winner}님이 정답을 맞추셨습니다 삐약!`,
+              },
+            ]);
+          }
+
           break;
         case 'MUSICPLAY': // 노래 시작 타이밍
-          // setIsMusicStart(true);
+          setIsMusicStart(msg.musicPlay);
           break;
         case 'GOWAITING': // 게임 끝났을 때 대기상태로 다시 변환
           setIsGameStart(false);
