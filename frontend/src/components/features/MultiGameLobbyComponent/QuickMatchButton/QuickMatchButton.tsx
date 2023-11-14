@@ -23,23 +23,6 @@ export const QuickMatchButton: React.FC<QuickMatchButtonProps> = ({
 }) => {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState<Room[]>([]);
-  const fetchRooms = async () => {
-    try {
-      const response = await userApis.get(
-        `${process.env.REACT_APP_BASE_URL}/game/main/${channelNumber}`
-      );
-      if (response.data.code === 200) {
-        setRooms(
-          Array.isArray(response.data.data.rooms)
-            ? response.data.data.rooms
-            : []
-        );
-      }
-      console.log('방 목록 불러오기 성공', response.data.data.rooms);
-    } catch (error) {
-      console.error('방 불러오기 실패', error);
-    }
-  };
 
   const handleRoomClick = (room: any) => {
     const requestBody = {
@@ -49,27 +32,43 @@ export const QuickMatchButton: React.FC<QuickMatchButtonProps> = ({
       musicYear: room.years,
       quizAmount: room.quizAmount,
     };
+    console.log(requestBody);
     navigate(`/multi/${channelNumber}/game/${room.gameRoomNo}`, {
       state: { requestBody },
     });
   };
 
   const handleQuickMatch = () => {
-    fetchRooms();
-    const eligibleRooms = rooms.filter(
-      (room) => room.currentMembers < 6 && !room.isPlay && !room.isPrivate
-    );
-    if (eligibleRooms.length === 0) {
-      alert('입장 가능한 방이 없습니다.');
-      return;
-    }
-    const randomRoom =
-      eligibleRooms[Math.floor(Math.random() * eligibleRooms.length)];
-    handleRoomClick(randomRoom);
+    userApis
+      .get(`${process.env.REACT_APP_BASE_URL}/game/main/${channelNumber}`)
+      .then((response) => {
+        if (response.data.code === 200) {
+          const fetchedRooms = Array.isArray(response.data.data.rooms)
+            ? response.data.data.rooms
+            : [];
+
+          const eligibleRooms = fetchedRooms.filter(
+            (room: any) =>
+              room.currentMembers < 6 && !room.isPlay && !room.isPrivate
+          );
+
+          if (eligibleRooms.length === 0) {
+            alert('입장 가능한 방이 없습니다.');
+            return;
+          }
+
+          const randomRoom =
+            eligibleRooms[Math.floor(Math.random() * eligibleRooms.length)];
+          handleRoomClick(randomRoom);
+        }
+      })
+      .catch((error) => {
+        console.error('방 불러오기 실패', error);
+      });
   };
   return (
-      <StyledButton type="button" onClick={handleQuickMatch}>
-        퀵매치
-      </StyledButton>
+    <StyledButton type="button" onClick={handleQuickMatch}>
+      퀵매치
+    </StyledButton>
   );
 };
