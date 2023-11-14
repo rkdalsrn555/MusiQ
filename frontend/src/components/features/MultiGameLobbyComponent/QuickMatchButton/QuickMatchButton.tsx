@@ -24,18 +24,37 @@ export const QuickMatchButton: React.FC<QuickMatchButtonProps> = ({
   const navigate = useNavigate();
   const [rooms, setRooms] = useState<Room[]>([]);
 
-  const handleRoomClick = (room: any) => {
-    const requestBody = {
-      channelNo: parseInt(channelNumber, 10),
-      roomName: room.roomTitle,
-      password: '',
-      musicYear: room.years,
-      quizAmount: room.quizAmount,
-    };
-    console.log(requestBody);
-    navigate(`/multi/${channelNumber}/game/${room.gameRoomNo}`, {
-      state: { requestBody },
-    });
+  const handleRoomClick = async (room: Room) => {
+    try {
+      const userInfoResponse = await userApis.get(
+        `${process.env.REACT_APP_BASE_URL}/game/main/enter/${room.gameRoomNo}`
+      );
+
+      if (userInfoResponse.data.code === 200) {
+        const requestBody = {
+          channelNo: parseInt(channelNumber, 10),
+          roomName: room.roomTitle,
+          password: '',
+          musicYear: room.years,
+          quizAmount: room.quizAmount,
+          data: userInfoResponse.data.data,
+        };
+        console.log(
+          '빠른 입장으로 게임 방에 들어갈 때 전달하는 상태',
+          requestBody
+        );
+        navigate(`/multi/${channelNumber}/game/${room.gameRoomNo}`, {
+          state: { requestBody },
+        });
+      } else {
+        console.error(
+          '사용자 정보 가져오기 실패:',
+          userInfoResponse.data.message
+        );
+      }
+    } catch (error) {
+      console.error('사용자 정보 가져오기 중 오류 발생:', error);
+    }
   };
 
   const handleQuickMatch = () => {
@@ -66,9 +85,10 @@ export const QuickMatchButton: React.FC<QuickMatchButtonProps> = ({
         console.error('방 불러오기 실패', error);
       });
   };
+
   return (
     <StyledButton type="button" onClick={handleQuickMatch}>
-      퀵매치
+      빠른 입장
     </StyledButton>
   );
 };

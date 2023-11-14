@@ -11,6 +11,7 @@ import {
   MultiGameSkip,
   MultiDancingChick,
   MultiGameStart,
+  MultiGameOption,
 } from '../../components/features';
 import * as S from './MultiGamePlaying.styled';
 
@@ -43,6 +44,9 @@ export const MultiGamePlaying = () => {
   const [isMusicStart, setIsMusicStart] = useState<boolean>(false); // 음악이 시작되었는지 아닌지
   const [isGameStart, setIsGameStart] = useState<boolean>(false); // 게임 시작되었는지 아닌지
 
+  const [remainMusicNum, setRemainMusicNum] = useState<number>(
+    location.state.requestBody.quizAmount
+  );
   const [initialHint, setInitialHint] = useState<string>(''); // 초성힌트
   const [singerHint, setSingerHint] = useState<string>(''); // 가수힌트
   const [winner, setWinner] = useState<string>(''); // 우승자가 없을때는 '', 있을때는 string
@@ -106,12 +110,12 @@ export const MultiGamePlaying = () => {
           setIsGameStart(true);
           break;
         case 'TIME': // 시간초세기
+          setPlayTime(msg.time);
           if (msg.time === 40) {
             setIsMusicStart(true);
           } else if (msg.time === 0) {
             setIsMusicStart(false);
           }
-          setPlayTime(msg.time);
           break;
         case 'MUSICPROBLEM': // 음악 문제 세팅
           setAnswerData({ title: msg.title, singer: msg.singer });
@@ -119,12 +123,21 @@ export const MultiGamePlaying = () => {
           setSingerHint(msg.singerHint);
           setInitialHint(msg.initialHint);
           setMusicUrl(msg.musicUrl);
+          setRemainMusicNum((prev) => prev - 1);
           break;
         case 'SINGERHINT': // 가수힌트
           setSingerHint(msg.singerHint);
+          setGameChatList((prev) => [
+            ...prev,
+            { nickname: '삐약이', message: '가수힌트가 나왔어요 삐약' },
+          ]);
           break;
         case 'INITIALHINT': // 초성힌트
           setInitialHint(msg.initialHint);
+          setGameChatList((prev) => [
+            ...prev,
+            { nickname: '삐약이', message: '초성힌트가 나왔어요 삐약' },
+          ]);
           break;
         case 'GAMERESULT': // 게임 끝났을 때 유저리스트 반환
           break;
@@ -137,8 +150,16 @@ export const MultiGamePlaying = () => {
           setSingerHint(msg.singerHint);
           setInitialHint(msg.initialHint);
           setWinner(msg.winner);
+          setGameChatList((prev) => [
+            ...prev,
+            {
+              nickname: '삐약이',
+              message: `${msg.winner}님이 정답을 맞추셨습니다삐약!`,
+            },
+          ]);
           break;
         case 'MUSICPLAY': // 노래 시작 타이밍
+          // setIsMusicStart(true);
           break;
         case 'GOWAITING': // 게임 끝났을 때 대기상태로 다시 변환
           setIsGameStart(false);
@@ -149,7 +170,6 @@ export const MultiGamePlaying = () => {
     });
   };
 
-  console.log(location.state);
   // 소켓 연결
   const connect = async () => {
     client.current = await new StompJs.Client({
@@ -175,15 +195,15 @@ export const MultiGamePlaying = () => {
   // 첫 렌더링 시 소켓연결, 페이지 떠날 시 disconnect
   useEffect(() => {
     connect();
-    // setGameUserList(location.state.requestBody.data.userInfoItems);
-    // setManager(location.state.requestBody.data.gameRoomManagerNickname);
-    // setGameChatList((prev) => [
-    //   ...prev,
-    //   {
-    //     nickname: '삐약이',
-    //     message: `${location.state.requestBody.data.enteredUserNickname}님이 입장하셨습니다.`,
-    //   },
-    // ]);
+    setGameUserList(location.state.requestBody.data.userInfoItems);
+    setManager(location.state.requestBody.data.gameRoomManagerNickname);
+    setGameChatList((prev) => [
+      ...prev,
+      {
+        nickname: '삐약이',
+        message: `${location.state.requestBody.data.enteredUserNickname}님이 입장하셨습니다.`,
+      },
+    ]);
     return () => {
       disconnect();
     };
@@ -206,11 +226,15 @@ export const MultiGamePlaying = () => {
         volume={1}
       />
       <S.Container>
+        <MultiGameOption years={location.state.requestBody.musicYear} />
         <MultiGameStatus gameUserList={gameUserList} manager={manager} />
         <S.topPosition>
           <S.ExplainBox>
             {isGameStart ? (
               <MultiGameHint
+                answerData={answerData}
+                remainMusic={remainMusicNum}
+                totalMusic={location.state.requestBody.quizAmount}
                 time={playTime}
                 singerHint={singerHint}
                 initialHint={initialHint}
