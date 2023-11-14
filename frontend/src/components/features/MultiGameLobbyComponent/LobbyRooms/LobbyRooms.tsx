@@ -136,8 +136,8 @@ export const LobbyRooms = () => {
   }, []);
 
   // 페이지네이션을 위한 시작점과 끝점 계산
-  const indexOfLastRoom = currentPage * pageSize;
-  const indexOfFirstRoom = indexOfLastRoom - pageSize;
+  const indexOfFirstRoom = (currentPage - 1) * pageSize;
+  const indexOfLastRoom = Math.min(currentPage * pageSize, rooms.length);
   const currentRooms = rooms.slice(indexOfFirstRoom, indexOfLastRoom);
 
   // 방의 years 배열에서 최소값과 최대값을 계산하는 함수
