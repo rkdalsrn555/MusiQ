@@ -417,6 +417,7 @@ public class GameService {
                             .year(room.getYear())
                             .roomManagerNickname(room.getRoomManagerNickname())
                             .build();
+
                     messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
                 }
             }
@@ -538,7 +539,6 @@ public class GameService {
                 "/topic/" + roomNumber;
 
         GameRoomPubDto gameRoomPubDto = GameRoomPubDto.builder()
-			.messageDtoType(MessageDtoType.GOWAITING)
 			.memberInfos(gameRoomMemberInfos)
 			.roomNo(roomNumber)
 			.roomName(createGameRoomRequestDto.getRoomName())
