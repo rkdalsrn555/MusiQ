@@ -16,6 +16,7 @@ import {
   LobbyRooms,
   LobbyUsersList,
   RefreshButton,
+  QuickMatchButton,
 } from '../../components/features';
 import { BackBtn } from '../../components/utils';
 import {
@@ -36,7 +37,7 @@ export const MultiGameLobbyPage = () => {
   >([]);
 
   const handleRefresh = () => {
-    setRefreshKey(prevKey => prevKey + 1); // 상태 업데이트
+    setRefreshKey((prevKey) => prevKey + 1); // 상태 업데이트
   };
 
   useEffect(() => {
@@ -120,6 +121,7 @@ export const MultiGameLobbyPage = () => {
           <LobbyRooms key={refreshKey} />
           <ButtonsWrapper>
             <LobbyCreateRoomButton />
+            <QuickMatchButton channelNumber={channelNumber} />
           </ButtonsWrapper>
           <LobbyChatting socketClient={client} lobbyChatList={lobbyChatList} />
         </LobbyWrapper>

@@ -13,13 +13,13 @@ export const RoomsWrapper = styled.div`
   left: 21%;
   flex-wrap: wrap;
   flex-direction: column;
-  padding: 0.35%;
+  padding: 3px;
 `;
 
 export const Room = styled.button`
   width: 30vw;
   height: 14vh;
-  margin: 0.4%;
+  margin: 4px;
   border: 1px solid #ccc;
   border-radius: 15px;
   display: flex;
