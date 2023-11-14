@@ -5,15 +5,15 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class MusicPlayDto {
+public class MusicEndDto {
 
     private MessageDtoType messageType;
     private Boolean musicPlay;
 
     @Builder
-    public MusicPlayDto() {
+    public MusicEndDto() {
 
-        this.messageType = MessageDtoType.MUSICPLAY;
-        this.musicPlay = true;
+        this.messageType = MessageDtoType.MUSICEND;
+        this.musicPlay = false;
     }
 }
