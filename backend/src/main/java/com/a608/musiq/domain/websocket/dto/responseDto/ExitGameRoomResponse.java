@@ -6,5 +6,5 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ExitGameRoomResponse {
-    private int destinationNo;
+    private int destinationChannelNo;
 }
