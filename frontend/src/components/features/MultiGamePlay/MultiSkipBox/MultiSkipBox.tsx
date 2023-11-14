@@ -5,7 +5,7 @@ const SkipBox = styled.div`
   position: absolute;
   top: 0;
   right: 0.68rem;
-  width: 10rem;
+  width: 12rem;
   height: 3rem;
   background-color: rgba(235, 226, 255, 0.6);
   display: flex;
@@ -22,15 +22,16 @@ const SkipBox = styled.div`
 
 type OwnProps = {
   skipVote: number;
+  userLength: number;
 };
 
 export const MultiSkipBox = (props: OwnProps) => {
-  const { skipVote } = props;
+  const { skipVote, userLength } = props;
 
   return (
     <SkipBox>
       <p>
-        <span className="bold">스킵인원</span> - [{skipVote}]
+        <span className="bold">스킵인원</span> - [ {skipVote} / {userLength} ]
       </p>
     </SkipBox>
   );
