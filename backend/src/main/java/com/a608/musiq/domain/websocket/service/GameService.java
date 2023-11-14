@@ -246,6 +246,8 @@ public class GameService {
                         answer = answer.replaceAll(" ", "").toLowerCase();
                         if (submitedAnswer.equals(answer.toLowerCase())) {
 
+                            gameRoom.setPlayType(PlayType.AFTERANSWER);
+
                             String title = gameRoom.getMultiModeProblems().get(round).getTitle();
                             String singer = gameRoom.getMultiModeProblems().get(round).getSinger();
 
@@ -254,8 +256,6 @@ public class GameService {
                                     MessageDtoType.BEFOREANSWERCORRECT, chatMessage.getNickname(),
                                     title, singer, 0);
                             messagingTemplate.convertAndSend(destination, beforeAnswerCorrectDto);
-
-                            gameRoom.setPlayType(PlayType.AFTERANSWER);
 
                             //스킵 투표 초기화
                             gameRoom.setSkipVote(0);
@@ -268,9 +268,7 @@ public class GameService {
                             return;
                         }
                     }
-
                 }
-
             }
 
             if (playType == PlayType.AFTERANSWER) {
@@ -493,6 +491,7 @@ public class GameService {
         GameRoom gameRoom = GameRoom.builder().roomNo(roomNumber)
                 .roomName(createGameRoomRequestDto.getRoomName())
                 .password(createGameRoomRequestDto.getPassword()).roomManagerUUID(uuid)
+                .roomManagerNickname(memberInfo.getNickname())
                 .numberOfProblems(createGameRoomRequestDto.getQuizAmount())
                 .year(createGameRoomRequestDto.getMusicYear()).totalUsers(1)
                 .gameRoomType(GameRoomType.WAITING)
@@ -515,7 +514,7 @@ public class GameService {
         //일반 채팅
 
         String destination =
-                "/topic" + roomNumber;
+                "/topic/" + roomNumber;
 
         GameRoomPubDto gameRoomPubDto = GameRoomPubDto.builder()
 			.messageDtoType(MessageDtoType.GOWAITING)

@@ -13,13 +13,13 @@ export const RoomsWrapper = styled.div`
   left: 21%;
   flex-wrap: wrap;
   flex-direction: column;
+  padding: 0.35%;
 `;
 
 export const Room = styled.button`
   width: 30vw;
   height: 14vh;
-  margin: 5px;
-  background-color: rgba(255, 255, 255, 0.5);
+  margin: 0.4%;
   border: 1px solid #ccc;
   border-radius: 15px;
   display: flex;
@@ -28,14 +28,14 @@ export const Room = styled.button`
 export const PreviousButton = styled.button`
   display: flex;
   position: absolute;
-  left: -6%;
+  left: -4%;
   top: 32%;
 `;
 
 export const NextButton = styled.button`
   display: flex;
   position: absolute;
-  right: -6%;
+  right: -4%;
   top: 32%;
 `;
 
@@ -72,6 +72,7 @@ export const RoomYearsDiv = styled.div`
 
 export const RoomPeopleDiv = styled.div`
   position: absolute;
+  font-weight: bold;
   margin-top: 6.8%;
   margin-left: 44%;
 `;
@@ -115,13 +116,13 @@ export const StyledModalInput = styled.input`
   border-radius: 8px;
   margin-bottom: 1%;
   margin-top: 20%;
-`
+`;
 
 export const StyledExitButton = styled.button`
   position: absolute;
   top: 3%;
   right: 2%;
-`
+`;
 
 export const StyledSubmitButton = styled.button`
   width: 14vw;
@@ -135,10 +136,10 @@ export const StyledSubmitButton = styled.button`
   font-size: 20px;
   font-weight: bold;
   margin-top: 10%;
-`
+`;
 export const StyledModalForm = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-`
+`;

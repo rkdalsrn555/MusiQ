@@ -112,3 +112,9 @@ export const StyledAmountLabel = styled.label`
   text-align: center;
   margin: 1%;
 `;
+
+export const StyledIsPrivateRoomCheckBoxDiv = styled.div`
+  position: absolute;
+  top: 24%;
+  right: 10%;
+`;

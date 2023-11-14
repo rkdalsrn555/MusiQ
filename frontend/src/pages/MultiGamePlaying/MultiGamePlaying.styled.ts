@@ -8,3 +8,14 @@ export const Container = styled.div`
   background-image: url(${backgroundGif1});
   background-size: cover;
 `;
+
+export const MCPosition = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  width: 38rem;
+`;
+
+export const BubblePosition = styled.div``;

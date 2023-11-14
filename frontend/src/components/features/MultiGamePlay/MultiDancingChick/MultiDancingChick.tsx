@@ -3,9 +3,6 @@ import styled from 'styled-components';
 import dancingChick from '../../../../assets/img/playgame/danceChick.gif';
 
 const Container = styled.div`
-  position: absolute;
-  top: 35%;
-  left: 30%;
   width: 29rem;
   height: 20rem;
 `;

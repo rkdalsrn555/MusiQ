@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
+import { ReactComponent as Crown } from '../../../../assets/svgs/ranking/Crown.svg';
 
 type OwnProps = {
-  color: string;
   score: number;
   nickname: string;
+  manager: string;
 };
 
 const Container = styled.div`
@@ -14,7 +15,12 @@ const Container = styled.div`
   gap: 1rem;
 
   .score {
+    width: 1.5rem;
     font-weight: bold;
+  }
+
+  .nickname {
+    width: 9rem;
   }
 `;
 
@@ -26,13 +32,17 @@ const CharactorColor = styled.div<{ color: string }>`
 `;
 
 export const GameUserData = (props: OwnProps) => {
-  const { color, score, nickname } = props;
+  const { score, nickname, manager } = props;
 
   return (
     <Container>
-      <CharactorColor color={color} />
       <p className="score">{score}</p>
-      <p>{nickname}</p>
+      <p className="nickname">{nickname}</p>
+      {manager === nickname ? (
+        <Crown width={25} height={25} />
+      ) : (
+        <div style={{ width: '30px' }} />
+      )}
     </Container>
   );
 };
