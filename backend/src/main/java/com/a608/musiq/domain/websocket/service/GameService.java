@@ -190,8 +190,17 @@ public class GameService {
                     roundStartService.makeMutiProblemList(gameRoom.getNumberOfProblems(),
                             gameRoom.getYear()));
 
+            List<GameRoomMemberInfo> memberInfos = gameRoom.getUserInfoItems().values().stream()
+                    .map(item -> GameRoomMemberInfo.builder()
+                            .nickName(item.getNickname())
+                            .build()).toList();
+
+            GameStartPubDto dto = GameStartPubDto.builder()
+                    .memberInfos(memberInfos)
+                    .build();
+
             // 게임 시작 pub
-            messagingTemplate.convertAndSend(destination, new GameStartPubDto());
+            messagingTemplate.convertAndSend(destination, dto);
             return;
         }
 

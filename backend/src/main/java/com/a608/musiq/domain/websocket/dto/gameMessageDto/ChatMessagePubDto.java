@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class ChatMessagePubDto {
-    MessageDtoType messageType;
+    private MessageDtoType messageType;
     private String nickname;
     private String message;
 
