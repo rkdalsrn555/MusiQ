@@ -4,8 +4,8 @@ import { GameUserData } from './GameUserData';
 
 const Container = styled.div`
   position: absolute;
-  top: 5%;
-  left: 5%;
+  top: 3%;
+  left: 3%;
   width: 16rem;
   height: 15rem;
   border-radius: 16px;
