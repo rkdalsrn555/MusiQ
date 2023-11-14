@@ -125,6 +125,12 @@ public class GameController {
 				.build());
 	}
 
+	/**
+	 * 비밀번호 체크
+	 *
+	 * @param checkPasswordRequestDto
+	 * @return
+	 */
 	@PostMapping("/main/password")
 	public ResponseEntity<BaseResponse<CheckPasswordResponseDto>> passwordCheck(
 		@RequestBody CheckPasswordRequestDto checkPasswordRequestDto
@@ -137,6 +143,8 @@ public class GameController {
 	}
 
 	/**
+	 * 게임방 입장
+	 *
 	 * @param accessToken
 	 * @param enterGameRoomRequestDto
 	 * @return
@@ -154,6 +162,8 @@ public class GameController {
 	}
 
 	/**
+	 * 게임방 퇴장
+	 *
 	 * @param accessToken
 	 * @param channelNo
 	 * @see ExitGameRoomResponse
