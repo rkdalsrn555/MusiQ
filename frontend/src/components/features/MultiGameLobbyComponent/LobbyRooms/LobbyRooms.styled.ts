@@ -50,16 +50,16 @@ export const RoomNumberDiv = styled.div`
 export const RoomTitleDiv = styled.div`
   position: absolute;
   font-size: large;
-  margin-top: 4.5%;
-  margin-left: 9%;
+  margin-top: 1%;
+  margin-left: 9.2%;
+  font-weight: bold;
 `;
 
 export const RoomManagerDiv = styled.div`
   position: absolute;
   font-size: 18px;
-  margin-top: 1%;
+  margin-top: 4.2%;
   margin-left: 10%;
-  font-weight: bold;
 `;
 
 export const RoomYearsDiv = styled.div`
