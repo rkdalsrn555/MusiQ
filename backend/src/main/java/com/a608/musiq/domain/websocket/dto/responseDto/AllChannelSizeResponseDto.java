@@ -1,4 +1,4 @@
-package com.a608.musiq.domain.websocket.dto;
+package com.a608.musiq.domain.websocket.dto.responseDto;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -14,6 +14,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Builder
-public class ChannelUserResponseDto {
-    private List<ChannelUserResponseItem> channelUserResponseItems;
+public class AllChannelSizeResponseDto {
+    private List<Integer> channelSizes;
 }

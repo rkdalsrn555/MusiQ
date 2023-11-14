@@ -1,4 +1,4 @@
-package com.a608.musiq.domain.websocket.dto;
+package com.a608.musiq.domain.websocket.dto.responseDto;
 
 import lombok.Builder;
 import lombok.Getter;
