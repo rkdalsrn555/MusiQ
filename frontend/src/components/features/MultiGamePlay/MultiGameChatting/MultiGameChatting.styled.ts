@@ -62,7 +62,6 @@ export const ChatListContainer = styled.div`
     gap: 0.6rem;
 
     & .nickname {
-      min-width: 9rem;
       text-align: center;
     }
   }

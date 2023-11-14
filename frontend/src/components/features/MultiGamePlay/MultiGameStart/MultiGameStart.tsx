@@ -16,6 +16,7 @@ const ButtonStyle = styled.div`
 
   :hover {
     background-color: rgba(255, 210, 48, 1);
+    transition: all 0.3s ease-in-out;
   }
 
   & button {
