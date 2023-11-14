@@ -254,6 +254,7 @@ export const LobbyCreateRoomButton = () => {
             if (userInfoResponse.data.code === 200) {
               const finalRequestBody = {
                 ...requestBody,
+                musicYear: musicYear.split(' '), // 문자열을 배열로 변환
                 data: userInfoResponse.data.data,
               };
 
