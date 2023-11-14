@@ -107,6 +107,7 @@ public class GameRoom {
     public ExitGameRoomDto exitUser(UUID uuid, int roomNumber) {
         int lobbyChannelNumber = roomNumber / ROOM_DIVIDE_NUMBER;
         int gameChannelNumber = roomNumber % ROOM_DIVIDE_NUMBER;
+        String nickname = userInfoItems.get(uuid).getNickname();
 
         // 방에 아무도 안 남을 경우
         if (totalUsers == LEAST_MEMBER_SIZE) {
@@ -118,7 +119,7 @@ public class GameRoom {
                 .messageDtoType(MessageDtoType.EXITUSER)
                 .userInfoItems(userInfoItems.values().stream().toList())
                 .gameRoomManagerNickname(this.roomManagerNickname)
-                .exitedUserNickname(userInfoItems.get(uuid).getNickname())
+                .exitedUserNickname(nickname)
                 .build();
         }
 
@@ -139,7 +140,7 @@ public class GameRoom {
             .messageDtoType(MessageDtoType.EXITUSER)
             .userInfoItems(userInfoItems.values().stream().toList())
             .gameRoomManagerNickname(this.roomManagerNickname)
-            .exitedUserNickname(userInfoItems.get(uuid).getNickname())
+            .exitedUserNickname(nickname)
             .build();
     }
 
