@@ -88,11 +88,6 @@ public class GameRoom {
         this.skipVote = skipVote;
     }
 
-    public void setUserInfoItems(
-        Map<UUID, UserInfoItem> userInfoItems) {
-        this.userInfoItems = userInfoItems;
-    }
-
     public void changeGameRoomType(GameRoomType type) {
         this.gameRoomType = type;
     }
