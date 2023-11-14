@@ -88,11 +88,6 @@ public class GameRoom {
         this.skipVote = skipVote;
     }
 
-    public void setUserInfoItems(
-        Map<UUID, UserInfoItem> userInfoItems) {
-        this.userInfoItems = userInfoItems;
-    }
-
     public void changeGameRoomType(GameRoomType type) {
         this.gameRoomType = type;
     }
@@ -112,13 +107,20 @@ public class GameRoom {
     public ExitGameRoomDto exitUser(UUID uuid, int roomNumber) {
         int lobbyChannelNumber = roomNumber / ROOM_DIVIDE_NUMBER;
         int gameChannelNumber = roomNumber % ROOM_DIVIDE_NUMBER;
+        String nickname = userInfoItems.get(uuid).getNickname();
 
         // 방에 아무도 안 남을 경우
         if (totalUsers == LEAST_MEMBER_SIZE) {
             Channel channel = GameValue.getChannel(lobbyChannelNumber);
 
             channel.clearGameRoom(gameChannelNumber);
-            return null;
+
+            return ExitGameRoomDto.builder()
+                .messageDtoType(MessageDtoType.EXITUSER)
+                .userInfoItems(userInfoItems.values().stream().toList())
+                .gameRoomManagerNickname(this.roomManagerNickname)
+                .exitedUserNickname(nickname)
+                .build();
         }
 
         // 방장 위임
@@ -138,7 +140,7 @@ public class GameRoom {
             .messageDtoType(MessageDtoType.EXITUSER)
             .userInfoItems(userInfoItems.values().stream().toList())
             .gameRoomManagerNickname(this.roomManagerNickname)
-            .exitedUserNickname(userInfoItems.get(uuid).getNickname())
+            .exitedUserNickname(nickname)
             .build();
     }
 
