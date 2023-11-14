@@ -5,6 +5,8 @@ import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.data.PlayType;
+import com.a608.musiq.domain.websocket.dto.responseDto.CheckPasswordResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.EnterGameRoomResponseDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.EnterGameRoomDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.ExitGameRoomDto;
 import com.a608.musiq.global.exception.exception.MultiModeException;
@@ -136,17 +138,23 @@ public class GameRoom {
             .messageDtoType(MessageDtoType.EXITUSER)
             .userInfoItems(userInfoItems.values().stream().toList())
             .gameRoomManagerNickname(this.roomManagerNickname)
-            .exitedUserNickname(userInfoItems.get(roomManagerUUID).getNickname())
+            .exitedUserNickname(userInfoItems.get(uuid).getNickname())
             .build();
     }
 
-    public EnterGameRoomDto enterUser(UUID uuid, UserInfoItem userInfoItem, String password) {
-        if (this.isPrivate) {
-            if (!this.password.equals(password)) {
-                throw new MultiModeException(MultiModeExceptionInfo.WRONG_PASSWORD);
-            }
+    public CheckPasswordResponseDto checkPassword(String password) {
+        if (!this.isPrivate) {
+            return new CheckPasswordResponseDto(Boolean.TRUE);
         }
 
+        if (this.password.equals(password)) {
+            return new CheckPasswordResponseDto(Boolean.TRUE);
+        }
+
+        return new CheckPasswordResponseDto(Boolean.FALSE);
+    }
+
+    public EnterGameRoomResponseDto enterUser(UUID uuid, UserInfoItem userInfoItem) {
         if (!gameRoomType.equals(GameRoomType.WAITING)) {
             throw new MultiModeException(MultiModeExceptionInfo.ALREADY_STARTED_ROOM);
         }
@@ -158,19 +166,25 @@ public class GameRoom {
         userInfoItems.put(uuid, userInfoItem);
         totalUsers++;
 
+        return EnterGameRoomResponseDto.builder()
+            .userInfoItems(userInfoItems.values().stream().toList())
+            .gameRoomManagerNickname(this.roomManagerNickname)
+            .enteredUserNickname(userInfoItems.get(uuid).getNickname())
+            .build();
+    }
+
+    public EnterGameRoomDto getGameRoomInformation(UUID uuid) {
         return EnterGameRoomDto.builder()
             .messageType(MessageDtoType.ENTERUSER)
             .userInfoItems(userInfoItems.values().stream().toList())
             .gameRoomManagerNickname(this.roomManagerNickname)
-            .enteredUserNickname(userInfoItems.get(roomManagerUUID).getNickname())
+            .enteredUserNickname(userInfoItems.get(uuid).getNickname())
             .build();
-
     }
 
     public void initializeRoom() {
-        this.gameRoomType = GameRoomType.WAITING;
+        this.gameRoomType = GameRoomType.GAME;
         this.playType = PlayType.ROUNDSTART;
-        this.multiModeProblems = null;
         this.time = 5;
         this.round = 1;
         this.skipVote = 0;
@@ -178,5 +192,9 @@ public class GameRoom {
         for(UserInfoItem userInfo : this.userInfoItems.values()) {
             userInfo.initializeUserInfo();
         }
+    }
+
+    public void setRound(int round) {
+        this.round = round;
     }
 }

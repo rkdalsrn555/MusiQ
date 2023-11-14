@@ -10,12 +10,14 @@ import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.Channel;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.domain.UserInfoItem;
-import com.a608.musiq.domain.websocket.dto.AllChannelSizeResponseDto;
-import com.a608.musiq.domain.websocket.dto.ChannelUserResponseDto;
-import com.a608.musiq.domain.websocket.dto.ChannelUserResponseItem;
+import com.a608.musiq.domain.websocket.dto.requestDto.CheckPasswordRequestDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.AllChannelSizeResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.ChannelUserResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.ChannelUserResponseItem;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
-import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
-import com.a608.musiq.domain.websocket.dto.GameRoomListResponseItem;
+import com.a608.musiq.domain.websocket.dto.responseDto.EnterGameRoomResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.GameRoomListResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.GameRoomListResponseItem;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.BeforeAnswerCorrectDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.EnterGameRoomDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameRoomPubDto;
@@ -26,17 +28,17 @@ import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameResultItem;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameStartPubDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.TimeDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.ExitGameRoomDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.CheckPasswordResponseDto;
 import com.a608.musiq.domain.websocket.service.subService.AfterAnswerService;
 import com.a608.musiq.domain.websocket.service.subService.BeforeAnswerService;
 import com.a608.musiq.domain.websocket.service.subService.CommonService;
 import com.a608.musiq.domain.websocket.service.subService.RoundStartService;
 import com.a608.musiq.global.Util;
 import com.a608.musiq.global.Util.RedisKey;
-import com.a608.musiq.domain.websocket.dto.CreateGameRoomRequestDto;
-import com.a608.musiq.domain.websocket.dto.CreateGameRoomResponseDto;
-import com.a608.musiq.domain.websocket.dto.DisconnectSocketResponseDto;
-import com.a608.musiq.domain.websocket.dto.ExitGameRoomResponse;
-import com.a608.musiq.domain.websocket.dto.JoinGameRoomResponseDto;
+import com.a608.musiq.domain.websocket.dto.requestDto.CreateGameRoomRequestDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.CreateGameRoomResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.DisconnectSocketResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.ExitGameRoomResponse;
 import com.a608.musiq.global.exception.exception.MemberInfoException;
 import com.a608.musiq.global.exception.exception.MultiModeException;
 import com.a608.musiq.global.exception.info.MemberInfoExceptionInfo;
@@ -178,21 +180,27 @@ public class GameService {
         GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
 
         // 게임이 시작될 때의 로직
-        if (chatMessage.getMessageType().equals(MessageType.GAMESTART.toString())) {
+        if (chatMessage.getMessageType().equals(MessageType.GAMESTART)) {
 
-            // 게임 방 타입을 Game으로 설정
-            gameRoom.changeGameRoomType(GameRoomType.GAME);
-
-            // 플레이 타입을 RoundStart로 설정
-            gameRoom.setPlayType(PlayType.ROUNDSTART);
+            // 게임 데이터 초기화
+            gameRoom.initializeRoom();
 
             // 문제 출제
             gameRoom.setMultiModeProblems(
                     roundStartService.makeMutiProblemList(gameRoom.getNumberOfProblems(),
                             gameRoom.getYear()));
 
+            List<GameRoomMemberInfo> memberInfos = gameRoom.getUserInfoItems().values().stream()
+                    .map(item -> GameRoomMemberInfo.builder()
+                            .nickName(item.getNickname())
+                            .build()).toList();
+
+            GameStartPubDto dto = GameStartPubDto.builder()
+                    .memberInfos(memberInfos)
+                    .build();
+
             // 게임 시작 pub
-            messagingTemplate.convertAndSend(destination, new GameStartPubDto());
+            messagingTemplate.convertAndSend(destination, dto);
             return;
         }
 
@@ -394,7 +402,7 @@ public class GameService {
 					}
 
                     // 다음 판을 위한 세팅
-                    room.initializeRoom();
+                    room.changeGameRoomType(GameRoomType.WAITING);
 
                     // 클라이언트에게 대기방 관련 정보 전달 해줘야 함
                     GameRoomPubDto dto = GameRoomPubDto.builder()
@@ -546,12 +554,6 @@ public class GameService {
                 .build();
     }
 
-    public JoinGameRoomResponseDto moveGameRoom(String accessToken, int channelNo) {
-        UUID uuid = jwtValidator.getData(accessToken);
-
-        return null;
-    }
-
     public ExitGameRoomResponse moveLobby(String accessToken, int channelNo) {
         UUID uuid = jwtValidator.getData(accessToken);
         int lobbyNo = GameValue.getChannelNo(uuid, channelNo);
@@ -561,25 +563,53 @@ public class GameService {
         return ExitGameRoomResponse.builder().destinationNo(lobbyNo).build();
     }
 
-    public void enterGameRoom(String accessToken, int channelNo, String password) {
+    /**
+     * 비밀번호 체크
+     *
+     * @param checkPasswordRequestDto
+     * @return
+     */
+    public CheckPasswordResponseDto checkPassword(CheckPasswordRequestDto checkPasswordRequestDto) {
+        GameRoom gameRoom = GameValue.getGameRooms().get(checkPasswordRequestDto.getGameRoomNo());
+
+        return commonService.checkPassword(gameRoom, checkPasswordRequestDto.getPassword());
+    }
+
+    /**
+     * 게임방 입장
+     *
+     * @param accessToken
+     * @param gameRoomNo
+     * @return
+     */
+    public EnterGameRoomResponseDto enterGameRoom(String accessToken, int gameRoomNo) {
         UUID uuid = jwtValidator.getData(accessToken);
         String nickname = memberInfoRepository.findNicknameById(uuid)
                 .orElseThrow(() -> new MemberInfoException(
                         MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
 
+        GameRoom gameRoom = GameValue.getGameRooms().get(gameRoomNo);
+
+		return commonService.enterGameRoom(uuid, nickname, gameRoom, gameRoomNo);
+	}
+
+    /**
+     * 게임방 입장 발행
+     *
+     * @param channelNo
+     */
+    public void enterGameRoomForPublish(String accessToken, int channelNo) {
+        UUID uuid = jwtValidator.getData(accessToken);
         String destination = getDestination(channelNo);
         GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
 
-		EnterGameRoomDto enterGameRoomDto = commonService.enterGameRoom(uuid, nickname, gameRoom, channelNo, password);
+        EnterGameRoomDto enterGameRoomDto = commonService.enterGameRoomForPublish(uuid, gameRoom);
 
-		messagingTemplate.convertAndSend(destination, enterGameRoomDto);
-	}
+        messagingTemplate.convertAndSend(destination, enterGameRoomDto);
+    }
 
     public void exitGameRoom(String accessToken, int channelNo) {
         UUID uuid = jwtValidator.getData(accessToken);
-        String nickname = memberInfoRepository.findNicknameById(uuid)
-                .orElseThrow(() -> new MemberInfoException(
-                        MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
 
         String destination = getDestination(channelNo);
         GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);

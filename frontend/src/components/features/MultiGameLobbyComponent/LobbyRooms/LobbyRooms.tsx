@@ -42,11 +42,16 @@ interface Room {
 
 interface PasswordModalProps {
   onClose: () => void;
-  onSubmit: (password: string) => void;
+  onSubmit: (password: string, data: object) => void;
+  selectedRoomNumber: number | null;
 }
 
 // 비밀번호가 있는 비공개방에 접근했을 때 생성되는 비밀번호 입력 modal
-const PasswordModal: React.FC<PasswordModalProps> = ({ onClose, onSubmit }) => {
+const PasswordModal: React.FC<PasswordModalProps> = ({
+  onClose,
+  onSubmit,
+  selectedRoomNumber,
+}) => {
   const [password, setPassword] = useState('');
   const location = useLocation();
   const channelNumber = location.pathname.split('/').slice(-2)[0];
@@ -57,25 +62,38 @@ const PasswordModal: React.FC<PasswordModalProps> = ({ onClose, onSubmit }) => {
 
   // 비밀번호 검증
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log(channelNumber, password);
     e.preventDefault();
     try {
-      const response = await userApis.post(
-        `${process.env.REACT_APP_BASE_URL}/game/room}`,
+      // 비밀번호 검증
+      const passwordResponse = await userApis.post(
+        `${process.env.REACT_APP_BASE_URL}/game/main/password`,
         {
-          channelNo: parseInt(channelNumber, 10),
           password,
+          gameRoomNo: selectedRoomNumber,
         }
       );
 
-      if (response.data.code === 200 && response.data.data.isCorrect) {
-        onSubmit(password);
+      if (
+        passwordResponse.data.code === 200 &&
+        passwordResponse.data.data.isCorrectPassword
+      ) {
+        // 비밀번호가 맞으면 토큰 보냄
+        const userInfoResponse = await userApis.get(
+          `${process.env.REACT_APP_BASE_URL}/game/main/enter/${selectedRoomNumber}`
+        );
+
+        if (userInfoResponse.data.code === 200) {
+          const data = {
+            ...userInfoResponse.data.data,
+          };
+          onSubmit(password, data);
+        }
       } else {
         alert('비밀번호가 틀렸습니다.');
       }
     } catch (error) {
       console.error('통신 에러', error);
-      alert('비밀번호 검증 중 오류가 발생함');
+      alert('서버와의 통신 중 오류가 발생했습니다.');
     }
   };
 
@@ -126,7 +144,6 @@ export const LobbyRooms = () => {
               : []
           );
         }
-        console.log('방 불러오기 성공', response.data.data.rooms);
       } catch (error) {
         console.error('Fetching rooms failed: ', error);
       }
@@ -136,8 +153,8 @@ export const LobbyRooms = () => {
   }, []);
 
   // 페이지네이션을 위한 시작점과 끝점 계산
-  const indexOfLastRoom = currentPage * pageSize;
-  const indexOfFirstRoom = indexOfLastRoom - pageSize;
+  const indexOfFirstRoom = (currentPage - 1) * pageSize;
+  const indexOfLastRoom = Math.min(currentPage * pageSize, rooms.length);
   const currentRooms = rooms.slice(indexOfFirstRoom, indexOfLastRoom);
 
   // 방의 years 배열에서 최소값과 최대값을 계산하는 함수
@@ -160,23 +177,36 @@ export const LobbyRooms = () => {
     );
   };
 
-  const handleRoomClick = (room: any) => {
+  const handleRoomClick = async (room: any) => {
     if (room.isPrivate) {
       setSelectedRoomNumber(room.gameRoomNo);
       setIsModalOpen(true);
     } else {
-      const requestBody = {
-        channelNo: parseInt(channelNumber, 10),
-        roomName: room.roomTitle,
-        password: '',
-        musicYear: room.years,
-        quizAmount: room.quizAmount,
-      };
-
-      navigate(`/multi/${channelNumber}/game/${room.gameRoomNo}`, {
-        state: { requestBody },
-      });
-      console.log('공개방 진입했을 때 전달하는 상태', requestBody);
+      try {
+        const userInfoResponse = await userApis.get(
+          `${process.env.REACT_APP_BASE_URL}/game/main/enter/${room.gameRoomNo}`
+        );
+        if (userInfoResponse.data.code === 200) {
+          const requestBody = {
+            channelNo: parseInt(channelNumber, 10),
+            roomName: room.roomTitle,
+            password: '',
+            musicYear: room.years,
+            quizAmount: room.quizAmount,
+            data: userInfoResponse.data.data,
+          };
+          navigate(`/multi/${channelNumber}/game/${room.gameRoomNo}`, {
+            state: { requestBody },
+          });
+        } else {
+          console.error(
+            '사용자 정보 가져오기 실패:',
+            userInfoResponse.data.message
+          );
+        }
+      } catch (error) {
+        console.error('사용자 정보 가져오기 중 오류 발생:', error);
+      }
     }
   };
 
@@ -243,24 +273,25 @@ export const LobbyRooms = () => {
       {isModalOpen && (
         <PasswordModal
           onClose={() => setIsModalOpen(false)}
-          onSubmit={(password) => {
+          onSubmit={(password, data) => {
             const room = rooms.find((r) => r.gameRoomNo === selectedRoomNumber);
             if (!room) return;
 
             const gameState = {
               channelNo: parseInt(channelNumber, 10),
               roomName: room.roomTitle,
-              password, // 입력 받은 비밀번호
+              password,
               musicYear: room.years,
               quizAmount: room.quizAmount,
+              data,
             };
-
             navigate(`/multi/${channelNumber}/game/${selectedRoomNumber}`, {
               state: { requestBody: gameState },
             });
-            console.log('비공개방에 접근했을 때 전달하는 상태', gameState);
+
             setIsModalOpen(false);
           }}
+          selectedRoomNumber={selectedRoomNumber}
         />
       )}
     </RoomsWrapper>

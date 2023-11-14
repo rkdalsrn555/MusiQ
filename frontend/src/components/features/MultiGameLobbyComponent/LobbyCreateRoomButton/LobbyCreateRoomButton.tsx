@@ -227,14 +227,6 @@ export const LobbyCreateRoomButton = () => {
     quizAmount: number;
   };
 
-  const joinGameRoom = (gameRoomNo: number, requestBody: RequestBody) => {
-    userApis
-      .patch(`${process.env.REACT_APP_BASE_URL}/game/main/join/${channelNo}`)
-      .then((res) => {
-        console.log(res);
-      });
-  };
-
   const handleCreateRoom = (
     roomName: string,
     password: string,
@@ -250,20 +242,40 @@ export const LobbyCreateRoomButton = () => {
     };
     userApis
       .post(`${process.env.REACT_APP_BASE_URL}/game/main/create`, requestBody)
-      .then((response) => {
-        if (response.data.code === 200) {
-          console.log(requestBody);
-          joinGameRoom(response.data.data.gameRoomNo, requestBody);
-          navigate(
-            `/multi/${channelNo}/game/${response.data.data.gameRoomNo}`,
-            { state: { requestBody } }
-          );
+      .then(async (createResponse) => {
+        if (createResponse.data.code === 200) {
+          const { gameRoomNo } = createResponse.data.data;
+
+          try {
+            const userInfoResponse = await userApis.get(
+              `${process.env.REACT_APP_BASE_URL}/game/main/enter/${gameRoomNo}`
+            );
+
+            if (userInfoResponse.data.code === 200) {
+              const finalRequestBody = {
+                ...requestBody,
+                musicYear: musicYear.split(' '), // 문자열을 배열로 변환
+                data: userInfoResponse.data.data,
+              };
+
+              navigate(`/multi/${channelNo}/game/${gameRoomNo}`, {
+                state: { requestBody: finalRequestBody },
+              });
+            } else {
+              console.error(
+                '사용자 정보 가져오기 실패:',
+                userInfoResponse.data.message
+              );
+            }
+          } catch (error) {
+            console.error('사용자 정보 가져오기 중 오류 발생:', error);
+          }
         } else {
-          console.error('Failed to create room:', response.data.message);
+          console.error('방 생성 실패:', createResponse.data.message);
         }
       })
       .catch((error) => {
-        console.error('Error creating room:', error);
+        console.error('방 생성 중 오류 발생:', error);
       });
 
     setIsModalOpen(false); // 모달 닫기

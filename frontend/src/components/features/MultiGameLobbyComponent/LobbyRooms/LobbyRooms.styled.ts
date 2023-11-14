@@ -13,13 +13,13 @@ export const RoomsWrapper = styled.div`
   left: 21%;
   flex-wrap: wrap;
   flex-direction: column;
-  padding: 0.35%;
+  padding: 3px;
 `;
 
 export const Room = styled.button`
   width: 30vw;
   height: 14vh;
-  margin: 0.4%;
+  margin: 4px;
   border: 1px solid #ccc;
   border-radius: 15px;
   display: flex;
@@ -50,16 +50,16 @@ export const RoomNumberDiv = styled.div`
 export const RoomTitleDiv = styled.div`
   position: absolute;
   font-size: large;
-  margin-top: 4.5%;
-  margin-left: 9%;
+  margin-top: 1%;
+  margin-left: 9.2%;
+  font-weight: bold;
 `;
 
 export const RoomManagerDiv = styled.div`
   position: absolute;
   font-size: 18px;
-  margin-top: 1%;
+  margin-top: 4.2%;
   margin-left: 10%;
-  font-weight: bold;
 `;
 
 export const RoomYearsDiv = styled.div`
@@ -72,6 +72,7 @@ export const RoomYearsDiv = styled.div`
 
 export const RoomPeopleDiv = styled.div`
   position: absolute;
+  font-weight: bold;
   margin-top: 6.8%;
   margin-left: 44%;
 `;
