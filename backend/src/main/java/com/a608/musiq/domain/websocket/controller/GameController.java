@@ -1,14 +1,17 @@
 package com.a608.musiq.domain.websocket.controller;
 
-import com.a608.musiq.domain.websocket.dto.DisconnectSocketResponseDto;
-import com.a608.musiq.domain.websocket.dto.ExitGameRoomResponse;
-import com.a608.musiq.domain.websocket.dto.JoinGameRoomResponseDto;
-import com.a608.musiq.domain.websocket.dto.AllChannelSizeResponseDto;
-import com.a608.musiq.domain.websocket.dto.ChannelUserResponseDto;
+import com.a608.musiq.domain.websocket.dto.requestDto.CheckPasswordRequestDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.DisconnectSocketResponseDto;
+import com.a608.musiq.domain.websocket.dto.requestDto.EnterGameRoomRequestDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.ExitGameRoomResponse;
+import com.a608.musiq.domain.websocket.dto.responseDto.EnterGameRoomResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.AllChannelSizeResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.ChannelUserResponseDto;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
-import com.a608.musiq.domain.websocket.dto.CreateGameRoomRequestDto;
-import com.a608.musiq.domain.websocket.dto.CreateGameRoomResponseDto;
-import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
+import com.a608.musiq.domain.websocket.dto.requestDto.CreateGameRoomRequestDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.CreateGameRoomResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.GameRoomListResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.CheckPasswordResponseDto;
 import com.a608.musiq.domain.websocket.service.GameService;
 import com.a608.musiq.global.common.response.BaseResponse;
 
@@ -122,20 +125,31 @@ public class GameController {
 				.build());
 	}
 
+	@PostMapping("/main/password")
+	public ResponseEntity<BaseResponse<CheckPasswordResponseDto>> passwordCheck(
+		@RequestBody CheckPasswordRequestDto checkPasswordRequestDto
+	) {
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(BaseResponse.<CheckPasswordResponseDto>builder()
+				.code(HttpStatus.OK.value())
+				.data(gameService.checkPassword(checkPasswordRequestDto))
+				.build());
+	}
+
 	/**
 	 * @param accessToken
-	 * @param channelNo
-	 * @see JoinGameRoomResponseDto
+	 * @param enterGameRoomRequestDto
 	 * @return
 	 */
-	@PatchMapping("/main/join/{channelNo}")
+	@PostMapping("/main/enter/{channelNo}")
 	@ResponseBody
-	public ResponseEntity<BaseResponse<JoinGameRoomResponseDto>> joinGameRoom(
-		@RequestHeader("accessToken") String accessToken, @PathVariable int channelNo) {
+	public ResponseEntity<BaseResponse<EnterGameRoomResponseDto>> enterGameRoom(
+		@RequestHeader("accessToken") String accessToken,
+		@RequestBody EnterGameRoomRequestDto enterGameRoomRequestDto) {
 
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(BaseResponse.<JoinGameRoomResponseDto>builder()
-				.data(gameService.moveGameRoom(accessToken, channelNo))
+			.body(BaseResponse.<EnterGameRoomResponseDto>builder()
+				.data(gameService.enterGameRoom(accessToken, enterGameRoomRequestDto))
 				.build());
 	}
 

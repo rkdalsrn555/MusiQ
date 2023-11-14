@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.domain.UserInfoItem;
+import com.a608.musiq.domain.websocket.dto.responseDto.CheckPasswordResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.EnterGameRoomResponseDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.EnterGameRoomDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.ExitGameRoomDto;
 
@@ -21,13 +23,21 @@ public class CommonService {
 		return gameRoom.exitUser(uuid, roomNumber);
 	}
 
-	public EnterGameRoomDto enterGameRoom(UUID uuid, String nickname, GameRoom gameRoom, int roomNumber, String password) {
+	public CheckPasswordResponseDto checkPassword(GameRoom gameRoom, String password) {
+		return gameRoom.checkPassword(password);
+	}
+
+	public EnterGameRoomResponseDto enterGameRoom(UUID uuid, String nickname, GameRoom gameRoom, int roomNumber) {
 		GameValue.enterGameRoom(uuid, roomNumber);
 
 		UserInfoItem userInfoItem = UserInfoItem.of(nickname);
 
 		// 게임 룸에서 totalUser++, userInfoItems에 내 uuid 추가
-		return gameRoom.enterUser(uuid, userInfoItem, password);
+		return gameRoom.enterUser(uuid, userInfoItem);
+	}
+
+	public EnterGameRoomDto enterGameRoomForPublish(GameRoom gameRoom) {
+		return gameRoom.getGameRoomInformation();
 	}
 
 }

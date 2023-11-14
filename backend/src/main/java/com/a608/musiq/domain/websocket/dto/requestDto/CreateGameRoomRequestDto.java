@@ -1,4 +1,4 @@
-package com.a608.musiq.domain.websocket.dto;
+package com.a608.musiq.domain.websocket.dto.requestDto;
 
 import java.util.List;
 import lombok.AllArgsConstructor;
