@@ -44,10 +44,10 @@ export const LobbyUsersList = () => {
     const isMyNicknamePresent = users.some(
       (user) => user.nickname === myNickname
     );
-    // if (!isMyNicknamePresent) {
-    //   fetchUsers();
-    // }
-  }, []);
+    if (!isMyNicknamePresent) {
+      fetchUsers();
+    }
+  }, [users]);
 
   return (
     <UsersListWrapper>
