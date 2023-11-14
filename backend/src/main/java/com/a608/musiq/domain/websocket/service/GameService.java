@@ -582,11 +582,12 @@ public class GameService {
      *
      * @param channelNo
      */
-    public void enterGameRoomForPublish(int channelNo) {
+    public void enterGameRoomForPublish(String accessToken, int channelNo) {
+        UUID uuid = jwtValidator.getData(accessToken);
         String destination = getDestination(channelNo);
         GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
 
-        EnterGameRoomDto enterGameRoomDto = commonService.enterGameRoomForPublish(gameRoom);
+        EnterGameRoomDto enterGameRoomDto = commonService.enterGameRoomForPublish(uuid, gameRoom);
 
         messagingTemplate.convertAndSend(destination, enterGameRoomDto);
     }

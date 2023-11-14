@@ -138,7 +138,7 @@ public class GameRoom {
             .messageDtoType(MessageDtoType.EXITUSER)
             .userInfoItems(userInfoItems.values().stream().toList())
             .gameRoomManagerNickname(this.roomManagerNickname)
-            .exitedUserNickname(userInfoItems.get(roomManagerUUID).getNickname())
+            .exitedUserNickname(userInfoItems.get(uuid).getNickname())
             .build();
     }
 
@@ -169,16 +169,16 @@ public class GameRoom {
         return EnterGameRoomResponseDto.builder()
             .userInfoItems(userInfoItems.values().stream().toList())
             .gameRoomManagerNickname(this.roomManagerNickname)
-            .enteredUserNickname(userInfoItems.get(roomManagerUUID).getNickname())
+            .enteredUserNickname(userInfoItems.get(uuid).getNickname())
             .build();
     }
 
-    public EnterGameRoomDto getGameRoomInformation() {
+    public EnterGameRoomDto getGameRoomInformation(UUID uuid) {
         return EnterGameRoomDto.builder()
             .messageType(MessageDtoType.ENTERUSER)
             .userInfoItems(userInfoItems.values().stream().toList())
             .gameRoomManagerNickname(this.roomManagerNickname)
-            .enteredUserNickname(userInfoItems.get(roomManagerUUID).getNickname())
+            .enteredUserNickname(userInfoItems.get(uuid).getNickname())
             .build();
     }
 
