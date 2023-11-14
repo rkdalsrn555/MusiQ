@@ -132,7 +132,7 @@ public class GameController {
 	 * @return
 	 */
 	@PostMapping("/main/password")
-	public ResponseEntity<BaseResponse<CheckPasswordResponseDto>> passwordCheck(
+	private ResponseEntity<BaseResponse<CheckPasswordResponseDto>> passwordCheck(
 		@RequestBody CheckPasswordRequestDto checkPasswordRequestDto
 	) {
 		return ResponseEntity.status(HttpStatus.OK)
@@ -151,7 +151,7 @@ public class GameController {
 	 */
 	@PostMapping("/main/enter/{channelNo}")
 	@ResponseBody
-	public ResponseEntity<BaseResponse<EnterGameRoomResponseDto>> enterGameRoom(
+	private ResponseEntity<BaseResponse<EnterGameRoomResponseDto>> enterGameRoom(
 		@RequestHeader("accessToken") String accessToken,
 		@RequestBody EnterGameRoomRequestDto enterGameRoomRequestDto) {
 
@@ -171,7 +171,7 @@ public class GameController {
 	 */
 	@PatchMapping("/main/lobby/{channelNo}")
 	@ResponseBody
-	public ResponseEntity<BaseResponse<ExitGameRoomResponse>> exitGameRoom(
+	private ResponseEntity<BaseResponse<ExitGameRoomResponse>> exitGameRoom(
 		@RequestHeader("accessToken") String accessToken, @PathVariable int channelNo) {
 
 		return ResponseEntity.status(HttpStatus.OK)
