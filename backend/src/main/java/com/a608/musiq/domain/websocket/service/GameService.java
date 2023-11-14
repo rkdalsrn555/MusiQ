@@ -180,13 +180,10 @@ public class GameService {
         GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
 
         // 게임이 시작될 때의 로직
-        if (chatMessage.getMessageType().equals(MessageType.GAMESTART.toString())) {
+        if (chatMessage.getMessageType().equals(MessageType.GAMESTART)) {
 
-            // 게임 방 타입을 Game으로 설정
-            gameRoom.changeGameRoomType(GameRoomType.GAME);
-
-            // 플레이 타입을 RoundStart로 설정
-            gameRoom.setPlayType(PlayType.ROUNDSTART);
+            // 게임 데이터 초기화
+            gameRoom.initializeRoom();
 
             // 문제 출제
             gameRoom.setMultiModeProblems(
@@ -385,7 +382,7 @@ public class GameService {
 					}
 
                     // 다음 판을 위한 세팅
-                    room.initializeRoom();
+                    room.changeGameRoomType(GameRoomType.WAITING);
 
                     // 클라이언트에게 대기방 관련 정보 전달 해줘야 함
                     GameRoomPubDto dto = GameRoomPubDto.builder()

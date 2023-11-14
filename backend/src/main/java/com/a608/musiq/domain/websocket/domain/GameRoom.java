@@ -183,9 +183,8 @@ public class GameRoom {
     }
 
     public void initializeRoom() {
-        this.gameRoomType = GameRoomType.WAITING;
+        this.gameRoomType = GameRoomType.GAME;
         this.playType = PlayType.ROUNDSTART;
-        this.multiModeProblems = null;
         this.time = 5;
         this.round = 1;
         this.skipVote = 0;
@@ -193,5 +192,9 @@ public class GameRoom {
         for(UserInfoItem userInfo : this.userInfoItems.values()) {
             userInfo.initializeUserInfo();
         }
+    }
+
+    public void setRound(int round) {
+        this.round = round;
     }
 }
