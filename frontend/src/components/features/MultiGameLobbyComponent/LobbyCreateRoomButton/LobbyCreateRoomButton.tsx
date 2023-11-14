@@ -242,19 +242,43 @@ export const LobbyCreateRoomButton = () => {
     };
     userApis
       .post(`${process.env.REACT_APP_BASE_URL}/game/main/create`, requestBody)
-      .then((response) => {
-        if (response.data.code === 200) {
-          console.log(requestBody);
-          navigate(
-            `/multi/${channelNo}/game/${response.data.data.gameRoomNo}`,
-            { state: { requestBody } }
-          );
+      .then(async (createResponse) => {
+        if (createResponse.data.code === 200) {
+          console.log('방 생성 성공:', createResponse.data);
+          const { gameRoomNo } = createResponse.data.data;
+
+          try {
+            const userInfoResponse = await userApis.get(
+              `${process.env.REACT_APP_BASE_URL}/game/main/enter/${gameRoomNo}`
+            );
+
+            if (userInfoResponse.data.code === 200) {
+              console.log('사용자 정보 가져오기 성공:', userInfoResponse.data);
+              const finalRequestBody = {
+                ...requestBody,
+                data: userInfoResponse.data.data
+              };
+
+              console.log(finalRequestBody)
+
+              navigate(`/multi/${channelNo}/game/${gameRoomNo}`, {
+                state: { requestBody: finalRequestBody },
+              });
+            } else {
+              console.error(
+                '사용자 정보 가져오기 실패:',
+                userInfoResponse.data.message
+              );
+            }
+          } catch (error) {
+            console.error('사용자 정보 가져오기 중 오류 발생:', error);
+          }
         } else {
-          console.error('Failed to create room:', response.data.message);
+          console.error('방 생성 실패:', createResponse.data.message);
         }
       })
       .catch((error) => {
-        console.error('Error creating room:', error);
+        console.error('방 생성 중 오류 발생:', error);
       });
 
     setIsModalOpen(false); // 모달 닫기
