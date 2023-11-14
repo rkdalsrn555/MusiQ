@@ -145,13 +145,16 @@ export const MultiGamePlaying = () => {
           setSingerHint(msg.singerHint);
           setInitialHint(msg.initialHint);
           setWinner(msg.winner);
-          setGameChatList((prev) => [
-            ...prev,
-            {
-              nickname: '삐약이',
-              message: `${msg.winner}님이 정답을 맞추셨습니다삐약!`,
-            },
-          ]);
+          if (msg.winner !== '') {
+            setGameChatList((prev) => [
+              ...prev,
+              {
+                nickname: '삐약이',
+                message: `${msg.winner}님이 정답을 맞추셨습니다 삐약!`,
+              },
+            ]);
+          }
+
           break;
         case 'MUSICPLAY': // 노래 시작 타이밍
           setIsMusicStart(msg.musicPlay);
