@@ -72,7 +72,6 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
           gameRoomNo: selectedRoomNumber,
         }
       );
-      console.log(passwordResponse.data.data);
 
       if (
         passwordResponse.data.code === 200 &&
@@ -87,7 +86,6 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
           const data = {
             ...userInfoResponse.data.data,
           };
-          console.log('통신 성공, 네비게이트ㄱㄱ', data);
           onSubmit(password, data);
         }
       } else {
@@ -146,7 +144,6 @@ export const LobbyRooms = () => {
               : []
           );
         }
-        console.log('방 불러오기 성공', response.data.data.rooms);
       } catch (error) {
         console.error('Fetching rooms failed: ', error);
       }
@@ -198,7 +195,6 @@ export const LobbyRooms = () => {
             quizAmount: room.quizAmount,
             data: userInfoResponse.data.data,
           };
-          console.log(requestBody);
           navigate(`/multi/${channelNumber}/game/${room.gameRoomNo}`, {
             state: { requestBody },
           });
@@ -289,7 +285,6 @@ export const LobbyRooms = () => {
               quizAmount: room.quizAmount,
               data,
             };
-            console.log('비공개방에 접근했을 때 전달하는 상태', gameState);
             navigate(`/multi/${channelNumber}/game/${selectedRoomNumber}`, {
               state: { requestBody: gameState },
             });

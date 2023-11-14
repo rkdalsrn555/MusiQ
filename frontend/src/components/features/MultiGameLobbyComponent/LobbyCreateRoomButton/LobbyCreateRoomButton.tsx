@@ -244,7 +244,6 @@ export const LobbyCreateRoomButton = () => {
       .post(`${process.env.REACT_APP_BASE_URL}/game/main/create`, requestBody)
       .then(async (createResponse) => {
         if (createResponse.data.code === 200) {
-          console.log('방 생성 성공:', createResponse.data);
           const { gameRoomNo } = createResponse.data.data;
 
           try {
@@ -253,13 +252,10 @@ export const LobbyCreateRoomButton = () => {
             );
 
             if (userInfoResponse.data.code === 200) {
-              console.log('사용자 정보 가져오기 성공:', userInfoResponse.data);
               const finalRequestBody = {
                 ...requestBody,
-                data: userInfoResponse.data.data
+                data: userInfoResponse.data.data,
               };
-
-              console.log(finalRequestBody)
 
               navigate(`/multi/${channelNo}/game/${gameRoomNo}`, {
                 state: { requestBody: finalRequestBody },
