@@ -18,7 +18,7 @@ export const ChattingWrapper = styled.div`
 
 export const ChattingContentsWrapper = styled.div`
   width: 73vw;
-  height: 28vh;
+  height: 27vh;
   border: solid 5px rgba(235, 226, 255, 0.2);
   border-radius: 15px;
   background-color: rgba(255, 255, 255, 0.5);
@@ -35,12 +35,17 @@ export const ChattingContentsWrapper = styled.div`
 `;
 
 export const ChattingContent = styled.div`
-  width: 72vw;
+  width: 68vw;
+  padding: 1%;
 `;
 
 export const ChattingInputWrapper = styled.div`
   width: 73vw;
   height: 3vh;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  margin-top: 0.8%;
 `;
 
 export const StyledInput = styled.input`

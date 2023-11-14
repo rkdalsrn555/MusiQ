@@ -41,15 +41,12 @@ public class WebSocketEventListener {
         String accessToken = ((List<String>) nativeHeaders.get("accessToken")).get(0);
         logger.info("accessToken = {}", accessToken);
         String connectType = ((List<String>) nativeHeaders.get("connectType")).get(0);
-        String password = ((List<String>) nativeHeaders.get("password")).get(0);
+        logger.info("connectType = {}", connectType);
 
-
-        if (connectType.equals(ConnectType.ENTER_LOBBY)) {
+        if (connectType.equals(ConnectType.ENTER_LOBBY.toString())) {
             gameService.joinGameChannel(accessToken, channelNo);
-        } else if (connectType.equals(ConnectType.ENTER_GAME_ROOM)) {
-            gameService.enterGameRoom(accessToken, channelNo, password);
-        } else if (connectType.equals(ConnectType.EXIT_GAME_ROOM)) {
-            gameService.exitGameRoom(accessToken, channelNo);
+        } else if (connectType.equals(ConnectType.ENTER_GAME_ROOM.toString())) {
+            gameService.enterGameRoomForPublish(accessToken, channelNo);
         }
     }
 
@@ -57,7 +54,6 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketSubscribeListener(SessionSubscribeEvent event) {
         logger.info("Received a new web-socket subscribe");
-
 
     }
 

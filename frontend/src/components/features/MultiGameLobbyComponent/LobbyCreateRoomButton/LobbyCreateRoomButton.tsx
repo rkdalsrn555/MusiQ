@@ -16,6 +16,7 @@ import {
   StyledRadio,
   StyledAmountLabel,
   StyledYearLabel,
+  StyledIsPrivateRoomCheckBoxDiv,
 } from './LobbyCreateRoomButton.styled';
 import exitButtonIcon from '../../../../assets/svgs/MultiLobby/exitButtonIcon.svg';
 import musiqLogo from '../../../../assets/svgs/logo.svg';
@@ -41,6 +42,9 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
   const [musicYear, setMusicYear] = useState<string[]>([]);
   const [quizAmount, setQuizAmount] = useState<number>(0);
   const quizAmountOptions = [10, 20, 30];
+  const [passwordError, setPasswordError] = useState('');
+  const [roomNameError, setRoomNameError] = useState('');
+  const [isPrivate, setIsPrivate] = useState(false); // 비공개방 체크박스 상태
   const yearsOptions = [
     '1970',
     '1980',
@@ -53,6 +57,14 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
     '2022',
     '2023',
   ];
+
+  // 비공개 여부 체크박스 상태 변경 핸들러
+  const handlePrivateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsPrivate(e.target.checked);
+    if (!e.target.checked) {
+      setPassword(''); // 체크박스가 해제되면 비밀번호를 초기화
+    }
+  };
 
   // 연도 선택 핸들러
   const toggleYearSelection = (year: string) => {
@@ -105,15 +117,58 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
       <StyledRoomTitleInput
         placeholder="&nbsp;방 제목"
         value={roomName}
-        onChange={(e) => setRoomName(e.target.value)}
+        onChange={(e) => {
+          const currentValue = e.target.value;
+          if (currentValue.length <= 18) {
+            setRoomName(currentValue);
+            setRoomNameError(''); // 에러 메시지 초기화
+          } else {
+            setRoomNameError('18자까지 입력 가능합니다.'); // 에러 메시지 설정
+          }
+        }}
         autoComplete="off"
+        maxLength={18} // 방 제목 길이 제한 추가
       />
-      <StyledRoomPasswordInput
-        placeholder="&nbsp;비밀번호"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        autoComplete="off"
-      />
+
+      {roomNameError && (
+        <div style={{ color: 'yellow' }}>{roomNameError}</div> // 에러 메시지 표시
+      )}
+      <StyledIsPrivateRoomCheckBoxDiv>
+        <label style={{ fontSize: '18px' }}>
+          <input
+            type="checkbox"
+            checked={isPrivate}
+            onChange={handlePrivateChange}
+            style={{ transform: 'scale(1.5)' }}
+          />
+          &nbsp;비공개
+        </label>
+      </StyledIsPrivateRoomCheckBoxDiv>
+      {isPrivate && (
+        <>
+          <StyledRoomPasswordInput
+            placeholder="&nbsp;비밀번호"
+            value={password}
+            onChange={(e) => {
+              const currentValue = e.target.value;
+              const regex = /^[0-9]*$/;
+              if (regex.test(currentValue) || currentValue === '') {
+                setPassword(currentValue);
+                setPasswordError('');
+              } else {
+                setPasswordError('숫자만 최대 4자리 입력 가능합니다.');
+              }
+            }}
+            autoComplete="off"
+            maxLength={4}
+          />
+
+          {passwordError && (
+            <div style={{ color: 'yellow' }}>{passwordError}</div>
+          )}
+        </>
+      )}
+
       <SelectYearWrapper>
         <div style={{ fontSize: '18px' }}>노래의 연도를 선택 해주세요</div>
         {yearsOptions.map((year) => (
@@ -172,14 +227,6 @@ export const LobbyCreateRoomButton = () => {
     quizAmount: number;
   };
 
-  const joinGameRoom = (gameRoomNo: number, requestBody: RequestBody) => {
-    userApis
-      .patch(`${process.env.REACT_APP_BASE_URL}/game/main/join/${channelNo}`)
-      .then((res) => {
-        console.log(res);
-      });
-  };
-
   const handleCreateRoom = (
     roomName: string,
     password: string,
@@ -193,23 +240,42 @@ export const LobbyCreateRoomButton = () => {
       musicYear,
       quizAmount,
     };
-    console.log(requestBody);
     userApis
       .post(`${process.env.REACT_APP_BASE_URL}/game/main/create`, requestBody)
-      .then((response) => {
-        if (response.data.code === 200) {
-          console.log(requestBody);
-          joinGameRoom(response.data.data.gameRoomNo, requestBody);
-          navigate(
-            `/multi/${channelNo}/game/${response.data.data.gameRoomNo}`,
-            { state: { requestBody } }
-          );
+      .then(async (createResponse) => {
+        if (createResponse.data.code === 200) {
+          const { gameRoomNo } = createResponse.data.data;
+
+          try {
+            const userInfoResponse = await userApis.get(
+              `${process.env.REACT_APP_BASE_URL}/game/main/enter/${gameRoomNo}`
+            );
+
+            if (userInfoResponse.data.code === 200) {
+              const finalRequestBody = {
+                ...requestBody,
+                musicYear: musicYear.split(' '), // 문자열을 배열로 변환
+                data: userInfoResponse.data.data,
+              };
+
+              navigate(`/multi/${channelNo}/game/${gameRoomNo}`, {
+                state: { requestBody: finalRequestBody },
+              });
+            } else {
+              console.error(
+                '사용자 정보 가져오기 실패:',
+                userInfoResponse.data.message
+              );
+            }
+          } catch (error) {
+            console.error('사용자 정보 가져오기 중 오류 발생:', error);
+          }
         } else {
-          console.error('Failed to create room:', response.data.message);
+          console.error('방 생성 실패:', createResponse.data.message);
         }
       })
       .catch((error) => {
-        console.error('Error creating room:', error);
+        console.error('방 생성 중 오류 발생:', error);
       });
 
     setIsModalOpen(false); // 모달 닫기

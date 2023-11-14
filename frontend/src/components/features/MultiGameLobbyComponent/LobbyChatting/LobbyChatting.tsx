@@ -65,7 +65,7 @@ export const LobbyChatting = (props: OwnProps) => {
         <ChattingContent>
           {lobbyChatList.map((msg) => (
             <div key={msg.nickname} style={{ marginTop: '0.5%' }}>
-              <strong>{msg.nickname}:</strong> {msg.message}
+              <strong style={{ fontWeight: 'bold' }}>{msg.nickname}:</strong> {msg.message}
             </div>
           ))}
           <div ref={chatEndRef} />
@@ -84,7 +84,7 @@ export const LobbyChatting = (props: OwnProps) => {
           }}
         />
         <button type="button" onClick={sendMessage}>
-          <img src={messageSubmit} alt="메세지 보내기" width={22} />
+          <img src={messageSubmit} alt="메세지 보내기" width={27}/>
         </button>
       </ChattingInputWrapper>
     </ChattingWrapper>

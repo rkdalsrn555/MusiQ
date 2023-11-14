@@ -1,4 +1,4 @@
-package com.a608.musiq.domain.websocket.dto;
+package com.a608.musiq.domain.websocket.dto.responseDto;
 
 import java.util.List;
 import lombok.Builder;
@@ -11,8 +11,9 @@ public class GameRoomListResponseItem {
     private String roomTitle;
     private String roomManager;
     private int currentMembers;
-    private int roomNumber;
+    private int quizAmount;
     private Boolean isPrivate;
+    private Boolean isPlay;
     // List로 수정
     private List<String> years;
 }

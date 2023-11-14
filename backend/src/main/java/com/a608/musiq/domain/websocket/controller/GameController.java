@@ -1,14 +1,18 @@
 package com.a608.musiq.domain.websocket.controller;
 
-import com.a608.musiq.domain.websocket.dto.DisconnectSocketResponseDto;
-import com.a608.musiq.domain.websocket.dto.ExitGameRoomResponse;
-import com.a608.musiq.domain.websocket.dto.JoinGameRoomResponseDto;
-import com.a608.musiq.domain.websocket.dto.AllChannelSizeResponseDto;
-import com.a608.musiq.domain.websocket.dto.ChannelUserResponseDto;
+import com.a608.musiq.domain.websocket.dto.requestDto.CheckPasswordRequestDto;
+import com.a608.musiq.domain.websocket.dto.requestDto.ExitGameRoomRequestDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.DisconnectSocketResponseDto;
+import com.a608.musiq.domain.websocket.dto.requestDto.EnterGameRoomRequestDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.ExitGameRoomResponse;
+import com.a608.musiq.domain.websocket.dto.responseDto.EnterGameRoomResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.AllChannelSizeResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.ChannelUserResponseDto;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
-import com.a608.musiq.domain.websocket.dto.CreateGameRoomRequestDto;
-import com.a608.musiq.domain.websocket.dto.CreateGameRoomResponseDto;
-import com.a608.musiq.domain.websocket.dto.GameRoomListResponseDto;
+import com.a608.musiq.domain.websocket.dto.requestDto.CreateGameRoomRequestDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.CreateGameRoomResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.GameRoomListResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.CheckPasswordResponseDto;
 import com.a608.musiq.domain.websocket.service.GameService;
 import com.a608.musiq.global.common.response.BaseResponse;
 
@@ -123,36 +127,57 @@ public class GameController {
 	}
 
 	/**
-	 * @param accessToken
-	 * @param channelNo
-	 * @see JoinGameRoomResponseDto
+	 * 비밀번호 체크
+	 *
+	 * @param checkPasswordRequestDto
 	 * @return
 	 */
-	@PatchMapping("/main/join/{channelNo}")
-	@ResponseBody
-	public ResponseEntity<BaseResponse<JoinGameRoomResponseDto>> joinGameRoom(
-		@RequestHeader("accessToken") String accessToken, @PathVariable int channelNo) {
-
+	@PostMapping("/main/password")
+	private ResponseEntity<BaseResponse<CheckPasswordResponseDto>> checkPassword(
+		@RequestBody CheckPasswordRequestDto checkPasswordRequestDto
+	) {
 		return ResponseEntity.status(HttpStatus.OK)
-			.body(BaseResponse.<JoinGameRoomResponseDto>builder()
-				.data(gameService.moveGameRoom(accessToken, channelNo))
+			.body(BaseResponse.<CheckPasswordResponseDto>builder()
+				.code(HttpStatus.OK.value())
+				.data(gameService.checkPassword(checkPasswordRequestDto))
 				.build());
 	}
 
 	/**
+	 * 게임방 입장
+	 *
 	 * @param accessToken
-	 * @param channelNo
+	 * @param gameRoomNo
+	 * @return ResponseEntity<BaseResponse<EnterGameRoomResponseDto>>
+	 */
+	@GetMapping("/main/enter/{gameRoomNo}")
+	@ResponseBody
+	private ResponseEntity<BaseResponse<EnterGameRoomResponseDto>> enterGameRoom(
+		@RequestHeader("accessToken") String accessToken,
+		@PathVariable("gameRoomNo") int gameRoomNo) {
+
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(BaseResponse.<EnterGameRoomResponseDto>builder()
+				.data(gameService.enterGameRoom(accessToken, gameRoomNo))
+				.build());
+	}
+
+	/**
+	 * 게임방 퇴장
+	 *
+	 * @param accessToken
+	 * @param exitGameRoomRequestDto
 	 * @see ExitGameRoomResponse
 	 * @return
 	 */
-	@PatchMapping("/main/lobby/{channelNo}")
+	@PatchMapping("/main/exit")
 	@ResponseBody
-	public ResponseEntity<BaseResponse<ExitGameRoomResponse>> exitGameRoom(
-		@RequestHeader("accessToken") String accessToken, @PathVariable int channelNo) {
+	private ResponseEntity<BaseResponse<ExitGameRoomResponse>> exitGameRoom(
+		@RequestHeader("accessToken") String accessToken, @RequestBody ExitGameRoomRequestDto exitGameRoomRequestDto) {
 
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(BaseResponse.<ExitGameRoomResponse>builder()
-				.data(gameService.moveLobby(accessToken, channelNo))
+				.data(gameService.exitGameRoom(accessToken, exitGameRoomRequestDto))
 				.build());
 	}
 

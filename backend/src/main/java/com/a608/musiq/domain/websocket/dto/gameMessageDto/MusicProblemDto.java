@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class MusicProblemDto {
+
     private MessageDtoType messageType;
     private String title;
     private String singer;
@@ -15,9 +16,10 @@ public class MusicProblemDto {
     private String singerHint;
     private String initialHint;
     private String musicUrl;
+    private Integer round;
 
     @Builder
-    public MusicProblemDto(String musicUrl) {
+    public MusicProblemDto(String musicUrl, Integer round) {
         this.messageType = MessageDtoType.MUSICPROBLEM;
         this.title = "";
         this.singer = "";
@@ -25,5 +27,6 @@ public class MusicProblemDto {
         this.singerHint = "";
         this.initialHint = "";
         this.musicUrl = musicUrl;
+        this.round = round;
     }
 }

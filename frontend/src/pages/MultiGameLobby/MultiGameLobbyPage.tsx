@@ -16,6 +16,8 @@ import {
   LobbyRooms,
   LobbyUsersList,
   RefreshButton,
+  QuickMatchButton,
+  SearchRoomButton,
 } from '../../components/features';
 import { BackBtn } from '../../components/utils';
 import {
@@ -30,9 +32,14 @@ export const MultiGameLobbyPage = () => {
   const channelNumber = location.pathname.split('/').slice(-2)[0];
   const accessToken = window.localStorage.getItem('userAccessToken') ?? '';
   const client = useRef<any>({});
+  const [refreshKey, setRefreshKey] = useState(0);
   const [lobbyChatList, setLobbyChatList] = useState<
     { nickname: string; message: string }[]
   >([]);
+
+  const handleRefresh = () => {
+    setRefreshKey((prevKey) => prevKey + 1); // 상태 업데이트
+  };
 
   useEffect(() => {
     // 모바일 기기 접근을 막는 로직
@@ -63,6 +70,7 @@ export const MultiGameLobbyPage = () => {
       connectHeaders: {
         accessToken,
         channelNo: location.pathname.split('/')[2],
+        connectType: 'ENTER_LOBBY',
       },
       onConnect: subscribe,
       onStompError: (frame) => {
@@ -108,12 +116,14 @@ export const MultiGameLobbyPage = () => {
     >
       <MulitBackGround>
         <LobbyWrapper>
-          <RefreshButton />
+          <RefreshButton onClick={handleRefresh} />
           <BackBtn url="/multi/channel" />
           <LobbyUsersList />
-          <LobbyRooms />
+          <LobbyRooms key={refreshKey} />
           <ButtonsWrapper>
             <LobbyCreateRoomButton />
+            <QuickMatchButton channelNumber={channelNumber} />
+            <SearchRoomButton channelNumber={channelNumber} />
           </ButtonsWrapper>
           <LobbyChatting socketClient={client} lobbyChatList={lobbyChatList} />
         </LobbyWrapper>

@@ -36,19 +36,18 @@ public class RoundStartService {
 
     public void doRoundStart(Integer roomNum, GameRoom room) {
 
-        // 해당 방에 문제가 아직 없는 경우 문제 출제
-        if (room.getMultiModeProblems() == null) {
-            room.setMultiModeProblems(
-                    makeMutiProblemList(room.getNumberOfProblems(), room.getYear()));
-        }
-
         // 타임 카운트가 5인 경우 (맨 처음 카운트인 경우) 문제 링크를 보냄
         // 라운드마다 변수 초기화를 위해 ""를 담아 보냄
-        if (room.getTime() >= 4) {
+        if (room.getTime() == 5) {
             MusicProblemDto dto = MusicProblemDto.builder()
                     .musicUrl(room.getMultiModeProblems().get(room.getRound() - 1).getUrl())
+                    .round(room.getRound())
                     .build();
             messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
+            room.timeDown();
+        }
+        else if(room.getTime() == 4) {
+            room.timeDown();
         }
         // 3, 2, 1 카운트 다운 전송
         else if (room.getTime() > 0) {
@@ -56,6 +55,7 @@ public class RoundStartService {
             // 카운트 다운 전송
             TimeDto timeDto = TimeDto.builder().time(room.getTime()).build();
             messagingTemplate.convertAndSend("/topic/" + roomNum, timeDto);
+
             room.timeDown();
         } else {
 
