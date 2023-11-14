@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import * as StompJs from '@stomp/stompjs';
 import ReactPlayer from 'react-player';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { userApis } from '../../hooks/api/userApis';
 import {
   MultiGameStatus,
   MultiGameChatting,
@@ -28,6 +29,11 @@ type GameChatType = {
 type AnswerDataType = {
   title: string;
   singer: string;
+};
+
+type ResultUser = {
+  nickname: string;
+  score: number;
 };
 
 export const MultiGamePlaying = () => {
@@ -57,6 +63,11 @@ export const MultiGamePlaying = () => {
   const [musicUrl, setMusicUrl] = useState<string>('');
   const videoRef = useRef<ReactPlayer>(null);
   const [isResult, setIsResult] = useState<boolean>(false); // 결과페이지인지 아닌지
+  const [resultUser, setResultUser] = useState<ResultUser[]>([]);
+  const [speakChick, setSpeakChick] = useState<GameChatType>({
+    nickname: '삐약이',
+    message: '게임 대기중...',
+  });
 
   // 모바일 기기 접근을 막는 로직
   useEffect(() => {
@@ -85,6 +96,10 @@ export const MultiGamePlaying = () => {
               message: `${msg.enteredUserNickname}님이 입장하셨습니다.`,
             },
           ]);
+          setSpeakChick({
+            nickname: '삐약이',
+            message: `${msg.enteredUserNickname}님이 입장하셨습니다.`,
+          });
           break;
         case 'EXITUSER': // 유저 나갈 때 pub
           setGameUserList(msg.userInfoItems);
@@ -100,6 +115,10 @@ export const MultiGamePlaying = () => {
               message: `방장이 ${msg.manager}님으로 변경되었습니다. 방장이 게임을 시작해주세요.`,
             },
           ]);
+          setSpeakChick({
+            nickname: '삐약이',
+            message: `방장이 ${msg.manager}님으로 변경되었습니다. 방장이 게임을 시작해주세요.`,
+          });
           break;
         case 'CHAT': // 유저가 채팅 보냈을 때
           setGameChatList((prev) => [
@@ -109,12 +128,13 @@ export const MultiGamePlaying = () => {
           break;
         case 'GAMESTART': // 게임 시작 버튼 클릭시
           setIsGameStart(true);
+          setSpeakChick({
+            nickname: '삐약이',
+            message: '게임이 시작됐다!',
+          });
           break;
         case 'TIME': // 시간초세기
           setPlayTime(msg.time);
-          if (isResult && msg.time === 0) {
-            setIsResult(false);
-          }
           break;
         case 'MUSICPROBLEM': // 음악 문제 세팅
           setAnswerData({ title: msg.title, singer: msg.singer });
@@ -130,6 +150,10 @@ export const MultiGamePlaying = () => {
             ...prev,
             { nickname: '삐약이', message: '가수힌트가 나왔어요 삐약' },
           ]);
+          setSpeakChick({
+            nickname: '삐약이',
+            message: '가수힌트가 나왔어요 삐약',
+          });
           break;
         case 'INITIALHINT': // 초성힌트
           setInitialHint(msg.initialHint);
@@ -137,6 +161,10 @@ export const MultiGamePlaying = () => {
             ...prev,
             { nickname: '삐약이', message: '초성힌트가 나왔어요 삐약' },
           ]);
+          setSpeakChick({
+            nickname: '삐약이',
+            message: '초성힌트가 나왔어요 삐약',
+          });
           break;
         case 'BEFORESKIP': // 누군가 문제 맞추기 전 스킵요청
           break;
@@ -155,6 +183,10 @@ export const MultiGamePlaying = () => {
                 message: `${msg.winner}님이 정답을 맞추셨습니다 삐약!`,
               },
             ]);
+            setSpeakChick({
+              nickname: '삐약이',
+              message: `${msg.winner}님이 정답을 맞추셨습니다 삐약!`,
+            });
             setGameUserList(msg.memberInfos);
           }
 
@@ -167,10 +199,12 @@ export const MultiGamePlaying = () => {
           break;
         case 'GAMERESULT':
           setIsResult(true);
+          setResultUser(msg.userResults.sort((a: number, b: number) => b - a));
           break;
         case 'GOWAITING': // 게임 끝났을 때 대기상태로 다시 변환
           setIsGameStart(false);
           setGameUserList(msg.memberInfos);
+          setIsResult(false);
           break;
         default:
           break;
@@ -200,6 +234,17 @@ export const MultiGamePlaying = () => {
     client.current.deactivate();
   };
 
+  // 게임방 나가기
+  const patchOutGameRoom = async () => {
+    await userApis
+      .patch(`${process.env.REACT_APP_BASE_URL}/game/main/exit`, {
+        previousChannelNo: location.state.requestBody.gameRoomNumber,
+      })
+      .then((res) => {
+        navigate(`/multi/${res.data.data.destinationChannelNo}/lobby`);
+      });
+  };
+
   // 첫 렌더링 시 소켓연결, 페이지 떠날 시 disconnect
   useEffect(() => {
     connect();
@@ -214,6 +259,7 @@ export const MultiGamePlaying = () => {
     ]);
     return () => {
       disconnect();
+      patchOutGameRoom();
     };
   }, []);
 
@@ -239,11 +285,23 @@ export const MultiGamePlaying = () => {
         <S.topPosition>
           <S.ExplainBox>
             {isResult ? (
-              <div>결과</div>
+              <div className="result">
+                <h1>결과</h1>
+                <ul>
+                  {resultUser.map((user, index) => (
+                    // eslint-disable-next-line react/no-array-index-key
+                    <li key={index}>
+                      {index + 1}등 {user.nickname} - {user.score}{' '}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ) : (
               <div>
                 {isGameStart ? (
                   <MultiGameHint
+                    winner={winner}
+                    isResult={isResult}
                     isMusicStart={isMusicStart}
                     answerData={answerData}
                     remainMusic={remainMusicNum}
@@ -267,10 +325,14 @@ export const MultiGamePlaying = () => {
           </S.ExplainBox>
         </S.topPosition>
         <S.middlePosition>
-          <MultiGameSkip gameStatus={isGameStart} />
+          <MultiGameSkip
+            gameStatus={isGameStart}
+            isResult={isResult}
+            time={playTime}
+          />
         </S.middlePosition>
         <S.bottomPosition>
-          <MultiDancingChick />
+          <MultiDancingChick speakChick={speakChick} />
           <MultiGameChatting
             gameChatList={gameChatList}
             setGameChatList={setGameChatList}
