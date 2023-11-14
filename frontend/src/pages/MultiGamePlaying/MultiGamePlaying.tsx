@@ -373,6 +373,7 @@ export const MultiGamePlaying = () => {
           />
           <MultiDancingChick speakChick={speakChick} />
           <MultiGameChatting
+            userLength={gameUserList.length}
             skipVote={skipVote}
             gameChatList={gameChatList}
             setGameChatList={setGameChatList}
