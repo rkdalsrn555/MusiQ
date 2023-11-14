@@ -62,8 +62,13 @@ export const ChatListContainer = styled.div`
     gap: 0.6rem;
 
     & .nickname {
-      min-width: 9rem;
       text-align: center;
     }
+  }
+`;
+
+export const NicknameColor = styled.div<{ nickname: string }>`
+  & .nickname {
+    color: ${(props) => (props.nickname === '삐약이' ? 'yellow' : '#fff')};
   }
 `;

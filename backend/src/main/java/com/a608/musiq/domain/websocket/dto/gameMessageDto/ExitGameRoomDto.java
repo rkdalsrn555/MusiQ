@@ -15,14 +15,4 @@ public class ExitGameRoomDto {
 	private List<UserInfoItem> userInfoItems;
 	private String gameRoomManagerNickname;
 	private String exitedUserNickname;
-
-	public static ExitGameRoomDto from(List<UserInfoItem> userInfoItems, String gameRoomManagerNickname,
-		String nickname) {
-		return ExitGameRoomDto.builder()
-			.messageDtoType(MessageDtoType.EXITUSER)
-			.userInfoItems(userInfoItems)
-			.gameRoomManagerNickname(gameRoomManagerNickname)
-			.exitedUserNickname(nickname)
-			.build();
-	}
 }

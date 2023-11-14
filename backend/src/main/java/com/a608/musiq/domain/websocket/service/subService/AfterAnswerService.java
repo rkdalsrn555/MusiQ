@@ -5,6 +5,7 @@ import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.domain.UserInfoItem;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.MusicEndDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.TimeDto;
 import java.util.Map;
 import java.util.UUID;
@@ -26,12 +27,14 @@ public class AfterAnswerService {
 
     public void doAfterAnswer(Integer roomNum, GameRoom room) {
 
-        // 카운트 다운 전송
-        TimeDto dto = TimeDto.builder().time(room.getTime()).build();
-        messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
 
         // 남은 시간이 1초 이상이라면 시간 다운
         if (room.getTime() > 0) {
+
+            // 카운트 다운 전송
+            TimeDto dto = TimeDto.builder().time(room.getTime()).build();
+            messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
+
             room.timeDown();
         }
         // 0초인 경우
@@ -53,6 +56,10 @@ public class AfterAnswerService {
 
             // 방의 전체 스킵 수도 0으로 설정
             room.setSkipVote(0);
+
+            // 음악 종료 신호 전송
+            MusicEndDto dto = MusicEndDto.builder().build();
+            messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
         }
     }
 

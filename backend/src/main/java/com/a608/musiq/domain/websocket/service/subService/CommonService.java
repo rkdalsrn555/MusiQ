@@ -1,5 +1,6 @@
 package com.a608.musiq.domain.websocket.service.subService;
 
+import com.a608.musiq.domain.member.domain.MemberInfo;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -11,9 +12,12 @@ import com.a608.musiq.domain.websocket.dto.responseDto.CheckPasswordResponseDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.EnterGameRoomResponseDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.EnterGameRoomDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.ExitGameRoomDto;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class CommonService {
+
+	private static final int MULTI_SCORE_WEIGHT = 10;
 
 	public ExitGameRoomDto exitGameRoom(UUID uuid, GameRoom gameRoom, int roomNumber) {
 		// Channel 현재 게임룸에서 로비로 이동
@@ -39,6 +43,11 @@ public class CommonService {
 	public EnterGameRoomDto enterGameRoomForPublish(UUID uuid, GameRoom gameRoom) {
 
 		return gameRoom.getGameRoomInformation(uuid);
+	}
+
+	@Transactional
+	public void updateExp(MemberInfo memberInfo, Double score) {
+		memberInfo.gainExp(score * MULTI_SCORE_WEIGHT);
 	}
 
 }

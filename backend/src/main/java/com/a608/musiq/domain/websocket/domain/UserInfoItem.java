@@ -41,4 +41,12 @@ public class UserInfoItem {
         this.score = INITIAL_SCORE;
         this.isSkipped = INITIAL_IS_SKIPPED;
     }
+
+    public void setScore(Double score) {
+        this.score = score;
+    }
+    public void upScore(){
+        this.score++;
+
+    }
 }

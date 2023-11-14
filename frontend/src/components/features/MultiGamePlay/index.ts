@@ -4,3 +4,4 @@ export * from './MultiGameSkip';
 export * from './MultiGameChatting';
 export * from './MultiDancingChick';
 export * from './MultiGameStart';
+export * from './MultiGameOption';

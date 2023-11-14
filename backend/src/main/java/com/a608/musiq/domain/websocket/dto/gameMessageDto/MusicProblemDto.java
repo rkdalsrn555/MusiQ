@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class MusicProblemDto {
+
     private MessageDtoType messageType;
     private String title;
     private String singer;
