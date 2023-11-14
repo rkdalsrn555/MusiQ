@@ -90,7 +90,6 @@ public class GameService {
 
     private ReentrantReadWriteLock lock;
 
-    private static final int MULTI_SCORE_WEIGHT = 10;
     private static final int LEVEL_SIZE = 50;
     private static final int MAKING_LOBBY_CHANNEL_NO = 1000;
 
@@ -381,18 +380,16 @@ public class GameService {
 
                     // 경험치 정산
                     for (UUID memberId : userInfoMap.keySet()) {
-                        //                        MemberInfo memberInfo = memberInfoRepository.findById(memberId)
-                        //                                .orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
-
+                        
                         Optional<MemberInfo> memberInfoOptional = memberInfoRepository.findById(
                                 memberId);
                         if (!memberInfoOptional.isPresent()) {
                             continue;
                         }
 
+                        // Transactional을 위한 UpdateExp 메서드 분리
                         MemberInfo memberInfo = memberInfoOptional.get();
-                        memberInfo.gainExp(
-                                userInfoMap.get(memberId).getScore() * MULTI_SCORE_WEIGHT);
+                        commonService.updateExp(memberInfo, userInfoMap.get(memberId).getScore());
 
                         util.insertDatatoRedisSortedSet(RedisKey.RANKING.getKey(),
                                 memberInfo.getNickname(), memberInfo.getExp());
