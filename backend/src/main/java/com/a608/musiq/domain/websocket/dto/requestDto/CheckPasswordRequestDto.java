@@ -4,6 +4,6 @@ import lombok.Getter;
 
 @Getter
 public class CheckPasswordRequestDto {
-	private int channelNo;
+	private int gameRoomNo;
 	private String password;
 }
