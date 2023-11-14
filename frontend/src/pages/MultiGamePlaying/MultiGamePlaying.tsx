@@ -24,6 +24,11 @@ type GameChatType = {
   message: string;
 };
 
+type AnswerDataType = {
+  title: string;
+  singer: string;
+};
+
 const mockUserData1 = [
   { score: 12, nickname: '장충동왕족발보쌈' },
   { score: 6, nickname: '이르케' },
@@ -40,7 +45,15 @@ export const MultiGamePlaying = () => {
 
   const [manager, setManager] = useState<string>(''); // 내가 게임방의 매니저인지 아닌지
   const [playTime, setPlayTime] = useState<number>(0); // 플레이타임
-  const [isGameStart, setIsGameStart] = useState<boolean>(false);
+  const [isGameStart, setIsGameStart] = useState<boolean>(true); // 게임 시작되었는지 아닌지
+
+  const [initialHint, setInitialHint] = useState<string>(''); // 초성힌트
+  const [singerHint, setSingerHint] = useState<string>(''); // 가수힌트
+  const [winner, setWinner] = useState<string>(''); // 우승자가 없을때는 '', 있을때는 string
+  const [answerData, setAnswerData] = useState<AnswerDataType>({
+    title: '',
+    singer: '',
+  }); // 정답 제목, 가수
 
   // 모바일 기기 접근을 막는 로직
   useEffect(() => {
@@ -55,7 +68,6 @@ export const MultiGamePlaying = () => {
 
   // 구독
   const subscribe = () => {
-    console.log('구독됐다');
     client.current.subscribe(`/topic/${gameRoomNumber}`, (message: any) => {
       const msg = JSON.parse(message.body);
 
@@ -73,7 +85,7 @@ export const MultiGamePlaying = () => {
           break;
         case 'EXITUSER': // 유저 나갈 때 pub
           setGameUserList(mockUserData1);
-          setManager(msg.manager);
+          setManager(msg.gameRoomManagerNickname);
           setGameChatList((prev) => [
             ...prev,
             {
@@ -99,8 +111,10 @@ export const MultiGamePlaying = () => {
         case 'MUSICPROBLEM': // 음악 문제 세팅
           break;
         case 'SINGERHINT': // 가수힌트
+          setSingerHint(msg.singerHint);
           break;
         case 'INITIALHINT': // 초성힌트
+          setInitialHint(msg.initialHint);
           break;
         case 'GAMERESULT': // 게임 끝났을 때 유저리스트 반환
           break;
@@ -109,6 +123,10 @@ export const MultiGamePlaying = () => {
         case 'AFTERSKIP': // 문제 맞춘 후 스킵요청
           break;
         case 'BEFOREANSWERCORRECT': // 정답 맞췄을때 누가 정답맞췄고, 정답이 뭔지
+          setAnswerData({ title: msg.title, singer: msg.singer });
+          setSingerHint(msg.singerHint);
+          setInitialHint(msg.initialHint);
+          setWinner(msg.winner);
           break;
         case 'MUSICPLAY': // 노래 시작 타이밍
           break;
@@ -136,8 +154,8 @@ export const MultiGamePlaying = () => {
   };
 
   // 소켓 연결
-  const connect = () => {
-    client.current = new StompJs.Client({
+  const connect = async () => {
+    client.current = await new StompJs.Client({
       brokerURL: `${process.env.REACT_APP_SOCKET_URL}`,
       connectHeaders: {
         accessToken,
@@ -174,20 +192,29 @@ export const MultiGamePlaying = () => {
     >
       <S.Container>
         <MultiGameStatus gameUserList={gameUserList} manager={manager} />
-        <S.MCPosition>
-          <S.BubblePosition>
-            <img src={bubbleBg} alt="말풍선" width={300} />
-            <p>게임 대기중입니다</p>
-          </S.BubblePosition>
+        <S.topPosition>
+          <S.ExplainBox>
+            {isGameStart ? (
+              <MultiGameHint
+                singerHint={singerHint}
+                initialHint={initialHint}
+              />
+            ) : (
+              <p className="waiting">...게임 대기중입니다</p>
+            )}
+          </S.ExplainBox>
           <MultiDancingChick />
-        </S.MCPosition>
-        <MultiGameHint />
-        <MultiGameSkip />
-        <MultiGameChatting
-          gameChatList={gameChatList}
-          setGameChatList={setGameChatList}
-          socketClient={client}
-        />
+        </S.topPosition>
+        <S.middlePosition>
+          <MultiGameSkip gameStatus={isGameStart} />
+        </S.middlePosition>
+        <S.bottomPosition>
+          <MultiGameChatting
+            gameChatList={gameChatList}
+            setGameChatList={setGameChatList}
+            socketClient={client}
+          />
+        </S.bottomPosition>
       </S.Container>
     </motion.div>
   );

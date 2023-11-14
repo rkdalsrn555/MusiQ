@@ -1,10 +1,6 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  position: absolute;
-  left: 50%;
-  bottom: 2%;
-  transform: translate(-50%, 0);
   width: 80rem;
   height: 20rem;
   border: 5px solid rgba(235, 226, 255, 0.6);

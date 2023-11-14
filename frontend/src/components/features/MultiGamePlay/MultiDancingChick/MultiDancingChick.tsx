@@ -3,8 +3,10 @@ import styled from 'styled-components';
 import dancingChick from '../../../../assets/img/playgame/danceChick.gif';
 
 const Container = styled.div`
-  width: 29rem;
-  height: 20rem;
+  &img {
+    display: block;
+    margin: 0 auto;
+  }
 `;
 
 export const MultiDancingChick = () => (

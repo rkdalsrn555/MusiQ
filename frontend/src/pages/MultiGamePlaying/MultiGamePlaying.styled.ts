@@ -7,15 +7,46 @@ export const Container = styled.div`
   height: 100vh;
   background-image: url(${backgroundGif1});
   background-size: cover;
-`;
-
-export const MCPosition = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   display: flex;
-  width: 38rem;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 
-export const BubblePosition = styled.div``;
+export const topPosition = styled.div`
+  width: 70%;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5rem;
+  margin-top: 5%;
+`;
+
+export const middlePosition = styled.div`
+  width: fit-content;
+  padding: 0.5rem;
+  margin: 0 auto;
+  background-color: black;
+  color: #fff;
+`;
+
+export const bottomPosition = styled.div`
+  margin: 0 auto;
+  margin-bottom: 1%;
+`;
+
+export const ExplainBox = styled.div`
+  padding: 1rem;
+  width: 30rem;
+  height: 20rem;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  border: 3px solid rgba(255, 255, 255, 0.6);
+
+  & .waiting {
+    font-size: 2rem;
+    font-family: 'Galmuri11', 'sans-serif';
+    line-height: 17rem;
+  }
+`;
