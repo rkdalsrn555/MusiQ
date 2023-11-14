@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as S from './MultiGameChatting.styled';
+import { MultiSkipBox } from '../MultiSkipBox';
 
 type ChatType = {
   nickname: string;
@@ -14,13 +15,14 @@ type ChatType = {
 };
 
 type OwnProps = {
+  skipVote: number;
   gameChatList: ChatType[];
   socketClient: React.MutableRefObject<any>;
   setGameChatList: Dispatch<SetStateAction<ChatType[]>>;
 };
 
 export const MultiGameChatting = (props: OwnProps) => {
-  const { gameChatList, socketClient, setGameChatList } = props;
+  const { skipVote, gameChatList, socketClient, setGameChatList } = props;
   const accessToken = window.localStorage.getItem('userAccessToken');
   const location = useLocation();
   const focusRef = useRef<HTMLInputElement>(null);
@@ -85,6 +87,7 @@ export const MultiGameChatting = (props: OwnProps) => {
         inputFocusRef.current = false;
       }}
     >
+      <MultiSkipBox skipVote={skipVote} />
       <S.ChatListContainer>
         {gameChatList.map((chat, index) => (
           <S.NicknameColor
