@@ -7,6 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class SkipVoteDto {
+
     private MessageDtoType messageType;
     private Boolean isSkipped;
     private Integer skipVote;
