@@ -11,6 +11,7 @@ import com.a608.musiq.domain.websocket.domain.Channel;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.domain.UserInfoItem;
 import com.a608.musiq.domain.websocket.dto.requestDto.CheckPasswordRequestDto;
+import com.a608.musiq.domain.websocket.dto.requestDto.ExitGameRoomRequestDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.AllChannelSizeResponseDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.ChannelUserResponseDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.ChannelUserResponseItem;
@@ -91,6 +92,7 @@ public class GameService {
 
     private static final int MULTI_SCORE_WEIGHT = 10;
     private static final int LEVEL_SIZE = 50;
+    private static final int MAKING_LOBBY_CHANNEL_NO = 1000;
 
     @PostConstruct
     public void init() {
@@ -554,15 +556,6 @@ public class GameService {
                 .build();
     }
 
-    public ExitGameRoomResponse moveLobby(String accessToken, int channelNo) {
-        UUID uuid = jwtValidator.getData(accessToken);
-        int lobbyNo = GameValue.getChannelNo(uuid, channelNo);
-        GameValue.removeUserFromChannel(uuid, channelNo);
-        GameValue.addUserToChannel(uuid, lobbyNo);
-
-        return ExitGameRoomResponse.builder().destinationNo(lobbyNo).build();
-    }
-
     /**
      * 비밀번호 체크
      *
@@ -608,15 +601,27 @@ public class GameService {
         messagingTemplate.convertAndSend(destination, enterGameRoomDto);
     }
 
-    public void exitGameRoom(String accessToken, int channelNo) {
+    public ExitGameRoomResponse exitGameRoom(String accessToken, ExitGameRoomRequestDto exitGameRoomRequestDto) {
+        // previousChannelNo : from -> 게임 방 번호
+        int previousChannelNo = exitGameRoomRequestDto.getPreviousChannelNo();
+        // destinationChannelNo : to -> 로비 번호
+        int destinationChannelNo = previousChannelNo / MAKING_LOBBY_CHANNEL_NO;
         UUID uuid = jwtValidator.getData(accessToken);
 
-        String destination = getDestination(channelNo);
-        GameRoom gameRoom = GameValue.getGameRooms().get(channelNo);
+        //pubDestination == previousChannelNo : pub 해줄 destination
+        String pubDestination = getDestination(previousChannelNo);
+        GameRoom gameRoom = GameValue.getGameRooms().get(previousChannelNo);
 
-		ExitGameRoomDto exitGameRoomDto = commonService.exitGameRoom(uuid, gameRoom, channelNo);
+		ExitGameRoomDto exitGameRoomDto = commonService.exitGameRoom(uuid, gameRoom, previousChannelNo);
 
-		messagingTemplate.convertAndSend(destination, exitGameRoomDto);
+		messagingTemplate.convertAndSend(pubDestination, exitGameRoomDto);
+
+        ExitGameRoomResponse exitGameRoomResponse = ExitGameRoomResponse.builder()
+            .destinationChannelNo(destinationChannelNo)
+            .build();
+
+
+        return exitGameRoomResponse;
 	}
 
 }
