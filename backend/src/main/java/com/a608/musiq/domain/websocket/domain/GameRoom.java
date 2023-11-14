@@ -118,7 +118,13 @@ public class GameRoom {
             Channel channel = GameValue.getChannel(lobbyChannelNumber);
 
             channel.clearGameRoom(gameChannelNumber);
-            return null;
+
+            return ExitGameRoomDto.builder()
+                .messageDtoType(MessageDtoType.EXITUSER)
+                .userInfoItems(userInfoItems.values().stream().toList())
+                .gameRoomManagerNickname(this.roomManagerNickname)
+                .exitedUserNickname(userInfoItems.get(uuid).getNickname())
+                .build();
         }
 
         // 방장 위임
