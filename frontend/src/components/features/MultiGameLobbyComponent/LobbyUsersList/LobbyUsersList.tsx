@@ -32,7 +32,6 @@ export const LobbyUsersList = () => {
           (a: UserType, b: UserType) => b.userLevel - a.userLevel
         );
         setUsers(sortedUsers);
-        console.log('유저목록', sortedUsers);
       }
     } catch (error) {
       console.error('Fetching users failed: ', error);
