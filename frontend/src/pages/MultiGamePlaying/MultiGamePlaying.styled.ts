@@ -9,7 +9,7 @@ export const Container = styled.div`
   background-size: cover;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-evenly;
 `;
 
 export const topPosition = styled.div`
@@ -20,7 +20,7 @@ export const topPosition = styled.div`
   justify-content: center;
   align-items: center;
   gap: 5rem;
-  margin-top: 5%;
+  margin-top: 2%;
 `;
 
 export const middlePosition = styled.div`
