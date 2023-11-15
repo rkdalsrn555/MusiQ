@@ -48,6 +48,10 @@ const Container = styled.div`
     font-size: 1.5rem;
     font-family: 'Galmuri11', 'sans-serif';
     font-weight: bold;
+
+    & .answerTitle {
+      color: #e9ff24;
+    }
   }
 
   & .hintBox {
@@ -74,6 +78,8 @@ const Container = styled.div`
 `;
 
 type OwnProps = {
+  playTimeMessage: string;
+  isSkipped: boolean;
   winner: string;
   isResult: boolean;
   isMusicStart: boolean;
@@ -87,6 +93,8 @@ type OwnProps = {
 
 export const MultiGameHint = (props: OwnProps) => {
   const {
+    playTimeMessage,
+    isSkipped,
     winner,
     isResult,
     isMusicStart,
@@ -113,15 +121,28 @@ export const MultiGameHint = (props: OwnProps) => {
               <p className="explain bold">정답이 나왔습니다!</p>
             ) : (
               <div className="explain bold">
-                {isMusicStart && time !== 0 ? (
-                  <>
-                    {' '}
-                    <span className="explain bold explainColor1">음악</span>을
-                    듣고 <span className="explain bold explainColor2">답</span>
-                    을 입력하세요.
-                  </>
+                {isSkipped ? (
+                  <p className="explain bold">
+                    과반수 투표로 노래가 스킵되었습니다!
+                  </p>
                 ) : (
-                  `${time} 초 뒤에 노래가 나와요!`
+                  <div className="explain bold">
+                    {isMusicStart && playTimeMessage !== '준비중' ? (
+                      <>
+                        {' '}
+                        <span className="explain bold explainColor1">음악</span>
+                        을 듣고{' '}
+                        <span className="explain bold explainColor2">답</span>을
+                        입력하세요.
+                      </>
+                    ) : (
+                      <div className="explain bold">
+                        {playTimeMessage === '준비중'
+                          ? playTimeMessage
+                          : `${time} 초 뒤에 노래가 나와요!`}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             )}
@@ -144,7 +165,8 @@ export const MultiGameHint = (props: OwnProps) => {
             </div>
           ) : (
             <p className="answer">
-              정답! {answerData.singer} - {answerData.title}
+              <span className="answerTitle">정답!</span> {answerData.singer} -{' '}
+              {answerData.title}
             </p>
           )}
         </>

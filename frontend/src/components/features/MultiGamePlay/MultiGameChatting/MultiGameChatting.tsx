@@ -51,15 +51,6 @@ export const MultiGameChatting = (props: OwnProps) => {
         nickname: window.localStorage.getItem('nickname'),
       }),
     });
-    // if (inputTextRef.current === '.') {
-    //   setGameChatList((prev) => [
-    //     ...prev,
-    //     {
-    //       nickname: '삐약이',
-    //       message: `${nickname}님 스킵투표되었습니다, 이 투표는 다른사람에게 공개되지 않습니다.`,
-    //     },
-    //   ]);
-    // }
     setInputText('');
   };
 
