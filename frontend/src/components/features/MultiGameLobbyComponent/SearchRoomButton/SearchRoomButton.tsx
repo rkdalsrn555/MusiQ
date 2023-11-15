@@ -52,7 +52,6 @@ const PasswordModal: React.FC<{
     <PasswordModalOverlay>
       <ModalContent>
         <StyledInput
-          type="password"
           value={password}
           placeholder="&nbsp;비밀번호를 입력하세요"
           onChange={(e) => setPassword(e.target.value)}
@@ -141,6 +140,7 @@ export const SearchRoomButton: React.FC<SearchRoomButtonProps> = ({
 
         if (foundRoom.isPrivate) {
           setIsPasswordModalOpen(true);
+          setIsModalOpen(false);
         } else {
           enterRoom(''); // 비밀번호가 없는 경우
         }
