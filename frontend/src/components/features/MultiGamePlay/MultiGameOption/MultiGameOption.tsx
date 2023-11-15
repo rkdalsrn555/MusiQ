@@ -24,6 +24,7 @@ const Container = styled.div`
 
   & li {
     font-size: 1.2rem;
+    padding-bottom: 3%;
   }
 `;
 

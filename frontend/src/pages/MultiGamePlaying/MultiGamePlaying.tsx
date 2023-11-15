@@ -15,6 +15,7 @@ import {
   MultiGameOption,
   MultiGameOutBtn,
 } from '../../components/features';
+import countDownBgm from '../../assets/audio/CountDownMid.wav';
 import * as S from './MultiGamePlaying.styled';
 import { Modal } from '../../components/utils';
 
@@ -77,6 +78,11 @@ export const MultiGamePlaying = () => {
     message: '게임 대기중...',
   });
 
+  // 카운트다운 음악객체 생성
+  const myAudio = new Audio(); // Aduio 객체 생성
+  myAudio.volume = 0.1;
+  myAudio.src = countDownBgm; // 음원 파일 설정
+
   // 모바일 기기 접근을 막는 로직
   useEffect(() => {
     const isMobile =
@@ -110,7 +116,6 @@ export const MultiGamePlaying = () => {
           });
           break;
         case 'EXITUSER': // 유저 나갈 때 pub
-          console.log('유저나갔당');
           setGameUserList(msg.userInfoItems);
           setManager(msg.gameRoomManagerNickname);
           setGameChatList((prev) => [
@@ -121,12 +126,12 @@ export const MultiGamePlaying = () => {
             },
             {
               nickname: '삐약이',
-              message: `방장이 ${msg.manager}님으로 변경되었습니다.`,
+              message: `방장이 ${msg.gameRoomManagerNickname}님으로 변경되었습니다.`,
             },
           ]);
           setSpeakChick({
             nickname: '삐약이',
-            message: `방장이 ${msg.manager}님으로 변경되었습니다.`,
+            message: `방장이 ${msg.gameRoomManagerNickname}님으로 변경되었습니다.`,
           });
           break;
         case 'CHAT': // 유저가 채팅 보냈을 때
@@ -154,8 +159,10 @@ export const MultiGamePlaying = () => {
           break;
         case 'TIME': // 시간초세기
           setPlayTime(msg.time);
-          console.log(msg.message);
           setPlayTimeMessage(msg.message);
+          if (!isMusicStart && !isResult && msg.time <= 3) {
+            myAudio.play();
+          }
           break;
         case 'MUSICPROBLEM': // 음악 문제 세팅
           setAnswerData({ title: msg.title, singer: msg.singer });
@@ -347,7 +354,6 @@ export const MultiGamePlaying = () => {
         width="0"
         height="0"
         ref={videoRef}
-        volume={1}
       />
       <S.Container>
         <MultiGameOption years={location.state.requestBody.musicYear} />
