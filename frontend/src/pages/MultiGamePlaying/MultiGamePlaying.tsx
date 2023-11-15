@@ -43,6 +43,7 @@ export const MultiGamePlaying = () => {
   const location = useLocation();
   const accessToken = window.localStorage.getItem('userAccessToken') ?? '';
   const [isToggled, setIsToggled] = useState<boolean>(false); // 모달 창 toggle
+  const isOutButtonClickRef = useRef<boolean>(false);
   const client = useRef<any>({}); // 게임 소켓 클라이언트
   const gameRoomNumber = Number(location.pathname.split('/')[4]); // 게임방번호
   const [gameChatList, setGameChatList] = useState<GameChatType[]>([]); // 채팅리스트
@@ -115,16 +116,16 @@ export const MultiGamePlaying = () => {
             ...prev,
             {
               nickname: '삐약이',
-              message: `${msg.enteredUserNickname}님이 퇴장하셨습니다.`,
+              message: `${msg.exitedUserNickname}님이 퇴장하셨습니다.`,
             },
             {
               nickname: '삐약이',
-              message: `방장이 ${msg.manager}님으로 변경되었습니다. 방장이 게임을 시작해주세요.`,
+              message: `방장이 ${msg.manager}님으로 변경되었습니다.`,
             },
           ]);
           setSpeakChick({
             nickname: '삐약이',
-            message: `방장이 ${msg.manager}님으로 변경되었습니다. 방장이 게임을 시작해주세요.`,
+            message: `방장이 ${msg.manager}님으로 변경되었습니다.`,
           });
           break;
         case 'CHAT': // 유저가 채팅 보냈을 때
@@ -133,7 +134,7 @@ export const MultiGamePlaying = () => {
               ...prev,
               {
                 nickname: '삐약이',
-                message: `${msg.nickname}님 스킵투표되었습니다, 이 투표는 다른사람에게 공개되지 않습니다.`,
+                message: `${msg.nickname}님 스킵투표되었습니다.`,
               },
             ]);
           } else {
@@ -249,6 +250,7 @@ export const MultiGamePlaying = () => {
         case 'GOWAITING': // 게임 끝났을 때 대기상태로 다시 변환
           setIsGameStart(false);
           setGameUserList(msg.memberInfos);
+          setIsSkipped(false);
           setIsResult(false);
           setSpeakChick({
             nickname: '삐약이',
@@ -309,7 +311,9 @@ export const MultiGamePlaying = () => {
     ]);
     return () => {
       disconnect();
-      patchOutGameRoom();
+      if (!isOutButtonClickRef.current) {
+        patchOutGameRoom();
+      }
     };
   }, []);
 
@@ -331,6 +335,7 @@ export const MultiGamePlaying = () => {
           setIsToggled(false);
         }}
         yesBtnClick={() => {
+          isOutButtonClickRef.current = true;
           patchOutGameRoom();
         }}
       />
