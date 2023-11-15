@@ -110,6 +110,7 @@ export const MultiGamePlaying = () => {
           });
           break;
         case 'EXITUSER': // 유저 나갈 때 pub
+          console.log('유저나갔당');
           setGameUserList(msg.userInfoItems);
           setManager(msg.gameRoomManagerNickname);
           setGameChatList((prev) => [
