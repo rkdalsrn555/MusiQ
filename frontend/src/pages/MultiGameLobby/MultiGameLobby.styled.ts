@@ -34,8 +34,9 @@ export const ButtonsWrapper = styled.div`
   border-radius: 30px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
+  gap: 1%;
   background-color: rgba(255, 255, 255, 0.5);
   position: absolute;
   right: 4.5%;
