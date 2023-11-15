@@ -17,6 +17,7 @@ public class MusicProblemDto {
     private String initialHint;
     private String musicUrl;
     private Integer round;
+    private Integer skipVote;
 
     @Builder
     public MusicProblemDto(String musicUrl, Integer round) {
@@ -26,6 +27,7 @@ public class MusicProblemDto {
         this.winner = "";
         this.singerHint = "";
         this.initialHint = "";
+        this.skipVote = 0;
         this.musicUrl = musicUrl;
         this.round = round;
     }

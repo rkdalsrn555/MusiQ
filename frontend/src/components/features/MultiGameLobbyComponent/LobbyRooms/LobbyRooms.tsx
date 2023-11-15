@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { userApis } from '../../../../hooks/api/userApis';
 import {
   RoomsWrapper,
@@ -21,6 +22,7 @@ import {
   StyledExitButton,
   StyledSubmitButton,
   StyledModalForm,
+  ModalOverlay,
 } from './LobbyRooms.styled';
 import previousButton from '../../../../assets/svgs/modeSelectSvgs/nextButton.svg';
 import roomLockIcon from '../../../../assets/svgs/MultiLobby/roomLock.svg';
@@ -98,24 +100,26 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
   };
 
   return (
-    <PasswordModalWrapper>
-      <img src={logoIcon} alt="logo" width={200} />
-      <StyledModalForm onSubmit={handleSubmit}>
-        <StyledModalInput
-          value={password}
-          onChange={handleChange}
-          placeholder="방 비밀번호 입력"
-          autoComplete="off"
-          maxLength={4}
-        />
-        <StyledSubmitButton type="submit" onClick={handleSubmit}>
-          확인
-        </StyledSubmitButton>
-        <StyledExitButton type="button" onClick={onClose}>
-          <img src={exitIcon} alt="나가기" width={50} />
-        </StyledExitButton>
-      </StyledModalForm>
-    </PasswordModalWrapper>
+    <ModalOverlay>
+      <PasswordModalWrapper>
+        <img src={logoIcon} alt="logo" width={200} />
+        <StyledModalForm onSubmit={handleSubmit}>
+          <StyledModalInput
+            value={password}
+            onChange={handleChange}
+            placeholder="방 비밀번호 입력"
+            autoComplete="off"
+            maxLength={4}
+          />
+          <StyledSubmitButton type="submit" onClick={handleSubmit}>
+            확인
+          </StyledSubmitButton>
+          <StyledExitButton type="button" onClick={onClose}>
+            <img src={exitIcon} alt="나가기" width={50} />
+          </StyledExitButton>
+        </StyledModalForm>
+      </PasswordModalWrapper>
+    </ModalOverlay>
   );
 };
 
@@ -219,81 +223,90 @@ export const LobbyRooms = () => {
   }
 
   return (
-    <RoomsWrapper>
-      {currentRooms.map((room) => (
-        <Room
-          key={room.roomManager}
-          onClick={() => !room.isPlay && handleRoomClick(room)}
-          style={{
-            backgroundColor: room.isPlay
-              ? 'rgba(0, 0, 0, 0.5)'
-              : 'rgba(255, 255, 255, 0.5)',
-            pointerEvents: room.isPlay ? 'none' : 'auto',
-          }}
-        >
-          <RoomNumberDiv>{room.gameRoomNo}</RoomNumberDiv>
-          <RoomTitleDiv>&nbsp;{room.roomTitle}</RoomTitleDiv>
-          <RoomManagerDiv>{room.roomManager}님의 방</RoomManagerDiv>
-          <RoomYearsDiv>{getYearsRange(room.years)}</RoomYearsDiv>
-          <RoomPeopleDiv
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1 }}
+    >
+      <RoomsWrapper>
+        {currentRooms.map((room) => (
+          <Room
+            key={room.roomManager}
+            onClick={() => !room.isPlay && handleRoomClick(room)}
             style={{
-              color: room.currentMembers === 6 ? 'red' : 'inherit',
+              backgroundColor: room.isPlay
+                ? 'rgba(0, 0, 0, 0.5)'
+                : 'rgba(255, 255, 255, 0.5)',
+              pointerEvents: room.isPlay ? 'none' : 'auto',
             }}
           >
-            {room.currentMembers}/6
-          </RoomPeopleDiv>
-          <IsPrivateimg
-            src={room.isPrivate ? roomLockIcon : roomUnlockIcon}
-            alt="Room is private?"
-            width={30}
+            <RoomNumberDiv>{room.gameRoomNo}</RoomNumberDiv>
+            <RoomTitleDiv>&nbsp;{room.roomTitle}</RoomTitleDiv>
+            <RoomManagerDiv>{room.roomManager}님의 방</RoomManagerDiv>
+            <RoomYearsDiv>{getYearsRange(room.years)}</RoomYearsDiv>
+            <RoomPeopleDiv
+              style={{
+                color: room.currentMembers === 6 ? 'red' : 'inherit',
+              }}
+            >
+              {room.currentMembers}/6
+            </RoomPeopleDiv>
+            <IsPrivateimg
+              src={room.isPrivate ? roomLockIcon : roomUnlockIcon}
+              alt="Room is private?"
+              width={30}
+            />
+            <RoomQuizAmountDiv>&nbsp;{room.quizAmount}문제</RoomQuizAmountDiv>
+          </Room>
+        ))}
+        <PreviousButton
+          type="button"
+          onClick={handlePrevious}
+          disabled={currentPage === 1 || rooms.length === 0}
+        >
+          <img
+            src={previousButton}
+            alt="이전 버튼"
+            style={{ rotate: '180deg', opacity: 1 }}
+            width={60}
           />
-          <RoomQuizAmountDiv>{room.quizAmount}문제</RoomQuizAmountDiv>
-        </Room>
-      ))}
-      <PreviousButton
-        type="button"
-        onClick={handlePrevious}
-        disabled={currentPage === 1 || rooms.length === 0}
-      >
-        <img
-          src={previousButton}
-          alt="이전 버튼"
-          style={{ rotate: '180deg', opacity: 0.8 }}
-          width={80}
-        />
-      </PreviousButton>
-      <NextButton type="button" onClick={handleNext}>
-        <img
-          src={previousButton}
-          alt="다음 버튼"
-          style={{ opacity: 0.8 }}
-          width={80}
-        />
-      </NextButton>
-      {isModalOpen && (
-        <PasswordModal
-          onClose={() => setIsModalOpen(false)}
-          onSubmit={(password, data) => {
-            const room = rooms.find((r) => r.gameRoomNo === selectedRoomNumber);
-            if (!room) return;
+        </PreviousButton>
+        <NextButton type="button" onClick={handleNext}>
+          <img
+            src={previousButton}
+            alt="다음 버튼"
+            style={{ opacity: 1 }}
+            width={60}
+          />
+        </NextButton>
+        {isModalOpen && (
+          <PasswordModal
+            onClose={() => setIsModalOpen(false)}
+            onSubmit={(password, data) => {
+              const room = rooms.find(
+                (r) => r.gameRoomNo === selectedRoomNumber
+              );
+              if (!room) return;
 
-            const gameState = {
-              channelNo: parseInt(channelNumber, 10),
-              roomName: room.roomTitle,
-              password,
-              musicYear: room.years,
-              quizAmount: room.quizAmount,
-              data,
-            };
-            navigate(`/multi/${channelNumber}/game/${selectedRoomNumber}`, {
-              state: { requestBody: gameState },
-            });
+              const gameState = {
+                channelNo: parseInt(channelNumber, 10),
+                roomName: room.roomTitle,
+                password,
+                musicYear: room.years,
+                quizAmount: room.quizAmount,
+                data,
+              };
+              navigate(`/multi/${channelNumber}/game/${selectedRoomNumber}`, {
+                state: { requestBody: gameState },
+              });
 
-            setIsModalOpen(false);
-          }}
-          selectedRoomNumber={selectedRoomNumber}
-        />
-      )}
-    </RoomsWrapper>
+              setIsModalOpen(false);
+            }}
+            selectedRoomNumber={selectedRoomNumber}
+          />
+        )}
+      </RoomsWrapper>
+    </motion.div>
   );
 };

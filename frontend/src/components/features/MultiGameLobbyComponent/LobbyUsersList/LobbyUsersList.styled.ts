@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 export const UsersListWrapper = styled.div`
-  width: 15vw;
-  height: 75vh;
+  width: 15rem;
+  height: 40rem;
   flex-shrink: 0;
   border: solid 5px rgba(235, 226, 255, 0.4);
   border-radius: 30px;
@@ -11,13 +11,13 @@ export const UsersListWrapper = styled.div`
   align-items: center;
   background-color: rgba(255, 255, 255, 0.5);
   position: absolute;
-  top: 18%;
+  top: 16.5%;
   left: 4.5%;
 `;
 
 export const UserCellWrapper = styled.div`
-  width: 13vw;
-  height: 65vh;
+  width: 13rem;
+  height: 35rem;
   border: solid 5px rgba(235, 226, 255, 0.4);
   border-radius: 12px;
   display: flex;
@@ -38,7 +38,7 @@ export const UserCellWrapper = styled.div`
 `;
 
 export const UserCell = styled.div`
-  font-size: 18px;
+  font-size: 1rem;
   font-weight: bold;
   margin-bottom: 1rem;
   display: flex;

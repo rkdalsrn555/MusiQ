@@ -32,7 +32,10 @@ public class AfterAnswerService {
         if (room.getTime() > 0) {
 
             // 카운트 다운 전송
-            TimeDto dto = TimeDto.builder().time(room.getTime()).build();
+            TimeDto dto = TimeDto.builder()
+                    .time(room.getTime())
+                    .message(room.getTime() + " 초")
+                    .build();
             messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
 
             room.timeDown();
@@ -69,10 +72,17 @@ public class AfterAnswerService {
         gameRoom.setSkipVote(++skipVote);
         //해당 유저 isSkipped = true
         gameRoom.getUserInfoItems().get(uuid).setSkipped(true);
+
         //과반수인 경우
         if (gameRoom.getSkipVote() >= (gameRoom.getTotalUsers() / MAKING_HALF_NUMBER
                 + MAKING_CEIL_NUMBER)) {
+
             gameRoom.setTime(SKIP_VOTE_INITIAL_NUMBER);
+            SkipVoteDto skipVoteDto = SkipVoteDto.create(MessageDtoType.AFTERSKIP, true,
+                    gameRoom.getSkipVote());
+
+            // skipVote++ 하고 pub
+            messagingTemplate.convertAndSend(destination, skipVoteDto);
         } else {
             //과반수가 아닌 경우
             SkipVoteDto skipVoteDto = SkipVoteDto.create(MessageDtoType.AFTERSKIP, false,

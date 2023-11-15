@@ -1,24 +1,25 @@
 import styled from 'styled-components';
 
 export const RoomsWrapper = styled.div`
-  width: 62vw;
-  height: 48vh;
+  width: 62rem;
+  height: 27rem;
   flex-shrink: 0;
   border: solid 5px rgba(235, 226, 255, 0.4);
   border-radius: 30px;
   display: flex;
   background-color: rgba(255, 255, 255, 0.5);
   position: absolute;
-  top: 7%;
-  left: 21%;
+  top: 6%;
+  left: 23.5%;
   flex-wrap: wrap;
   flex-direction: column;
   padding: 3px;
 `;
 
 export const Room = styled.button`
-  width: 30vw;
-  height: 14vh;
+  width: 30rem;
+  height: 8rem;
+  padding: 1rem;
   margin: 4px;
   border: 1px solid #ccc;
   border-radius: 15px;
@@ -28,66 +29,75 @@ export const Room = styled.button`
 export const PreviousButton = styled.button`
   display: flex;
   position: absolute;
-  left: -4%;
+  left: -9%;
   top: 32%;
 `;
 
 export const NextButton = styled.button`
   display: flex;
   position: absolute;
-  right: -4%;
+  right: -9%;
   top: 32%;
 `;
 
 export const RoomNumberDiv = styled.div`
   position: absolute;
+  font-family: 'Galmuri11', 'sans-serif';
   font-weight: bold;
   font-size: 28px;
-  margin-top: 0.5%;
-  margin-left: 0.3%;
+  margin-top: -0.5%;
 `;
 
 export const RoomTitleDiv = styled.div`
+  width: 15rem;
   position: absolute;
-  font-size: large;
-  margin-top: 1%;
+  font-size: 1.3rem;
+  margin-top: -0.3%;
   margin-left: 9.2%;
   font-weight: bold;
+  text-align: left;
 `;
 
 export const RoomManagerDiv = styled.div`
   position: absolute;
-  font-size: 18px;
-  margin-top: 4.2%;
-  margin-left: 10%;
+  font-size: 1.2rem;
+  margin-top: 7.2%;
+  margin-left: 9.2%;
+
+  & span {
+    font-size: 1.2rem;
+    color: rgba(255, 78, 131, 1);
+  }
 `;
 
 export const RoomYearsDiv = styled.div`
   position: absolute;
-  font-size: 18px;
-  margin-top: 7.5%;
-  margin-left: 10%;
-  color: grey;
+  width: 6rem;
+  font-size: 1.2rem;
+  margin-top: 4.5%;
+  margin-left: 36%;
+  color: #666;
 `;
 
 export const RoomPeopleDiv = styled.div`
   position: absolute;
   font-weight: bold;
-  margin-top: 6.8%;
-  margin-left: 44%;
+  font-size: 1.4rem;
+  margin-top: 7%;
+  margin-left: 3.5%;
 `;
 
 export const IsPrivateimg = styled.img`
   position: absolute;
-  margin-top: 6.1%;
-  margin-left: 40%;
+  margin-top: 7.2%;
+  margin-left: 0;
 `;
 
 export const RoomQuizAmountDiv = styled.div`
   position: absolute;
   font-size: 22px;
-  margin-left: 38%;
-  margin-top: 1%;
+  margin-left: 35%;
+  margin-top: -0.2%;
 `;
 export const NoRoomImg = styled.img`
   margin: auto;
@@ -106,8 +116,6 @@ export const PasswordModalWrapper = styled.div`
   background-color: rgba(255, 118, 120, 1);
   position: absolute;
   z-index: 1;
-  top: 30%;
-  left: 25%;
 `;
 
 export const StyledModalInput = styled.input`
@@ -142,4 +150,17 @@ export const StyledModalForm = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+`;
+
+export const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5); // 반투명 배경 설정
+  z-index: 1000;
 `;

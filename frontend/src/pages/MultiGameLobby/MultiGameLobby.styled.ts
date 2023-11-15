@@ -3,6 +3,7 @@ import backgroundGif2 from '../../assets/img/background/backgroundGif1.gif';
 
 export const LobbyWrapper = styled.div`
   width: 95vw;
+  min-width: 100rem;
   height: 93vh;
   flex-shrink: 0;
   border: solid 5px rgba(235, 226, 255, 0.4);
@@ -34,10 +35,11 @@ export const ButtonsWrapper = styled.div`
   border-radius: 30px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
+  gap: 1%;
   background-color: rgba(255, 255, 255, 0.5);
   position: absolute;
   right: 4.5%;
-  top: 14%
+  top: 14%;
 `;
