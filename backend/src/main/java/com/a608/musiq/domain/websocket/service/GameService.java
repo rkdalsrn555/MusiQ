@@ -400,6 +400,9 @@ public class GameService {
                         // Transactional을 위한 UpdateExp 메서드 분리
                         MemberInfo memberInfo = memberInfoOptional.get();
                         commonService.updateExp(memberInfo, userInfoMap.get(memberId).getScore());
+                        
+                        // 저장
+                        memberInfoRepository.save(memberInfo);
 
                         util.insertDatatoRedisSortedSet(RedisKey.RANKING.getKey(),
                                 memberInfo.getNickname(), memberInfo.getExp());
@@ -519,10 +522,13 @@ public class GameService {
                         .isSkipped(false).build());
         GameRoom gameRoom = GameRoom.builder().roomNo(roomNumber)
                 .roomName(createGameRoomRequestDto.getRoomName())
-                .password(createGameRoomRequestDto.getPassword()).roomManagerUUID(uuid)
+                .password(createGameRoomRequestDto.getPassword())
+                .isPrivate(!createGameRoomRequestDto.getPassword().equals(""))
+                .roomManagerUUID(uuid)
                 .roomManagerNickname(memberInfo.getNickname())
                 .numberOfProblems(createGameRoomRequestDto.getQuizAmount())
-                .year(createGameRoomRequestDto.getMusicYear()).totalUsers(0)
+                .year(createGameRoomRequestDto.getMusicYear())
+                .totalUsers(0)
                 .gameRoomType(GameRoomType.WAITING)
                 .userInfoItems(userInfoItems).build();
 

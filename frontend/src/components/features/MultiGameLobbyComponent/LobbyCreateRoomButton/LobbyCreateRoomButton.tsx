@@ -17,6 +17,7 @@ import {
   StyledAmountLabel,
   StyledYearLabel,
   StyledIsPrivateRoomCheckBoxDiv,
+  ModalOverlay,
 } from './LobbyCreateRoomButton.styled';
 import exitButtonIcon from '../../../../assets/svgs/MultiLobby/exitButtonIcon.svg';
 import musiqLogo from '../../../../assets/svgs/logo.svg';
@@ -109,99 +110,101 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
   }
 
   return (
-    <StyledModal className="modal">
-      <img src={musiqLogo} alt="logo" width={200} />
-      <StyledExitButton type="button" onClick={onClose}>
-        <img src={exitButtonIcon} alt="창 닫기" width={50} />
-      </StyledExitButton>
-      <StyledRoomTitleInput
-        placeholder="&nbsp;방 제목"
-        value={roomName}
-        onChange={(e) => {
-          const currentValue = e.target.value;
-          if (currentValue.length <= 18) {
-            setRoomName(currentValue);
-            setRoomNameError(''); // 에러 메시지 초기화
-          } else {
-            setRoomNameError('18자까지 입력 가능합니다.'); // 에러 메시지 설정
-          }
-        }}
-        autoComplete="off"
-        maxLength={18} // 방 제목 길이 제한 추가
-      />
+    <ModalOverlay>
+      <StyledModal className="modal">
+        <img src={musiqLogo} alt="logo" width={200} />
+        <StyledExitButton type="button" onClick={onClose}>
+          <img src={exitButtonIcon} alt="창 닫기" width={50} />
+        </StyledExitButton>
+        <StyledRoomTitleInput
+          placeholder="&nbsp;방 제목"
+          value={roomName}
+          onChange={(e) => {
+            const currentValue = e.target.value;
+            if (currentValue.length <= 18) {
+              setRoomName(currentValue);
+              setRoomNameError(''); // 에러 메시지 초기화
+            } else {
+              setRoomNameError('18자까지 입력 가능합니다.'); // 에러 메시지 설정
+            }
+          }}
+          autoComplete="off"
+          maxLength={18} // 방 제목 길이 제한 추가
+        />
 
-      {roomNameError && (
-        <div style={{ color: 'yellow' }}>{roomNameError}</div> // 에러 메시지 표시
-      )}
-      <StyledIsPrivateRoomCheckBoxDiv>
-        <label style={{ fontSize: '18px' }}>
-          <input
-            type="checkbox"
-            checked={isPrivate}
-            onChange={handlePrivateChange}
-            style={{ transform: 'scale(1.5)' }}
-          />
-          &nbsp;비공개
-        </label>
-      </StyledIsPrivateRoomCheckBoxDiv>
-      {isPrivate && (
-        <>
-          <StyledRoomPasswordInput
-            placeholder="&nbsp;비밀번호"
-            value={password}
-            onChange={(e) => {
-              const currentValue = e.target.value;
-              const regex = /^[0-9]*$/;
-              if (regex.test(currentValue) || currentValue === '') {
-                setPassword(currentValue);
-                setPasswordError('');
-              } else {
-                setPasswordError('숫자만 최대 4자리 입력 가능합니다.');
-              }
-            }}
-            autoComplete="off"
-            maxLength={4}
-          />
-
-          {passwordError && (
-            <div style={{ color: 'yellow' }}>{passwordError}</div>
-          )}
-        </>
-      )}
-
-      <SelectYearWrapper>
-        <div style={{ fontSize: '18px' }}>노래의 연도를 선택 해주세요</div>
-        {yearsOptions.map((year) => (
-          <StyledYearLabel key={year} style={{ fontSize: '20px' }}>
-            <StyledCheckbox
+        {roomNameError && (
+          <div style={{ color: 'yellow' }}>{roomNameError}</div> // 에러 메시지 표시
+        )}
+        <StyledIsPrivateRoomCheckBoxDiv>
+          <label style={{ fontSize: '18px' }}>
+            <input
               type="checkbox"
-              value={year}
-              checked={musicYear.includes(year)}
-              onChange={() => toggleYearSelection(year)}
+              checked={isPrivate}
+              onChange={handlePrivateChange}
+              style={{ transform: 'scale(1.5)' }}
             />
-            &nbsp;{year}
-          </StyledYearLabel>
-        ))}
-      </SelectYearWrapper>
-      <SelectQuizAmoutWrapper>
-        <div style={{ fontSize: '18px' }}>문제 개수를 선택 해주세요</div>
-        {quizAmountOptions.map((amount) => (
-          <StyledAmountLabel key={amount} style={{ fontSize: '20px' }}>
-            <StyledRadio
-              type="radio"
-              name="quizAmount"
-              value={amount}
-              checked={quizAmount === amount}
-              onChange={() => handleQuizAmountChange(amount)}
+            &nbsp;비공개
+          </label>
+        </StyledIsPrivateRoomCheckBoxDiv>
+        {isPrivate && (
+          <>
+            <StyledRoomPasswordInput
+              placeholder="&nbsp;비밀번호"
+              value={password}
+              onChange={(e) => {
+                const currentValue = e.target.value;
+                const regex = /^[0-9]*$/;
+                if (regex.test(currentValue) || currentValue === '') {
+                  setPassword(currentValue);
+                  setPasswordError('');
+                } else {
+                  setPasswordError('숫자만 최대 4자리 입력 가능합니다.');
+                }
+              }}
+              autoComplete="off"
+              maxLength={4}
             />
-            &nbsp;{amount}
-          </StyledAmountLabel>
-        ))}
-      </SelectQuizAmoutWrapper>
-      <StyledCreateRoomButton type="button" onClick={handleCreateRoom}>
-        방 만들기
-      </StyledCreateRoomButton>
-    </StyledModal>
+
+            {passwordError && (
+              <div style={{ color: 'yellow' }}>{passwordError}</div>
+            )}
+          </>
+        )}
+
+        <SelectYearWrapper>
+          <div style={{ fontSize: '18px' }}>노래의 연도를 선택 해주세요</div>
+          {yearsOptions.map((year) => (
+            <StyledYearLabel key={year} style={{ fontSize: '20px' }}>
+              <StyledCheckbox
+                type="checkbox"
+                value={year}
+                checked={musicYear.includes(year)}
+                onChange={() => toggleYearSelection(year)}
+              />
+              &nbsp;{year}
+            </StyledYearLabel>
+          ))}
+        </SelectYearWrapper>
+        <SelectQuizAmoutWrapper>
+          <div style={{ fontSize: '18px' }}>문제 개수를 선택 해주세요</div>
+          {quizAmountOptions.map((amount) => (
+            <StyledAmountLabel key={amount} style={{ fontSize: '20px' }}>
+              <StyledRadio
+                type="radio"
+                name="quizAmount"
+                value={amount}
+                checked={quizAmount === amount}
+                onChange={() => handleQuizAmountChange(amount)}
+              />
+              &nbsp;{amount}
+            </StyledAmountLabel>
+          ))}
+        </SelectQuizAmoutWrapper>
+        <StyledCreateRoomButton type="button" onClick={handleCreateRoom}>
+          방 만들기
+        </StyledCreateRoomButton>
+      </StyledModal>
+    </ModalOverlay>
   );
 };
 

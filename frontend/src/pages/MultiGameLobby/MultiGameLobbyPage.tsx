@@ -88,7 +88,7 @@ export const MultiGameLobbyPage = () => {
           location.pathname.split('/')[2]
         )}`
       );
-      console.log('Left channel successfully.', response.data);
+      console.log('채널에서 나갔습니다', response.data);
     } catch (error) {
       console.error('Error leaving channel:', error);
     }
