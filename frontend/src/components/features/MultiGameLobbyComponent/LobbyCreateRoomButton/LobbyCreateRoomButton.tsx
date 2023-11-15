@@ -185,7 +185,13 @@ const LobbyCreateRoomModal: React.FC<CreateRoomModalProps> = ({
             </StyledYearLabel>
           ))}
         </SelectYearWrapper>
-        <SelectQuizAmoutWrapper>
+        <SelectQuizAmoutWrapper
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              handleCreateRoom();
+            }
+          }}
+        >
           <div style={{ fontSize: '18px' }}>문제 개수를 선택 해주세요</div>
           {quizAmountOptions.map((amount) => (
             <StyledAmountLabel key={amount} style={{ fontSize: '20px' }}>
