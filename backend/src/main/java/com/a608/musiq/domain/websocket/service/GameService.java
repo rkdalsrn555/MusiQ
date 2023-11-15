@@ -522,10 +522,13 @@ public class GameService {
                         .isSkipped(false).build());
         GameRoom gameRoom = GameRoom.builder().roomNo(roomNumber)
                 .roomName(createGameRoomRequestDto.getRoomName())
-                .password(createGameRoomRequestDto.getPassword()).roomManagerUUID(uuid)
+                .password(createGameRoomRequestDto.getPassword())
+                .isPrivate(!createGameRoomRequestDto.getPassword().equals(""))
+                .roomManagerUUID(uuid)
                 .roomManagerNickname(memberInfo.getNickname())
                 .numberOfProblems(createGameRoomRequestDto.getQuizAmount())
-                .year(createGameRoomRequestDto.getMusicYear()).totalUsers(0)
+                .year(createGameRoomRequestDto.getMusicYear())
+                .totalUsers(0)
                 .gameRoomType(GameRoomType.WAITING)
                 .userInfoItems(userInfoItems).build();
 

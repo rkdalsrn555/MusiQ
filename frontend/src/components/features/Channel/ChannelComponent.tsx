@@ -19,12 +19,8 @@ export const ChannelComponent = (props: OwnProps) => {
               handleChannelClick(channelNumber);
             }}
           >
-            <p
-              style={{ fontSize: '28px', color: '#E08080', marginRight: '5%' }}
-            >
-              채널 {channelNumber}{' '}
-            </p>
-            <p>인원수 {size}/100</p>
+            <p className="channel">채널 {channelNumber} </p>
+            <p className="userNum">인원수 {size}/100</p>
           </ChannelItem>
         );
       })}

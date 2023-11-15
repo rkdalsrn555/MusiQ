@@ -39,10 +39,6 @@ export const QuickMatchButton: React.FC<QuickMatchButtonProps> = ({
           quizAmount: room.quizAmount,
           data: userInfoResponse.data.data,
         };
-        console.log(
-          '빠른 입장으로 게임 방에 들어갈 때 전달하는 상태',
-          requestBody
-        );
         navigate(`/multi/${channelNumber}/game/${room.gameRoomNo}`, {
           state: { requestBody },
         });
