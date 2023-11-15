@@ -3,7 +3,6 @@ package com.a608.musiq.domain.websocket.dto.gameMessageDto;
 import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import java.util.List;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GameRoomPubDto {
 
-    private MessageDtoType messageDtoType;
+    private MessageDtoType messageType;
     private List<GameRoomMemberInfo> memberInfos;
     private Integer roomNo;
     private String roomName;
@@ -28,7 +27,7 @@ public class GameRoomPubDto {
     public GameRoomPubDto(List<GameRoomMemberInfo> memberInfos, Integer roomNo, String roomName,
         String password, Boolean isPrivate, Integer numberOfProblems, String year,
         String roomManagerNickname) {
-        this.messageDtoType = MessageDtoType.GOWAITING;
+        this.messageType = MessageDtoType.GOWAITING;
         this.memberInfos = memberInfos;
         this.roomNo = roomNo;
         this.roomName = roomName;

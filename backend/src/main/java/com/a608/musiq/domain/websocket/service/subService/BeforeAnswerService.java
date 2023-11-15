@@ -110,7 +110,10 @@ public class BeforeAnswerService {
         if (room.getTime() > 0) {
 
             // 카운트 다운 전송
-            TimeDto timeDto = TimeDto.builder().time(room.getTime()).build();
+            TimeDto timeDto = TimeDto.builder()
+                    .time(room.getTime())
+                    .message(room.getTime() + " 초")
+                    .build();
             messagingTemplate.convertAndSend("/topic/" + roomNum, timeDto);
 
             // 시간 다운
