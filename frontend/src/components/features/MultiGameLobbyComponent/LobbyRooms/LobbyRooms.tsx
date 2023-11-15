@@ -21,6 +21,7 @@ import {
   StyledExitButton,
   StyledSubmitButton,
   StyledModalForm,
+  ModalOverlay,
 } from './LobbyRooms.styled';
 import previousButton from '../../../../assets/svgs/modeSelectSvgs/nextButton.svg';
 import roomLockIcon from '../../../../assets/svgs/MultiLobby/roomLock.svg';
@@ -98,24 +99,26 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
   };
 
   return (
-    <PasswordModalWrapper>
-      <img src={logoIcon} alt="logo" width={200} />
-      <StyledModalForm onSubmit={handleSubmit}>
-        <StyledModalInput
-          value={password}
-          onChange={handleChange}
-          placeholder="방 비밀번호 입력"
-          autoComplete="off"
-          maxLength={4}
-        />
-        <StyledSubmitButton type="submit" onClick={handleSubmit}>
-          확인
-        </StyledSubmitButton>
-        <StyledExitButton type="button" onClick={onClose}>
-          <img src={exitIcon} alt="나가기" width={50} />
-        </StyledExitButton>
-      </StyledModalForm>
-    </PasswordModalWrapper>
+    <ModalOverlay>
+      <PasswordModalWrapper>
+        <img src={logoIcon} alt="logo" width={200} />
+        <StyledModalForm onSubmit={handleSubmit}>
+          <StyledModalInput
+            value={password}
+            onChange={handleChange}
+            placeholder="방 비밀번호 입력"
+            autoComplete="off"
+            maxLength={4}
+          />
+          <StyledSubmitButton type="submit" onClick={handleSubmit}>
+            확인
+          </StyledSubmitButton>
+          <StyledExitButton type="button" onClick={onClose}>
+            <img src={exitIcon} alt="나가기" width={50} />
+          </StyledExitButton>
+        </StyledModalForm>
+      </PasswordModalWrapper>
+    </ModalOverlay>
   );
 };
 

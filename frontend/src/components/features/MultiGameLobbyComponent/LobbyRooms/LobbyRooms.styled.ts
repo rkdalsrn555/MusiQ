@@ -106,8 +106,6 @@ export const PasswordModalWrapper = styled.div`
   background-color: rgba(255, 118, 120, 1);
   position: absolute;
   z-index: 1;
-  top: 30%;
-  left: 25%;
 `;
 
 export const StyledModalInput = styled.input`
@@ -142,4 +140,17 @@ export const StyledModalForm = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+`;
+
+export const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5); // 반투명 배경 설정
+  z-index: 1000; 
 `;
