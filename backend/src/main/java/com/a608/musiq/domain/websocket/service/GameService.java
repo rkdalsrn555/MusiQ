@@ -400,6 +400,9 @@ public class GameService {
                         // Transactional을 위한 UpdateExp 메서드 분리
                         MemberInfo memberInfo = memberInfoOptional.get();
                         commonService.updateExp(memberInfo, userInfoMap.get(memberId).getScore());
+                        
+                        // 저장
+                        memberInfoRepository.save(memberInfo);
 
                         util.insertDatatoRedisSortedSet(RedisKey.RANKING.getKey(),
                                 memberInfo.getNickname(), memberInfo.getExp());
