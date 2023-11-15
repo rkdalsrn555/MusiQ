@@ -70,6 +70,7 @@ export const MultiGamePlaying = () => {
   const [musicUrl, setMusicUrl] = useState<string>('');
   const videoRef = useRef<ReactPlayer>(null);
   const [isResult, setIsResult] = useState<boolean>(false); // 결과페이지인지 아닌지
+  const isResultRef = useRef<boolean>(false);
   const [resultUser, setResultUser] = useState<ResultUser[]>([]);
   const [skipVote, setSkipVote] = useState<number>(0);
   const [isSkipped, setIsSkipped] = useState<boolean>(false);
@@ -160,7 +161,11 @@ export const MultiGamePlaying = () => {
         case 'TIME': // 시간초세기
           setPlayTime(msg.time);
           setPlayTimeMessage(msg.message);
-          if (!isMusicStart && !isResult && msg.time <= 3) {
+          if (
+            !isMusicStartRef.current &&
+            !isResultRef.current &&
+            msg.time <= 3
+          ) {
             myAudio.play();
           }
           break;
@@ -249,7 +254,8 @@ export const MultiGamePlaying = () => {
           break;
         case 'GAMERESULT':
           setIsResult(true);
-          setResultUser(msg.userResults.sort((a: number, b: number) => b - a));
+          isResultRef.current = true;
+          setResultUser(msg.userResults);
           setSpeakChick({
             nickname: '삐약이',
             message: '게임이 끝났다 삐약!',
@@ -257,9 +263,18 @@ export const MultiGamePlaying = () => {
           break;
         case 'GOWAITING': // 게임 끝났을 때 대기상태로 다시 변환
           setIsGameStart(false);
-          setGameUserList(msg.memberInfos);
-          setIsSkipped(false);
           setIsResult(false);
+          isResultRef.current = false;
+          setIsSkipped(false);
+          setIsMusicStart(false);
+          isMusicStartRef.current = false;
+          setWinner('');
+          setAnswerData({ title: '', singer: '' });
+          setGameUserList(msg.memberInfos);
+          setRemainMusicNum(msg.numberOfProblems);
+          setInitialHint('');
+          setSingerHint('');
+          setSkipVote(0);
           setSpeakChick({
             nickname: '삐약이',
             message: '대기중입니다.. 삐약!',
