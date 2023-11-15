@@ -11,10 +11,12 @@ public class TimeDto {
 
     private MessageDtoType messageType;
     private Integer time;
+    private String message;
 
     @Builder
-    public TimeDto(Integer time) {
+    public TimeDto(Integer time, String message) {
         this.messageType = MessageDtoType.TIME;
         this.time = time;
+        this.message = message;
     }
 }
