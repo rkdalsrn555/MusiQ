@@ -413,6 +413,9 @@ public class GameService {
 								.build());
 					}
 
+                    // 리스트 정렬
+                    memberInfos.sort((o1, o2)->{return o2.getScore().compareTo(o1.getScore());});
+
                     // 다음 판을 위한 세팅
                     room.changeGameRoomType(GameRoomType.WAITING);
 
