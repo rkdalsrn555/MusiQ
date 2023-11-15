@@ -128,9 +128,15 @@ export const SearchRoomButton: React.FC<SearchRoomButtonProps> = ({
         );
 
         setSelectedRoom(foundRoom);
+        console.log(foundRoom);
 
         if (!foundRoom) {
           alert('해당 번호의 방이 없습니다.');
+          return;
+        }
+
+        if (foundRoom.isPlay) {
+          alert('게임 중 입니다.');
           return;
         }
 
