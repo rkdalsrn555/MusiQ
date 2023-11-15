@@ -369,6 +369,9 @@ public class GameService {
                             .map(item -> GameResultItem.builder().nickname(item.getNickname())
                                     .score(item.getScore()).build()).collect(Collectors.toList()));
 
+                    // 리스트 정렬
+                    gameResults.sort((o1, o2)->{return o2.getScore().compareTo(o1.getScore());});
+
                     // 점수 리스트를 담아 전송
                     GameResultDto dto = GameResultDto.builder().userResults(gameResults).build();
 
@@ -412,9 +415,6 @@ public class GameService {
 								.nickName(memberInfo.getNickname())
 								.build());
 					}
-
-                    // 리스트 정렬
-                    memberInfos.sort((o1, o2)->{return o2.getScore().compareTo(o1.getScore());});
 
                     // 다음 판을 위한 세팅
                     room.changeGameRoomType(GameRoomType.WAITING);
