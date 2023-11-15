@@ -50,7 +50,9 @@ export const MultiGamePlaying = () => {
 
   const [manager, setManager] = useState<string>(''); // 내가 게임방의 매니저인지 아닌지
   const [playTime, setPlayTime] = useState<number>(3); // 플레이타임
+  const [playTimeMessage, setPlayTimeMessage] = useState<string>('');
   const [isMusicStart, setIsMusicStart] = useState<boolean>(false); // 음악이 시작되었는지 아닌지
+  const isMusicStartRef = useRef<boolean>(false);
   const [isGameStart, setIsGameStart] = useState<boolean>(false); // 게임 시작되었는지 아닌지
 
   const [remainMusicNum, setRemainMusicNum] = useState<number>(
@@ -126,10 +128,20 @@ export const MultiGamePlaying = () => {
           });
           break;
         case 'CHAT': // 유저가 채팅 보냈을 때
-          setGameChatList((prev) => [
-            ...prev,
-            { nickname: msg.nickname, message: msg.message },
-          ]);
+          if (msg.message === '.' && isMusicStartRef.current) {
+            setGameChatList((prev) => [
+              ...prev,
+              {
+                nickname: '삐약이',
+                message: `${msg.nickname}님 스킵투표되었습니다, 이 투표는 다른사람에게 공개되지 않습니다.`,
+              },
+            ]);
+          } else {
+            setGameChatList((prev) => [
+              ...prev,
+              { nickname: msg.nickname, message: msg.message },
+            ]);
+          }
           break;
         case 'GAMESTART': // 게임 시작 버튼 클릭시
           setIsGameStart(true);
@@ -140,6 +152,7 @@ export const MultiGamePlaying = () => {
           break;
         case 'TIME': // 시간초세기
           setPlayTime(msg.time);
+          setPlayTimeMessage(msg.message);
           break;
         case 'MUSICPROBLEM': // 음악 문제 세팅
           setAnswerData({ title: msg.title, singer: msg.singer });
@@ -148,6 +161,7 @@ export const MultiGamePlaying = () => {
           setInitialHint(msg.initialHint);
           setMusicUrl(msg.musicUrl);
           setRemainMusicNum((prev) => prev - 1);
+          setSkipVote(msg.skipVote);
           break;
         case 'SINGERHINT': // 가수힌트
           setSingerHint(msg.singerHint);
@@ -178,15 +192,19 @@ export const MultiGamePlaying = () => {
             setSingerHint(msg.singerHint);
             setInitialHint(msg.initialHint);
             setSkipVote(msg.skipVote);
+            setIsSkipped(msg.isSkipped);
             setGameUserList(msg.memberInfos);
           } else if (msg.isSkipped) {
             setSkipVote(msg.skipVote);
+            setIsSkipped(msg.isSkipped);
           } else {
             setSkipVote(msg.skipVote);
+            setIsSkipped(msg.isSkipped);
           }
           break;
         case 'AFTERSKIP': // 문제 맞춘 후 스킵요청
           setSkipVote(msg.skipVote);
+          setIsSkipped(msg.isSkipped);
           break;
         case 'BEFOREANSWERCORRECT': // 정답 맞췄을때 누가 정답맞췄고, 정답이 뭔지
           setAnswerData({ title: msg.title, singer: msg.singer });
@@ -212,9 +230,11 @@ export const MultiGamePlaying = () => {
           break;
         case 'MUSICPLAY': // 노래 시작 타이밍
           setIsMusicStart(msg.musicPlay);
+          isMusicStartRef.current = msg.musicPlay;
           break;
         case 'MUSICEND': // 노래 끝
           setIsMusicStart(msg.musicPlay);
+          isMusicStartRef.current = msg.musicPlay;
           break;
         case 'GAMERESULT':
           setIsResult(true);
@@ -334,6 +354,8 @@ export const MultiGamePlaying = () => {
               <div>
                 {isGameStart ? (
                   <MultiGameHint
+                    playTimeMessage={playTimeMessage}
+                    isSkipped={isSkipped}
                     winner={winner}
                     isResult={isResult}
                     isMusicStart={isMusicStart}
