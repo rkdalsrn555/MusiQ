@@ -2,15 +2,15 @@ import styled from 'styled-components';
 
 export const RoomsWrapper = styled.div`
   width: 62rem;
-  height: 25rem;
+  height: 27rem;
   flex-shrink: 0;
   border: solid 5px rgba(235, 226, 255, 0.4);
   border-radius: 30px;
   display: flex;
   background-color: rgba(255, 255, 255, 0.5);
   position: absolute;
-  top: 7%;
-  left: 21%;
+  top: 6%;
+  left: 23.5%;
   flex-wrap: wrap;
   flex-direction: column;
   padding: 3px;
@@ -29,14 +29,14 @@ export const Room = styled.button`
 export const PreviousButton = styled.button`
   display: flex;
   position: absolute;
-  left: -4%;
+  left: -9%;
   top: 32%;
 `;
 
 export const NextButton = styled.button`
   display: flex;
   position: absolute;
-  right: -4%;
+  right: -9%;
   top: 32%;
 `;
 
@@ -162,5 +162,5 @@ export const ModalOverlay = styled.div`
   justify-content: center;
   align-items: center;
   background-color: rgba(0, 0, 0, 0.5); // 반투명 배경 설정
-  z-index: 1000; 
+  z-index: 1000;
 `;
