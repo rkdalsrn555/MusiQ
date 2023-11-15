@@ -49,7 +49,7 @@ export const MultiGamePlaying = () => {
   const [gameUserList, setGameUserList] = useState<GameUserList[]>([]); // 유저리스트
 
   const [manager, setManager] = useState<string>(''); // 내가 게임방의 매니저인지 아닌지
-  const [playTime, setPlayTime] = useState<number>(3); // 플레이타임
+  const [playTime, setPlayTime] = useState<number>(5); // 플레이타임
   const [playTimeMessage, setPlayTimeMessage] = useState<string>('');
   const [isMusicStart, setIsMusicStart] = useState<boolean>(false); // 음악이 시작되었는지 아닌지
   const isMusicStartRef = useRef<boolean>(false);
@@ -152,6 +152,7 @@ export const MultiGamePlaying = () => {
           break;
         case 'TIME': // 시간초세기
           setPlayTime(msg.time);
+          console.log(msg.message);
           setPlayTimeMessage(msg.message);
           break;
         case 'MUSICPROBLEM': // 음악 문제 세팅
@@ -162,6 +163,7 @@ export const MultiGamePlaying = () => {
           setMusicUrl(msg.musicUrl);
           setRemainMusicNum((prev) => prev - 1);
           setSkipVote(msg.skipVote);
+          setIsSkipped(false);
           break;
         case 'SINGERHINT': // 가수힌트
           setSingerHint(msg.singerHint);
@@ -239,11 +241,19 @@ export const MultiGamePlaying = () => {
         case 'GAMERESULT':
           setIsResult(true);
           setResultUser(msg.userResults.sort((a: number, b: number) => b - a));
+          setSpeakChick({
+            nickname: '삐약이',
+            message: '게임이 끝났다 삐약!',
+          });
           break;
         case 'GOWAITING': // 게임 끝났을 때 대기상태로 다시 변환
           setIsGameStart(false);
           setGameUserList(msg.memberInfos);
           setIsResult(false);
+          setSpeakChick({
+            nickname: '삐약이',
+            message: '대기중입니다.. 삐약!',
+          });
           break;
         default:
           break;
