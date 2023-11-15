@@ -5,6 +5,7 @@ import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.data.PlayType;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameRoomMemberInfo;
 import com.a608.musiq.domain.websocket.dto.responseDto.CheckPasswordResponseDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.EnterGameRoomResponseDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.EnterGameRoomDto;
@@ -12,6 +13,8 @@ import com.a608.musiq.domain.websocket.dto.gameMessageDto.ExitGameRoomDto;
 import com.a608.musiq.global.exception.exception.MultiModeException;
 import com.a608.musiq.global.exception.info.MultiModeExceptionInfo;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -107,21 +110,30 @@ public class GameRoom {
     public ExitGameRoomDto exitUser(UUID uuid, String nickname, int gameRoomNumber) {
         int lobbyChannelNumber = gameRoomNumber / ROOM_DIVIDE_NUMBER;
         int gameRoomIndex = gameRoomNumber % ROOM_DIVIDE_NUMBER;
-
+        List<GameRoomMemberInfo> gameRoomMemberInfos = new ArrayList<>();
+        
         // 방에 아무도 안 남을 경우
         if (totalUsers == LEAST_MEMBER_SIZE) {
             GameValue.deleteGameRoom(lobbyChannelNumber, gameRoomIndex, gameRoomNumber);
 
             this.totalUsers--;
-            userInfoItems.remove(uuid);
+            this.userInfoItems.remove(uuid);
+
+            for(UserInfoItem userInfoItem : this.userInfoItems.values()) {
+                GameRoomMemberInfo gameRoomMemberInfo =
+                    GameRoomMemberInfo.create(userInfoItem.getNickname(),userInfoItem.getScore());
+                gameRoomMemberInfos.add(gameRoomMemberInfo);
+            }
+
 
             return ExitGameRoomDto.builder()
-                .messageDtoType(MessageDtoType.EXITUSER)
-                .userInfoItems(userInfoItems.values().stream().toList())
+                .messageType(MessageDtoType.EXITUSER)
+                .userInfoItems(gameRoomMemberInfos)
                 .gameRoomManagerNickname(this.roomManagerNickname)
                 .exitedUserNickname(nickname)
                 .build();
         }
+
 
         // 방장 위임
         if (uuid.equals(this.roomManagerUUID)) {
@@ -137,9 +149,16 @@ public class GameRoom {
         this.totalUsers--;
         userInfoItems.remove(uuid);
 
+        for(UserInfoItem userInfoItem : this.userInfoItems.values()) {
+            GameRoomMemberInfo gameRoomMemberInfo =
+                GameRoomMemberInfo.create(userInfoItem.getNickname(),userInfoItem.getScore());
+            gameRoomMemberInfos.add(gameRoomMemberInfo);
+        }
+
+
         return ExitGameRoomDto.builder()
-            .messageDtoType(MessageDtoType.EXITUSER)
-            .userInfoItems(userInfoItems.values().stream().toList())
+            .messageType(MessageDtoType.EXITUSER)
+            .userInfoItems(gameRoomMemberInfos)
             .gameRoomManagerNickname(this.roomManagerNickname)
             .exitedUserNickname(nickname)
             .build();

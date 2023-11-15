@@ -7,6 +7,8 @@ import {
   CloseButton,
   ButtonsWrapper,
   PasswordModalOverlay,
+  StyledInput,
+  SubmitButton,
 } from './SearchRoomButton.styled';
 
 interface ModalProps {
@@ -36,9 +38,10 @@ const Modal: React.FC<ModalProps> = ({ children, onClose }) => (
   </ModalOverlay>
 );
 
-const PasswordModal: React.FC<{ onSubmit: (password: string) => void }> = ({
-  onSubmit,
-}) => {
+const PasswordModal: React.FC<{
+  onSubmit: (password: string) => void;
+  onClose: () => void;
+}> = ({ onSubmit, onClose }) => {
   const [password, setPassword] = useState('');
 
   const handleSubmit = () => {
@@ -48,8 +51,10 @@ const PasswordModal: React.FC<{ onSubmit: (password: string) => void }> = ({
   return (
     <PasswordModalOverlay>
       <ModalContent>
-        <input
+        <StyledInput
+          type="password"
           value={password}
+          placeholder="&nbsp;비밀번호를 입력하세요"
           onChange={(e) => setPassword(e.target.value)}
           onKeyPress={(e) => {
             if (e.key === 'Enter') {
@@ -57,9 +62,11 @@ const PasswordModal: React.FC<{ onSubmit: (password: string) => void }> = ({
             }
           }}
         />
-        <button type="button" onClick={handleSubmit}>
+        <SubmitButton type="button" onClick={handleSubmit}>
           확인
-        </button>
+        </SubmitButton>
+        <CloseButton onClick={onClose}>&times;</CloseButton>{' '}
+        {/* 닫기 버튼 추가 */}
       </ModalContent>
     </PasswordModalOverlay>
   );
@@ -121,9 +128,15 @@ export const SearchRoomButton: React.FC<SearchRoomButtonProps> = ({
         );
 
         setSelectedRoom(foundRoom);
+        console.log(foundRoom);
 
         if (!foundRoom) {
           alert('해당 번호의 방이 없습니다.');
+          return;
+        }
+
+        if (foundRoom.isPlay) {
+          alert('게임 중 입니다.');
           return;
         }
 
@@ -152,7 +165,7 @@ export const SearchRoomButton: React.FC<SearchRoomButtonProps> = ({
           password,
         }
       );
-      console.log('들어간 방', selectedRoom.gameRoomNo)
+      console.log('들어간 방', selectedRoom.gameRoomNo);
       console.log('입력한 번호:', password);
       console.log('비밀번호 검증', passwordResponse.data.data);
       if (
@@ -175,8 +188,8 @@ export const SearchRoomButton: React.FC<SearchRoomButtonProps> = ({
       </button>
       {isModalOpen && (
         <Modal onClose={handleCloseModal}>
-          <input
-            placeholder="방 번호 입력"
+          <StyledInput
+            placeholder="&nbsp;방 번호 입력"
             value={roomNumber}
             onChange={handleInputChange}
             onKeyPress={(e) => {
@@ -185,12 +198,17 @@ export const SearchRoomButton: React.FC<SearchRoomButtonProps> = ({
               }
             }}
           />
-          <button type="button" onClick={handleSubmit}>
+          <SubmitButton type="button" onClick={handleSubmit}>
             입장
-          </button>
+          </SubmitButton>
         </Modal>
       )}
-      {isPasswordModalOpen && <PasswordModal onSubmit={handlePasswordSubmit} />}
+      {isPasswordModalOpen && (
+        <PasswordModal
+          onSubmit={handlePasswordSubmit}
+          onClose={() => setIsPasswordModalOpen(false)}
+        />
+      )}
     </ButtonsWrapper>
   );
 };

@@ -11,8 +11,8 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ExitGameRoomDto {
-	private MessageDtoType messageDtoType;
-	private List<UserInfoItem> userInfoItems;
+	private MessageDtoType messageType;
+	private List<GameRoomMemberInfo> userInfoItems;
 	private String gameRoomManagerNickname;
 	private String exitedUserNickname;
 }
