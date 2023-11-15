@@ -9,9 +9,8 @@ export const CenteredContainer = styled.div`
 `;
 
 export const ChannelWrapper = styled.div`
-  width: 48vw;
-  height: 75vh;
-  flex-shrink: 0;
+  min-width: 40rem;
+  height: 40rem;
   border: solid 5px rgba(235, 226, 255, 0.4);
   border-radius: 30px;
   display: flex;

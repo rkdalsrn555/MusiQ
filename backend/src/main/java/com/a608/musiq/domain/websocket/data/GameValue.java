@@ -116,9 +116,9 @@ public class GameValue {
         gameRooms.put(gameRoomNo, gameRoom);
     }
 
-    public static void deleteGameRoom(int lobbyChannelNo, int gameRoomNo) {
+    public static void deleteGameRoom(int lobbyChannelNo, int gameRoomIndex, int gameRoomNo) {
         Channel channel = gameChannels.get(lobbyChannelNo - CHANNEL_SYNC);
-        channel.clearGameRoom(gameRoomNo);
+        channel.clearGameRoom(gameRoomIndex);
 
         gameRooms.remove(gameRoomNo);
     }
