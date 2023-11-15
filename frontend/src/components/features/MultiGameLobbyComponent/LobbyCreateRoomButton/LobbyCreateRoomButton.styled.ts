@@ -26,8 +26,6 @@ export const StyledModal = styled.div`
   background-color: rgba(255, 118, 120, 1);
   position: absolute;
   z-index: 1;
-  bottom: -50%;
-  left: -520%;
 `;
 
 export const StyledRoomTitleInput = styled.input`
@@ -117,4 +115,17 @@ export const StyledIsPrivateRoomCheckBoxDiv = styled.div`
   position: absolute;
   top: 24%;
   right: 10%;
+`;
+
+export const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5); // 반투명 배경 설정
+  z-index: 1000; 
 `;
