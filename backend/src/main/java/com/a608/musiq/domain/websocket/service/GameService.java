@@ -226,6 +226,13 @@ public class GameService {
 
             }
             if (playType == PlayType.BEFOREANSWER) {
+
+                //먼저 일반채팅으로 pub 부터 함
+                ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(
+                        MessageDtoType.CHAT, chatMessage.getNickname(),
+                        chatMessage.getMessage());
+                messagingTemplate.convertAndSend(destination, chatMessagePubDto);
+
                 // 스킵 확인
                 if (chatMessage.getMessage().equals(".")) {
                     // 이미 스킵 했으면 그냥 return
@@ -239,11 +246,6 @@ public class GameService {
                 }
                 // 스킵이 아닌 경우
                 else {
-                    //먼저 일반채팅으로 pub 부터 함
-                    ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(
-                            MessageDtoType.CHAT, chatMessage.getNickname(),
-                            chatMessage.getMessage());
-                    messagingTemplate.convertAndSend(destination, chatMessagePubDto);
 
                     //그 다음 정답 채점 로직 구현
                     int round = gameRoom.getRound() - 1;
@@ -292,6 +294,13 @@ public class GameService {
             }
 
             if (playType == PlayType.AFTERANSWER) {
+
+                //일반 채팅
+                ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(
+                        MessageDtoType.CHAT, chatMessage.getNickname(),
+                        chatMessage.getMessage());
+                messagingTemplate.convertAndSend(destination, chatMessagePubDto);
+
                 if (chatMessage.getMessage().equals(".")) {
                     // 이미 스킵 했으면 그냥 return
                     if (gameRoom.getUserInfoItems().get(uuid).getIsSkipped()) {
@@ -299,12 +308,6 @@ public class GameService {
                     }
                     afterAnswerService.skip(gameRoom, uuid, destination);
                     return;
-                } else {
-                    //일반 채팅
-                    ChatMessagePubDto chatMessagePubDto = ChatMessagePubDto.create(
-                            MessageDtoType.CHAT, chatMessage.getNickname(),
-                            chatMessage.getMessage());
-                    messagingTemplate.convertAndSend(destination, chatMessagePubDto);
                 }
             }
         }
@@ -605,11 +608,14 @@ public class GameService {
         int destinationChannelNo = previousChannelNo / MAKING_LOBBY_CHANNEL_NO;
         UUID uuid = jwtValidator.getData(accessToken);
 
+        String nickname = memberInfoRepository.findNicknameById(uuid)
+            .orElseThrow(() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
+
         //pubDestination == previousChannelNo : pub 해줄 destination
         String pubDestination = getDestination(previousChannelNo);
         GameRoom gameRoom = GameValue.getGameRooms().get(previousChannelNo);
 
-		ExitGameRoomDto exitGameRoomDto = commonService.exitGameRoom(uuid, gameRoom, previousChannelNo);
+		ExitGameRoomDto exitGameRoomDto = commonService.exitGameRoom(uuid, nickname, gameRoom, previousChannelNo);
 
 		messagingTemplate.convertAndSend(pubDestination, exitGameRoomDto);
 

@@ -19,12 +19,12 @@ public class CommonService {
 
 	private static final int MULTI_SCORE_WEIGHT = 10;
 
-	public ExitGameRoomDto exitGameRoom(UUID uuid, GameRoom gameRoom, int roomNumber) {
+	public ExitGameRoomDto exitGameRoom(UUID uuid,String nickname, GameRoom gameRoom, int roomNumber) {
 		// Channel 현재 게임룸에서 로비로 이동
 		GameValue.exitGameRoom(uuid, roomNumber);
 
 		// 게임 룸에서 totalUser--, userInfoItems에서 내 uuid로 지우기
-		return gameRoom.exitUser(uuid, roomNumber);
+		return gameRoom.exitUser(uuid, nickname, roomNumber);
 	}
 
 	public CheckPasswordResponseDto checkPassword(GameRoom gameRoom, String password) {

@@ -13,8 +13,10 @@ import {
   MultiDancingChick,
   MultiGameStart,
   MultiGameOption,
+  MultiGameOutBtn,
 } from '../../components/features';
 import * as S from './MultiGamePlaying.styled';
+import { Modal } from '../../components/utils';
 
 type GameUserList = {
   nickname: string;
@@ -40,6 +42,7 @@ export const MultiGamePlaying = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const accessToken = window.localStorage.getItem('userAccessToken') ?? '';
+  const [isToggled, setIsToggled] = useState<boolean>(false); // 모달 창 toggle
   const client = useRef<any>({}); // 게임 소켓 클라이언트
   const gameRoomNumber = Number(location.pathname.split('/')[4]); // 게임방번호
   const [gameChatList, setGameChatList] = useState<GameChatType[]>([]); // 채팅리스트
@@ -64,6 +67,8 @@ export const MultiGamePlaying = () => {
   const videoRef = useRef<ReactPlayer>(null);
   const [isResult, setIsResult] = useState<boolean>(false); // 결과페이지인지 아닌지
   const [resultUser, setResultUser] = useState<ResultUser[]>([]);
+  const [skipVote, setSkipVote] = useState<number>(0);
+  const [isSkipped, setIsSkipped] = useState<boolean>(false);
   const [speakChick, setSpeakChick] = useState<GameChatType>({
     nickname: '삐약이',
     message: '게임 대기중...',
@@ -167,13 +172,27 @@ export const MultiGamePlaying = () => {
           });
           break;
         case 'BEFORESKIP': // 누군가 문제 맞추기 전 스킵요청
+          if (msg.winner) {
+            setWinner(msg.winner);
+            setAnswerData({ title: msg.title, singer: msg.singer });
+            setSingerHint(msg.singerHint);
+            setInitialHint(msg.initialHint);
+            setSkipVote(msg.skipVote);
+            setGameUserList(msg.memberInfos);
+          } else if (msg.isSkipped) {
+            setSkipVote(msg.skipVote);
+          } else {
+            setSkipVote(msg.skipVote);
+          }
           break;
         case 'AFTERSKIP': // 문제 맞춘 후 스킵요청
+          setSkipVote(msg.skipVote);
           break;
         case 'BEFOREANSWERCORRECT': // 정답 맞췄을때 누가 정답맞췄고, 정답이 뭔지
           setAnswerData({ title: msg.title, singer: msg.singer });
           setSingerHint(msg.singerHint);
           setInitialHint(msg.initialHint);
+          setSkipVote(msg.skipVote);
           setWinner(msg.winner);
           if (msg.winner !== '') {
             setGameChatList((prev) => [
@@ -238,10 +257,11 @@ export const MultiGamePlaying = () => {
   const patchOutGameRoom = async () => {
     await userApis
       .patch(`${process.env.REACT_APP_BASE_URL}/game/main/exit`, {
-        previousChannelNo: location.state.requestBody.gameRoomNumber,
+        previousChannelNo: gameRoomNumber,
       })
       .then((res) => {
         navigate(`/multi/${res.data.data.destinationChannelNo}/lobby`);
+        setIsToggled(false);
       });
   };
 
@@ -270,6 +290,20 @@ export const MultiGamePlaying = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 1 }}
     >
+      <Modal
+        data={{
+          title: '😥',
+          message: '정말 게임방을 나가시겠어요?',
+        }}
+        isToggled={isToggled}
+        setIsToggled={setIsToggled}
+        noBtnClick={() => {
+          setIsToggled(false);
+        }}
+        yesBtnClick={() => {
+          patchOutGameRoom();
+        }}
+      />
       <ReactPlayer
         url={musicUrl}
         controls
@@ -332,8 +366,15 @@ export const MultiGamePlaying = () => {
           />
         </S.middlePosition>
         <S.bottomPosition>
+          <MultiGameOutBtn
+            patchOutGameRoom={() => {
+              setIsToggled(true);
+            }}
+          />
           <MultiDancingChick speakChick={speakChick} />
           <MultiGameChatting
+            userLength={gameUserList.length}
+            skipVote={skipVote}
             gameChatList={gameChatList}
             setGameChatList={setGameChatList}
             socketClient={client}

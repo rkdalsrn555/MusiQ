@@ -179,7 +179,7 @@ public class GuestModeMusicServiceImpl implements MusicService {
 		Music music = room.getMusicList().get(round);
 		List<Title> titles = titleRepository.findAllByMusicId(music.getId());
 
-		answer = answer.replaceAll(SPACE, EMPTY_STRING);
+		answer = answer.toLowerCase().replaceAll(SPACE, EMPTY_STRING);
 
 		GradeAnswerResponseDto gradeAnswerResponseDto = null;
 		for (Title title : titles) {
@@ -228,6 +228,7 @@ public class GuestModeMusicServiceImpl implements MusicService {
 	 * @return GameOverResponseDto
 	 */
 	@Override
+	@Transactional
 	public GameOverResponseDto gameOver(int roomId, int round) {
 		GuestModeLog log = guestModeLogRepository.findById(roomId)
 			.orElseThrow(() -> new GuestModeException(GuestModeExceptionInfo.NOT_FOUND_LOG));
