@@ -50,6 +50,7 @@ const Container = styled.div`
     font-weight: bold;
 
     & .answerTitle {
+      font-size: 1.5rem;
       color: #e9ff24;
     }
   }
@@ -117,13 +118,14 @@ export const MultiGameHint = (props: OwnProps) => {
             ]
           </p>
           <p className="explain bold">
-            {winner !== '' || answerData.singer !== '' ? (
+            {(winner !== '' && answerData.singer !== '') ||
+            (winner === '' && answerData.singer !== '') ? (
               <p className="explain bold">정답이 나왔습니다!</p>
             ) : (
               <div className="explain bold">
                 {isSkipped ? (
                   <p className="explain bold">
-                    과반수 투표로 노래가 스킵되었습니다!
+                    과반수 투표로 노래가 스킵됩니다!
                   </p>
                 ) : (
                   <div className="explain bold">
@@ -137,9 +139,9 @@ export const MultiGameHint = (props: OwnProps) => {
                       </>
                     ) : (
                       <div className="explain bold">
-                        {playTimeMessage === '준비중'
+                        {playTimeMessage === '준비 중'
                           ? playTimeMessage
-                          : `${time} 초 뒤에 노래가 나와요!`}
+                          : `${playTimeMessage}뒤에 노래가 나와요!`}
                       </div>
                     )}
                   </div>
@@ -147,7 +149,7 @@ export const MultiGameHint = (props: OwnProps) => {
               </div>
             )}
           </p>
-          <p className="time">- {time} 초 -</p>
+          <p className="time">- {playTimeMessage} -</p>
           {answerData.title === '' ? (
             <div className="hintBox">
               <p>
