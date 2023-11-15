@@ -232,8 +232,11 @@ export const LobbyRooms = () => {
           }}
         >
           <RoomNumberDiv>{room.gameRoomNo}</RoomNumberDiv>
-          <RoomTitleDiv>&nbsp;{room.roomTitle}</RoomTitleDiv>
-          <RoomManagerDiv>{room.roomManager}님의 방</RoomManagerDiv>
+          <RoomTitleDiv>{room.roomTitle}</RoomTitleDiv>
+          <RoomManagerDiv>
+            {/* <span>{room.roomManager}</span> 님의 방 */}
+            <span>장충동왕족발보쌈</span> 님의 방
+          </RoomManagerDiv>
           <RoomYearsDiv>{getYearsRange(room.years)}</RoomYearsDiv>
           <RoomPeopleDiv
             style={{
@@ -245,9 +248,9 @@ export const LobbyRooms = () => {
           <IsPrivateimg
             src={room.isPrivate ? roomLockIcon : roomUnlockIcon}
             alt="Room is private?"
-            width={30}
+            width={25}
           />
-          <RoomQuizAmountDiv>{room.quizAmount}문제</RoomQuizAmountDiv>
+          <RoomQuizAmountDiv>총{room.quizAmount}문제</RoomQuizAmountDiv>
         </Room>
       ))}
       <PreviousButton
