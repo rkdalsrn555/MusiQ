@@ -106,13 +106,14 @@ public class GameRoom {
 
     public ExitGameRoomDto exitUser(UUID uuid, String nickname, int roomNumber) {
         int lobbyChannelNumber = roomNumber / ROOM_DIVIDE_NUMBER;
-        int gameChannelNumber = roomNumber % ROOM_DIVIDE_NUMBER;
+        int gameRoomNumber = roomNumber % ROOM_DIVIDE_NUMBER;
 
         // 방에 아무도 안 남을 경우
         if (totalUsers == LEAST_MEMBER_SIZE) {
-            Channel channel = GameValue.getChannel(lobbyChannelNumber);
+            GameValue.deleteGameRoom(lobbyChannelNumber, gameRoomNumber);
 
-            channel.clearGameRoom(gameChannelNumber);
+            this.totalUsers--;
+            userInfoItems.remove(uuid);
 
             return ExitGameRoomDto.builder()
                 .messageDtoType(MessageDtoType.EXITUSER)
