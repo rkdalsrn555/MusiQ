@@ -124,10 +124,11 @@ public class GameRoom {
         }
 
         // 방장 위임
-        if (uuid.equals(roomManagerUUID)) {
-            for(UUID userUUID : userInfoItems.keySet()) {
-                if (!userUUID.equals(roomManagerUUID)) {
-                    roomManagerUUID = userUUID;
+        if (uuid.equals(this.roomManagerUUID)) {
+            for(UUID userUUID : this.userInfoItems.keySet()) {
+                if (!userUUID.equals(this.roomManagerUUID)) {
+                    this.roomManagerNickname = userInfoItems.get(userUUID).getNickname();
+                    this.roomManagerUUID = userUUID;
                     break;
                 }
             }
