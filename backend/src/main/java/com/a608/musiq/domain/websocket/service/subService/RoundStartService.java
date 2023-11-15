@@ -125,9 +125,14 @@ public class RoundStartService {
             List<Music> finalMusicList, int numberOfProblems) {
         List<MultiModeProblem> multiModeProblemList = new ArrayList<>();
 
-        // 랜덤한 int를 numberOfProblems만큼 뽑기
+        // 랜덤한 int를 numberOfProblems만큼 뽑아서 Set에 추가
         Random random = new Random();
-        int[] indexes = random.ints(numberOfProblems, 0, finalMusicList.size()).toArray();
+        Set<Integer> indexes = new HashSet<>();
+
+        while(indexes.size() < numberOfProblems) {
+            int num = random.nextInt(finalMusicList.size());
+            indexes.add(num);
+        }
 
         for (int index : indexes) {
             Music music = finalMusicList.get(index);
