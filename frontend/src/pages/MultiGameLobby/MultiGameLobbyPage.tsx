@@ -117,7 +117,7 @@ export const MultiGameLobbyPage = () => {
         <LobbyWrapper>
           <RefreshButton onClick={handleRefresh} />
           <BackBtn url="/multi/channel" />
-          <LobbyUsersList />
+          <LobbyUsersList refreshKey={refreshKey} />
           <LobbyRooms key={refreshKey} />
           <ButtonsWrapper>
             <LobbyCreateRoomButton />
