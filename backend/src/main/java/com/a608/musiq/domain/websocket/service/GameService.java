@@ -13,6 +13,7 @@ import com.a608.musiq.domain.websocket.domain.UserInfoItem;
 import com.a608.musiq.domain.websocket.domain.log.MultiModeCreateGameRoomLog;
 import com.a608.musiq.domain.websocket.domain.log.MultiModeGameOverLog;
 import com.a608.musiq.domain.websocket.domain.log.MultiModeGameStartLog;
+import com.a608.musiq.domain.websocket.dto.GetUserInfoItemDto;
 import com.a608.musiq.domain.websocket.dto.requestDto.CheckPasswordRequestDto;
 import com.a608.musiq.domain.websocket.dto.requestDto.ExitGameRoomRequestDto;
 import com.a608.musiq.domain.websocket.dto.requestDto.GameOverRequestDto;
@@ -699,6 +700,7 @@ public class GameService {
 			.multiModeCreateGameRoomLogId(gameStartRequestDto.getMultiModeCreateGameRoomLogId())
 			.title(gameRoom.getRoomName())
 			.years(gameRoom.getYear())
+			.roomManagerNickname(gameRoom.getRoomManagerNickname())
 			.nicknames(gameRoom.getNicknames())
 			.startedAt(LocalDateTime.now())
 			.build()).getMultiModeCreateGameRoomLogId();
@@ -721,7 +723,7 @@ public class GameService {
 			new MultiModeException(MultiModeExceptionInfo.NOT_FOUND_MULTI_MODE_CREATE_GAME_ROOM_LOG));
 
 		multiModeCreateGameRoomLog.gameStart();
-		// multiModeCreateGameRoomLogRepository.save(multiModeCreateGameRoomLog);
+		multiModeCreateGameRoomLogRepository.save(multiModeCreateGameRoomLog);
 	}
 
 	/**
@@ -739,11 +741,14 @@ public class GameService {
 
 		GameRoom gameRoom = GameValue.getGameRooms().get(gameOverRequestDto.getGameRoomNumber());
 
+		GetUserInfoItemDto userInfoItemDto = gameRoom.getUserInfoItemDto();
+
 		int multiModeCreateGameRoomLogId = multiModeGameOverLogRepository.save(MultiModeGameOverLog.builder()
 			.multiModeCreateGameRoomLogId(gameOverRequestDto.getMultiModeCreateGameRoomLogId())
 			.title(gameRoom.getRoomName())
 			.years(gameRoom.getYear())
-			.nicknames(gameRoom.getNicknames())
+			.nicknames(userInfoItemDto.getNicknames())
+			.exps(userInfoItemDto.getExps())
 			.endedAt(endedAt)
 			.playTime(playTime)
 			.build()).getMultiModeCreateGameRoomLogId();
