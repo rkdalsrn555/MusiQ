@@ -138,6 +138,8 @@
 
 ## 🚩 아키텍쳐
 
+<img src="./img/Architecture/A608_Architecture.png" />
+
 ## 🚩 API 명세
 
 <img src="./img/API/API_1.PNG" />
