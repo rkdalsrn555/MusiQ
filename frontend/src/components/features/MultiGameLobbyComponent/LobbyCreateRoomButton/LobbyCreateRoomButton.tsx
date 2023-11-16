@@ -254,6 +254,9 @@ export const LobbyCreateRoomButton = () => {
       .then(async (createResponse) => {
         if (createResponse.data.code === 200) {
           const { gameRoomNo } = createResponse.data.data;
+          // eslint-disable-next-line prefer-destructuring
+          const multiModeCreateGameRoomLogId =
+            createResponse.data.data.multiModeCreateGameRoomLogId;
 
           try {
             const userInfoResponse = await userApis.get(
@@ -265,6 +268,7 @@ export const LobbyCreateRoomButton = () => {
                 ...requestBody,
                 musicYear: musicYear.split(' '), // 문자열을 배열로 변환
                 data: userInfoResponse.data.data,
+                multiModeCreateGameRoomLogId,
               };
 
               navigate(`/multi/${channelNo}/game/${gameRoomNo}`, {
