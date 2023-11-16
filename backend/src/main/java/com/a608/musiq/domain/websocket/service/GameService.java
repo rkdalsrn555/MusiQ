@@ -587,6 +587,7 @@ public class GameService {
 
 		return CreateGameRoomResponseDto.builder()
 			.gameRoomNo(roomNumber)
+			.multiModeCreateGameRoomLogId(multiModeCreateGameRoomLogId)
 			.build();
 	}
 

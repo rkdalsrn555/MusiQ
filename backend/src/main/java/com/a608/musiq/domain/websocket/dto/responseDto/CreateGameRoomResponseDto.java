@@ -16,4 +16,5 @@ import lombok.ToString;
 @Builder
 public class CreateGameRoomResponseDto {
     private int gameRoomNo;
+    private int multiModeCreateGameRoomLogId;
 }
