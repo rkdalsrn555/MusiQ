@@ -15,6 +15,7 @@ import {
   MultiGameOption,
   MultiGameOutBtn,
 } from '../../components/features';
+import countDownBgm from '../../assets/audio/CountDownMid.wav';
 import * as S from './MultiGamePlaying.styled';
 import { Modal } from '../../components/utils';
 
@@ -69,6 +70,7 @@ export const MultiGamePlaying = () => {
   const [musicUrl, setMusicUrl] = useState<string>('');
   const videoRef = useRef<ReactPlayer>(null);
   const [isResult, setIsResult] = useState<boolean>(false); // 결과페이지인지 아닌지
+  const isResultRef = useRef<boolean>(false);
   const [resultUser, setResultUser] = useState<ResultUser[]>([]);
   const [skipVote, setSkipVote] = useState<number>(0);
   const [isSkipped, setIsSkipped] = useState<boolean>(false);
@@ -76,6 +78,11 @@ export const MultiGamePlaying = () => {
     nickname: '삐약이',
     message: '게임 대기중...',
   });
+
+  // 카운트다운 음악객체 생성
+  const myAudio = new Audio(); // Aduio 객체 생성
+  myAudio.volume = 0.1;
+  myAudio.src = countDownBgm; // 음원 파일 설정
 
   // 모바일 기기 접근을 막는 로직
   useEffect(() => {
@@ -110,7 +117,6 @@ export const MultiGamePlaying = () => {
           });
           break;
         case 'EXITUSER': // 유저 나갈 때 pub
-          console.log('유저나갔당');
           setGameUserList(msg.userInfoItems);
           setManager(msg.gameRoomManagerNickname);
           setGameChatList((prev) => [
@@ -121,12 +127,12 @@ export const MultiGamePlaying = () => {
             },
             {
               nickname: '삐약이',
-              message: `방장이 ${msg.manager}님으로 변경되었습니다.`,
+              message: `방장이 ${msg.gameRoomManagerNickname}님으로 변경되었습니다.`,
             },
           ]);
           setSpeakChick({
             nickname: '삐약이',
-            message: `방장이 ${msg.manager}님으로 변경되었습니다.`,
+            message: `방장이 ${msg.gameRoomManagerNickname}님으로 변경되었습니다.`,
           });
           break;
         case 'CHAT': // 유저가 채팅 보냈을 때
@@ -154,8 +160,14 @@ export const MultiGamePlaying = () => {
           break;
         case 'TIME': // 시간초세기
           setPlayTime(msg.time);
-          console.log(msg.message);
           setPlayTimeMessage(msg.message);
+          if (
+            !isMusicStartRef.current &&
+            !isResultRef.current &&
+            msg.time <= 3
+          ) {
+            myAudio.play();
+          }
           break;
         case 'MUSICPROBLEM': // 음악 문제 세팅
           setAnswerData({ title: msg.title, singer: msg.singer });
@@ -242,7 +254,8 @@ export const MultiGamePlaying = () => {
           break;
         case 'GAMERESULT':
           setIsResult(true);
-          setResultUser(msg.userResults.sort((a: number, b: number) => b - a));
+          isResultRef.current = true;
+          setResultUser(msg.userResults);
           setSpeakChick({
             nickname: '삐약이',
             message: '게임이 끝났다 삐약!',
@@ -250,9 +263,18 @@ export const MultiGamePlaying = () => {
           break;
         case 'GOWAITING': // 게임 끝났을 때 대기상태로 다시 변환
           setIsGameStart(false);
-          setGameUserList(msg.memberInfos);
-          setIsSkipped(false);
           setIsResult(false);
+          isResultRef.current = false;
+          setIsSkipped(false);
+          setIsMusicStart(false);
+          isMusicStartRef.current = false;
+          setWinner('');
+          setAnswerData({ title: '', singer: '' });
+          setGameUserList(msg.memberInfos);
+          setRemainMusicNum(msg.numberOfProblems);
+          setInitialHint('');
+          setSingerHint('');
+          setSkipVote(0);
           setSpeakChick({
             nickname: '삐약이',
             message: '대기중입니다.. 삐약!',
@@ -347,7 +369,6 @@ export const MultiGamePlaying = () => {
         width="0"
         height="0"
         ref={videoRef}
-        volume={1}
       />
       <S.Container>
         <MultiGameOption years={location.state.requestBody.musicYear} />

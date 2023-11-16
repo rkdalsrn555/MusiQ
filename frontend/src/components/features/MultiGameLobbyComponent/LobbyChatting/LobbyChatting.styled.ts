@@ -12,7 +12,7 @@ export const ChattingWrapper = styled.div`
   align-items: center;
   background-color: rgba(255, 255, 255, 0.5);
   position: absolute;
-  bottom: 7%;
+  bottom: 5%;
   left: 21%;
 `;
 

@@ -163,12 +163,11 @@ public class GameService {
 	public DisconnectSocketResponseDto disconnectUser(String accessToken, int channelNo) {
 		UUID uuid = jwtValidator.getData(accessToken);
 
-        /*
-        로비에서 정상적인 루트로 나가는 사람이 아닌 게임 룸에서 강제로 퇴장 하는 유저 고려해야 함
-        - 채널에서 지우고 게임룸에서 지우고 Pub 해줘야함
-         */
+        int curChannelNo = GameValue.getGameChannel(channelNo).get(uuid);
 
-		GameValue.removeUserFromChannel(uuid, channelNo);
+        if(channelNo == curChannelNo) {
+            GameValue.removeUserFromChannel(uuid, channelNo);
+        }
 
 		return DisconnectSocketResponseDto.builder().channelNo(channelNo).build();
 	}
@@ -383,8 +382,11 @@ public class GameService {
 						.map(item -> GameResultItem.builder().nickname(item.getNickname())
 							.score(item.getScore()).build()).collect(Collectors.toList()));
 
-					// 점수 리스트를 담아 전송
-					GameResultDto dto = GameResultDto.builder().userResults(gameResults).build();
+                    // 리스트 정렬
+                    gameResults.sort((o1, o2)->{return o2.getScore().compareTo(o1.getScore());});
+
+                    // 점수 리스트를 담아 전송
+                    GameResultDto dto = GameResultDto.builder().userResults(gameResults).build();
 
 					messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
 				}
@@ -468,14 +470,15 @@ public class GameService {
 		ConcurrentHashMap<UUID, Integer> channel = GameValue.getGameChannel(channelNo);
 		Iterator<UUID> it = channel.keySet().iterator();
 
-		while (it.hasNext()) {
-			UUID uuid = it.next();
-			MemberInfo memberInfo = memberInfoRepository.findById(uuid).orElseThrow(
-				() -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
-
-			items.add(ChannelUserResponseItem.builder().nickname(memberInfo.getNickname())
-				.userLevel((int)(memberInfo.getExp() / 50) + 1).build());
-		}
+        while (it.hasNext()) {
+            UUID uuid = it.next();
+            MemberInfo memberInfo = memberInfoRepository.findById(uuid).orElseThrow(
+                    () -> new MemberInfoException(MemberInfoExceptionInfo.NOT_FOUND_MEMBER_INFO));
+            logger.info("Nickname : {}, channel : {}", memberInfo.getNickname(), channel.get(uuid));
+            items.add(ChannelUserResponseItem.builder().nickname(memberInfo.getNickname())
+                    .userLevel((int) (memberInfo.getExp() / 50) + 1)
+                    .isGaming(channel.get(uuid) / 1000 != 0).build());
+        }
 
 		channelUserResponseDto.setChannelUserResponseItems(items);
 
@@ -659,7 +662,7 @@ public class GameService {
 
 	/**
 	 * 게임방 생성 로그 저장
-	 * 
+	 *
 	 * @param createGameRoomRequestDto
 	 * @param nickname
 	 * @see CreateGameRoomRequestDto
