@@ -16,4 +16,5 @@ import lombok.ToString;
 public class ChannelUserResponseItem {
     private int userLevel;
     private String nickname;
+    private Boolean isGaming;
 }
