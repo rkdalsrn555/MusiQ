@@ -88,7 +88,7 @@ export const MultiGamePlaying = () => {
   // 게임 로그 찍기
   const postGameStart = () => {
     userApis
-      .post(`${process.env.REACT_APP_BASE_URL}/start`, {
+      .post(`${process.env.REACT_APP_BASE_URL}/game/start`, {
         multiModeCreateGameRoomLogId:
           location.state.requestBody.multiModeCreateGameRoomLogId,
         gameRoomNumber,
@@ -99,7 +99,7 @@ export const MultiGamePlaying = () => {
   };
   const postGameEnd = () => {
     userApis
-      .post(`${process.env.REACT_APP_BASE_URL}/over`, {
+      .post(`${process.env.REACT_APP_BASE_URL}/game/over`, {
         multiModeCreateGameRoomLogId:
           location.state.requestBody.multiModeCreateGameRoomLogId,
         gameRoomNumber,
@@ -108,6 +108,16 @@ export const MultiGamePlaying = () => {
         console.log(err);
       });
   };
+
+  useEffect(() => {
+    if (window.localStorage.getItem('nickname') === managerRef.current) {
+      if (isGameStart) {
+        postGameStart();
+      } else {
+        postGameEnd();
+      }
+    }
+  }, [isGameStart]);
 
   // 모바일 기기 접근을 막는 로직
   useEffect(() => {
@@ -184,9 +194,6 @@ export const MultiGamePlaying = () => {
             nickname: '삐약이',
             message: '게임이 시작됐다!',
           });
-          if (window.localStorage.getItem('nickname') === managerRef.current) {
-            postGameStart();
-          }
           break;
         case 'TIME': // 시간초세기
           setPlayTime(msg.time);
