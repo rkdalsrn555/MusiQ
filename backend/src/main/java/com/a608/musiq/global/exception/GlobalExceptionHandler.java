@@ -8,6 +8,7 @@ import com.a608.musiq.global.common.response.BaseResponse;
 import com.a608.musiq.global.exception.exception.GuestModeException;
 import com.a608.musiq.global.exception.exception.MemberException;
 import com.a608.musiq.global.exception.exception.MemberInfoException;
+import com.a608.musiq.global.exception.exception.MultiModeException;
 import com.a608.musiq.global.exception.exception.MusicException;
 import com.a608.musiq.global.exception.exception.RankingException;
 import com.a608.musiq.global.exception.exception.SingleModeException;
@@ -66,6 +67,16 @@ public class GlobalExceptionHandler {
 		SingleModeException exception) {
 		return ResponseEntity.status(exception.getInfo().getStatus())
 			.body(BaseResponse.<SingleModeException>builder()
+				.code(exception.getInfo().getCode())
+				.message(exception.getInfo().getMessage())
+				.build());
+	}
+
+	@ExceptionHandler(MultiModeException.class)
+	public ResponseEntity<BaseResponse<MultiModeException>> multiModeExceptionHandler(
+		MultiModeException exception) {
+		return ResponseEntity.status(exception.getInfo().getStatus())
+			.body(BaseResponse.<MultiModeException>builder()
 				.code(exception.getInfo().getCode())
 				.message(exception.getInfo().getMessage())
 				.build());

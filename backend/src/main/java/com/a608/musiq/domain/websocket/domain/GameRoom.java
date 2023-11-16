@@ -2,8 +2,19 @@ package com.a608.musiq.domain.websocket.domain;
 
 import com.a608.musiq.domain.websocket.data.GameRoomType;
 import com.a608.musiq.domain.websocket.data.GameValue;
+import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.data.PlayType;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameRoomMemberInfo;
+import com.a608.musiq.domain.websocket.dto.responseDto.CheckPasswordResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.EnterGameRoomResponseDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.EnterGameRoomDto;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.ExitGameRoomDto;
+import com.a608.musiq.global.exception.exception.MultiModeException;
+import com.a608.musiq.global.exception.info.MultiModeExceptionInfo;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -20,9 +31,9 @@ import lombok.NoArgsConstructor;
 public class GameRoom {
     private static final int LEAST_MEMBER_SIZE = 1;
     private static final int ROOM_DIVIDE_NUMBER = 1000;
-    /*
-    !!!!!!!!!!!!!!!!!전체적으로 수정해야 함!!!!!!!!!!!!!!!!!
-    */
+    private static final int MAX_ROOM_USER = 6;
+    private static final String SPACE = " ";
+
     private int roomNo;
     private String roomName;
 
@@ -38,7 +49,7 @@ public class GameRoom {
     //선택한 연도
     private String year;
 
-    private String roomManager;
+    private String roomManagerNickname;
 
 
     private GameRoomType gameRoomType;
@@ -81,11 +92,6 @@ public class GameRoom {
         this.skipVote = skipVote;
     }
 
-    public void setUserInfoItems(
-        Map<UUID, UserInfoItem> userInfoItems) {
-        this.userInfoItems = userInfoItems;
-    }
-
     public void changeGameRoomType(GameRoomType type) {
         this.gameRoomType = type;
     }
@@ -102,23 +108,40 @@ public class GameRoom {
         this.round++;
     }
 
-    public String leaveUser(UUID uuid, int roomNumber) {
-        int lobbyChannelNumber = roomNumber / ROOM_DIVIDE_NUMBER;
-        int gameChannelNumber = roomNumber % ROOM_DIVIDE_NUMBER;
-
+    public ExitGameRoomDto exitUser(UUID uuid, String nickname, int gameRoomNumber) {
+        int lobbyChannelNumber = gameRoomNumber / ROOM_DIVIDE_NUMBER;
+        int gameRoomIndex = gameRoomNumber % ROOM_DIVIDE_NUMBER;
+        List<GameRoomMemberInfo> gameRoomMemberInfos = new ArrayList<>();
+        
         // 방에 아무도 안 남을 경우
         if (totalUsers == LEAST_MEMBER_SIZE) {
-            Channel channel = GameValue.getChannel(lobbyChannelNumber);
+            GameValue.deleteGameRoom(lobbyChannelNumber, gameRoomIndex, gameRoomNumber);
 
-            channel.clearGameRoom(gameChannelNumber);
-            return null;
+            this.totalUsers--;
+            this.userInfoItems.remove(uuid);
+
+            for(UserInfoItem userInfoItem : this.userInfoItems.values()) {
+                GameRoomMemberInfo gameRoomMemberInfo =
+                    GameRoomMemberInfo.create(userInfoItem.getNickname(),userInfoItem.getScore());
+                gameRoomMemberInfos.add(gameRoomMemberInfo);
+            }
+
+
+            return ExitGameRoomDto.builder()
+                .messageType(MessageDtoType.EXITUSER)
+                .userInfoItems(gameRoomMemberInfos)
+                .gameRoomManagerNickname(this.roomManagerNickname)
+                .exitedUserNickname(nickname)
+                .build();
         }
 
+
         // 방장 위임
-        if (uuid.equals(roomManagerUUID)) {
-            for(UUID userUUID : userInfoItems.keySet()) {
-                if (!userUUID.equals(roomManagerUUID)) {
-                    roomManagerUUID = userUUID;
+        if (uuid.equals(this.roomManagerUUID)) {
+            for(UUID userUUID : this.userInfoItems.keySet()) {
+                if (!userUUID.equals(this.roomManagerUUID)) {
+                    this.roomManagerNickname = userInfoItems.get(userUUID).getNickname();
+                    this.roomManagerUUID = userUUID;
                     break;
                 }
             }
@@ -127,13 +150,64 @@ public class GameRoom {
         this.totalUsers--;
         userInfoItems.remove(uuid);
 
-        return userInfoItems.get(roomManagerUUID).getNickname();
+        for(UserInfoItem userInfoItem : this.userInfoItems.values()) {
+            GameRoomMemberInfo gameRoomMemberInfo =
+                GameRoomMemberInfo.create(userInfoItem.getNickname(),userInfoItem.getScore());
+            gameRoomMemberInfos.add(gameRoomMemberInfo);
+        }
+
+
+        return ExitGameRoomDto.builder()
+            .messageType(MessageDtoType.EXITUSER)
+            .userInfoItems(gameRoomMemberInfos)
+            .gameRoomManagerNickname(this.roomManagerNickname)
+            .exitedUserNickname(nickname)
+            .build();
+    }
+
+    public CheckPasswordResponseDto checkPassword(String password) {
+        if (!this.isPrivate) {
+            return new CheckPasswordResponseDto(Boolean.TRUE);
+        }
+
+        if (this.password.equals(password)) {
+            return new CheckPasswordResponseDto(Boolean.TRUE);
+        }
+
+        return new CheckPasswordResponseDto(Boolean.FALSE);
+    }
+
+    public EnterGameRoomResponseDto enterUser(UUID uuid, UserInfoItem userInfoItem) {
+        if (!gameRoomType.equals(GameRoomType.WAITING)) {
+            throw new MultiModeException(MultiModeExceptionInfo.ALREADY_STARTED_ROOM);
+        }
+
+        if (totalUsers == MAX_ROOM_USER) {
+            throw new MultiModeException(MultiModeExceptionInfo.FULL_ROOM_USER);
+        }
+
+        userInfoItems.put(uuid, userInfoItem);
+        totalUsers++;
+
+        return EnterGameRoomResponseDto.builder()
+            .userInfoItems(userInfoItems.values().stream().toList())
+            .gameRoomManagerNickname(this.roomManagerNickname)
+            .enteredUserNickname(userInfoItems.get(uuid).getNickname())
+            .build();
+    }
+
+    public EnterGameRoomDto getGameRoomInformation(UUID uuid) {
+        return EnterGameRoomDto.builder()
+            .messageType(MessageDtoType.ENTERUSER)
+            .userInfoItems(userInfoItems.values().stream().toList())
+            .gameRoomManagerNickname(this.roomManagerNickname)
+            .enteredUserNickname(userInfoItems.get(uuid).getNickname())
+            .build();
     }
 
     public void initializeRoom() {
-        this.gameRoomType = GameRoomType.WAITING;
+        this.gameRoomType = GameRoomType.GAME;
         this.playType = PlayType.ROUNDSTART;
-        this.multiModeProblems = null;
         this.time = 5;
         this.round = 1;
         this.skipVote = 0;
@@ -141,5 +215,18 @@ public class GameRoom {
         for(UserInfoItem userInfo : this.userInfoItems.values()) {
             userInfo.initializeUserInfo();
         }
+    }
+
+    public void setRound(int round) {
+        this.round = round;
+    }
+
+    public String getNicknames() {
+        StringBuilder nicknames = new StringBuilder();
+        for(UserInfoItem userInfoItem : this.userInfoItems.values()) {
+            nicknames.append(userInfoItem.getNickname()).append(SPACE);
+        }
+
+        return nicknames.toString();
     }
 }

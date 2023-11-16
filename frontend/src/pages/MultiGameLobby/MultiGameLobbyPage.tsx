@@ -1,8 +1,14 @@
-import React, { useEffect, useRef } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+// eslint-disable-next-line import/no-unresolved
+import * as StompJs from '@stomp/stompjs';
 import { motion } from 'framer-motion';
-import { websocketClientState } from '../../atoms/atoms';
 import { userApis } from '../../hooks/api/userApis';
 import {
   LobbyCreateRoomButton,
@@ -10,6 +16,8 @@ import {
   LobbyRooms,
   LobbyUsersList,
   RefreshButton,
+  QuickMatchButton,
+  SearchRoomButton,
 } from '../../components/features';
 import { BackBtn } from '../../components/utils';
 import {
@@ -18,11 +26,20 @@ import {
   ButtonsWrapper,
 } from './MultiGameLobby.styled';
 
-export const MultiGameLobbyPage: React.FC = () => {
+export const MultiGameLobbyPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const websocketClient = useRecoilValue(websocketClientState);
   const channelNumber = location.pathname.split('/').slice(-2)[0];
+  const accessToken = window.localStorage.getItem('userAccessToken') ?? '';
+  const client = useRef<any>({});
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [lobbyChatList, setLobbyChatList] = useState<
+    { nickname: string; message: string }[]
+  >([]);
+
+  const handleRefresh = () => {
+    setRefreshKey((prevKey) => prevKey + 1); // 상태 업데이트
+  };
 
   useEffect(() => {
     // 모바일 기기 접근을 막는 로직
@@ -33,53 +50,61 @@ export const MultiGameLobbyPage: React.FC = () => {
     if (isMobile) {
       navigate('/mobile-restriction');
     }
+  }, []);
 
-    // 이미 활성화된 WebSocket 클라이언트를 확인하고 재사용
-    if (!websocketClient) {
-      console.error(
-        'No active WebSocket client. Redirecting to channel selection.'
+  // 구독
+  const subscribe = () => {
+    client.current.subscribe(`/topic/${channelNumber}`, (message: any) => {
+      const msg = JSON.parse(message.body);
+      setLobbyChatList((prev) => [
+        ...prev,
+        { nickname: msg.nickname, message: msg.message },
+      ]);
+    });
+  };
+
+  // 소켓 연결
+  const connect = () => {
+    client.current = new StompJs.Client({
+      brokerURL: `${process.env.REACT_APP_SOCKET_URL}`,
+      connectHeaders: {
+        accessToken,
+        channelNo: location.pathname.split('/')[2],
+        connectType: 'ENTER_LOBBY',
+      },
+      onConnect: subscribe,
+      onStompError: (frame) => {
+        console.error('STOMP Error:', frame.headers.message);
+      },
+    });
+    client.current.activate();
+  };
+
+  // 소켓 연결 해제
+  const postSocketDisconnect = async () => {
+    try {
+      const response = await userApis.post(
+        `${process.env.REACT_APP_BASE_URL}/game/${Number(
+          location.pathname.split('/')[2]
+        )}`
       );
-      navigate('/multi/channel'); // 웹소켓 클라이언트가 없으면 채널 선택으로 리다이렉트
+    } catch (error) {
+      console.error('Error leaving channel:', error);
     }
+  };
 
-    // 페이지를 떠날 때 WebSocket 연결을 종료
+  const disconnect = () => {
+    client.current.deactivate();
+  };
+
+  // 첫 렌더링 시 소켓연결, 페이지 떠날 시 disconnect
+  useEffect(() => {
+    connect();
     return () => {
-      // 비동기 함수를 선언합니다.
-      const deactivateClient = async () => {
-        if (websocketClient) {
-          try {
-            // deactivate가 Promise를 반환한다고 가정하고 await 키워드를 사용합니다.
-            await websocketClient.deactivate();
-            console.log(`Disconnected from channel ${channelNumber}`);
-          } catch (error) {
-            console.error('Error deactivating client:', error);
-          }
-        }
-
-        // 서버에 사용자가 채널을 떠남을 알립니다.
-        const accessToken = window.localStorage.getItem('userAccessToken');
-        if (accessToken) {
-          try {
-            const response = await userApis.post(
-              `${process.env.REACT_APP_BASE_URL}/game/${channelNumber}`,
-              {},
-              {
-                headers: {
-                  accessToken,
-                },
-              }
-            );
-            console.log('Left channel successfully.', response.data);
-          } catch (error) {
-            console.error('Error leaving channel:', error);
-          }
-        }
-      };
-
-      // 비동기 함수를 실행합니다.
-      deactivateClient();
+      disconnect();
+      postSocketDisconnect();
     };
-  }, [websocketClient, channelNumber]);
+  }, []);
 
   return (
     <motion.div
@@ -90,14 +115,16 @@ export const MultiGameLobbyPage: React.FC = () => {
     >
       <MulitBackGround>
         <LobbyWrapper>
-          <RefreshButton />
+          <RefreshButton onClick={handleRefresh} />
           <BackBtn url="/multi/channel" />
-          <LobbyUsersList />
-          <LobbyRooms />
+          <LobbyUsersList refreshKey={refreshKey} />
+          <LobbyRooms key={refreshKey} />
           <ButtonsWrapper>
             <LobbyCreateRoomButton />
+            <QuickMatchButton channelNumber={channelNumber} />
+            <SearchRoomButton channelNumber={channelNumber} />
           </ButtonsWrapper>
-          <LobbyChatting />
+          <LobbyChatting socketClient={client} lobbyChatList={lobbyChatList} />
         </LobbyWrapper>
       </MulitBackGround>
     </motion.div>
