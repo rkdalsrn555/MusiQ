@@ -130,3 +130,152 @@
 ## 🚩 V3 MZ mode
 
 - 2023/12/25 까지 구현 목표
+
+## 🚩 ERD
+
+## 🚩 아키텍쳐
+
+## 🚩 API 명세
+
+## 🚩 시연
+
+### 게스트 모드
+
+<img src="./img/DemonstrationGifs/EnterGuestMode.gif" />
+
+- 로그인 없이도 플레이 가능한 게스트 모드 입니다.
+
+<img src="./img/DemonstrationGifs/GuestGameOption.gif" />
+
+- 게스트 모드에 입장하면, 게임 옵션 페이지로 이동합니다.
+- 게임의 난이도, 연도(복수 선택 가능)를 선택할 수 있습니다.
+
+<img src="./img/DemonstrationGifs/GuestGamePlay.gif" />
+
+- 옵션을 선택하고 START 버튼을 클릭하면 게임 플레이 페이지로 이동합니다.
+- 음악의 처음, 중간, 끝을 선택해서 한 문제당 3번을 들을 수 있고, 각각 키보드의 좌, 하, 우 방향키로도 조작할 수 있습니다.
+- 한 문제 당 정답 제출 기회는 3번이며, Enter 혹은 마우스로 입력 창을 누른 후 정답을 제출할 수 있습니다.
+- 정답 제출 기회를 3번 사용하고 정답을 맞추지 못하면 생명(하트)이 하나 감소합니다.
+
+<img src="./img/DemonstrationGifs/GuestGameSkip.gif" />
+
+- 문제의 정답을 모를 때는 스킵 버튼을 클릭하거나, 키보드 '.'(온점)을 눌러 스킵할 수 있습니다.
+- 스킵을 누르면 생명(하트)가 하나 감소합니다.
+
+<img src="./img/DemonstrationGifs/GuestResult.gif"/>
+
+- 하트를 모두 소모하면 결과 페이지로 이동하는 '결과보기' 버튼이 생성됩니다.
+- 결과 페이지에서 사용자가 선택한 게임 옵션으로 몇 문제를 맞혔는 지 확인할 수 있습니다.
+
+<img src="./img/DemonstrationGifs/GuestShare.gif" />
+
+- 카카오톡 공유하기를 이용하여 타인에게 자신의 게임 결과를 공유할 수 있습니다(카카오 로그인 필요).
+
+<img src="./img/DemonstrationGifs/GuestRetry.gif" />
+
+- 다시하기 버튼을 클릭하면, 직전 게임에서 선택한 게임 옵션들을 저장한 채 게임 옵션 페이지로 돌아갑니다.
+
+### 싱글모드
+
+<img src="./img/DemonstrationGifs/SingleEnter.gif" />
+
+- 싱글 모드는 로그인을 하고 혼자 게임을 즐길 수 있는 모드입니다.
+- 게스트 모드와는 다르게 맞힌 퀴즈 개수에 따라 경험치를 받을 수 있습니다.
+- 모드 선택 페이지의 위에 있는 로그인 버튼을 누르면 로그인 페이지로 이동합니다.
+
+<img src="./img/DemonstrationGifs/SignUp.gif" />
+
+- 계정이 없다면 로그인 페이지에서 회원가입 버튼을 클릭하여 회원가입 페이지로 이동할 수 있습니다.
+- 아이디, 닉네임, 비밀번호를 입력하여 계정을 생성할 수 있으며, 닉네임과 아이디는 중복이 불가능합니다.
+
+<img src="./img/DemonstrationGifs/SignUp_Login.gif" />
+
+- 가입한 계정으로 로그인을 완료하면, 랜딩 페이지로 돌아갑니다.
+
+<img src="./img/DemonstrationGifs//SingleOption.gif" />
+
+- 로그인을 완료했다면, 싱글 모드에 접근할 수 있습니다.
+- 싱글 모드를 클릭하면, 게스트 모드와 동일하게 게임 옵션 페이지로 이동합니다.
+
+<img src="./img/DemonstrationGifs/SingleGamePlay.gif" />
+
+- 게임 옵션을 모두 선택하고 'START' 버튼을 클릭하면, 게임 플레이 페이지로 이동합니다.
+- 게스트 모드와 똑같은 방식으로 게임이 진행됩니다.
+- 게임 결과 페이지로 이동하여 결과를 확인할 수 있고, 게스트 모드와 다르게 획득한 경험치를 확인할 수 있습니다.
+
+<img src="./img/DemonstrationGifs/Ranking.gif" />
+
+- 획득한 경험치와 내 순위를 랭킹 페이지에서 확인할 수 있습니다.
+
+### 멀티모드
+
+<img src="./img/DemonstrationGifs/ChannelToLobby.gif" />
+
+- 멀티 모드는 로그인을 하고 멀리 떨어진 사람들과도 즐길 수 있는 모드 입니다.
+- 게임 모드 선택 페이지에서 멀티 모드를 선택하면, 채널 페이지로 이동합니다.
+- 채널 페이지에서는 10개의 채널 중 원하는 채널을 선택할 수 있고, 채널 정원과 현재 해당 채널에 접속한 인원을 확인할 수 있습니다.
+- 채널 페이지를 클릭하면 해당 채널의 로비 페이지로 이동합니다.
+
+<img src="./img/DemonstrationGifs/LobbyChatting.gif" />
+
+- 로비 페이지의 좌측에는 현재 채널에 있는 인원이 경험치가 높은 순으로 위에서 아래로 표시됩니다.
+- 로비 하단에 보이는 채팅창을 통해 채널에 접속해 있는 사람들과 대화를 할 수 있습니다.
+
+<img src="./img/DemonstrationGifs/CreateRoom.gif" />
+
+- 로비 우측에 있는 '방 만들기' 버튼을 클릭하여 게임방을 생성할 수 있습니다.
+- 버튼을 클릭하면 게임 옵션을 선택할 수 있는 팝업창이 나타납니다.
+- 방 제목, 연도(복수 선택 가능), 문제 수를 선택하고 '방 만들기' 버튼을 클릭하거나 키보드 'Enter'키를 누르면 게임방이 생성됩니다.
+
+<img src="./img/DemonstrationGifs/CreateSecretRoom.gif" />
+
+- 비공개 체크박스를 누르고, 추가적으로 비밀번호를 입력하면 비공개방을 생성할 수 있습니다.
+
+<img src="./img/DemonstrationGifs/MultiGameStart.gif" />
+
+- 게임 방을 만든 방장이 '게임시작' 버튼을 클릭하면 잠시 후 게임이 시작됩니다.
+- 하단의 채팅창에서는 자유롭게 방에 입장한 사람들과 채팅을 할 수 있습니다.
+
+<img src="./img/DemonstrationGifs/MultiHint.gif" />
+
+- 게임이 시작되면 한 곡을 40초 동안 들려줍니다.
+- 게임이 시작되고 10초 후, 재생 중인 곡의 가수 명이 힌트로 제시됩니다.
+- 게임이 시작되고 20초 후, 재생 중인 곡 제목의 초성이 힌트로 제시됩니다.
+
+<img src="./img/DemonstrationGifs/MultiCorrection_Skip.gif">
+
+- 채팅창에 정답을 입력할 수 있습니다.
+- 정답을 맞힌 사람이 있다면, 맞춘 사람의 점수가 1 증가하고 채팅창에 맞힌 사람의 이름이 표시됩니다.
+
+<img src="./img/DemonstrationGifs/MultiGameEnd.gif" />
+
+- 설정한 곡들이 모두 재생되고 나면, 중앙에 순위와 점수가 포함된 순위가 표시됩니다.
+- 게임 결과가 나오고 10초가 지나면 다시 대기상태로 돌아갑니다.
+
+<img src="./img/DemonstrationGifs/MultiExitRoom.gif" />
+
+- '게임방나가기' 버튼을 클릭하여 게임방에서 로비 페이지로 이동할 수 있습니다.
+
+<img src="./img/DemonstrationGifs/EnterAnotherRoom.gif" />
+
+- 로비에서 다른 사람이 생성한 방을 클릭하여 게임 방에 입장할 수 있습니다.
+
+<img src="./img/DemonstrationGifs/MultiEnterSecretRoom.gif">
+
+- 비공개 방을 클릭하면, 비밀번호를 입력하고 입장할 수 있습니다.
+
+<img src="./img/DemonstrationGifs/MultiFastEnter.gif" />
+
+- 우측의 '빠른 입장' 버튼을 클릭하여 게임 중이 아닌 공개방에 무작위로 입장할 수 있습니다.
+
+<img src="./img/DemonstrationGifs/MultiSearchRoom.gif" />
+
+- 우측의 '방 찾기' 버튼을 클릭하고, 방번호를 입력하여 게임 방에 입장할 수 있습니다.
+
+<img src="./img/DemonstrationGifs/MultiSearchSecretRoom.gif">
+
+- 비공개방의 방 번호를 검색해서 입장하면, 추가적으로 비밀번호를 입력해야 합니다.
+
+<img src="./img/DemonstrationGifs/MultiRefresh.gif" />
+
+- 우측 상단의 '새로고침' 버튼을 클릭하여, 접속 유저 목록과 게임 방 목록을 새로 불러올 수 있습니다.
