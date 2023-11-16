@@ -370,8 +370,6 @@ export const MultiGamePlaying = () => {
       });
   };
 
-  console.log(location.state.requestBody);
-
   // 첫 렌더링 시 소켓연결, 페이지 떠날 시 disconnect
   useEffect(() => {
     connect();
