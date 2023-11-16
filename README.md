@@ -133,9 +133,16 @@
 
 ## 🚩 ERD
 
+<img src="./img/ERD/A608_ERD_1.png" />
+<img src="./img/ERD/A608_ERD_2.png" />
+
 ## 🚩 아키텍쳐
 
 ## 🚩 API 명세
+
+<img src="./img/API/API_1.PNG" />
+<img src="./img/API/API_2.PNG" />
+<img src="./img/API/API_3.PNG" />
 
 ## 🚩 시연
 
