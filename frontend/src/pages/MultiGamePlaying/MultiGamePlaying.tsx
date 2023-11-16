@@ -113,7 +113,7 @@ export const MultiGamePlaying = () => {
     if (window.localStorage.getItem('nickname') === managerRef.current) {
       if (isGameStart) {
         postGameStart();
-      } else {
+      } else if (isResult) {
         postGameEnd();
       }
     }
@@ -155,22 +155,32 @@ export const MultiGamePlaying = () => {
         case 'EXITUSER': // 유저 나갈 때 pub
           setGameUserList(msg.userInfoItems);
           setManager(msg.gameRoomManagerNickname);
-          managerRef.current = msg.gameRoomManagerNickname;
-          setGameChatList((prev) => [
-            ...prev,
-            {
-              nickname: '삐약이',
-              message: `${msg.exitedUserNickname}님이 퇴장하셨습니다.`,
-            },
-            {
+          if (msg.gameRoomManagerNickname === managerRef.current) {
+            setGameChatList((prev) => [
+              ...prev,
+              {
+                nickname: '삐약이',
+                message: `${msg.exitedUserNickname}님이 퇴장하셨습니다.`,
+              },
+            ]);
+          } else {
+            setGameChatList((prev) => [
+              ...prev,
+              {
+                nickname: '삐약이',
+                message: `${msg.exitedUserNickname}님이 퇴장하셨습니다.`,
+              },
+              {
+                nickname: '삐약이',
+                message: `방장이 ${msg.gameRoomManagerNickname}님으로 변경되었습니다.`,
+              },
+            ]);
+            setSpeakChick({
               nickname: '삐약이',
               message: `방장이 ${msg.gameRoomManagerNickname}님으로 변경되었습니다.`,
-            },
-          ]);
-          setSpeakChick({
-            nickname: '삐약이',
-            message: `방장이 ${msg.gameRoomManagerNickname}님으로 변경되었습니다.`,
-          });
+            });
+          }
+          managerRef.current = msg.gameRoomManagerNickname;
           break;
         case 'CHAT': // 유저가 채팅 보냈을 때
           if (msg.message === '.' && isMusicStartRef.current) {
@@ -359,8 +369,6 @@ export const MultiGamePlaying = () => {
         setIsToggled(false);
       });
   };
-
-  console.log(location.state.requestBody);
 
   // 첫 렌더링 시 소켓연결, 페이지 떠날 시 disconnect
   useEffect(() => {

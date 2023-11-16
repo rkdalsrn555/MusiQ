@@ -5,6 +5,7 @@ import com.a608.musiq.domain.websocket.data.GameValue;
 import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import com.a608.musiq.domain.websocket.data.MessageType;
 import com.a608.musiq.domain.websocket.data.PlayType;
+import com.a608.musiq.domain.websocket.dto.GetUserInfoItemDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.GameRoomMemberInfo;
 import com.a608.musiq.domain.websocket.dto.responseDto.CheckPasswordResponseDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.EnterGameRoomResponseDto;
@@ -32,6 +33,7 @@ public class GameRoom {
     private static final int LEAST_MEMBER_SIZE = 1;
     private static final int ROOM_DIVIDE_NUMBER = 1000;
     private static final int MAX_ROOM_USER = 6;
+    private static final int MULTI_MODE_EXP_WEIGHT = 10;
     private static final String SPACE = " ";
 
     private int roomNo;
@@ -228,5 +230,19 @@ public class GameRoom {
         }
 
         return nicknames.toString();
+    }
+
+    public GetUserInfoItemDto getUserInfoItemDto() {
+        StringBuilder nicknames = new StringBuilder();
+        StringBuilder exps = new StringBuilder();
+        for(UserInfoItem userInfoItem : this.userInfoItems.values()) {
+            nicknames.append(userInfoItem.getNickname()).append(SPACE);
+            exps.append(userInfoItem.getScore() * MULTI_MODE_EXP_WEIGHT).append(SPACE);
+        }
+
+        return GetUserInfoItemDto.builder()
+            .nicknames(nicknames.toString())
+            .exps(exps.toString())
+            .build();
     }
 }
