@@ -155,22 +155,32 @@ export const MultiGamePlaying = () => {
         case 'EXITUSER': // 유저 나갈 때 pub
           setGameUserList(msg.userInfoItems);
           setManager(msg.gameRoomManagerNickname);
-          managerRef.current = msg.gameRoomManagerNickname;
-          setGameChatList((prev) => [
-            ...prev,
-            {
-              nickname: '삐약이',
-              message: `${msg.exitedUserNickname}님이 퇴장하셨습니다.`,
-            },
-            {
+          if (msg.gameRoomManagerNickname === managerRef.current) {
+            setGameChatList((prev) => [
+              ...prev,
+              {
+                nickname: '삐약이',
+                message: `${msg.exitedUserNickname}님이 퇴장하셨습니다.`,
+              },
+            ]);
+          } else {
+            setGameChatList((prev) => [
+              ...prev,
+              {
+                nickname: '삐약이',
+                message: `${msg.exitedUserNickname}님이 퇴장하셨습니다.`,
+              },
+              {
+                nickname: '삐약이',
+                message: `방장이 ${msg.gameRoomManagerNickname}님으로 변경되었습니다.`,
+              },
+            ]);
+            setSpeakChick({
               nickname: '삐약이',
               message: `방장이 ${msg.gameRoomManagerNickname}님으로 변경되었습니다.`,
-            },
-          ]);
-          setSpeakChick({
-            nickname: '삐약이',
-            message: `방장이 ${msg.gameRoomManagerNickname}님으로 변경되었습니다.`,
-          });
+            });
+          }
+          managerRef.current = msg.gameRoomManagerNickname;
           break;
         case 'CHAT': // 유저가 채팅 보냈을 때
           if (msg.message === '.' && isMusicStartRef.current) {
