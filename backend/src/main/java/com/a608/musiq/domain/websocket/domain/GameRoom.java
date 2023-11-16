@@ -32,6 +32,7 @@ public class GameRoom {
     private static final int LEAST_MEMBER_SIZE = 1;
     private static final int ROOM_DIVIDE_NUMBER = 1000;
     private static final int MAX_ROOM_USER = 6;
+    private static final String SPACE = " ";
 
     private int roomNo;
     private String roomName;
@@ -218,5 +219,14 @@ public class GameRoom {
 
     public void setRound(int round) {
         this.round = round;
+    }
+
+    public String getNicknames() {
+        StringBuilder nicknames = new StringBuilder();
+        for(UserInfoItem userInfoItem : this.userInfoItems.values()) {
+            nicknames.append(userInfoItem.getNickname()).append(SPACE);
+        }
+
+        return nicknames.toString();
     }
 }

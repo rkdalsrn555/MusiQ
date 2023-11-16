@@ -2,6 +2,8 @@ package com.a608.musiq.domain.websocket.controller;
 
 import com.a608.musiq.domain.websocket.dto.requestDto.CheckPasswordRequestDto;
 import com.a608.musiq.domain.websocket.dto.requestDto.ExitGameRoomRequestDto;
+import com.a608.musiq.domain.websocket.dto.requestDto.GameOverRequestDto;
+import com.a608.musiq.domain.websocket.dto.requestDto.GameStartRequestDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.DisconnectSocketResponseDto;
 import com.a608.musiq.domain.websocket.dto.requestDto.EnterGameRoomRequestDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.ExitGameRoomResponse;
@@ -11,8 +13,10 @@ import com.a608.musiq.domain.websocket.dto.responseDto.ChannelUserResponseDto;
 import com.a608.musiq.domain.websocket.domain.ChatMessage;
 import com.a608.musiq.domain.websocket.dto.requestDto.CreateGameRoomRequestDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.CreateGameRoomResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.GameOverResponseDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.GameRoomListResponseDto;
 import com.a608.musiq.domain.websocket.dto.responseDto.CheckPasswordResponseDto;
+import com.a608.musiq.domain.websocket.dto.responseDto.GameStartResponseDto;
 import com.a608.musiq.domain.websocket.service.GameService;
 import com.a608.musiq.global.common.response.BaseResponse;
 
@@ -192,6 +196,40 @@ public class GameController {
 
         gameService.sendMessage(Integer.parseInt(channelNo), chatMessage, accessToken);
     }
+
+	/**
+	 * 게임 시작 로그 생성
+	 *
+	 * @param gameStartRequestDto
+	 * @return
+	 */
+	@PostMapping("/start")
+	private ResponseEntity<BaseResponse<GameStartResponseDto>> gameStart(
+		@RequestBody GameStartRequestDto gameStartRequestDto
+	) {
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(BaseResponse.<GameStartResponseDto>builder()
+				.code(HttpStatus.OK.value())
+				.data(gameService.saveMultiModeGameStartLog(gameStartRequestDto))
+				.build());
+	}
+
+	/**
+	 * 게임 종료 로그 생성
+	 *
+	 * @param gameOverRequestDto
+	 * @return
+	 */
+	@PostMapping("/over")
+	private ResponseEntity<BaseResponse<GameOverResponseDto>> gameOver(
+		@RequestBody GameOverRequestDto gameOverRequestDto
+	) {
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(BaseResponse.<GameOverResponseDto>builder()
+				.code(HttpStatus.OK.value())
+				.data(gameService.saveMultiModeGameOverLog(gameOverRequestDto))
+				.build());
+	}
 
 
 }
