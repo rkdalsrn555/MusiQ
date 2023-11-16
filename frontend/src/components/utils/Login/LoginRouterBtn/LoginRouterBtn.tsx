@@ -80,7 +80,7 @@ export const LoginRouterBtn = (props: OwnProps) => {
           navigate('/');
         })
         .catch((err) => {
-          alert('로그아웃 성공!');
+          alert('로그아웃 실패!');
         });
     } else {
       navigate('/login');

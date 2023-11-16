@@ -51,6 +51,7 @@ export const MultiGamePlaying = () => {
   const [gameUserList, setGameUserList] = useState<GameUserList[]>([]); // 유저리스트
 
   const [manager, setManager] = useState<string>(''); // 내가 게임방의 매니저인지 아닌지
+  const managerRef = useRef<string>('');
   const [playTime, setPlayTime] = useState<number>(5); // 플레이타임
   const [playTimeMessage, setPlayTimeMessage] = useState<string>('');
   const [isMusicStart, setIsMusicStart] = useState<boolean>(false); // 음악이 시작되었는지 아닌지
@@ -84,6 +85,30 @@ export const MultiGamePlaying = () => {
   myAudio.volume = 0.1;
   myAudio.src = countDownBgm; // 음원 파일 설정
 
+  // 게임 로그 찍기
+  const postGameStart = () => {
+    userApis
+      .post(`${process.env.REACT_APP_BASE_URL}/start`, {
+        multiModeCreateGameRoomLogId:
+          location.state.requestBody.multiModeCreateGameRoomLogId,
+        gameRoomNumber,
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const postGameEnd = () => {
+    userApis
+      .post(`${process.env.REACT_APP_BASE_URL}/over`, {
+        multiModeCreateGameRoomLogId:
+          location.state.requestBody.multiModeCreateGameRoomLogId,
+        gameRoomNumber,
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   // 모바일 기기 접근을 막는 로직
   useEffect(() => {
     const isMobile =
@@ -104,6 +129,7 @@ export const MultiGamePlaying = () => {
         case 'ENTERUSER': // 유저 입장 시 마다 pub
           setGameUserList(msg.userInfoItems);
           setManager(msg.gameRoomManagerNickname);
+          managerRef.current = msg.gameRoomManagerNickname;
           setGameChatList((prev) => [
             ...prev,
             {
@@ -119,6 +145,7 @@ export const MultiGamePlaying = () => {
         case 'EXITUSER': // 유저 나갈 때 pub
           setGameUserList(msg.userInfoItems);
           setManager(msg.gameRoomManagerNickname);
+          managerRef.current = msg.gameRoomManagerNickname;
           setGameChatList((prev) => [
             ...prev,
             {
@@ -157,6 +184,9 @@ export const MultiGamePlaying = () => {
             nickname: '삐약이',
             message: '게임이 시작됐다!',
           });
+          if (window.localStorage.getItem('nickname') === managerRef.current) {
+            postGameStart();
+          }
           break;
         case 'TIME': // 시간초세기
           setPlayTime(msg.time);
@@ -260,6 +290,9 @@ export const MultiGamePlaying = () => {
             nickname: '삐약이',
             message: '게임이 끝났다 삐약!',
           });
+          if (window.localStorage.getItem('nickname') === managerRef.current) {
+            postGameEnd();
+          }
           break;
         case 'GOWAITING': // 게임 끝났을 때 대기상태로 다시 변환
           setIsGameStart(false);
@@ -320,11 +353,15 @@ export const MultiGamePlaying = () => {
       });
   };
 
+  console.log(location.state.requestBody);
+
   // 첫 렌더링 시 소켓연결, 페이지 떠날 시 disconnect
   useEffect(() => {
     connect();
     setGameUserList(location.state.requestBody.data.userInfoItems);
     setManager(location.state.requestBody.data.gameRoomManagerNickname);
+    managerRef.current =
+      location.state.requestBody.data.gameRoomManagerNickname;
     setGameChatList((prev) => [
       ...prev,
       {
