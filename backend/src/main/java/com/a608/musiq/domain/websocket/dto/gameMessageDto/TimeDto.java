@@ -9,12 +9,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TimeDto {
 
-    private MessageDtoType type;
+    private MessageDtoType messageType;
     private Integer time;
+    private String message;
 
     @Builder
-    public TimeDto(Integer time) {
-        this.type = MessageDtoType.TIME;
+    public TimeDto(Integer time, String message) {
+        this.messageType = MessageDtoType.TIME;
         this.time = time;
+        this.message = message;
     }
 }

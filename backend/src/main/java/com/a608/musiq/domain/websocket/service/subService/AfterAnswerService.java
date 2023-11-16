@@ -5,6 +5,7 @@ import com.a608.musiq.domain.websocket.data.MessageDtoType;
 import com.a608.musiq.domain.websocket.data.PlayType;
 import com.a608.musiq.domain.websocket.domain.GameRoom;
 import com.a608.musiq.domain.websocket.domain.UserInfoItem;
+import com.a608.musiq.domain.websocket.dto.gameMessageDto.MusicEndDto;
 import com.a608.musiq.domain.websocket.dto.gameMessageDto.TimeDto;
 import java.util.Map;
 import java.util.UUID;
@@ -22,15 +23,21 @@ public class AfterAnswerService {
     private SimpMessageSendingOperations messagingTemplate;
     private static final int MAKING_HALF_NUMBER = 2;
     private static final int MAKING_CEIL_NUMBER = 1;
+    private static final int SKIP_VOTE_INITIAL_NUMBER = 0;
 
     public void doAfterAnswer(Integer roomNum, GameRoom room) {
 
-        // 카운트 다운 전송
-        TimeDto dto = TimeDto.builder().time(room.getTime()).build();
-        messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
 
         // 남은 시간이 1초 이상이라면 시간 다운
         if (room.getTime() > 0) {
+
+            // 카운트 다운 전송
+            TimeDto dto = TimeDto.builder()
+                    .time(room.getTime())
+                    .message(room.getTime() + " 초")
+                    .build();
+            messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
+
             room.timeDown();
         }
         // 0초인 경우
@@ -52,6 +59,10 @@ public class AfterAnswerService {
 
             // 방의 전체 스킵 수도 0으로 설정
             room.setSkipVote(0);
+
+            // 음악 종료 신호 전송
+            MusicEndDto dto = MusicEndDto.builder().build();
+            messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
         }
     }
 
@@ -61,10 +72,17 @@ public class AfterAnswerService {
         gameRoom.setSkipVote(++skipVote);
         //해당 유저 isSkipped = true
         gameRoom.getUserInfoItems().get(uuid).setSkipped(true);
+
         //과반수인 경우
         if (gameRoom.getSkipVote() >= (gameRoom.getTotalUsers() / MAKING_HALF_NUMBER
                 + MAKING_CEIL_NUMBER)) {
-            gameRoom.setTime(0);
+
+            gameRoom.setTime(SKIP_VOTE_INITIAL_NUMBER);
+            SkipVoteDto skipVoteDto = SkipVoteDto.create(MessageDtoType.AFTERSKIP, true,
+                    gameRoom.getSkipVote());
+
+            // skipVote++ 하고 pub
+            messagingTemplate.convertAndSend(destination, skipVoteDto);
         } else {
             //과반수가 아닌 경우
             SkipVoteDto skipVoteDto = SkipVoteDto.create(MessageDtoType.AFTERSKIP, false,

@@ -206,9 +206,13 @@ export const GuestGamePlaying = () => {
   };
 
   const patchGameResult = () => {
-    axios.patch(
-      `${process.env.REACT_APP_BASE_URL}/music/guest/over?room-id=${location.state.gameRoomData.roomId}&round=${roundRef.current}`
-    );
+    axios
+      .patch(
+        `${process.env.REACT_APP_BASE_URL}/music/guest/over?room-id=${location.state.gameRoomData.roomId}&round=${roundRef.current}`
+      )
+      .then((res) => {
+        console.log(res);
+      });
   };
 
   // 결과창으로 라우팅

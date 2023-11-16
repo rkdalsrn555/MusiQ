@@ -36,26 +36,45 @@ public class RoundStartService {
 
     public void doRoundStart(Integer roomNum, GameRoom room) {
 
-        // 해당 방에 문제가 아직 없는 경우 문제 출제
-        if (room.getMultiModeProblems() == null) {
-            room.setMultiModeProblems(
-                    makeMutiProblemList(room.getNumberOfProblems(), room.getYear()));
-        }
-
         // 타임 카운트가 5인 경우 (맨 처음 카운트인 경우) 문제 링크를 보냄
         // 라운드마다 변수 초기화를 위해 ""를 담아 보냄
-        if (room.getTime() >= 4) {
+        if (room.getTime() == 5) {
             MusicProblemDto dto = MusicProblemDto.builder()
                     .musicUrl(room.getMultiModeProblems().get(room.getRound() - 1).getUrl())
+                    .round(room.getRound())
                     .build();
             messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
+
+            // 카운트 다운 전송
+            TimeDto timeDto = TimeDto.builder()
+                    .time(room.getTime())
+                    .message("준비 중")
+                    .build();
+            messagingTemplate.convertAndSend("/topic/" + roomNum, timeDto);
+
+            room.timeDown();
+        }
+        else if(room.getTime() == 4) {
+
+            // 카운트 다운 전송
+            TimeDto timeDto = TimeDto.builder()
+                    .time(room.getTime())
+                    .message("준비 중")
+                    .build();
+            messagingTemplate.convertAndSend("/topic/" + roomNum, timeDto);
+
+            room.timeDown();
         }
         // 3, 2, 1 카운트 다운 전송
         else if (room.getTime() > 0) {
 
             // 카운트 다운 전송
-            TimeDto timeDto = TimeDto.builder().time(room.getTime()).build();
+            TimeDto timeDto = TimeDto.builder()
+                    .time(room.getTime())
+                    .message(room.getTime() + " 초")
+                    .build();
             messagingTemplate.convertAndSend("/topic/" + roomNum, timeDto);
+
             room.timeDown();
         } else {
 
@@ -106,9 +125,14 @@ public class RoundStartService {
             List<Music> finalMusicList, int numberOfProblems) {
         List<MultiModeProblem> multiModeProblemList = new ArrayList<>();
 
-        // 랜덤한 int를 numberOfProblems만큼 뽑기
+        // 랜덤한 int를 numberOfProblems만큼 뽑아서 Set에 추가
         Random random = new Random();
-        int[] indexes = random.ints(numberOfProblems, 0, finalMusicList.size()).toArray();
+        Set<Integer> indexes = new HashSet<>();
+
+        while(indexes.size() < numberOfProblems) {
+            int num = random.nextInt(finalMusicList.size());
+            indexes.add(num);
+        }
 
         for (int index : indexes) {
             Music music = finalMusicList.get(index);

@@ -1,5 +1,6 @@
 package com.a608.musiq.domain.websocket.listener;
 
+import com.a608.musiq.domain.websocket.data.ConnectType;
 import com.a608.musiq.domain.websocket.service.GameService;
 import java.util.List;
 import java.util.Map;
@@ -39,14 +40,20 @@ public class WebSocketEventListener {
         logger.info("channelNo = {}", channelNo);
         String accessToken = ((List<String>) nativeHeaders.get("accessToken")).get(0);
         logger.info("accessToken = {}", accessToken);
-        gameService.joinGameChannel(accessToken, channelNo);
+        String connectType = ((List<String>) nativeHeaders.get("connectType")).get(0);
+        logger.info("connectType = {}", connectType);
+
+        if (connectType.equals(ConnectType.ENTER_LOBBY.toString())) {
+            gameService.joinGameChannel(accessToken, channelNo);
+        } else if (connectType.equals(ConnectType.ENTER_GAME_ROOM.toString())) {
+            gameService.enterGameRoomForPublish(accessToken, channelNo);
+        }
     }
 
     // 구독 요청
     @EventListener
     public void handleWebSocketSubscribeListener(SessionSubscribeEvent event) {
         logger.info("Received a new web-socket subscribe");
-
 
     }
 
