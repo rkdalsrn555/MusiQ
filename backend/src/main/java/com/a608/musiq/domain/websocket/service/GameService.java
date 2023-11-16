@@ -699,6 +699,7 @@ public class GameService {
 			.multiModeCreateGameRoomLogId(gameStartRequestDto.getMultiModeCreateGameRoomLogId())
 			.title(gameRoom.getRoomName())
 			.years(gameRoom.getYear())
+			.roomManagerNickname(gameRoom.getRoomManagerNickname())
 			.nicknames(gameRoom.getNicknames())
 			.startedAt(LocalDateTime.now())
 			.build()).getMultiModeCreateGameRoomLogId();
@@ -721,7 +722,7 @@ public class GameService {
 			new MultiModeException(MultiModeExceptionInfo.NOT_FOUND_MULTI_MODE_CREATE_GAME_ROOM_LOG));
 
 		multiModeCreateGameRoomLog.gameStart();
-		// multiModeCreateGameRoomLogRepository.save(multiModeCreateGameRoomLog);
+		multiModeCreateGameRoomLogRepository.save(multiModeCreateGameRoomLog);
 	}
 
 	/**
