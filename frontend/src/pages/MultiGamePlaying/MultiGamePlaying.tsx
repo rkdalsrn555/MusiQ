@@ -113,7 +113,7 @@ export const MultiGamePlaying = () => {
     if (window.localStorage.getItem('nickname') === managerRef.current) {
       if (isGameStart) {
         postGameStart();
-      } else {
+      } else if (isResult) {
         postGameEnd();
       }
     }
