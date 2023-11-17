@@ -1,0 +1,66 @@
+-- --------------------------------------------------------
+-- 호스트:                          k9a608a.p.ssafy.io
+-- 서버 버전:                        11.1.2-MariaDB-1:11.1.2+maria~ubu2204 - mariadb.org binary distribution
+-- 서버 OS:                        debian-linux-gnu
+-- HeidiSQL 버전:                  12.3.0.6589
+-- --------------------------------------------------------
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+-- 테이블 musiqdb.guest_mode_log 구조 내보내기
+CREATE TABLE IF NOT EXISTS `guest_mode_log` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `difficulty` varchar(255) NOT NULL,
+  `ended_at` datetime(6) DEFAULT NULL,
+  `ip` varchar(255) DEFAULT NULL,
+  `play_time` int(11) DEFAULT NULL,
+  `round` int(11) DEFAULT NULL,
+  `started_at` datetime(6) NOT NULL,
+  `year` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- 테이블 데이터 musiqdb.guest_mode_log:~29 rows (대략적) 내보내기
+INSERT INTO `guest_mode_log` (`id`, `difficulty`, `ended_at`, `ip`, `play_time`, `round`, `started_at`, `year`) VALUES
+	(1, 'EASY', NULL, NULL, 0, 0, '2023-11-08 13:54:21.801165', '2023 2022'),
+	(2, 'EASY', NULL, '211.192.252.152', 0, 0, '2023-11-08 13:57:09.336928', '2023'),
+	(3, 'EASY', NULL, NULL, 0, 0, '2023-11-08 13:57:58.923537', '2023 2022'),
+	(4, 'EASY', NULL, NULL, 0, 0, '2023-11-08 13:58:00.620725', '2023 2022'),
+	(5, 'EASY', NULL, '211.192.252.152', 0, 0, '2023-11-08 13:58:01.753460', '2023 2022'),
+	(6, 'EASY', NULL, '211.192.252.152', 0, 0, '2023-11-08 14:22:29.020916', '2023'),
+	(7, 'NORMAL', NULL, '211.192.252.152', 0, 0, '2023-11-08 14:23:28.877279', '2015'),
+	(8, 'EASY', NULL, '211.192.252.152', 0, 0, '2023-11-08 14:48:19.308799', '2023'),
+	(9, 'EASY', NULL, '211.192.252.152', 0, 0, '2023-11-08 15:05:45.112716', '2023'),
+	(10, 'EASY', NULL, '211.192.252.152', 0, 0, '2023-11-08 15:42:38.008246', '2010'),
+	(11, 'EASY', NULL, '211.192.252.152', 0, 0, '2023-11-08 16:30:56.291272', '2023'),
+	(12, 'EASY', NULL, '211.192.252.169', 0, 0, '2023-11-08 16:44:28.746200', '2023'),
+	(13, 'EASY', NULL, NULL, 0, 0, '2023-11-09 13:08:55.930253', '2015'),
+	(14, 'EASY', NULL, '221.148.157.74', 0, 0, '2023-11-09 15:04:07.054447', '2023'),
+	(15, 'EASY', NULL, '221.148.157.74', 0, 0, '2023-11-09 15:04:14.682510', '2023'),
+	(16, 'EASY', NULL, '211.192.252.152', 0, 0, '2023-11-10 09:27:48.235965', '2023'),
+	(17, 'EASY', NULL, '211.192.252.152', 0, 0, '2023-11-10 13:47:44.730906', '2023'),
+	(18, 'EASY', NULL, NULL, 0, 0, '2023-11-10 14:14:57.844780', '2015'),
+	(19, 'EASY', NULL, '221.148.157.74', 0, 0, '2023-11-10 23:35:51.700422', '2023'),
+	(20, 'EASY', NULL, '211.192.252.152', 0, 0, '2023-11-13 11:58:27.002935', '2023'),
+	(21, 'EASY', NULL, NULL, 0, 0, '2023-11-13 11:58:54.251349', '2023 2022'),
+	(22, 'EASY', NULL, '211.192.252.152', 0, 0, '2023-11-13 12:02:08.675553', '2023'),
+	(23, 'EASY', '2023-11-13 12:02:23.159458', NULL, 6, 0, '2023-11-13 12:02:16.935218', '2023 2022'),
+	(24, 'EASY', NULL, '211.192.252.132', 0, 0, '2023-11-14 12:06:49.707804', '2023'),
+	(25, 'EASY', '2023-11-16 15:25:20.480355', '211.192.252.142', 66, 3, '2023-11-16 15:24:13.526871', '2000 2010 2015'),
+	(26, 'EASY', NULL, '221.148.157.74', 0, 0, '2023-11-17 11:15:00.331050', '2023'),
+	(27, 'EASY', NULL, '221.148.157.74', 0, 0, '2023-11-17 11:19:04.010064', '2023'),
+	(28, 'EASY', NULL, '221.148.157.74', 0, 0, '2023-11-17 11:19:31.536418', '2023'),
+	(29, 'EASY', '2023-11-17 11:20:32.022889', '221.148.157.74', 46, 3, '2023-11-17 11:19:45.605495', '2023');
+
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;
