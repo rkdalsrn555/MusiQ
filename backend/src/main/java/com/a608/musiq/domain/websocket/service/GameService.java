@@ -390,6 +390,26 @@ public class GameService {
                     GameResultDto dto = GameResultDto.builder().userResults(gameResults).build();
 
 					messagingTemplate.convertAndSend("/topic/" + roomNum, dto);
+
+					// 경험치 정산
+					for (UUID memberId : userInfoMap.keySet()) {
+
+						Optional<MemberInfo> memberInfoOptional = memberInfoRepository.findById(
+							memberId);
+						if (memberInfoOptional.isEmpty()) {
+							continue;
+						}
+
+						// Transactional을 위한 UpdateExp 메서드 분리
+						MemberInfo memberInfo = memberInfoOptional.get();
+						commonService.updateExp(memberInfo, userInfoMap.get(memberId).getScore());
+
+						// 저장
+						memberInfoRepository.save(memberInfo);
+
+						util.insertDatatoRedisSortedSet(RedisKey.RANKING.getKey(),
+							memberInfo.getNickname(), memberInfo.getExp());
+					}
 				}
 
 				// 시간 초 카운트
@@ -405,24 +425,13 @@ public class GameService {
 				else {
 					List<GameRoomMemberInfo> memberInfos = new ArrayList<>();
 
-					// 경험치 정산
 					for (UUID memberId : userInfoMap.keySet()) {
-
 						Optional<MemberInfo> memberInfoOptional = memberInfoRepository.findById(
 							memberId);
-						if (!memberInfoOptional.isPresent()) {
+						if (memberInfoOptional.isEmpty()) {
 							continue;
 						}
-
-						// Transactional을 위한 UpdateExp 메서드 분리
 						MemberInfo memberInfo = memberInfoOptional.get();
-						commonService.updateExp(memberInfo, userInfoMap.get(memberId).getScore());
-
-						// 저장
-						memberInfoRepository.save(memberInfo);
-
-						util.insertDatatoRedisSortedSet(RedisKey.RANKING.getKey(),
-							memberInfo.getNickname(), memberInfo.getExp());
 
 						memberInfos.add(
 							GameRoomMemberInfo.builder()
