@@ -214,7 +214,7 @@ public class GameRoom {
         this.round = 1;
         this.skipVote = 0;
 
-        for(UserInfoItem userInfo : this.userInfoItems.values()) {
+        for (UserInfoItem userInfo : this.userInfoItems.values()) {
             userInfo.initializeUserInfo();
         }
     }
@@ -244,5 +244,13 @@ public class GameRoom {
             .nicknames(nicknames.toString())
             .exps(exps.toString())
             .build();
+    }
+
+
+    public void gameRoomUserScoreReset() {
+        for (Map.Entry<UUID, UserInfoItem> entry : this.userInfoItems.entrySet()) {
+            entry.getValue().initializeUserInfo();
+            this.userInfoItems.put(entry.getKey(), entry.getValue());
+        }
     }
 }
