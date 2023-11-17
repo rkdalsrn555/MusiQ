@@ -646,6 +646,13 @@ public class GameService {
 		messagingTemplate.convertAndSend(destination, enterGameRoomDto);
 	}
 
+	/**
+	 * 게임방 나가기
+	 *
+	 * @param accessToken
+	 * @param exitGameRoomRequestDto
+	 * @return ExitGameRoomResponse
+	 */
 	public ExitGameRoomResponse exitGameRoom(String accessToken, ExitGameRoomRequestDto exitGameRoomRequestDto) {
 		// previousChannelNo : from -> 게임 방 번호
 		int previousChannelNo = exitGameRoomRequestDto.getPreviousChannelNo();
@@ -761,6 +768,9 @@ public class GameService {
 			.endedAt(endedAt)
 			.playTime(playTime)
 			.build()).getMultiModeCreateGameRoomLogId();
+
+		 // 게임방 초기화
+		gameRoom.initializeRoom();
 
 		return GameOverResponseDto.builder()
 			.multiModeCreateGameRoomLogId(multiModeCreateGameRoomLogId)
