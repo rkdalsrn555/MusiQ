@@ -768,9 +768,9 @@ public class GameService {
 			.endedAt(endedAt)
 			.playTime(playTime)
 			.build()).getMultiModeCreateGameRoomLogId();
-
-		 // 게임방 초기화
-		gameRoom.initializeRoom();
+		
+		 // 게임방 사용자 점수 초기화
+		gameRoom.gameRoomUserScoreReset();
 
 		return GameOverResponseDto.builder()
 			.multiModeCreateGameRoomLogId(multiModeCreateGameRoomLogId)
