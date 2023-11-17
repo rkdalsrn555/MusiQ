@@ -85,6 +85,19 @@ export const MultiGamePlaying = () => {
   myAudio.volume = 0.1;
   myAudio.src = countDownBgm; // 음원 파일 설정
 
+  // 제목없는 음원으로 미디어 플레이어 제목 가리기
+  navigator.mediaSession.metadata = new MediaMetadata({});
+  const aud = new Audio('../../assets/audio/무음.wav');
+  const blindMusicTitlePlay = () => {
+    aud.volume = 0;
+    aud.loop = true;
+    aud.play();
+  };
+
+  const blindMusicTitleStop = () => {
+    aud.pause();
+  };
+
   // 게임 로그 찍기
   const postGameStart = () => {
     userApis
@@ -109,6 +122,7 @@ export const MultiGamePlaying = () => {
       });
   };
 
+  // 게임 시작, 끝난 후 로그 찍기
   useEffect(() => {
     if (window.localStorage.getItem('nickname') === managerRef.current) {
       if (isGameStart) {
@@ -292,10 +306,12 @@ export const MultiGamePlaying = () => {
 
           break;
         case 'MUSICPLAY': // 노래 시작 타이밍
+          blindMusicTitlePlay();
           setIsMusicStart(msg.musicPlay);
           isMusicStartRef.current = msg.musicPlay;
           break;
         case 'MUSICEND': // 노래 끝
+          blindMusicTitleStop();
           setIsMusicStart(msg.musicPlay);
           isMusicStartRef.current = msg.musicPlay;
           break;
