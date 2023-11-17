@@ -29,7 +29,7 @@ export const MultiChannelPage = () => {
     if (isMobile) {
       navigate('/mobile-restriction');
     }
-    setActiveCarouselNum({ activeCarouselNum: 3 });
+    setActiveCarouselNum({ activeCarouselNum: 2 });
   }, []);
 
   const handleChannelClick = (channelNumber: number) => {
