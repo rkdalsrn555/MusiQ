@@ -16,6 +16,7 @@ import {
   MultiGameOutBtn,
 } from '../../components/features';
 import countDownBgm from '../../assets/audio/CountDownMid.wav';
+import blindSound from '../../assets/audio/무음.wav';
 import * as S from './MultiGamePlaying.styled';
 import { Modal } from '../../components/utils';
 
@@ -87,7 +88,7 @@ export const MultiGamePlaying = () => {
 
   // 제목없는 음원으로 미디어 플레이어 제목 가리기
   navigator.mediaSession.metadata = new MediaMetadata({});
-  const aud = new Audio('../../assets/audio/무음.wav');
+  const aud = new Audio(`${blindSound}`);
   const blindMusicTitlePlay = () => {
     aud.volume = 0;
     aud.loop = true;
