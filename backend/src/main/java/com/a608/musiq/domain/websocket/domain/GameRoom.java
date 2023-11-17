@@ -214,8 +214,11 @@ public class GameRoom {
         this.round = 1;
         this.skipVote = 0;
 
-        for(UserInfoItem userInfo : this.userInfoItems.values()) {
-            userInfo.initializeUserInfo();
+        for(Map.Entry<UUID, UserInfoItem> entry: this.userInfoItems.entrySet()) {
+            System.out.printf("초기화 이전 점수: %f\n", entry.getValue().getScore());
+            entry.getValue().initializeUserInfo();
+            System.out.printf("초기화 이후 점수: %f\n", entry.getValue().getScore());
+            this.userInfoItems.put(entry.getKey(), entry.getValue());
         }
     }
 
