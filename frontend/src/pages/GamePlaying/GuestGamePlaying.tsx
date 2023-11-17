@@ -21,6 +21,7 @@ import {
 } from '../../components/features';
 import { BackBtn, Modal } from '../../components/utils';
 import * as S from './GamePlaying.styled';
+import blindSound from '../../assets/audio/무음.wav';
 
 type musicDataType = {
   musicId: number;
@@ -96,6 +97,19 @@ export const GuestGamePlaying = () => {
   const [isInputFocus, setIsInputFocus] = useState<boolean>(false);
   const [keyEvent, setKeyEvent] = useState<string>('');
   const videoRef = useRef<ReactPlayer>(null);
+
+  // 제목없는 음원으로 미디어 플레이어 제목 가리기
+  navigator.mediaSession.metadata = new MediaMetadata({});
+  const aud = new Audio(`${blindSound}`);
+  const blindMusicTitlePlay = () => {
+    aud.volume = 0;
+    aud.loop = true;
+    aud.play();
+  };
+
+  const blindMusicTitleStop = () => {
+    aud.pause();
+  };
 
   // 모바일 기기 접근을 막기 위해 추가한 코드
   useEffect(() => {
@@ -487,11 +501,13 @@ export const GuestGamePlaying = () => {
     window.addEventListener('keyup', handleKeyUp);
     window.addEventListener('beforeunload', preventRefresh);
     window.addEventListener('keydown', handleKeyDown);
+    blindMusicTitlePlay();
 
     return () => {
       window.removeEventListener('keyup', handleKeyUp);
       window.removeEventListener('beforeunload', preventRefresh);
       window.removeEventListener('keydown', handleKeyDown);
+      blindMusicTitleStop();
     };
   }, []);
 
