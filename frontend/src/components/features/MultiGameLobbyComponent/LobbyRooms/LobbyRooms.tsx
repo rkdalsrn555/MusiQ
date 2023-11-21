@@ -232,7 +232,7 @@ export const LobbyRooms = () => {
       <RoomsWrapper>
         {currentRooms.map((room) => (
           <Room
-            key={room.roomManager}
+            key={room.gameRoomNo}
             onClick={() => !room.isPlay && handleRoomClick(room)}
             style={{
               backgroundColor: room.isPlay
